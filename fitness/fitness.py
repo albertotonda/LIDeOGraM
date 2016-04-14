@@ -1,7 +1,9 @@
 """Computed fitness of solutions."""
 import math
-from sympy.parsing.sympy_parser import parse_expr
+import multiprocessing
+from multiprocessing.pool import ThreadPool
 
+from sympy.parsing.sympy_parser import parse_expr
 
 
 class Equation:
@@ -46,6 +48,7 @@ class Individual:
             self.equations.append(Equation(t[2] ,t[3] ,t[0], localvar))
             self.complexity[t[2]] = float(t[0])
 
+
     def process(self, n: int):
         """Take example i and compute solution.
         :type n: int
@@ -60,10 +63,10 @@ class Individual:
         #print(neq)
         while neq and nnode:
             for eq in self.equations:
-                if set(eq.variables).issubset(set(computed.keys())) and eq.name not in computed.keys() :
+                if eq.name not in computed.keys() and set(eq.variables).issubset(set(computed.keys()))  :
                     #Attention ensemble vide inclus dans n'importe quel autre ensemble !
                     neq -= 1
-                    result = parse_expr(eq.equation.replace("^","**"), local_dict=computed)
+                    result = (parse_expr(eq.equation.replace("^","**"), local_dict=computed))
                     computed[eq.name] = result
             nnode -= 1
             #print(neq)
@@ -72,6 +75,7 @@ class Individual:
            # print(list(zip(sorted(self.variables), sorted(list(set(self.variables))))))
             #print(set(self.variables))
             # raise
+
         return computed
 
     def get_fitness(self, fun=(lambda x, y: math.fabs(x - y)/x), penalty=0):
@@ -99,6 +103,12 @@ class Individual:
             if i in self.complexity:
                 cpx += self.complexity[i]
         return var/acc, cpx
+
+def get_multithread_fitness(var,exps,initv):
+    tasks = [Individual(initv,var,exp) for exp in exps]
+    p = ThreadPool.Pool(multiprocessing.cpu_count())
+    xs = p.map(lambda x : x.get_fitness(), tasks)
+    return xs
 
 
 if __name__ == "__main__":
