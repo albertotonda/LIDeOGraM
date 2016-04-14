@@ -1,5 +1,4 @@
 #-*- coding: utf-8
-from PyQt4 import QtGui
 from sys import path
 path.append("../fitness")
 import fitness
@@ -24,7 +23,7 @@ class RFGraphCanvas(FigureCanvas):
         self.axes.set_xlim([0,0.1])
         self.axes.set_ylim([0, 0.6])
         self.G=nx.DiGraph()
-        self.pos=data.pos_graph(self.G)
+        self.pos=fdata.pos_graph(self.G)
         self.val_ts=0.5
         self.val_ds=0.5
 
@@ -70,7 +69,7 @@ class FitCanvas(FigureCanvas):
         self.cell_pop = []
         self.mol_cell = []
 
-        f = open("dataset_cell_pop.csv")
+        f = open("data/dataset_cell_pop.csv")
         t = f.readline()
         variables = []
         for i in t.split(','):
@@ -79,7 +78,7 @@ class FitCanvas(FigureCanvas):
             t = zip(variables,[float(i.strip()) for i in line.split(',')])
             self.cell_pop.append(dict(t))
 
-        f = open("dataset_mol_cell.csv")
+        f = open("data/dataset_mol_cell.csv")
         t = f.readline()
         variables = []
         for i in t.split(','):
