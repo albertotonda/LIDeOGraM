@@ -81,7 +81,7 @@ class ApplicationWindow(QtGui.QMainWindow):
         self.fitg = graphs.FitCanvas(self.main_widget, width=37, height=30, dpi=200)
         grid.addWidget(self.fitg,6,60,6,60)
 
-        self.button1=QtGui.QPushButton('Compromis', self)
+        self.button1 = QtGui.QPushButton('Compromis', self)
         self.button2 = QtGui.QPushButton('Fitness', self)
         self.button3 = QtGui.QPushButton('Complexité', self)
         self.button4 = QtGui.QPushButton('Optimisation µGP', self)
