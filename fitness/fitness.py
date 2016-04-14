@@ -91,9 +91,6 @@ class Individual:
         for case in range(ncases):
             for i in bkeys:
                 if i in results[case] and i in self.exp:
-                    #print("Value : {}, type : {}".format(results[case][i],type(results[case][i])))
-                    #print("Value : {}, type : {}".format(self.exp[i][case],type(self.exp[i][case])))
-                    #print("\n")
                     acc+=1
                     var += fun(float(results[case][i]), float(self.exp[i][case].replace(",",".")))
                 else:

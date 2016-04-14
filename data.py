@@ -1,17 +1,11 @@
 #-*- coding: utf-8
 
 
-from numpy import genfromtxt
-import numpy as np
-
-
 import random
 
 import networkx as nx
-
-
-
-
+import numpy as np
+from numpy import genfromtxt
 
 adj_simple = genfromtxt('data/adj_simple_withMol.csv', delimiter=',')
 adj_cmplx  = genfromtxt('data/adj_cmplx_withMol.csv', delimiter=',')
@@ -27,9 +21,6 @@ dataset_cell_popS=genfromtxt('data/dataset_cell_pop.csv','str',delimiter=',')
 dataset_mol_cellS=genfromtxt('data/dataset_mol_cell.csv','str',delimiter=',')
 dataset_cell_popF=genfromtxt('data/dataset_cell_pop.csv','float',delimiter=',')
 dataset_mol_cellF=genfromtxt('data/dataset_mol_cell.csv','float',delimiter=',')
-last_clicked=''
-curr_tabl=[]
-mode_cntrt=False
 
 
 #ts : Slider entre 0 et 1 pour afficher les arrêtes selon les poids sur la matrice d'adjacence simple

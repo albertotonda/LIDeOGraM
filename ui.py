@@ -7,6 +7,8 @@ from PyQt4.QtGui import *
 
 import data as fdata
 import graphs
+mode_cntrt=False
+
 
 
 class MyTable(QTableWidget):
@@ -22,7 +24,6 @@ class MyTable(QTableWidget):
         self.clear()
         for n  in range(len(self.data)):
             for m in range(len(self.data[n])):
-                #print('n:',n,' m:',m,' case:',self.data[n][m])
                 newitem = QTableWidgetItem(self.data[n][m])
                 self.setItem(n,m,newitem)
         self.setHorizontalHeaderLabels(['Complexité','Fitness','Equation'])
@@ -75,7 +76,6 @@ class ApplicationWindow(QtGui.QMainWindow):
             self.table.item(5,i).setBackground(QtGui.QColor(150,150,150))
 
         self.table.itemClicked.connect(self.tableClicked)
-        #self.table.connect(self.tableClicked)
         grid.addWidget(self.table, 0, 60, 6, 60)
 
         self.fitg = graphs.FitCanvas(self.main_widget, width=37, height=30, dpi=200)
@@ -140,63 +140,53 @@ class ApplicationWindow(QtGui.QMainWindow):
 
     def onClick(self, event, radius=0.005):
         #TODO Variables globales, selection du noeud le plus proche, affichage du nom du noeud selectionné
-        global last_clicked
-        global curr_tabl
         global mode_cntrt
         (x, y) = (event.xdata, event.ydata)
 
-        print('clicked', event.xdata)
-        candidates = []
 
-        for i in self.RFG.G.node:
-            node = self.RFG.pos[i]
-            distance = pow(x - node[0], 2) + pow(y - node[1], 2)
-            if distance < radius:
-                candidates.append(i)
-                # print(i)
+        dst = [(pow(x - self.RFG.pos[node][0], 2) + pow(y - self.RFG.pos[node][1], 2),node) for node in self.RFG.G.node]
 
-        print('list:', candidates)
-        if (len(candidates) > 1):
-            self.onClick(event, radius / 2)
-        elif (len(candidates) == 0):
-
+        if len(list(filter(lambda x: x[0] < 0.0005, dst))) == 0 :
             return
+
+        theone = min(dst,key=(lambda x: x[0]))
+        candidates = [theone[1]]
+
+        #print('list:', candidates)
+
+        if (mode_cntrt == False):
+            print('action:', candidates[0])
+            graphs.last_clicked = candidates[0]
+            data_tmp = fdata.equacolOs[np.ix_(fdata.equacolOs[:, 2] == candidates, [0, 1, 3])]
+            graphs.curr_tabl = fdata.equacolOs[np.ix_(fdata.equacolOs[:, 2] == candidates, [0, 1, 3, 4])]
+            data = []
+            for i in range(len(data_tmp)):
+                data.append(data_tmp[i])
+            self.table.data = data
+            self.table.setmydata()
+            self.RFG.figure.canvas.draw()
+            self.fitg.setCurrentTable(self.table)
         else:
-            if (mode_cntrt == False):
-                print('action:', candidates, ' ', candidates[0])
-                last_clicked = candidates[0]
-                # print('last_clicked_affected_to:',last_clicked)
-                data_tmp = fdata.equacolOs[np.ix_(fdata.equacolOs[:, 2] == candidates, [0, 1, 3])]
-                curr_tabl = fdata.equacolOs[np.ix_(fdata.equacolOs[:, 2] == candidates, [0, 1, 3, 4])]
-                data = []
-                for i in range(len(data_tmp)):
-                    data.append(data_tmp[i])
-                # print(data)
-                self.table.data = data
-                self.table.setmydata()
-                self.RFG.figure.canvas.draw()
-                self.fitg.setCurrentTable(self.table)
-            else:
-                if (self.click1 == ''):
-                    self.click1 = candidates[0]
-                elif (self.click2 == ''):
-                    self.click2 = candidates[0]
-                else:
-                    print('click1:', self.click1, ' click2:', self.click2)
-                    self.click1 = ''
-                    self.click2 = ''
-                    mode_cntrt = False
+            pass
+            #if (self.click1 == ''):
+            #    self.click1 = candidates[0]
+            #elif (self.click2 == ''):
+            #    self.click2 = candidates[0]
+            #else:
+            #    print('click1:', self.click1, ' click2:', self.click2)
+            #    self.click1 = ''
+            #    self.click2 = ''
+            #    mode_cntrt = False
 
 
 
     def SliderMoved(self, value):
-        #print('ts=',self.ts_slider.value())
-        #print('ds=', self.ds_slider.value())
         self.RFG.updateGraph(self.ts_slider.value()/100.0,self.ds_slider.value()/100.0)
         self.RFG.figure.canvas.draw()
+
+
     def tableClicked(self,cellClicked):
         self.fitg.fitplot(cellClicked.row())
-
 
 
     def fileQuit(self):

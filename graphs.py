@@ -10,6 +10,9 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 import data as fdata
 from PyQt4 import QtGui
 
+curr_tabl=[]
+last_clicked=''
+
 
 class RFGraphCanvas(FigureCanvas):
     """Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""
