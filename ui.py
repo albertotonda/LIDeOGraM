@@ -1,11 +1,12 @@
 #-*- coding: utf-8
-import matplotlib.pyplot as plt
+from math import *
+
+import numpy as np
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import *
-from math import *
+
 import data as fdata
 import graphs
-import numpy as np
 
 
 class MyTable(QTableWidget):
@@ -39,7 +40,6 @@ class ApplicationWindow(QtGui.QMainWindow):
         self.main_widget = QtGui.QWidget(self)
 
 
-        #l = QtGui.QVBoxLayout(self.main_widget)
         grid = QtGui.QGridLayout(self.main_widget)
         self.RFG = graphs.RFGraphCanvas(self.main_widget, width=37, height=30, dpi=200)
         self.ts_slider = QtGui.QSlider(QtCore.Qt.Horizontal,self.main_widget)
@@ -47,9 +47,6 @@ class ApplicationWindow(QtGui.QMainWindow):
         self.ts_slider.setValue(50)
         self.ds_slider.setValue(50)
         self.forbidden_edge=[]
-        #l.addWidget(self.RFG)
-        #grid_w=QtGui.QWidget(self.main_widget)
-        #grid=QtGui.QGridLayout(grid_w)
         grid.setSpacing(10)
 
         grid.addWidget(self.RFG,0,0,8,60)
@@ -69,8 +66,6 @@ class ApplicationWindow(QtGui.QMainWindow):
         grid.addWidget(ds_lab_fitness, 8, 59,1,1)
 
 
-        #data = {'col1': ['1', '2', '3'], 'col2': ['4', '5', '6'], 'col3': ['7', '8', '9'],'col4':['1','2','3'], 'col5':['4','5','6'], 'col6':['7','8','9'],'col1156146516':['1','2','3'], 'col23':['4','5','6'], 'col38':['7','8','9']}
-        #data={}
         data_tmp=fdata.equacolPOs[:,np.ix_([0,1,4])]
         data=[]
         for i in range(len(data_tmp)):
@@ -106,26 +101,7 @@ class ApplicationWindow(QtGui.QMainWindow):
         grid.addWidget(self.button7, 11, 0, 1, 30)
         grid.addWidget(self.button8, 11, 30, 1, 30)
 
-        #eq=QtGui.QTextEdit()
-        #grid.addWidget(eq,1,8,7,40)
 
-
-        #l.addWidget(grid_w)
-
-        #ts_w=QtGui.QWidget(self.main_widget)
-        #ts_l=QtGui.QHBoxLayout(ts_w)
-        #ts_lab=QtGui.QLabel('Importance des arcs : ')
-        #ts_l.addWidget(ts_lab)
-        #ts_l.addWidget(self.ts_slider)
-        #l.addWidget(ts_w)
-
-
-        #ds_w=QtGui.QWidget(self.main_widget)
-        #ds_l = QtGui.QHBoxLayout(ds_w)
-        #ds_lab = QtGui.QLabel('Compromis : ')
-        #ds_l.addWidget(ds_lab)
-        #ds_l.addWidget(self.ds_slider)
-        #l.addWidget(ds_w)
 
         self.ts_slider.valueChanged.connect(self.SliderMoved)
         self.ds_slider.valueChanged.connect(self.SliderMoved)
@@ -163,6 +139,7 @@ class ApplicationWindow(QtGui.QMainWindow):
         pass
 
     def onClick(self, event, radius=0.005):
+        #TODO Variables globales, selection du noeud le plus proche, affichage du nom du noeud selectionné
         global last_clicked
         global curr_tabl
         global mode_cntrt
@@ -211,20 +188,6 @@ class ApplicationWindow(QtGui.QMainWindow):
                     mode_cntrt = False
 
 
-            # refreshGraph()
-
-    def onpick(self, event):
-        """Deal with pick events"""
-        print("You picked {:s}, which has color={:s} and linewidth={:f}".format(event.artist,
-                                                                                event.artist.get_color(),
-                                                                                event.artist.get_linewidth()))
-        new_color = 'r' if event.artist.get_color() == 'k' else 'k'
-        print("I will change the color to color={:s}".format(new_color))
-        event.artist.set_color(new_color)
-        plt.draw()
-        print("A pick-event has access to the mouse event: to prove it, I pass it to 'onclick'")
-        self.onClick(event.mouseevent)
-        print("----> That was actually from within 'onpick'!")
 
     def SliderMoved(self, value):
         #print('ts=',self.ts_slider.value())
