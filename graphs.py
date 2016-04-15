@@ -1,6 +1,6 @@
 #-*- coding: utf-8
 from sys import path
-path.append("../fitness")
+path.append("fitness/")
 import fitness
 import networkx as nx
 
@@ -105,32 +105,31 @@ class FitCanvas(FigureCanvas):
 
         datafrom=curr_tabl[line][3]
 
+        x = []
+        y = []
 
+        if datafrom=='1':
 
-        if(datafrom=='1'):
-            x=[]
-            y=[]
-            currdatasetF=fdata.dataset_cell_popF
+            currdatasetF = fdata.dataset_cell_popF
             currdatasetS = fdata.dataset_cell_popS
 
-            for n,i in enumerate(self.cell_pop):
+            for n, i in enumerate(self.cell_pop):
                 x.append(n)
                 y.append(parse_expr(eq.replace("^","**"),i))
 
         else:
-            x = []
-            y = []
-            currdatasetF=fdata.dataset_mol_cellF
 
+            currdatasetF = fdata.dataset_mol_cellF
             currdatasetS = fdata.dataset_mol_cellS
 
             for n, i in enumerate(self.mol_cell):
                 x.append(n)
                 y.append(parse_expr(eq.replace("^","**"), i))
+
         num_exp=range(len(currdatasetF[1:,currdatasetS[0,:]==last_clicked]))
 
         if self.mg:
-            ft = fitness.Individual("../fitness/params.csv", "../fitness/ex_indiv.csv", "../fitness/varnames.csv")
+            ft = fitness.Individual("fitness/params.csv", "fitness/ex_indiv.csv", "fitness/varnames.csv")
             x = num_exp
             z = [ft.process(i)[last_clicked] for i in x]
 
