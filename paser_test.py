@@ -1,7 +1,6 @@
 from sympy import srepr
 from sympy.parsing.sympy_parser import parse_expr
-eq = "a/b"
-eqd = {"a":None,"b":None}
+eq = "0.890420685427687+(12.075341069316*UFAdivSFA+73.2315556415024*UFAdivSFA**3-0.943665542824327-51.5061941345233*UFAdivSFA**2)/(CFAdivUFA-3.83166666666667)"
 expr = parse_expr(eq)
 print(srepr(expr))
 tree = srepr(expr)
@@ -48,14 +47,26 @@ def display(tree):
         display(tree.childs[0])
         display(tree.childs[1])
     elif tree.name == "Pow":
+        print("(")
         display(tree.childs[0])
         print("^{")
         display(tree.childs[1])
         print('}')
+        print(")")
     elif tree.name == "Integer":
         print(tree.childs[0].name)
     elif tree.name == "base":
         display(tree.childs[0])
+    elif tree.name == "Add":
+        print("(")
+        display(tree.childs[0])
+        print("+")
+        display(tree.childs[1])
+        print(")")
+    elif tree.name == "Float":
+        #print("{03}".format(float(tree.childs[0].name.replace("'",""))))
+        print(tree.childs[0].name)
+
 
 
 
