@@ -107,6 +107,7 @@ class FitCanvas(FigureCanvas):
 
         x = []
         y = []
+        v =  ""
 
         if datafrom=='1':
 
@@ -116,6 +117,7 @@ class FitCanvas(FigureCanvas):
             for n, i in enumerate(self.cell_pop):
                 x.append(n)
                 y.append(parse_expr(eq.replace("^","**"),i))
+            v =  "fitness/params_ce_po.csv"
 
         else:
 
@@ -125,11 +127,12 @@ class FitCanvas(FigureCanvas):
             for n, i in enumerate(self.mol_cell):
                 x.append(n)
                 y.append(parse_expr(eq.replace("^","**"), i))
+            v = "fitness/params_mo_ce.csv"
 
         num_exp=range(len(currdatasetF[1:,currdatasetS[0,:]==last_clicked]))
 
         if self.mg:
-            ft = fitness.Individual("fitness/params.csv", "fitness/ex_indiv.csv", "fitness/varnames.csv")
+            ft = fitness.Individual(v, "fitness/ex_indiv.csv","fitness/varnames.csv" )
             x = num_exp
             z = [ft.process(i)[last_clicked] for i in x]
 
