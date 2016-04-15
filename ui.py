@@ -28,6 +28,45 @@ class MyTable(QTableWidget):
                 self.setItem(n,m,newitem)
         self.setHorizontalHeaderLabels(['Complexité','Fitness','Equation'])
 
+class Optimisation(QDialog):
+    def __init__(self,parent=None):
+        super(Optimisation,self).__init__(parent)
+        god = QVBoxLayout(self)
+        layout = QHBoxLayout()
+        god.addLayout(layout)
+        s1 = QVBoxLayout()
+        s2 = QVBoxLayout()
+
+        popsize = QLineEdit()
+        concurr = QLineEdit()
+
+        s1.addWidget(QLabel("Pop size:"))
+        s1.addWidget(popsize)
+
+        s2.addWidget(QLabel("Concurrency:"))
+        s2.addWidget(concurr)
+
+
+        layout.addLayout(s1)
+        layout.addLayout(s2)
+
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, QtCore.Qt.Horizontal, self)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+
+        god.addWidget(buttons)
+
+    def params(self):
+        return 0
+
+
+    @staticmethod
+    def get_params(Parent=None):
+        dialog = Optimisation()
+        result = dialog.exec_()
+        params = dialog.params()
+        return (result, params)
+
 class ApplicationWindow(QtGui.QMainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
@@ -107,6 +146,7 @@ class ApplicationWindow(QtGui.QMainWindow):
         self.ds_slider.valueChanged.connect(self.SliderMoved)
 
         self.button6.clicked.connect(self.clickModGlobal)
+        self.button4.clicked.connect(self.clickOptmuGP)
 
         self.RFG.fig.canvas.mpl_connect('button_press_event', self.onClick)
 
@@ -123,7 +163,7 @@ class ApplicationWindow(QtGui.QMainWindow):
         pass
 
     def clickOptmuGP(self):
-        pass
+        opt_params = Optimisation.get_params()
 
     def clickModLocaux(self):
         pass
