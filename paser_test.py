@@ -6,6 +6,7 @@ print(srepr(expr))
 tree = srepr(expr)
 
 
+
 class ctree:
     def __init__(self, n):
         self.name = n
@@ -46,7 +47,6 @@ def display(tree):
     elif tree.name == 'Mul':
         for i in tree.childs:
             s +=display(i)
-        #s +=display(tree.childs[1])
     elif tree.name == "Pow":
         s += ("(")
         s +=display(tree.childs[0])
@@ -55,7 +55,10 @@ def display(tree):
         s +=('}')
         s +=(")")
     elif tree.name == "Integer":
-        s +=(tree.childs[0].name)
+        #if tree.childs[0].name == '-1':
+        #    s +="-"
+        #else:
+            s+= tree.childs[0].name
     elif tree.name == "base":
         s +=display(tree.childs[0])
     elif tree.name == "Add":
@@ -66,12 +69,10 @@ def display(tree):
         s+= display(tree.childs[-1])
         s +=(")")
     elif tree.name == "Float":
-        #print("{03}".format(float(tree.childs[0].name.replace("'",""))))
         t = tree.childs[0].name
         u = t[1:-1]
         v = float(u)
         s+="{0:.2f}".format(v)
-        #s +=(tree.childs[0].name)
     return s
 
 

@@ -15,6 +15,8 @@ class Equation:
         self.complexity = cmplx
 
 
+#TODO: preparse all equations, and apply parameters on evalutation
+
 class Individual:
     """Class to describe the whole system."""
     def __init__(self, datafile, eqfile, expfile):  # gestion des noeud orphelins
