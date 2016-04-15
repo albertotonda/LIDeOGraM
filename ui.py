@@ -91,7 +91,7 @@ class ApplicationWindow(QtGui.QMainWindow):
 
         grid.addWidget(self.RFG,0,0,8,60)
 
-
+        self.lastNodeClicked=""
 
         ts_lab = QtGui.QLabel('Importance des arcs : ')
         grid.addWidget(ts_lab,7,0,1,2)
@@ -179,10 +179,13 @@ class ApplicationWindow(QtGui.QMainWindow):
         pass
 
     def onClick(self, event, radius=0.005):
-        #TODO Variables globales, selection du noeud le plus proche, affichage du nom du noeud selectionné
+        #TODO Variables globales, selection du noeud le plus proche, affichage du nom du noeud selectionné + changer couleur
         global mode_cntrt
         (x, y) = (event.xdata, event.ydata)
 
+        if self.lastNodeClicked != "":
+            pass
+            #Change color back
 
         dst = [(pow(x - self.RFG.pos[node][0], 2) + pow(y - self.RFG.pos[node][1], 2),node) for node in self.RFG.G.node]
 
@@ -191,6 +194,7 @@ class ApplicationWindow(QtGui.QMainWindow):
 
         theone = min(dst,key=(lambda x: x[0]))
         candidates = [theone[1]]
+        self.lastNodeClicked = theone[1]
 
         #print('list:', candidates)
 
