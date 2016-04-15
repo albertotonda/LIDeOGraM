@@ -42,32 +42,53 @@ def f1(line):
 def display(tree):
     s = ""
     if tree.name == "Symbol":
-        print(tree.childs[0].name)
+        s+=(tree.childs[0].name)
     elif tree.name == 'Mul':
-        display(tree.childs[0])
-        display(tree.childs[1])
+        for i in tree.childs:
+            s +=display(i)
+        #s +=display(tree.childs[1])
     elif tree.name == "Pow":
-        print("(")
-        display(tree.childs[0])
-        print("^{")
-        display(tree.childs[1])
-        print('}')
-        print(")")
+        s += ("(")
+        s +=display(tree.childs[0])
+        s +=("^{")
+        s +=display(tree.childs[1])
+        s +=('}')
+        s +=(")")
     elif tree.name == "Integer":
-        print(tree.childs[0].name)
+        s +=(tree.childs[0].name)
     elif tree.name == "base":
-        display(tree.childs[0])
+        s +=display(tree.childs[0])
     elif tree.name == "Add":
-        print("(")
-        display(tree.childs[0])
-        print("+")
-        display(tree.childs[1])
-        print(")")
+        s +=("(")
+        for i in tree.childs[:-1]:
+            s += display(i)
+            s +=("+")
+        s+= display(tree.childs[-1])
+        s +=(")")
     elif tree.name == "Float":
         #print("{03}".format(float(tree.childs[0].name.replace("'",""))))
-        print(tree.childs[0].name)
+        t = tree.childs[0].name
+        u = t[1:-1]
+        v = float(u)
+        s+="{0:.2f}".format(v)
+        #s +=(tree.childs[0].name)
+    return s
 
 
 
 
-display(f1(srepr(expr)))
+t = display(f1(srepr(expr)))
+k = t.replace("'","")
+
+import numpy as np
+import matplotlib.pyplot as plt
+t = np.arange(0.0, 2.0, 0.01)
+s = np.sin(2*np.pi*t)
+
+plt.plot(t,s)
+plt.title(r'$\alpha_i > \beta_i$', fontsize=20)
+plt.text(1, -0.6, r'$\sum_{i=0}^\infty x_i$', fontsize=20)
+plt.text(0.6, 0.6, "$"+k+"$",fontsize=20)
+plt.xlabel('time (s)')
+plt.ylabel('volts (mV)')
+plt.show()
