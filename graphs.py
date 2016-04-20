@@ -11,7 +11,6 @@ import data as fdata
 from PyQt4 import QtGui
 
 curr_tabl=[]
-last_clicked=''
 
 
 class RFGraphCanvas(FigureCanvas):
@@ -59,6 +58,7 @@ class FitCanvas(FigureCanvas):
         self.axes.axis('off')
         self.compute_initial_figure()
         self.mg = False
+        self.last_clicked = None
 
         FigureCanvas.__init__(self, self.fig)
         self.setParent(parent)
@@ -99,7 +99,6 @@ class FitCanvas(FigureCanvas):
         self.table = table
 
     def fitplot(self,line):
-        global last_clicked
         global curr_tabl
         eq = self.table.item(line,2).text()
 
@@ -107,7 +106,6 @@ class FitCanvas(FigureCanvas):
 
         x = []
         y = []
-        v =  ""
 
         if datafrom=='1':
 
@@ -129,26 +127,23 @@ class FitCanvas(FigureCanvas):
                 y.append(parse_expr(eq.replace("^","**"), i))
             v = "fitness/params_mo_ce.csv"
 
-        num_exp=range(len(currdatasetF[1:,currdatasetS[0,:]==last_clicked]))
+        num_exp=range(len(currdatasetF[1:,currdatasetS[0,:]==self.last_clicked]))
 
         if self.mg:
             ft = fitness.Individual(v, "fitness/ex_indiv.csv","fitness/varnames.csv" )
             x = num_exp
-            z = [ft.process(i)[last_clicked] for i in x]
+            z = [ft.process(i)[self.last_clicked] for i in x]
 
 
-        print("num_exp {} x {}".format(num_exp,x))
-        val_node_exp=currdatasetF[1:,currdatasetS[0,:]==last_clicked]
+        val_node_exp=currdatasetF[1:,currdatasetS[0,:]==self.last_clicked]
         self.fig.clear()
         currax=self.fig.add_subplot(111)
         if not self.mg:
             currax.plot(num_exp, val_node_exp, 'ro')
-
             currax.plot(num_exp,y,'k--')
         else:
             currax.plot(num_exp, val_node_exp, 'ro')
             currax.plot(num_exp,y)
-
             currax.plot(num_exp,z,'k--')
         self.fig.canvas.draw()
 

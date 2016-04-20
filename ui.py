@@ -200,7 +200,8 @@ class ApplicationWindow(QtGui.QMainWindow):
 
         if (mode_cntrt == False):
             print('action:', candidates[0])
-            graphs.last_clicked = candidates[0]
+            #graphs.last_clicked = candidates[0]
+            self.fitg.last_clicked = candidates[0]
             data_tmp = fdata.equacolOs[np.ix_(fdata.equacolOs[:, 2] == candidates, [0, 1, 3])]
             graphs.curr_tabl = fdata.equacolOs[np.ix_(fdata.equacolOs[:, 2] == candidates, [0, 1, 3, 4])]
             data = []
