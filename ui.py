@@ -10,6 +10,7 @@ import graphs
 
 
 
+
 class MyTable(QTableWidget):
     def __init__(self, data, *args):
         QTableWidget.__init__(self, *args)

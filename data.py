@@ -30,8 +30,10 @@ def draw_graph(fig,G, pos, ts, ds):
     edgelist_inOrder = []
     cmplxMin=np.amin(equacolPOf[:, 0]) #Complexite la plus petite sur toutes les equations de tout les noeuds
     cmplxMax=np.amax(equacolPOf[:, 0]) #Complexite la plus grande sur toutes les equations de tout les noeuds
+
     for v in varnames:
         G.add_node(v)
+
     for i in range(len(adj_simple)):
         for j in range(len(adj_simple[i])):
             #lIdxColPareto:liste des equations correspondant au couple parent/enfant
@@ -77,7 +79,7 @@ def draw_graph(fig,G, pos, ts, ds):
 
 
 
-def pos_graph(G):
+def pos_graph():
     pos = {}
     pos['Age'] = np.array([0.66, 15.0 / 15.0])
     pos['Temperature'] = np.array([0.33, 15.0 / 15.0])

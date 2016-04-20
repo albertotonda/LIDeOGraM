@@ -10,6 +10,8 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 import data as fdata
 from PyQt4 import QtGui
 
+import network
+
 curr_tabl=[]
 
 
@@ -19,15 +21,16 @@ class RFGraphCanvas(FigureCanvas):
         self.fig, self.axes =  plt.subplots()
         # We want the axes cleared every time plot() is called
         self.axes.hold(False)
+
         self.fig.patch.set_visible(False)
         self.fig.tight_layout()
         self.axes.axis('off')
         self.axes.set_xlim([0,0.1])
         self.axes.set_ylim([0, 0.6])
         self.G=nx.DiGraph()
-        self.pos=fdata.pos_graph(self.G)
-        self.val_ts=0.5
-        self.val_ds=0.5
+        self.pos=fdata.pos_graph()
+
+        self.network = network.network(self.G, self.axes, self.fig, self.pos)
 
         self.compute_initial_figure()
 
@@ -39,12 +42,14 @@ class RFGraphCanvas(FigureCanvas):
 
     def compute_initial_figure(self):
         plt.axis('off')
-        fdata.draw_graph(self,self.G,self.pos,self.val_ts,self.val_ds)
+        #fdata.draw_graph(self,self.G,self.pos,0.5,0.5)
+        self.network.update(0.5,0.5)
         self.axes.set_xlim([0, 1.07])
         self.axes.set_ylim([0, 1.07])
 
     def updateGraph(self,ts,ds):
-        fdata.draw_graph(self,self.G,self.pos,ts,ds)
+        #fdata.draw_graph(self,self.G,self.pos,ts,ds)
+        self.network.update(ts,ds)
 
 
 class FitCanvas(FigureCanvas):
