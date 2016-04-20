@@ -66,18 +66,31 @@ class Optimisation(QDialog):
         params = dialog.params()
         return (result, params)
 
+#class Parameters:
+#    def __init__(self):
+#        self.mode_global = False
+#        self.lastNodeClicked = ''
+#        self.mode_cntrt = False
+#        self.click1 = ''
+#        self.click2 = ''
+
+
 class ApplicationWindow(QtGui.QMainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.setWindowTitle("RFGraph")
 
+        #self.flash = Parameters()
+        #self.flash.mode_global = ...
+
         self.mg = False
         self.lastNodeClicked=""
         self.mode_cntrt = False
-
         self.click1 = ''
         self.click2 = ''
+
+
         self.main_widget = QtGui.QWidget(self)
 
 
@@ -182,9 +195,8 @@ class ApplicationWindow(QtGui.QMainWindow):
         pass
 
     def onClick(self, event, radius=0.005):
-        #TODO Variables globales, selection du noeud le plus proche, affichage du nom du noeud selectionné + changer couleur
+        #TODO  affichage du nom du noeud selectionné + changer couleur
         (x, y) = (event.xdata, event.ydata)
-
 
 
         dst = [(pow(x - self.RFG.pos[node][0], 2) + pow(y - self.RFG.pos[node][1], 2),node) for node in self.RFG.G.node]
@@ -199,7 +211,7 @@ class ApplicationWindow(QtGui.QMainWindow):
         self.lastNodeClicked = nodeclicked
 
 
-        if (self.mode_cntrt == False):
+        if (not self.mode_cntrt):
             print('action:', nodeclicked)
             self.fitg.last_clicked = nodeclicked
             data_tmp = fdata.equacolOs[np.ix_(fdata.equacolOs[:, 2] == [nodeclicked], [0, 1, 3])]
