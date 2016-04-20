@@ -183,27 +183,25 @@ class ApplicationWindow(QtGui.QMainWindow):
         global mode_cntrt
         (x, y) = (event.xdata, event.ydata)
 
+
+
+        dst = [(pow(x - self.RFG.pos[node][0], 2) + pow(y - self.RFG.pos[node][1], 2),node) for node in self.RFG.G.node]
+        if len(list(filter(lambda x: x[0] < 0.0005, dst))) == 0 :
+            return
+        nodeclicked = min(dst,key=(lambda x: x[0]))[1]
+
+
         if self.lastNodeClicked != "":
             pass
             #Change color back
+        self.lastNodeClicked = nodeclicked
 
-        dst = [(pow(x - self.RFG.pos[node][0], 2) + pow(y - self.RFG.pos[node][1], 2),node) for node in self.RFG.G.node]
-
-        if len(list(filter(lambda x: x[0] < 0.0005, dst))) == 0 :
-            return
-
-        theone = min(dst,key=(lambda x: x[0]))
-        candidates = [theone[1]]
-        self.lastNodeClicked = theone[1]
-
-        #print('list:', candidates)
 
         if (mode_cntrt == False):
-            print('action:', candidates[0])
-            #graphs.last_clicked = candidates[0]
-            self.fitg.last_clicked = candidates[0]
-            data_tmp = fdata.equacolOs[np.ix_(fdata.equacolOs[:, 2] == candidates, [0, 1, 3])]
-            graphs.curr_tabl = fdata.equacolOs[np.ix_(fdata.equacolOs[:, 2] == candidates, [0, 1, 3, 4])]
+            print('action:', nodeclicked)
+            self.fitg.last_clicked = nodeclicked
+            data_tmp = fdata.equacolOs[np.ix_(fdata.equacolOs[:, 2] == [nodeclicked], [0, 1, 3])]
+            graphs.curr_tabl = fdata.equacolOs[np.ix_(fdata.equacolOs[:, 2] == [nodeclicked], [0, 1, 3, 4])]
             data = []
             for i in range(len(data_tmp)):
                 data.append(data_tmp[i])

@@ -37,13 +37,11 @@ def draw_graph(fig,G, pos, ts, ds):
             #lIdxColPareto:liste des equations correspondant au couple parent/enfant
             lIdxColPareto = equacolPOf[np.ix_(np.logical_and(equacolPOs[:,2]==varnames[i],equacolPOs[:,3]==varnames[j])),0:2][0]
             if(len(lIdxColPareto)>0): #il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
-                lIdxColParetoS = equacolPOs[np.ix_(np.logical_and(equacolPOs[:,2]==varnames[i],equacolPOs[:,3]==varnames[j])),:][0]
                 lIdxColPareto[:,0]=(lIdxColPareto[:,0]-cmplxMin)/(cmplxMax-cmplxMin) #Normalisation de la complexité
                 dist_lIdxColPareto=np.sqrt(np.power(np.cos(ds*(np.pi/2))*lIdxColPareto[:,0],2)+
                                           np.power(np.sin(ds*(np.pi/2))*lIdxColPareto[:,1],2))
                 dist_lIdxColPareto_idxMin=np.argmin(dist_lIdxColPareto) #Indice dans dist_lIdxColPareto correspondant au meilleur compromi
                 dist_lIdxColPareto_valMin=dist_lIdxColPareto[dist_lIdxColPareto_idxMin] #Distance meilleur compromi
-                dist_lIdxColPareto_eqMin=lIdxColParetoS[dist_lIdxColPareto_idxMin] #Equation meilleur compromi
                 r=adj_simple[i,j]/nbeq[i] #Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
                 if(r>ts):
                     G.add_edge(varnames[j],varnames[i],adjsimple=adj_simple[i,j],adjfit=
