@@ -7,7 +7,6 @@ from PyQt4.QtGui import *
 
 import data as fdata
 import graphs
-mode_cntrt=False
 
 
 
@@ -74,6 +73,8 @@ class ApplicationWindow(QtGui.QMainWindow):
         self.setWindowTitle("RFGraph")
 
         self.mg = False
+        self.lastNodeClicked=""
+        self.mode_cntrt = False
 
         self.click1 = ''
         self.click2 = ''
@@ -91,7 +92,6 @@ class ApplicationWindow(QtGui.QMainWindow):
 
         grid.addWidget(self.RFG,0,0,8,60)
 
-        self.lastNodeClicked=""
 
         ts_lab = QtGui.QLabel('Importance des arcs : ')
         grid.addWidget(ts_lab,7,0,1,2)
@@ -110,6 +110,7 @@ class ApplicationWindow(QtGui.QMainWindow):
         data=[]
         for i in range(len(data_tmp)):
             data.append(data_tmp[i][0])
+
         self.table = MyTable(data,len(data),3)
         for i in range(len(data[5])):
             self.table.item(5,i).setBackground(QtGui.QColor(150,150,150))
@@ -172,15 +173,16 @@ class ApplicationWindow(QtGui.QMainWindow):
         self.fitg.mg = True
 
     def clickAjContrainte(self):
-        global mode_cntrt
-        mode_cntrt = True
+        if (not self.mode_cntrt):
+            self.mode_cntrt = True
+        else:
+            self.mode_cntrt = False
 
     def clickChangeEq(self):
         pass
 
     def onClick(self, event, radius=0.005):
         #TODO Variables globales, selection du noeud le plus proche, affichage du nom du noeud selectionné + changer couleur
-        global mode_cntrt
         (x, y) = (event.xdata, event.ydata)
 
 
@@ -197,7 +199,7 @@ class ApplicationWindow(QtGui.QMainWindow):
         self.lastNodeClicked = nodeclicked
 
 
-        if (mode_cntrt == False):
+        if (self.mode_cntrt == False):
             print('action:', nodeclicked)
             self.fitg.last_clicked = nodeclicked
             data_tmp = fdata.equacolOs[np.ix_(fdata.equacolOs[:, 2] == [nodeclicked], [0, 1, 3])]
