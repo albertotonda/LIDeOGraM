@@ -15,6 +15,8 @@ class Equation:
         self.complexity = cmplx
 
 
+#TODO: preparse all equations, and apply parameters on evalutation
+
 class Individual:
     """Class to describe the whole system."""
     def __init__(self, datafile, eqfile, expfile):  # gestion des noeud orphelins
@@ -28,7 +30,6 @@ class Individual:
         for b in open(expfile, 'r'):
             n, *v = [j.strip() for j in b.split(";")]
             self.exp[n] = v
-            # pass
 
         for datum in open(datafile, 'r'):
             n, *v = [j.strip() for j in datum.split(";")]
@@ -60,7 +61,6 @@ class Individual:
         # computed = self.inodes  # "Age" : value ...
         neq = len(self.equations)
         nnode = len(self.variables)  # Eviter les boules infinies
-        #print(neq)
         while neq and nnode:
             for eq in self.equations:
                 if eq.name not in computed.keys() and set(eq.variables).issubset(set(computed.keys()))  :
@@ -69,13 +69,8 @@ class Individual:
                     result = (parse_expr(eq.equation.replace("^","**"), local_dict=computed))
                     computed[eq.name] = result
             nnode -= 1
-            #print(neq)
         if nnode == 0:
             print("Error in process, variables not found")
-           # print(list(zip(sorted(self.variables), sorted(list(set(self.variables))))))
-            #print(set(self.variables))
-            # raise
-
         return computed
 
     def get_fitness(self, fun=(lambda x, y: math.fabs(x - y)/x), penalty=0):
@@ -91,9 +86,6 @@ class Individual:
         for case in range(ncases):
             for i in bkeys:
                 if i in results[case] and i in self.exp:
-                    #print("Value : {}, type : {}".format(results[case][i],type(results[case][i])))
-                    #print("Value : {}, type : {}".format(self.exp[i][case],type(self.exp[i][case])))
-                    #print("\n")
                     acc+=1
                     var += fun(float(results[case][i]), float(self.exp[i][case].replace(",",".")))
                 else:
