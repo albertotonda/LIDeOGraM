@@ -42,13 +42,11 @@ class RFGraphCanvas(FigureCanvas):
 
     def compute_initial_figure(self):
         plt.axis('off')
-        #fdata.draw_graph(self,self.G,self.pos,0.5,0.5)
         self.network.update(0.5,0.5)
         self.axes.set_xlim([0, 1.07])
         self.axes.set_ylim([0, 1.07])
 
     def updateGraph(self,ts,ds):
-        #fdata.draw_graph(self,self.G,self.pos,ts,ds)
         self.network.update(ts,ds)
 
 

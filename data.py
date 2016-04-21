@@ -25,7 +25,7 @@ dataset_mol_cellF=genfromtxt('data/dataset_mol_cell.csv','float',delimiter=',')
 
 #ts : Slider entre 0 et 1 pour afficher les arrêtes selon les poids sur la matrice d'adjacence simple
 #ds : Slider entre 0 et 1 pour la couleur des arrêtes selon la distance à la meilleure équation-compromis
-def draw_graph(fig,G, pos, ts, ds):
+def draw_graph(fig, G, pos, ts, ds):
     edgecolor = []
     edgelist_inOrder = []
     cmplxMin=np.amin(equacolPOf[:, 0]) #Complexite la plus petite sur toutes les equations de tout les noeuds
