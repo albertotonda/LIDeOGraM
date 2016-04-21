@@ -213,6 +213,7 @@ class ApplicationWindow(QtGui.QMainWindow):
 
 
         if (not self.mode_cntrt):
+            #Ceci est un test pour le merge
             print('action:', nodeclicked)
             self.fitg.last_clicked = nodeclicked
             data_tmp = fdata.equacolOs[np.ix_(fdata.equacolOs[:, 2] == [nodeclicked], [0, 1, 3])]
