@@ -1,4 +1,5 @@
 import random
+import copy
 
 import networkx as nx
 import numpy as np
@@ -17,10 +18,16 @@ class network:
         self.G = G
         self.fig = fig
         self.pos = pos
+        self.lpos = copy.deepcopy(pos)
+        for p in self.lpos:  # raise text positions
+            self.lpos[p][1] += 0.04
+
         self.axes = ax
+        self.labels = {}
 
         for v in fdata.varnames:
             G.add_node(v)
+            self.labels[v] = v
 
         for i in range(len(fdata.adj_simple)):
             self.pareto.append([])
@@ -38,19 +45,13 @@ class network:
         for i in range(len(fdata.varnames)):
             self.nodeColor.append((0.5, 0.5 + 0.5 * self.nodeWeight[i] / np.amax(self.nodeWeight), 0.5))
 
-        #self.fig.axes.get_xaxis().set_visible(False)
-        #self.fig.axes.get_yaxis().set_visible(False)
+        self.axes.get_xaxis().set_visible(False)
+        self.axes.get_yaxis().set_visible(False)
 
     def draw_nodes_labels(self):
         nx.draw_networkx_nodes(self.G, self.pos, nodelist=fdata.varnames.tolist(), node_color=self.nodeColor, with_labels=False, ax=self.axes)
+        nx.draw_networkx_labels(self.G, self.lpos, self.labels, ax=self.axes)
 
-        for p in self.pos:  # raise text positions
-            self.pos[p][1] += 0.04
-
-        nx.draw_networkx_labels(self.G, self.pos, ax=self.axes)
-
-        for p in self.pos:  # raise text positions
-            self.pos[p][1] -= 0.04
 
     def higlight(self, new_node: str, old_node: str):
         #nx.draw_networkx_nodes(self.G, self.pos, nodelist=fdata.varnames.tolist(), node_color=self.nodeColor,
