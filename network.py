@@ -1,11 +1,6 @@
-import random
 import copy
-
 import networkx as nx
 import numpy as np
-
-from RFGraph_Model import RFGraph_Model
-
 
 class network:
     def __init__(self,modApp, G,ax , fig, pos):

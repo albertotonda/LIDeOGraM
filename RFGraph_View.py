@@ -1,7 +1,7 @@
 from PyQt4 import QtGui, QtCore
 import numpy as np
 
-import graphs
+import RFGraphCanvas
 from MyTable import MyTable
 from Optimisation import Optimisation
 import sys
@@ -28,7 +28,7 @@ class RFGraph_View(QtGui.QMainWindow):
 
 
         grid = QtGui.QGridLayout(self.main_widget)
-        self.RFG = graphs.RFGraphCanvas(self.modApp,self.main_widget, width=37, height=30, dpi=200)
+        self.RFG = RFGraphCanvas.RFGraphCanvas(self.modApp, self.main_widget, width=37, height=30, dpi=200)
         self.ts_slider = QtGui.QSlider(QtCore.Qt.Horizontal,self.main_widget)
         self.ds_slider = QtGui.QSlider(QtCore.Qt.Horizontal,self.main_widget)
         self.ts_slider.setValue(50)
@@ -64,7 +64,7 @@ class RFGraph_View(QtGui.QMainWindow):
         self.table.itemClicked.connect(self.tableClicked)
         grid.addWidget(self.table, 0, 60, 6, 60)
 
-        self.fitg = graphs.FitCanvas(self.main_widget, width=37, height=30, dpi=200)
+        self.fitg = RFGraphCanvas.FitCanvas(self.main_widget, width=37, height=30, dpi=200)
         grid.addWidget(self.fitg,6,60,6,60)
 
         self.button1 = QtGui.QPushButton('Compromis', self)
@@ -152,7 +152,7 @@ class RFGraph_View(QtGui.QMainWindow):
             print('action:', nodeclicked)
             self.fitg.last_clicked = nodeclicked
             data_tmp = self.modApp.equacolOs[np.ix_(self.modApp.equacolOs[:, 2] == [nodeclicked], [0, 1, 3])]
-            graphs.curr_tabl = self.modApp.equacolOs[np.ix_(self.modApp.equacolOs[:, 2] == [nodeclicked], [0, 1, 3, 4])]
+            RFGraphCanvas.curr_tabl = self.modApp.equacolOs[np.ix_(self.modApp.equacolOs[:, 2] == [nodeclicked], [0, 1, 3, 4])]
             data = []
             for i in range(len(data_tmp)):
                 data.append(data_tmp[i])
