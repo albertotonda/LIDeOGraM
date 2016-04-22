@@ -1,12 +1,15 @@
 from PyQt4 import QtGui, QtCore
 import numpy as np
-import data as fdata
+
 import graphs
 from MyTable import MyTable
 from Optimisation import Optimisation
+import sys
 
-class ApplicationWindow(QtGui.QMainWindow):
-    def __init__(self):
+class RFGraph_View(QtGui.QMainWindow):
+    def __init__(self,modApp):
+        self.modApp=modApp
+        qApp = QtGui.QApplication(sys.argv)
         QtGui.QMainWindow.__init__(self)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.setWindowTitle("RFGraph")
@@ -25,7 +28,7 @@ class ApplicationWindow(QtGui.QMainWindow):
 
 
         grid = QtGui.QGridLayout(self.main_widget)
-        self.RFG = graphs.RFGraphCanvas(self.main_widget, width=37, height=30, dpi=200)
+        self.RFG = graphs.RFGraphCanvas(self.modApp,self.main_widget, width=37, height=30, dpi=200)
         self.ts_slider = QtGui.QSlider(QtCore.Qt.Horizontal,self.main_widget)
         self.ds_slider = QtGui.QSlider(QtCore.Qt.Horizontal,self.main_widget)
         self.ts_slider.setValue(50)
@@ -49,7 +52,7 @@ class ApplicationWindow(QtGui.QMainWindow):
         grid.addWidget(ds_lab_fitness, 8, 59,1,1)
 
 
-        data_tmp=fdata.equacolPOs[:,np.ix_([0,1,4])]
+        data_tmp=self.modApp.equacolPOs[:,np.ix_([0,1,4])]
         data=[]
         for i in range(len(data_tmp)):
             data.append(data_tmp[i][0])
@@ -96,6 +99,10 @@ class ApplicationWindow(QtGui.QMainWindow):
 
         self.main_widget.setFocus()
         self.setCentralWidget(self.main_widget)
+
+        self.setWindowTitle('RFGraph')
+        self.show()
+        sys.exit(qApp.exec_())
 
     def clickFitness(self):
         pass
@@ -144,8 +151,8 @@ class ApplicationWindow(QtGui.QMainWindow):
         if (not self.mode_cntrt):
             print('action:', nodeclicked)
             self.fitg.last_clicked = nodeclicked
-            data_tmp = fdata.equacolOs[np.ix_(fdata.equacolOs[:, 2] == [nodeclicked], [0, 1, 3])]
-            graphs.curr_tabl = fdata.equacolOs[np.ix_(fdata.equacolOs[:, 2] == [nodeclicked], [0, 1, 3, 4])]
+            data_tmp = self.modApp.equacolOs[np.ix_(self.modApp.equacolOs[:, 2] == [nodeclicked], [0, 1, 3])]
+            graphs.curr_tabl = self.modApp.equacolOs[np.ix_(self.modApp.equacolOs[:, 2] == [nodeclicked], [0, 1, 3, 4])]
             data = []
             for i in range(len(data_tmp)):
                 data.append(data_tmp[i])

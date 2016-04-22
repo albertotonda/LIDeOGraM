@@ -3,11 +3,11 @@ from sys import path
 path.append("fitness/")
 import fitness
 import networkx as nx
-
+from RFGraph_Model import RFGraph_Model
 from sympy.parsing.sympy_parser import parse_expr
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-import data as fdata
+
 from PyQt4 import QtGui
 
 import network
@@ -17,7 +17,8 @@ curr_tabl=[]
 
 class RFGraphCanvas(FigureCanvas):
     """Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""
-    def __init__(self, parent=None, width=5, height=4, dpi=100):
+    def __init__(self, modApp, parent=None, width=5, height=4, dpi=100):
+        self.modApp=modApp
         self.fig, self.axes =  plt.subplots()
         # We want the axes cleared every time plot() is called
         self.axes.hold(False)
@@ -28,9 +29,9 @@ class RFGraphCanvas(FigureCanvas):
         self.axes.set_xlim([0,0.1])
         self.axes.set_ylim([0, 0.6])
         self.G=nx.DiGraph()
-        self.pos=fdata.pos_graph()
+        self.pos=self.modApp.pos_graph()
 
-        self.network = network.network(self.G, self.axes, self.fig, self.pos)
+        self.network = network.network(self.modApp,self.G, self.axes, self.fig, self.pos)
 
         self.compute_initial_figure()
 
@@ -112,8 +113,8 @@ class FitCanvas(FigureCanvas):
 
         if datafrom=='1':
 
-            currdatasetF = fdata.dataset_cell_popF
-            currdatasetS = fdata.dataset_cell_popS
+            currdatasetF = self.modApp.dataset_cell_popF
+            currdatasetS = self.modApp.dataset_cell_popS
 
             for n, i in enumerate(self.cell_pop):
                 x.append(n)
@@ -122,8 +123,8 @@ class FitCanvas(FigureCanvas):
 
         else:
 
-            currdatasetF = fdata.dataset_mol_cellF
-            currdatasetS = fdata.dataset_mol_cellS
+            currdatasetF = self.modApp.dataset_mol_cellF
+            currdatasetS = self.modApp.dataset_mol_cellS
 
             for n, i in enumerate(self.mol_cell):
                 x.append(n)

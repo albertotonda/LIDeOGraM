@@ -3,12 +3,10 @@
 from PyQt4 import QtGui
 import Optimisation
 import RFGraph_View as vw
-import sys
+from RFGraph_Model import RFGraph_Model
 
 
-qApp = QtGui.QApplication(sys.argv)
-aw = vw.ApplicationWindow()
-aw.setWindowTitle('RFGraph')
-aw.show()
-sys.exit(qApp.exec_())
+modApp=RFGraph_Model()
+vwApp = vw.RFGraph_View(modApp)
+
 
