@@ -2,7 +2,7 @@ import copy
 import networkx as nx
 import numpy as np
 
-class network:
+class Network:
     def __init__(self,modApp, G,ax , fig, pos):
         self.modApp=modApp
         self.edgeColor = []

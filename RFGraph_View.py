@@ -1,23 +1,28 @@
-from PyQt4 import QtGui, QtCore
+import sys
 import numpy as np
 
-import RFGraphCanvas
+from PyQt4 import QtGui, QtCore
+from NetworkCanvas import NetworkCanvas
 from MyTable import MyTable
 from Optimisation import Optimisation
-import sys
+from FitCanvas import FitCanvas
+
 
 class RFGraph_View(QtGui.QMainWindow):
     def __init__(self,modApp):
         self.modApp=modApp
+
         qApp = QtGui.QApplication(sys.argv)
+        sys.exit(qApp.exec_())
         QtGui.QMainWindow.__init__(self)
+
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.setWindowTitle("RFGraph")
 
         #self.flash = Parameters()
         #self.flash.mode_global = ...
 
-        self.mg = False
+
         self.lastNodeClicked=""
         self.mode_cntrt = False
         self.click1 = ''
@@ -28,7 +33,7 @@ class RFGraph_View(QtGui.QMainWindow):
 
 
         grid = QtGui.QGridLayout(self.main_widget)
-        self.RFG = RFGraphCanvas.RFGraphCanvas(self.modApp, self.main_widget, width=37, height=30, dpi=200)
+        self.RFG = NetworkCanvas(self.modApp, self.main_widget, width=37, height=30, dpi=200)
         self.ts_slider = QtGui.QSlider(QtCore.Qt.Horizontal,self.main_widget)
         self.ds_slider = QtGui.QSlider(QtCore.Qt.Horizontal,self.main_widget)
         self.ts_slider.setValue(50)
@@ -64,7 +69,7 @@ class RFGraph_View(QtGui.QMainWindow):
         self.table.itemClicked.connect(self.tableClicked)
         grid.addWidget(self.table, 0, 60, 6, 60)
 
-        self.fitg = RFGraphCanvas.FitCanvas(self.main_widget, width=37, height=30, dpi=200)
+        self.fitg = FitCanvas(self.main_widget, width=37, height=30, dpi=200)
         grid.addWidget(self.fitg,6,60,6,60)
 
         self.button1 = QtGui.QPushButton('Compromis', self)
@@ -102,7 +107,7 @@ class RFGraph_View(QtGui.QMainWindow):
 
         self.setWindowTitle('RFGraph')
         self.show()
-        sys.exit(qApp.exec_())
+
 
     def clickFitness(self):
         pass
@@ -152,7 +157,7 @@ class RFGraph_View(QtGui.QMainWindow):
             print('action:', nodeclicked)
             self.fitg.last_clicked = nodeclicked
             data_tmp = self.modApp.equacolOs[np.ix_(self.modApp.equacolOs[:, 2] == [nodeclicked], [0, 1, 3])]
-            RFGraphCanvas.curr_tabl = self.modApp.equacolOs[np.ix_(self.modApp.equacolOs[:, 2] == [nodeclicked], [0, 1, 3, 4])]
+            NetworkCanvas.curr_tabl = self.modApp.equacolOs[np.ix_(self.modApp.equacolOs[:, 2] == [nodeclicked], [0, 1, 3, 4])]
             data = []
             for i in range(len(data_tmp)):
                 data.append(data_tmp[i])
@@ -180,6 +185,7 @@ class RFGraph_View(QtGui.QMainWindow):
 
 
     def tableClicked(self,cellClicked):
+        print('tableclicked')
         self.fitg.fitplot(cellClicked.row())
 
 

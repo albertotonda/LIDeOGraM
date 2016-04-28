@@ -1,25 +1,26 @@
 import random
-
-import networkx as nx
 import numpy as np
 from numpy import genfromtxt
 
 
 class RFGraph_Model:
-    adj_simple = genfromtxt('data/adj_simple_withMol.csv', delimiter=',')
-    adj_cmplx  = genfromtxt('data/adj_cmplx_withMol.csv', delimiter=',')
-    adj_fit    = genfromtxt('data/adj_fit_withMol.csv', delimiter=',')
-    adj_contr  = genfromtxt('data/adj_contraintes_withMol.csv', delimiter=',')
-    varnames   = genfromtxt('data/varnames_withMol.csv',dtype='str',delimiter=',')
-    nbeq       = genfromtxt('data/nbeq_withMol.csv',delimiter=',')
-    equacolPOf  = genfromtxt('data/equa_with_col_ParentOffspring_withMol.csv','float',delimiter=',')
-    equacolPOs  = genfromtxt('data/equa_with_col_ParentOffspring_withMol.csv','str',delimiter=',')
-    equacolOf  = genfromtxt('data/equa_with_col_Parent_withMol.csv','float',delimiter=',')
-    equacolOs  = genfromtxt('data/equa_with_col_Parent_withMol.csv','str',delimiter=',')
-    dataset_cell_popS=genfromtxt('data/dataset_cell_pop.csv','str',delimiter=',')
-    dataset_mol_cellS=genfromtxt('data/dataset_mol_cell.csv','str',delimiter=',')
-    dataset_cell_popF=genfromtxt('data/dataset_cell_pop.csv','float',delimiter=',')
-    dataset_mol_cellF=genfromtxt('data/dataset_mol_cell.csv','float',delimiter=',')
+
+    def __init__(self):
+        self.pos=self.pos_graph()
+        self.adj_simple = genfromtxt('data/adj_simple_withMol.csv', delimiter=',')
+        self.adj_cmplx = genfromtxt('data/adj_cmplx_withMol.csv', delimiter=',')
+        self.adj_fit = genfromtxt('data/adj_fit_withMol.csv', delimiter=',')
+        self.adj_contr = genfromtxt('data/adj_contraintes_withMol.csv', delimiter=',')
+        self.varnames = genfromtxt('data/varnames_withMol.csv', dtype='str', delimiter=',')
+        self.nbeq = genfromtxt('data/nbeq_withMol.csv', delimiter=',')
+        self.equacolPOf = genfromtxt('data/equa_with_col_ParentOffspring_withMol.csv', 'float', delimiter=',')
+        self.equacolPOs = genfromtxt('data/equa_with_col_ParentOffspring_withMol.csv', 'str', delimiter=',')
+        self.equacolOf = genfromtxt('data/equa_with_col_Parent_withMol.csv', 'float', delimiter=',')
+        self.equacolOs = genfromtxt('data/equa_with_col_Parent_withMol.csv', 'str', delimiter=',')
+        self.dataset_cell_popS = genfromtxt('data/dataset_cell_pop.csv', 'str', delimiter=',')
+        self.dataset_mol_cellS = genfromtxt('data/dataset_mol_cell.csv', 'str', delimiter=',')
+        self.dataset_cell_popF = genfromtxt('data/dataset_cell_pop.csv', 'float', delimiter=',')
+        self.dataset_mol_cellF = genfromtxt('data/dataset_mol_cell.csv', 'float', delimiter=',')
 
     def pos_graph(self):
         pos = {}

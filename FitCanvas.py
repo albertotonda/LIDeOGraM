@@ -6,6 +6,7 @@ from sympy.parsing.sympy_parser import parse_expr
 import matplotlib.pyplot as plt
 from PyQt4 import QtGui
 
+curr_tabl=[]
 
 class FitCanvas(FigureCanvas):
     """Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""

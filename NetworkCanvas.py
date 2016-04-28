@@ -10,12 +10,12 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 
 from PyQt4 import QtGui
 
-import network
-
-curr_tabl=[]
+from Network import Network
 
 
-class RFGraphCanvas(FigureCanvas):
+
+
+class NetworkCanvas(FigureCanvas):
     """Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""
     def __init__(self, modApp, parent=None, width=5, height=4, dpi=100):
         self.modApp=modApp
@@ -31,7 +31,7 @@ class RFGraphCanvas(FigureCanvas):
         self.G=nx.DiGraph()
         self.pos=self.modApp.pos_graph()
 
-        self.network = network.network(self.modApp,self.G, self.axes, self.fig, self.pos)
+        self.network = Network(self.modApp, self.G, self.axes, self.fig, self.pos)
 
         self.compute_initial_figure()
 
