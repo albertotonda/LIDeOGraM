@@ -200,7 +200,7 @@ class ApplicationWindow(QtGui.QMainWindow):
         (x, y) = (event.xdata, event.ydata)
 
 
-        dst = [(pow(x - self.RFG.pos[node][0], 2) + pow(y - self.RFG.pos[node][1], 2),node) for node in self.RFG.G.node]
+        dst = [(pow(x - self.RFG.pos[node][0], 2) + pow(y - self.RFG.pos[node][1], 2),node) for node in self.RFG.pos]
         if len(list(filter(lambda x: x[0] < 0.0005, dst))) == 0 :
             return
         nodeclicked = min(dst,key=(lambda x: x[0]))[1]
