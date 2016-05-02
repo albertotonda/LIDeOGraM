@@ -1,9 +1,10 @@
+#-*- coding: utf-8
 import copy
 import networkx as nx
 import numpy as np
 
 class Network:
-    def __init__(self,modApp, G,ax , fig, pos):
+    def __init__(self,modApp, G,ax , fig):
         self.modApp=modApp
         self.edgeColor = []
         self.cmplxMin = np.amin(self.modApp.equacolPOf[:, 0])
@@ -13,8 +14,8 @@ class Network:
         self.pareto = []
         self.G = G
         self.fig = fig
-        self.pos = pos
-        self.lpos = copy.deepcopy(pos)
+        self.pos = self.modApp.pos_graph()
+        self.lpos = copy.deepcopy(self.pos)
         for p in self.lpos:  # raise text positions
             self.lpos[p][1] += 0.04
 

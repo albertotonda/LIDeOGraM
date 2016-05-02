@@ -1,3 +1,4 @@
+#-*- coding: utf-8
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from sys import path
 path.append("fitness/")
@@ -10,49 +11,53 @@ curr_tabl=[]
 
 class FitCanvas(FigureCanvas):
     """Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""
-    def __init__(self, parent=None, width=5, height=4, dpi=100):
-
+    def __init__(self):
         self.fig, self.axes =  plt.subplots()
-        # We want the axes cleared every time plot() is called
         self.axes.hold(False)
         self.fig.patch.set_visible(False)
         self.axes.axis('off')
         self.compute_initial_figure()
-        self.mg = False
-        self.last_clicked = None
+
+        #TODO : semi-global variables ?
+
+
+        #TODO : Delete following line ?
+        #self.setParent(parent)  def ...(..., parent=None)
 
         FigureCanvas.__init__(self, self.fig)
-        self.setParent(parent)
-
         FigureCanvas.setSizePolicy(self, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         FigureCanvas.updateGeometry(self)
 
         self.computeDictionaries()
 
+
+    #TODO: Rendre plus fonctionelle en ajoutant le parametre NomDuFichier
     def computeDictionaries(self):
+        #self.cell_pop ans self.mol_cell are dictionary lists.
+        #Each dictionary represents the results for every variables of an experiment.
         self.cell_pop = []
         self.mol_cell = []
 
-        f = open("data/dataset_cell_pop.csv")
-        t = f.readline()
+        cell_pop_HVdatafile = open("data/dataset_cell_pop.csv")
+        cell_pop_line = cell_pop_HVdatafile.readline()  # First line are the variables name
         variables = []
-        for i in t.split(','):
+        for i in cell_pop_line.split(','):
             variables.append(i.strip())
-        for line in f:
-            t = zip(variables,[float(i.strip()) for i in line.split(',')])
-            self.cell_pop.append(dict(t))
+        for line in cell_pop_HVdatafile:
+            cell_pop_line = zip(variables, [float(i.strip()) for i in line.split(',')])
+            self.cell_pop.append(dict(cell_pop_line))
 
-        f = open("data/dataset_mol_cell.csv")
-        t = f.readline()
+        mol_cellHVdatafile = open("data/dataset_mol_cell.csv")
+        mol_cell_line = mol_cellHVdatafile.readline()  # First line are the variables name
         variables = []
-        for i in t.split(','):
+        for i in mol_cell_line.split(','):
             variables.append(i.strip())
-        for line in f:
-            t = zip(variables, [float(i.strip()) for i in line.split(',')])
-            self.mol_cell.append(dict(t))
+        for line in mol_cellHVdatafile:
+            mol_cell_line = zip(variables, [float(i.strip()) for i in line.split(',')])
+            self.mol_cell.append(dict(mol_cell_line))
 
 
-
+    #TODO : Afficher un plot Initial intéressant
     def compute_initial_figure(self):
         plt.axis('on')
 

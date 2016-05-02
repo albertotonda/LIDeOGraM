@@ -1,3 +1,4 @@
+#-*- coding: utf-8
 import random
 import numpy as np
 from numpy import genfromtxt
@@ -21,6 +22,15 @@ class RFGraph_Model:
         self.dataset_mol_cellS = genfromtxt('data/dataset_mol_cell.csv', 'str', delimiter=',')
         self.dataset_cell_popF = genfromtxt('data/dataset_cell_pop.csv', 'float', delimiter=',')
         self.dataset_mol_cellF = genfromtxt('data/dataset_mol_cell.csv', 'float', delimiter=',')
+
+        self.showGlobalModel = False
+        self.lastNodeClicked = ""
+        self.last_clicked = None
+        self.mode_cntrt = False
+        self.cntrt_FirstClick = ''
+        self.cntrt_SecondClick = ''
+        self.forbidden_edge = []
+
 
     def pos_graph(self):
         pos = {}

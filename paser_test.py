@@ -1,3 +1,4 @@
+#-*- coding: utf-8
 from sympy import srepr
 from sympy.parsing.sympy_parser import parse_expr
 eq = "0.890420685427687+(12.075341069316*UFAdivSFA+73.2315556415024*UFAdivSFA**3-0.943665542824327-51.5061941345233*UFAdivSFA**2)/(CFAdivUFA-3.83166666666667)"

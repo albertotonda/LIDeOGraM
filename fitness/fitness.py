@@ -1,3 +1,4 @@
+#-*- coding: utf-8
 """Computed fitness of solutions."""
 import math
 import multiprocessing

@@ -17,26 +17,23 @@ from Network import Network
 
 class NetworkCanvas(FigureCanvas):
     """Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""
-    def __init__(self, modApp, parent=None, width=5, height=4, dpi=100):
-        self.modApp=modApp
-        self.fig, self.axes =  plt.subplots()
-        # We want the axes cleared every time plot() is called
-        self.axes.hold(False)
+    def __init__(self, modApp):
 
+        self.modApp=modApp
+
+        self.fig, self.axes =  plt.subplots()
+        self.axes.hold(False)
         self.fig.patch.set_visible(False)
         self.fig.tight_layout()
         self.axes.axis('off')
-        self.axes.set_xlim([0,0.1])
-        self.axes.set_ylim([0, 0.6])
+
         self.G=nx.DiGraph()
-        self.pos=self.modApp.pos_graph()
-
-        self.network = Network(self.modApp, self.G, self.axes, self.fig, self.pos)
-
+        self.network = Network(self.modApp, self.G, self.axes, self.fig)
         self.compute_initial_figure()
 
         FigureCanvas.__init__(self, self.fig)
-        self.setParent(parent)
+        # TODO : Delete following line ?
+        # self.setParent(parent)  def ...(..., parent=None)
 
         FigureCanvas.setSizePolicy(self, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         FigureCanvas.updateGeometry(self)
