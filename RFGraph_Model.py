@@ -30,7 +30,7 @@ class RFGraph_Model:
         self.cntrt_FirstClick = ''
         self.cntrt_SecondClick = ''
         self.forbidden_edge = []
-
+        self.curr_tabl=[]
 
     def pos_graph(self):
         pos = {}

@@ -7,11 +7,12 @@ from sympy.parsing.sympy_parser import parse_expr
 import matplotlib.pyplot as plt
 from PyQt4 import QtGui
 
-curr_tabl=[]
+
 
 class FitCanvas(FigureCanvas):
     """Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""
-    def __init__(self):
+    def __init__(self,modApp):
+        self.modApp=modApp
         self.fig, self.axes =  plt.subplots()
         self.axes.hold(False)
         self.fig.patch.set_visible(False)
@@ -65,10 +66,10 @@ class FitCanvas(FigureCanvas):
         self.table = table
 
     def fitplot(self,line):
-        global curr_tabl
+
         eq = self.table.item(line,2).text()
 
-        datafrom=curr_tabl[line][3]
+        datafrom=self.modApp.curr_tabl[line][3]
 
         x = []
         y = []
@@ -93,18 +94,18 @@ class FitCanvas(FigureCanvas):
                 y.append(parse_expr(eq.replace("^","**"), i))
             v = "fitness/params_mo_ce.csv"
 
-        num_exp=range(len(currdatasetF[1:,currdatasetS[0,:]==self.last_clicked]))
+        num_exp=range(len(currdatasetF[1:,currdatasetS[0,:]==self.modApp.last_clicked]))
 
-        if self.mg:
+        if self.modApp.showGlobalModel:
             ft = fitness.Individual(v, "fitness/ex_indiv.csv","fitness/varnames.csv" )
             x = num_exp
-            z = [ft.process(i)[self.last_clicked] for i in x]
+            z = [ft.process(i)[self.modApp.last_clicked] for i in x]
 
 
-        val_node_exp=currdatasetF[1:,currdatasetS[0,:]==self.last_clicked]
+        val_node_exp=currdatasetF[1:,currdatasetS[0,:]==self.modApp.last_clicked]
         self.fig.clear()
         currax=self.fig.add_subplot(111)
-        if not self.mg:
+        if not self.modApp.showGlobalModel:
             currax.plot(num_exp, val_node_exp, 'ro')
             currax.plot(num_exp,y,'k--')
         else:

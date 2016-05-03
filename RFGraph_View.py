@@ -64,7 +64,7 @@ class RFGraph_View(QtGui.QMainWindow):
         self.grid.addWidget(self.table, 0, 60, 6, 60)
 
         #self.fitg = FitCanvas(self.main_widget)
-        self.fitg = FitCanvas()
+        self.fitg = FitCanvas(self.modApp)
         self.grid.addWidget(self.fitg,6,60,6,60)
 
         self.buttonCompromis = QtGui.QPushButton('Compromis', self)

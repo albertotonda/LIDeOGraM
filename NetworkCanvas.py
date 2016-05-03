@@ -1,18 +1,13 @@
 #-*- coding: utf-8
 from sys import path
 path.append("fitness/")
-import fitness
 import networkx as nx
-from RFGraph_Model import RFGraph_Model
-from sympy.parsing.sympy_parser import parse_expr
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 
 from PyQt4 import QtGui
 
 from Network import Network
-
-
 
 
 class NetworkCanvas(FigureCanvas):
