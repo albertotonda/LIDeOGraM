@@ -59,7 +59,7 @@ class Network:
         self.G.clear()
         self.draw_nodes_labels()
         edgelist_inOrder = []
-        self.edgeColor = []
+        self.edgeColor =  []
 
         for i in range(len(self.pareto)):
             for j in range(len(self.pareto[i])):
