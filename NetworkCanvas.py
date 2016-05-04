@@ -7,7 +7,7 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 
 from PyQt4 import QtGui
 
-from network import Network
+from Network import Network
 
 
 class NetworkCanvas(FigureCanvas):
