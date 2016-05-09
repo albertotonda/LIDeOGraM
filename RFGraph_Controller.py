@@ -40,7 +40,7 @@ class RFGraph_Controller:
         (x, y) = (event.xdata, event.ydata)
 
         dst = [(pow(x - self.modApp.pos[node][0], 2) + pow(y - self.modApp.pos[node][1], 2), node) for node in
-               self.vwApp.RFG.G.node]
+               self.vwApp.RFG.network.G.node]
         if len(list(filter(lambda x: x[0] < 0.0005, dst))) == 0:
             return
         nodeclicked = min(dst, key=(lambda x: x[0]))[1]
@@ -59,10 +59,10 @@ class RFGraph_Controller:
             data = []
             for i in range(len(data_tmp)):
                 data.append(data_tmp[i])
-            self.vwApp.table.data = data
-            self.vwApp.table.setmydata()
+            self.modApp.data = data
+            self.vwApp.equaTable.updateView()
             self.vwApp.RFG.figure.canvas.draw()
-            self.vwApp.fitg.setCurrentTable(self.vwApp.table)
+            self.vwApp.fitg.setCurrentTable(self.vwApp.equaTable)
         else:
             pass
             # if (self.click1 == ''):
@@ -76,7 +76,7 @@ class RFGraph_Controller:
             #    mode_cntrt = False
 
     def SliderMoved(self, value):
-        self.vwApp.RFG.updateGraph(self.vwApp.ts_slider.value() / 100.0, self.vwApp.ds_slider.value() / 100.0)
+        self.vwApp.RFG.updateView(self.vwApp.ts_slider.value() / 100.0, self.vwApp.ds_slider.value() / 100.0)
         self.vwApp.RFG.figure.canvas.draw()
 
     def tableClicked(self, cellClicked):

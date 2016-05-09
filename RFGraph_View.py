@@ -1,16 +1,12 @@
 #-*- coding: utf-8
-import numpy as np
-
 from PyQt4 import QtGui, QtCore
 from NetworkCanvas import NetworkCanvas
-from MyTable import MyTable
+from EqTable import EqTable
 from Optimisation import Optimisation
 from FitCanvas import FitCanvas
 
 
 class RFGraph_View(QtGui.QMainWindow):
-
-    # self.modApp : Modèle MVC
 
     def __init__(self,modApp):
 
@@ -28,18 +24,17 @@ class RFGraph_View(QtGui.QMainWindow):
 
         self.grid = QtGui.QGridLayout(self.main_widget)
         self.grid.setSpacing(5)
-        #self.RFG = NetworkCanvas(self.modApp, self.main_widget)
         self.RFG = NetworkCanvas(self.modApp)
         self.grid.addWidget(self.RFG,0,0,8,60)
 
         self.ts_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
-        self.ts_slider.setValue(50)
+        self.ts_slider.setValue(self.modApp.tsVal*100)
         ts_lab = QtGui.QLabel('Importance des arcs : ')
         self.grid.addWidget(ts_lab,7,0,1,2)
         self.grid.addWidget(self.ts_slider,7,2,1,57)
 
         self.ds_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
-        self.ds_slider.setValue(50)
+        self.ds_slider.setValue(self.modApp.dsVal*100)
         ds_lab = QtGui.QLabel('Compromis : ')
         self.grid.addWidget(ds_lab,8,0)
         ds_lab_cmplx = QtGui.QLabel('Complexité')
@@ -48,22 +43,10 @@ class RFGraph_View(QtGui.QMainWindow):
         ds_lab_fitness = QtGui.QLabel('Fitness')
         self.grid.addWidget(ds_lab_fitness, 8, 59,1,1)
 
-        #Charge la base de données d'équations à afficher après chargement
-        #TODO: Base de données d'équations à changer
-        data_tmp=self.modApp.equacolPOs[:,np.ix_([0,1,4])]
-        data=[]
-        for i in range(len(data_tmp)):
-            data.append(data_tmp[i][0])
+        self.equaTable = EqTable(self.modApp)
 
-        # Test coloration ligne selectioné dans le tableau d'équation
-        #for i in range(len(data[5])):
-        #    self.table.item(5,i).setBackground(QtGui.QColor(150,150,150))
+        self.grid.addWidget(self.equaTable, 0, 60, 6, 60)
 
-        self.table = MyTable(data, len(data), 3)
-
-        self.grid.addWidget(self.table, 0, 60, 6, 60)
-
-        #self.fitg = FitCanvas(self.main_widget)
         self.fitg = FitCanvas(self.modApp)
         self.grid.addWidget(self.fitg,6,60,6,60)
 
@@ -85,15 +68,18 @@ class RFGraph_View(QtGui.QMainWindow):
         self.grid.addWidget(self.buttonAjtCntrt, 11, 0, 1, 30)
         self.grid.addWidget(self.buttonChangerEq, 11, 30, 1, 30)
 
-
-
         self.main_widget.setFocus()
         self.setCentralWidget(self.main_widget)
         self.setWindowTitle('RFGraph')
+        self.updateView()
         self.show()
 
 
 
+    def updateView(self):
+        self.RFG.updateView(self.modApp.tsVal,self.modApp.dsVal)
+        self.fitg.updateView()
+        self.equaTable.updateView()
 
     def fileQuit(self):
         self.close()

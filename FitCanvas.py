@@ -10,7 +10,6 @@ from PyQt4 import QtGui
 
 
 class FitCanvas(FigureCanvas):
-    """Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""
     def __init__(self,modApp):
         self.modApp=modApp
         self.fig, self.axes =  plt.subplots()
@@ -18,9 +17,6 @@ class FitCanvas(FigureCanvas):
         self.fig.patch.set_visible(False)
         self.axes.axis('off')
         self.compute_initial_figure()
-
-        #TODO : semi-global variables ?
-
 
         #TODO : Delete following line ?
         #self.setParent(parent)  def ...(..., parent=None)
@@ -116,3 +112,5 @@ class FitCanvas(FigureCanvas):
 
 
 
+    def updateView(self):
+        pass

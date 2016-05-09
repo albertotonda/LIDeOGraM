@@ -31,6 +31,15 @@ class RFGraph_Model:
         self.cntrt_SecondClick = ''
         self.forbidden_edge = []
         self.curr_tabl=[]
+        self.tsVal=0.5
+        self.dsVal=0.5
+
+        # Charge la base de données d'équations à afficher après chargement
+        # TODO: Base de données d'équations à changer
+        self.data = []
+        for i in range(len(self.equacolPOs)):
+            self.data.append(self.equacolPOs[i, np.ix_([0, 1, 4])][0])
+
 
     def pos_graph(self):
         pos = {}

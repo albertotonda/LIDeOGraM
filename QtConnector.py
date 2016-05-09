@@ -3,7 +3,7 @@ class QtConnector:
         self.vwApp=vwApp
         self.cntrApp=cntrApp
         self.vwApp.buttonAjtCntrt.clicked.connect(self.cntrApp.clickAjContrainte)
-        self.vwApp.table.itemClicked.connect(self.cntrApp.tableClicked)
+        self.vwApp.equaTable.itemClicked.connect(self.cntrApp.tableClicked)
         self.vwApp.ts_slider.valueChanged.connect(self.cntrApp.SliderMoved)
         self.vwApp.ds_slider.valueChanged.connect(self.cntrApp.SliderMoved)
         self.vwApp.buttonModGlobal.clicked.connect(self.cntrApp.clickModGlobal)

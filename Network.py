@@ -4,7 +4,7 @@ import networkx as nx
 import numpy as np
 
 class Network:
-    def __init__(self,modApp, G,ax , fig):
+    def __init__(self,modApp,ax , fig):
         self.modApp=modApp
         self.edgeColor = []
         self.cmplxMin = np.amin(self.modApp.equacolPOf[:, 0])
@@ -12,7 +12,6 @@ class Network:
         self.nodeColor = []
         self.nodeWeight = []
         self.pareto = []
-        self.G = G
         self.fig = fig
         self.pos = self.modApp.pos_graph()
         self.lpos = copy.deepcopy(self.pos)
@@ -22,8 +21,10 @@ class Network:
         self.axes = ax
         self.labels = {}
 
+        self.G = nx.DiGraph()
+
         for v in self.modApp.varnames:
-            G.add_node(v)
+            self.G.add_node(v)
             self.labels[v] = v
 
         for i in range(len(self.modApp.adj_simple)):
@@ -51,8 +52,6 @@ class Network:
 
 
     def higlight(self, new_node: str, old_node: str):
-        #nx.draw_networkx_nodes(self.G, self.pos, nodelist=self.modApp.varnames.tolist(), node_color=self.nodeColor,
-        #                       with_labels=False, ax=self.fig.axes)
         pass
 
     def update(self, ts: float, ds: float):
