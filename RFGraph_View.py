@@ -29,19 +29,20 @@ class RFGraph_View(QtGui.QMainWindow):
 
         self.ts_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
         self.ts_slider.setValue(self.modApp.tsVal*100)
-        ts_lab = QtGui.QLabel('Importance des arcs : ')
-        self.grid.addWidget(ts_lab,7,0,1,2)
+
+        self.ts_lab = QtGui.QLabel('Importance des arcs : ')
+        self.grid.addWidget(self.ts_lab,7,0,1,2)
         self.grid.addWidget(self.ts_slider,7,2,1,57)
 
         self.ds_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
         self.ds_slider.setValue(self.modApp.dsVal*100)
-        ds_lab = QtGui.QLabel('Compromis : ')
-        self.grid.addWidget(ds_lab,8,0)
-        ds_lab_cmplx = QtGui.QLabel('Complexité')
-        self.grid.addWidget(ds_lab_cmplx,8,1)
+        self.ds_lab = QtGui.QLabel('Compromis : ')
+        self.grid.addWidget(self.ds_lab,8,0)
+        self.ds_lab_cmplx = QtGui.QLabel('Complexité')
+        self.grid.addWidget(self.ds_lab_cmplx,8,1)
         self.grid.addWidget(self.ds_slider,8,2,1,57)
-        ds_lab_fitness = QtGui.QLabel('Fitness')
-        self.grid.addWidget(ds_lab_fitness, 8, 59,1,1)
+        self.ds_lab_fitness = QtGui.QLabel('Fitness')
+        self.grid.addWidget(self.ds_lab_fitness, 8, 59,1,1)
 
         self.equaTable = EqTable(self.modApp)
 
@@ -71,15 +72,17 @@ class RFGraph_View(QtGui.QMainWindow):
         self.main_widget.setFocus()
         self.setCentralWidget(self.main_widget)
         self.setWindowTitle('RFGraph')
-        self.updateView()
         self.show()
+        self.updateView()
+
 
 
 
     def updateView(self):
-        self.RFG.updateView(self.modApp.tsVal,self.modApp.dsVal)
+        self.RFG.updateView()
         self.fitg.updateView()
         self.equaTable.updateView()
+
 
     def fileQuit(self):
         self.close()

@@ -58,14 +58,16 @@ class FitCanvas(FigureCanvas):
     def compute_initial_figure(self):
         plt.axis('on')
 
-    def setCurrentTable(self, table):
-        self.table = table
 
-    def fitplot(self,line):
 
-        eq = self.table.item(line,2).text()
+    def updateView(self):
+        if self.modApp.clicked_line==-1:
+            return
 
-        datafrom=self.modApp.curr_tabl[line][3]
+        eq = self.modApp.data[self.modApp.clicked_line][2]
+
+
+        datafrom=self.modApp.curr_tabl[self.modApp.clicked_line][3]
 
         x = []
         y = []
@@ -112,5 +114,3 @@ class FitCanvas(FigureCanvas):
 
 
 
-    def updateView(self):
-        pass

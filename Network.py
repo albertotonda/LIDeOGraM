@@ -54,11 +54,13 @@ class Network:
     def higlight(self, new_node: str, old_node: str):
         pass
 
-    def update(self, ts: float, ds: float):
+    def updateView(self):
         self.G.clear()
         self.draw_nodes_labels()
         edgelist_inOrder = []
         self.edgeColor =  []
+        ts=self.modApp.tsVal
+        ds=self.modApp.dsVal
 
         for i in range(len(self.pareto)):
             for j in range(len(self.pareto[i])):

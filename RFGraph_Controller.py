@@ -18,7 +18,7 @@ class RFGraph_Controller:
         pass
 
     def clickOptmuGP(self):
-        opt_params = Optimisation.get_params()
+        self.modApp.opt_params = Optimisation.get_params()
 
     def clickModLocaux(self):
         pass
@@ -35,13 +35,14 @@ class RFGraph_Controller:
     def clickChangeEq(self):
         pass
 
-    def onClick(self, event, radius=0.005):
+    def onClick(self, event, radius=0.0005):
         # TODO  affichage du nom du noeud selectionné + changer couleur
         (x, y) = (event.xdata, event.ydata)
+        print("x=",x," y=",y)
 
         dst = [(pow(x - self.modApp.pos[node][0], 2) + pow(y - self.modApp.pos[node][1], 2), node) for node in
-               self.vwApp.RFG.network.G.node]
-        if len(list(filter(lambda x: x[0] < 0.0005, dst))) == 0:
+               self.modApp.pos]
+        if len(list(filter(lambda x: x[0] < radius, dst))) == 0:
             return
         nodeclicked = min(dst, key=(lambda x: x[0]))[1]
 
@@ -61,8 +62,6 @@ class RFGraph_Controller:
                 data.append(data_tmp[i])
             self.modApp.data = data
             self.vwApp.equaTable.updateView()
-            self.vwApp.RFG.figure.canvas.draw()
-            self.vwApp.fitg.setCurrentTable(self.vwApp.equaTable)
         else:
             pass
             # if (self.click1 == ''):
@@ -76,9 +75,11 @@ class RFGraph_Controller:
             #    mode_cntrt = False
 
     def SliderMoved(self, value):
-        self.vwApp.RFG.updateView(self.vwApp.ts_slider.value() / 100.0, self.vwApp.ds_slider.value() / 100.0)
-        self.vwApp.RFG.figure.canvas.draw()
+        self.modApp.tsVal=self.vwApp.ts_slider.value() / 100.0
+        self.modApp.dsVal=self.vwApp.ds_slider.value() / 100.0
+        self.vwApp.RFG.updateView()
+
 
     def tableClicked(self, cellClicked):
-        print('tableclicked')
-        self.vwApp.fitg.fitplot(cellClicked.row())
+        self.modApp.clicked_line=cellClicked.row()
+        self.vwApp.fitg.updateView()

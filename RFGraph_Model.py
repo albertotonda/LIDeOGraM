@@ -33,6 +33,8 @@ class RFGraph_Model:
         self.curr_tabl=[]
         self.tsVal=0.5
         self.dsVal=0.5
+        self.opt_params= []
+        self.clicked_line=-1
 
         # Charge la base de données d'équations à afficher après chargement
         # TODO: Base de données d'équations à changer

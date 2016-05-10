@@ -23,8 +23,9 @@ class NetworkCanvas(FigureCanvas):
         FigureCanvas.setSizePolicy(self, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         FigureCanvas.updateGeometry(self)
 
-    def updateView(self, ts, ds):
-        self.network.update(ts,ds)
+    def updateView(self):
+        self.network.updateView()
         self.axes.set_xlim([0, 1.07])
         self.axes.set_ylim([0, 1.07])
+        self.fig.canvas.draw()
 
