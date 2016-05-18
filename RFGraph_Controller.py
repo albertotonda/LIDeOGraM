@@ -1,6 +1,5 @@
 #-*- coding: utf-8
-from Optimisation import Optimisation
-from NetworkCanvas import NetworkCanvas
+from OptimisationCanvas import OptimisationCanvas
 import numpy as np
 
 class RFGraph_Controller:
@@ -18,7 +17,7 @@ class RFGraph_Controller:
         pass
 
     def clickOptmuGP(self):
-        self.modApp.opt_params = Optimisation.get_params()
+        self.modApp.opt_params = OptimisationCanvas.get_params()
 
     def clickModLocaux(self):
         pass
@@ -29,8 +28,10 @@ class RFGraph_Controller:
     def clickAjContrainte(self):
         if (not self.modApp.mode_cntrt):
             self.modApp.mode_cntrt = True
+            self.vwApp.buttonAjtCntrt.setDown(True)
         else:
             self.modApp.mode_cntrt = False
+            self.vwApp.buttonAjtCntrt.setDown(False)
 
     def clickChangeEq(self):
         pass
@@ -51,6 +52,15 @@ class RFGraph_Controller:
             # Change color back
         self.modApp.lastNodeClicked = nodeclicked
 
+        if self.modApp.lastNodeClicked != "":
+            self.vwApp.networkGUI.network.higlight(nodeclicked, self.modApp.lastNodeClicked)
+        else:
+            self.vwApp.networkGUI.network.higlight(nodeclicked,None)
+
+            #Change color back
+        self.lastNodeClicked = nodeclicked
+
+
         if (not self.modApp.mode_cntrt):
             print('action:', nodeclicked)
             self.modApp.last_clicked = nodeclicked
@@ -61,7 +71,7 @@ class RFGraph_Controller:
             for i in range(len(data_tmp)):
                 data.append(data_tmp[i])
             self.modApp.data = data
-            self.vwApp.equaTable.updateView()
+            self.vwApp.eqTableGUI.updateView()
         else:
             pass
             # if (self.click1 == ''):
@@ -75,11 +85,20 @@ class RFGraph_Controller:
             #    mode_cntrt = False
 
     def SliderMoved(self, value):
-        self.modApp.tsVal=self.vwApp.ts_slider.value() / 100.0
-        self.modApp.dsVal=self.vwApp.ds_slider.value() / 100.0
-        self.vwApp.RFG.updateView()
+        self.modApp.adjThresholdVal=self.vwApp.adjThreshold_slider.value() / 100.0
+        self.modApp.comprFitCmplxVal=self.vwApp.comprFitCmplx_slider.value() / 100.0
+        self.vwApp.networkGUI.updateView()
 
 
     def tableClicked(self, cellClicked):
         self.modApp.clicked_line=cellClicked.row()
-        self.vwApp.fitg.updateView()
+        self.vwApp.fitGUI.updateView()
+        self.vwApp.networkGUI.updateView()
+
+    def fileQuit(self):
+        self.vwApp.close()
+
+
+    def closeEvent(self, ce):
+        self.fileQuit()
+

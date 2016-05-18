@@ -1,7 +1,6 @@
 #-*- coding: utf-8
 from sys import path
 path.append("fitness/")
-import networkx as nx
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 
@@ -14,11 +13,12 @@ class NetworkCanvas(FigureCanvas):
     def __init__(self, modApp):
         self.modApp=modApp
         self.fig, self.axes =  plt.subplots()
+        # We want the axes cleared every time plot() is called
         self.axes.hold(False)
         self.fig.patch.set_visible(False)
         self.fig.tight_layout()
         self.axes.axis('off')
-        self.network = Network(self.modApp, self.axes, self.fig)
+        self.network = Network(self.modApp, self.axes)
         FigureCanvas.__init__(self, self.fig)
         FigureCanvas.setSizePolicy(self, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         FigureCanvas.updateGeometry(self)

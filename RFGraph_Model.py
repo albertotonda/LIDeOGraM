@@ -31,10 +31,12 @@ class RFGraph_Model:
         self.cntrt_SecondClick = ''
         self.forbidden_edge = []
         self.curr_tabl=[]
-        self.tsVal=0.5
-        self.dsVal=0.5
+        self.adjThresholdVal=0.5
+        self.comprFitCmplxVal=0.5
         self.opt_params= []
         self.clicked_line=-1
+        self.old_color=[]
+
 
         # Charge la base de données d'équations à afficher après chargement
         # TODO: Base de données d'équations à changer

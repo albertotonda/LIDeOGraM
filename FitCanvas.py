@@ -1,7 +1,5 @@
 #-*- coding: utf-8
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-from sys import path
-path.append("fitness/")
 import fitness
 from sympy.parsing.sympy_parser import parse_expr
 import matplotlib.pyplot as plt
@@ -17,9 +15,6 @@ class FitCanvas(FigureCanvas):
         self.fig.patch.set_visible(False)
         self.axes.axis('off')
         self.compute_initial_figure()
-
-        #TODO : Delete following line ?
-        #self.setParent(parent)  def ...(..., parent=None)
 
         FigureCanvas.__init__(self, self.fig)
         FigureCanvas.setSizePolicy(self, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)

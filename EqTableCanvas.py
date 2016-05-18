@@ -1,7 +1,7 @@
 #-*- coding: utf-8
 from PyQt4.QtGui import *
 
-class EqTable(QTableWidget):
+class EqTableCanvas(QTableWidget):
     def __init__(self, modApp, *args):
         self.modApp = modApp
         QTableWidget.__init__(self)

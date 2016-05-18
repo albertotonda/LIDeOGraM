@@ -2,9 +2,9 @@
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import *
 
-class Optimisation(QDialog):
+class OptimisationCanvas(QDialog):
     def __init__(self,parent=None):
-        super(Optimisation,self).__init__(parent)
+        super(OptimisationCanvas,self).__init__(parent)
         god = QVBoxLayout(self)
         layout = QHBoxLayout()
         god.addLayout(layout)
@@ -36,7 +36,7 @@ class Optimisation(QDialog):
 
     @staticmethod
     def get_params(Parent=None):
-        dialog = Optimisation()
+        dialog = OptimisationCanvas()
         result = dialog.exec_()
         params = dialog.params()
         return (result, params)
