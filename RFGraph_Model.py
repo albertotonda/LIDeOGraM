@@ -2,7 +2,8 @@
 import random
 import numpy as np
 from numpy import genfromtxt
-
+import copy
+import networkx as nx
 
 class RFGraph_Model:
 
@@ -36,13 +37,27 @@ class RFGraph_Model:
         self.opt_params= []
         self.clicked_line=-1
         self.old_color=[]
-
+        self.nodeColor = []
+        self.edgeColor = []
+        self.nodeWeight = []
+        self.cmplxMin = np.amin(self.equacolPOf[:, 0])
+        self.cmplxMax = np.amax(self.equacolPOf[:, 0])
+        self.pareto = []
+        #Necessaire de faire une deepcopy ?
+        self.lpos = copy.deepcopy(self.pos)
+        for p in self.lpos:  # raise text positions
+            self.lpos[p][1] += 0.04
 
         # Charge la base de données d'équations à afficher après chargement
         # TODO: Base de données d'équations à changer
         self.data = []
         for i in range(len(self.equacolPOs)):
             self.data.append(self.equacolPOs[i, np.ix_([0, 1, 4])][0])
+
+        self.labels = {}
+        self.edges = None
+        self.initGraph()
+
 
 
     def pos_graph(self):
@@ -108,3 +123,28 @@ class RFGraph_Model:
         pos['dtpH07stot'] = np.array([random.random() * 0.15 + 0.55, 1.0 / 15.0])
         pos['dtpH07spe2tot'] = np.array([random.random() * 0.15 + 0.8, 1.0 / 15.0])
         return pos
+
+    def initGraph(self):
+        self.G = nx.DiGraph()
+
+        for v in self.varnames:
+            self.G.add_node(v)
+            self.labels[v] = v
+
+        for i in range(len(self.adj_simple)):
+            self.pareto.append([])
+            for j in range(len(self.adj_simple[i])):
+                self.pareto[i - 1].append(self.equacolPOf[np.ix_(
+                    np.logical_and(self.equacolPOs[:, 2] == self.varnames[i],
+                                   self.equacolPOs[:, 3] == self.varnames[j])), 0:2][0])
+
+        for i in range(len(self.varnames)):
+            if ((len(self.varnames) - np.sum(self.adj_contr, axis=0)[i]) != 0):
+                self.nodeWeight.append(
+                    np.sum(self.adj_simple, axis=0)[i] / (
+                    len(self.varnames) - np.sum(self.adj_contr, axis=0)[i]))
+            else:
+                self.nodeWeight.append(0)
+        for i in range(len(self.varnames)):
+            self.nodeColor.append(
+                (0.5, 0.5 + 0.5 * self.nodeWeight[i] / np.amax(self.nodeWeight), 0.5))
