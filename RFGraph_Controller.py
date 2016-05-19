@@ -46,15 +46,15 @@ class RFGraph_Controller:
         if self.modApp.lastNodeClicked != "":
             pass
             # Change color back
-        self.modApp.lastNodeClicked = nodeclicked
+        #self.modApp.lastNodeClicked = nodeclicked
 
         if self.modApp.lastNodeClicked != "":
-            self.vwApp.networkGUI.network.higlight(nodeclicked, self.modApp.lastNodeClicked)
+            self.higlight(nodeclicked, self.modApp.lastNodeClicked)
         else:
-            self.vwApp.networkGUI.network.higlight(nodeclicked,None)
+            self.higlight(nodeclicked,None)
 
             #Change color back
-        self.lastNodeClicked = nodeclicked
+        self.modApp.lastNodeClicked = nodeclicked
 
 
         if (not self.modApp.mode_cntrt):
@@ -89,6 +89,16 @@ class RFGraph_Controller:
     def tableClicked(self, cellClicked):
         self.modApp.clicked_line=cellClicked.row()
         self.vwApp.fitGUI.updateView()
+        self.vwApp.networkGUI.updateView()
+
+    def higlight(self, new_node: str, old_node: str = None):
+        self.modApp.G.clear()
+        if old_node:
+            self.modApp.nodeColor[(self.modApp.varnames.tolist()).index(old_node)] = self.modApp.old_color
+
+        self.modApp.old_color = self.modApp.nodeColor[(self.modApp.varnames.tolist()).index(new_node)]
+        self.modApp.nodeColor[(self.modApp.varnames.tolist()).index(new_node)] = (1.0, 0, 0)
+
         self.vwApp.networkGUI.updateView()
 
     def fileQuit(self):

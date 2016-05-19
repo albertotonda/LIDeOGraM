@@ -5,9 +5,9 @@ from PyQt4.QtGui import *
 class OptimisationCanvas(QDialog):
     def __init__(self,parent=None):
         super(OptimisationCanvas,self).__init__(parent)
-        god = QVBoxLayout(self)
+        mainBoxLayout = QVBoxLayout(self)
         layout = QHBoxLayout()
-        god.addLayout(layout)
+        mainBoxLayout.addLayout(layout)
         s1 = QVBoxLayout()
         s2 = QVBoxLayout()
 
@@ -28,7 +28,7 @@ class OptimisationCanvas(QDialog):
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
 
-        god.addWidget(buttons)
+        mainBoxLayout.addWidget(buttons)
 
     def params(self):
         return 0
