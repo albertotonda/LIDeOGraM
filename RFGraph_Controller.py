@@ -26,12 +26,8 @@ class RFGraph_Controller:
         self.modApp.showGlobalModel = True
 
     def clickAjContrainte(self):
-        if (not self.modApp.mode_cntrt):
-            self.modApp.mode_cntrt = True
-            self.vwApp.buttonAjtCntrt.setDown(True)
-        else:
-            self.modApp.mode_cntrt = False
-            self.vwApp.buttonAjtCntrt.setDown(False)
+        pass
+        #self.modApp.opt_params = AddConstraints.get_params()
 
     def clickChangeEq(self):
         pass
