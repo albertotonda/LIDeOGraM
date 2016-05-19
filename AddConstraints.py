@@ -5,7 +5,7 @@ from PyQt4 import QtGui
 def __init__(self):
     self.node_one=
     self.node_two=
-    self.link=
+    self.link= i
 
 
 def onClick(self, event, radius=0.0005):
