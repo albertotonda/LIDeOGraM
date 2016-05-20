@@ -15,6 +15,6 @@ class EqTableCanvas(QTableWidget):
             for m in range(len(self.modApp.data[n])):
                 newitem = QTableWidgetItem(self.modApp.data[n][m])
                 self.setItem(n,m,newitem)
-        self.setHorizontalHeaderLabels(['Complexité','Fitness','Equation'])
+        self.setHorizontalHeaderLabels(['Complexity','Fitness','Equation'])
         self.resizeColumnsToContents()
         self.resizeRowsToContents()
