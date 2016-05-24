@@ -103,8 +103,8 @@ class FitCanvas(FigureCanvas):
             currax.plot(num_exp,y,'k--')
         else:
             currax.plot(num_exp, val_node_exp, 'ro')
-            currax.plot(num_exp,y)
-            currax.plot(num_exp,z,'k--')
+            currax.plot(num_exp,y,'k--')
+            currax.plot(num_exp,z)
         self.fig.canvas.draw()
 
 
