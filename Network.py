@@ -33,8 +33,7 @@ class Network:
                                                  np.power(np.sin(comprFitCmplx * (np.pi / 2)) * lIdxColPareto[:, 1], 2))
                     dist_lIdxColPareto_idxMin = np.argmin(
                         dist_lIdxColPareto)  # Indice dans dist_lIdxColPareto correspondant au meilleur compromi
-                    dist_lIdxColPareto_valMin = dist_lIdxColPareto[
-                        dist_lIdxColPareto_idxMin]  # Distance meilleur compromi
+                    dist_lIdxColPareto_valMin = dist_lIdxColPareto[dist_lIdxColPareto_idxMin]  # Distance meilleur compromi
                     if self.modApp.nbeq[i] == np.float64(0.0) : continue
                     r = self.modApp.adj_simple[i, j] / self.modApp.nbeq[i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
                     if (r > adjThreshold):
@@ -44,4 +43,5 @@ class Network:
                         self.modApp.edgeColor.append((dist_lIdxColPareto_valMin + (1 - dist_lIdxColPareto_valMin) * (1 - r)
                                                , (1 - dist_lIdxColPareto_valMin) + dist_lIdxColPareto_valMin * (1 - r)
                                                , 1 - r))
+                        # TODO MODIFIER!!!
         nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=edgelist_inOrder, edge_color=self.modApp.edgeColor, ax=self.axes)

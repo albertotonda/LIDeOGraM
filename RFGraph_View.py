@@ -3,7 +3,7 @@ from PyQt4 import QtGui, QtCore
 from NetworkCanvas import NetworkCanvas
 from EqTableCanvas import EqTableCanvas
 from FitCanvas import FitCanvas
-
+from QtConnector import QtConnector
 
 class RFGraph_View(QtGui.QMainWindow):
 
@@ -54,6 +54,7 @@ class RFGraph_View(QtGui.QMainWindow):
         self.buttonModGlobal = QtGui.QPushButton('Global Model', self)
         self.buttonAjtCntrt = QtGui.QPushButton('Add constraints', self)
         self.buttonChangerEq = QtGui.QPushButton('Change equation', self)
+        self.buttonRemoveConstraint = QtGui.QPushButton('Remove', self)
 
         self.gridLayout.addWidget(self.buttonCompromis, 10, 0, 1, 15)
         self.gridLayout.addWidget(self.buttonFitness, 10, 15, 1, 15)
@@ -63,11 +64,16 @@ class RFGraph_View(QtGui.QMainWindow):
         self.gridLayout.addWidget(self.buttonModGlobal, 11, 30, 1, 30)
         self.gridLayout.addWidget(self.buttonAjtCntrt, 12, 0, 1, 30)
         self.gridLayout.addWidget(self.buttonChangerEq, 12, 30, 1, 30)
+        self.gridLayout.addWidget(self.buttonRemoveConstraint, 0, 12, 2, 12)
 
         # TODO  Ajout de la liste déroulante
         self.listeDeroulante = QtGui.QComboBox(self)
         self.gridLayout.addWidget(self.listeDeroulante, 0, 0, 2, 12 )
-        self.listeDeroulante.addItem("Hello world")
+        self.listeDeroulante.addItem("Select constraint to remove")
+
+        self.advContr = QtGui.QLabel('')
+        self.gridLayout.addWidget(self.advContr, 0, 25, 2, 12)
+
 
         self.main_widget.setFocus()
         self.setCentralWidget(self.main_widget)

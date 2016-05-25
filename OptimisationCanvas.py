@@ -3,8 +3,8 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import *
 
 class OptimisationCanvas(QDialog):
-    def __init__(self,parent=None):
-        super(OptimisationCanvas,self).__init__(parent)
+    def __init__(self, parent=None):
+        super(OptimisationCanvas, self).__init__(parent)
         mainBoxLayout = QVBoxLayout(self)
         layout = QHBoxLayout()
         mainBoxLayout.addLayout(layout)
@@ -20,7 +20,6 @@ class OptimisationCanvas(QDialog):
         s2.addWidget(QLabel("Concurrency:"))
         s2.addWidget(concurr)
 
-
         layout.addLayout(s1)
         layout.addLayout(s2)
 
@@ -32,7 +31,6 @@ class OptimisationCanvas(QDialog):
 
     def params(self):
         return 0
-
 
     @staticmethod
     def get_params(Parent=None):

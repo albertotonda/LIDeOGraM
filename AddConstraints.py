@@ -1,13 +1,38 @@
-import sys
+#-*- coding: utf-8
+from PyQt4 import QtGui, QtCore
+from PyQt4.QtGui import *
+
+class AddConstraint(QWidget):
+    def __init__(self, modApp):
+        self.modApp = modApp
+        self.NodeConstraints= []
+
+    def params(self):
+        return 0
+
+"""
+from RFGraph_View import RFGraph_View
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-class AddConstraints(QWidget):
-    def __init__(self):
+class AddConstraints(RFGraph_View, QWidget):
+    def __init__(self, modApp):
+        self.modApp = modApp
+        super(AddConstraints, self).__init__(RFGraph_View)
         self.modApp.NodetoConstrain= []
+        self.modApp.ButtonAjtCntrt= self.buttonAjtCntrt
+
 
     def addConstrainsts(self, event, radius=0.0005):
-        # TODO  Ajout de la contrainte entre les noeuds
+       # TODO Ajout de la contrainte aux noeuds
+        for i in range(len(self.modApp.NodetoConstrain.pareto)):
+            for j in range(len(self.modApp.NodetoConstrain.pareto[i])):
+                i = i + 1
+                if (len(self.modApp.NodetoConstrain.pareto[i])==2):
+
+
+
+           # TODO  Reconnaît les noeuds
         (x, y) = (event.xdata, event.ydata)
         print("x=", x, " y=", y)
 
@@ -17,25 +42,14 @@ class AddConstraints(QWidget):
             return
         nodeclicked = min(dst, key=(lambda x: x[0]))[1]
 
-            # Change color back
+            # TODO Change la couleur des 2 noeuds à contraindre
         self.modApp.NodetoConstrain.append(nodeclicked)
 
-        if (len(self.modApp.NodetoConstrain.append(nodeclicked) == 2)):
-            self.vwApp.networkGUI.network.higlight(nodeclicked, self.modApp.lastNodeClicked)
+        if (len(self.modApp.NodetoConstrain.append(nodeclicked) ==1) or len(self.modApp.NodetoConstrain.append(nodeclicked)==2)):
+            self.vwApp.networkGUI.network.higlight(nodeclicked, self.modApp.NodetoConstrain.append(nodeclicked))
         else:
             self.vwApp.networkGUI.network.higlight(nodeclicked, None)
 
-            # Change color back
-        self.lastNodeClicked = node
-
-        if (not self.modApp.mode_cntrt):
-            print('action:', nodeclicked)
-            self.modApp.last_clicked = node
-            data_tmp = self.modApp.equacolOs[np.ix_(self.modApp.equacolOs[:, 2] == [node], [0, 1, 3])]
-            self.modApp.curr_tabl = self.modApp.equacolOs[
-                np.ix_(self.modApp.equacolOs[:, 2] == [node], [0, 1, 3, 4])]
-            data = []
-            for i in range(len(data_tmp)):
-                data.append(data_tmp[i])
-            self.modApp.data = data
-            self.vwApp.eqTableGUI.updateView()
+        if (len(self.modApp.NodetoConstrain.append(nodeclicked) == 2):
+            self.listeDeroulante.addItem(nodeclicked[1]"//" nodeclicked[2])
+"""

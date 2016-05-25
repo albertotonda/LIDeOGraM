@@ -1,11 +1,15 @@
 #-*- coding: utf-8
+from AddConstraints import AddConstraint
 from OptimisationCanvas import OptimisationCanvas
 import numpy as np
+from PyQt4 import QtGui, QtCore
+from PyQt4.QtGui import *
 
 class RFGraph_Controller:
     def __init__(self,modApp,vwApp):
         self.modApp=modApp
         self.vwApp=vwApp
+        self.addC= AddConstraint(modApp)
 
     def clickFitness(self):
         pass
@@ -25,9 +29,9 @@ class RFGraph_Controller:
     def clickModGlobal(self):
         self.modApp.showGlobalModel = True
 
-    def clickAjContrainte(self):
-        pass
-        #self.modApp.opt_params = AddConstraints.get_params()
+    def clickAjContrainte(self, event, radius=0.0005):
+        self.modApp.mode_cntrt = True
+        self.vwApp.advContr.setText('Select node 1')
 
     def clickChangeEq(self):
         pass
@@ -39,9 +43,12 @@ class RFGraph_Controller:
 
         dst = [(pow(x - self.modApp.pos[node][0], 2) + pow(y - self.modApp.pos[node][1], 2), node) for node in
                self.modApp.pos]
+        self.modApp.NodetoConstrain = []
         if len(list(filter(lambda x: x[0] < radius, dst))) == 0:
             return
         nodeclicked = min(dst, key=(lambda x: x[0]))[1]
+
+
 
         if self.modApp.lastNodeClicked != "":
             pass
@@ -56,6 +63,17 @@ class RFGraph_Controller:
             #Change color back
         self.modApp.lastNodeClicked = nodeclicked
 
+        if (self.modApp.mode_cntrt == True):
+            self.addC.NodeConstraints.append(nodeclicked)
+            self.vwApp.advContr.setText('Select node 2')
+            if (len(self.addC.NodeConstraints) == 2):
+                constraint = " - ".join(self.addC.NodeConstraints)
+                self.vwApp.listeDeroulante.addItem(constraint)
+                self.addC.NodeConstraints = []
+                self.vwApp.advContr.setText('')
+
+                self.modApp.mode_cntrt = False
+                return
 
         if (not self.modApp.mode_cntrt):
             print('action:', nodeclicked)
@@ -79,6 +97,9 @@ class RFGraph_Controller:
             #    self.click1 = ''
             #    self.click2 = ''
             #    mode_cntrt = False
+
+    def RemoveConstraint (self):
+        self.vwApp.listeDeroulante.removeItem(self.vwApp.listeDeroulante.currentIndex())
 
     def SliderMoved(self, value):
         self.modApp.adjThresholdVal=self.vwApp.adjThreshold_slider.value() / 100.0
