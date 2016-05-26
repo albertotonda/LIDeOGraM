@@ -9,7 +9,7 @@ class RFGraph_Controller:
     def __init__(self,modApp,vwApp):
         self.modApp=modApp
         self.vwApp=vwApp
-        self.addC= AddConstraint(modApp)
+        self.addC=AddConstraint(modApp)
 
     def clickFitness(self):
         pass
@@ -62,16 +62,17 @@ class RFGraph_Controller:
 
             #Change color back
         self.modApp.lastNodeClicked = nodeclicked
-
+        # TODO
         if (self.modApp.mode_cntrt == True):
             self.addC.NodeConstraints.append(nodeclicked)
+            fNode=nodeclicked
             self.vwApp.advContr.setText('Select node 2')
             if (len(self.addC.NodeConstraints) == 2):
+                sNode = nodeclicked
                 constraint = " - ".join(self.addC.NodeConstraints)
                 self.vwApp.listeDeroulante.addItem(constraint)
                 self.addC.NodeConstraints = []
                 self.vwApp.advContr.setText('')
-
                 self.modApp.mode_cntrt = False
                 return
 
@@ -97,7 +98,7 @@ class RFGraph_Controller:
             #    self.click1 = ''
             #    self.click2 = ''
             #    mode_cntrt = False
-
+    # TODO
     def RemoveConstraint (self):
         self.vwApp.listeDeroulante.removeItem(self.vwApp.listeDeroulante.currentIndex())
 

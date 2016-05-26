@@ -19,7 +19,7 @@ class RFGraph_View(QtGui.QMainWindow):
 
         self.gridLayout = QtGui.QGridLayout(self.main_widget)
         self.gridLayout.setSpacing(5)
-        self.networkGUI = NetworkCanvas(self.modApp)
+        self.networkGUI = NetworkCanvas(self.modApp, self)
         self.gridLayout.addWidget(self.networkGUI, 1, 0, 8, 60)
 
         self.adjThreshold_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)

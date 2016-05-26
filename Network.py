@@ -3,9 +3,9 @@ import networkx as nx
 import numpy as np
 
 class Network:
-    def __init__(self,modApp,ax):
+    def __init__(self,modApp, vwApp, ax):
         self.modApp=modApp
-
+        self.vwApp = vwApp
         self.axes = ax
         self.axes.get_xaxis().set_visible(False)
         self.axes.get_yaxis().set_visible(False)
@@ -44,4 +44,14 @@ class Network:
                                                , (1 - dist_lIdxColPareto_valMin) + dist_lIdxColPareto_valMin * (1 - r)
                                                , 1 - r))
                         # TODO MODIFIER!!!
-        nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=edgelist_inOrder, edge_color=self.modApp.edgeColor, ax=self.axes)
+                    n1= self.modApp.varnames[i]+' - '+self.modApp.varnames[j]
+                    n2= self.modApp.varnames[j]+' - '+self.modApp.varnames[i]
+                    if ((self.vwApp.listeDeroulante.findData(n1)==-1) or (self.vwApp.listeDeroulante.findData(n2)==-1)):
+                        nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=edgelist_inOrder,edge_color=self.modApp.edgeColor, ax=self.axes)
+                    else:
+                        print("caca")
+                        self.modApp.G.remove_edge(self.modApp.varnames[i], self.modApp.varnames[j])
+                        ed= self.modApp.G.edges()
+                        nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=ed, ax=self.axes)
+
+
