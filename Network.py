@@ -46,12 +46,29 @@ class Network:
                         # TODO MODIFIER!!!
                     n1= self.modApp.varnames[i]+' - '+self.modApp.varnames[j]
                     n2= self.modApp.varnames[j]+' - '+self.modApp.varnames[i]
-                    if ((self.vwApp.listeDeroulante.findData(n1)==-1) or (self.vwApp.listeDeroulante.findData(n2)==-1)):
-                        nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=edgelist_inOrder,edge_color=self.modApp.edgeColor, ax=self.axes)
-                    else:
+
+                    AllItems = [self.vwApp.listeDeroulante.itemText(i) for i in range(self.vwApp.listeDeroulante.count())]
+
+                    if n1 in AllItems or n2 in AllItems:
                         print("caca")
-                        self.modApp.G.remove_edge(self.modApp.varnames[i], self.modApp.varnames[j])
-                        ed= self.modApp.G.edges()
-                        nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=ed, ax=self.axes)
+
+                        try:
+                            idx = edgelist_inOrder.index((self.modApp.varnames[i],self.modApp.varnames[j]))
+                        except:
+                            idx = edgelist_inOrder.index((self.modApp.varnames[j],self.modApp.varnames[i]))
+                        edgelist_inOrder.pop(idx)
+                        self.modApp.edgeColor.pop(idx)
+
+
+                    #nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=ed, ax=self.axes)
+
+
+                #if ((self.vwApp.listeDeroulante.findData(n1)==-1) or (self.vwApp.listeDeroulante.findData(n2)==-1)):
+        nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=edgelist_inOrder,edge_color=self.modApp.edgeColor, ax=self.axes)
+                #else:
+                #    print("caca")
+                 #   self.modApp.G.remove_edge(self.modApp.varnames[i], self.modApp.varnames[j])
+                 #   ed= self.modApp.G.edges()
+                 #   nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=ed, ax=self.axes)
 
 

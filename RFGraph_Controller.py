@@ -74,6 +74,7 @@ class RFGraph_Controller:
                 self.addC.NodeConstraints = []
                 self.vwApp.advContr.setText('')
                 self.modApp.mode_cntrt = False
+                self.vwApp.networkGUI.updateView()
                 return
 
         if (not self.modApp.mode_cntrt):
@@ -101,6 +102,7 @@ class RFGraph_Controller:
     # TODO
     def RemoveConstraint (self):
         self.vwApp.listeDeroulante.removeItem(self.vwApp.listeDeroulante.currentIndex())
+        self.vwApp.networkGUI.updateView()
 
     def SliderMoved(self, value):
         self.modApp.adjThresholdVal=self.vwApp.adjThreshold_slider.value() / 100.0
