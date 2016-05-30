@@ -39,6 +39,8 @@ class RFGraph_Controller:
     def onClick(self, event, radius=0.0005):
         # TODO  affichage du nom du noeud selectionné + changer couleur
         (x, y) = (event.xdata, event.ydata)
+        if not x or not y :
+            return
         print("x=",x," y=",y)
 
         dst = [(pow(x - self.modApp.pos[node][0], 2) + pow(y - self.modApp.pos[node][1], 2), node) for node in
