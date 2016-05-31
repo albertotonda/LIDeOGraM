@@ -1,6 +1,7 @@
 #-*- coding: utf-8
 from PyQt4.QtGui import *
 
+# TODO Crée la table contenant les équations du noeud sélectionné
 class EqTableCanvas(QTableWidget):
     def __init__(self, modApp, *args):
         self.modApp = modApp

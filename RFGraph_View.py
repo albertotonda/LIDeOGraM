@@ -3,8 +3,8 @@ from PyQt4 import QtGui, QtCore
 from NetworkCanvas import NetworkCanvas
 from EqTableCanvas import EqTableCanvas
 from FitCanvas import FitCanvas
-from QtConnector import QtConnector
 
+# TODO Crée tout les boutons (or graphes + équations)
 class RFGraph_View(QtGui.QMainWindow):
 
     def __init__(self,modApp):
@@ -38,6 +38,8 @@ class RFGraph_View(QtGui.QMainWindow):
         self.gridLayout.addWidget(self.comprFitCmplx_slider, 9, 2, 1, 57)
         self.comprFitCmplx_lab_fit = QtGui.QLabel('Fitness')
         self.gridLayout.addWidget(self.comprFitCmplx_lab_fit, 9, 59, 1, 1)
+        self.selectContrTxt = QtGui.QLabel('')
+        self.gridLayout.addWidget(self.selectContrTxt, 0, 25, 2, 12)
 
         self.eqTableGUI = EqTableCanvas(self.modApp)
 
@@ -52,8 +54,8 @@ class RFGraph_View(QtGui.QMainWindow):
         self.buttonOptUgp3 = QtGui.QPushButton('µGP Optimisation', self)
         self.buttonModLocal = QtGui.QPushButton('Locals Models', self)
         self.buttonModGlobal = QtGui.QPushButton('Global Model', self)
-        self.buttonAjtCntrt = QtGui.QPushButton('Add constraints', self)
         self.buttonChangerEq = QtGui.QPushButton('Change equation', self)
+        self.buttonAddConstraint = QtGui.QPushButton('Add constraints', self)
         self.buttonRemoveConstraint = QtGui.QPushButton('Remove', self)
 
         self.gridLayout.addWidget(self.buttonCompromis, 10, 0, 1, 15)
@@ -62,33 +64,22 @@ class RFGraph_View(QtGui.QMainWindow):
         self.gridLayout.addWidget(self.buttonOptUgp3, 10, 45, 1, 15)
         self.gridLayout.addWidget(self.buttonModLocal, 11, 0, 1, 30)
         self.gridLayout.addWidget(self.buttonModGlobal, 11, 30, 1, 30)
-        self.gridLayout.addWidget(self.buttonAjtCntrt, 12, 0, 1, 30)
         self.gridLayout.addWidget(self.buttonChangerEq, 12, 30, 1, 30)
-        self.gridLayout.addWidget(self.buttonRemoveConstraint, 0, 12, 2, 12)
+        self.gridLayout.addWidget(self.buttonAddConstraint, 12, 0, 1, 30)
+        self.gridLayout.addWidget(self.buttonRemoveConstraint, 0, 12, 1, 12)
 
-        # TODO  Ajout de la liste déroulante
-        self.listeDeroulante = QtGui.QComboBox(self)
-        self.gridLayout.addWidget(self.listeDeroulante, 0, 0, 2, 12 )
-        self.listeDeroulante.addItem("Select constraint to remove")
-
-        self.advContr = QtGui.QLabel('')
-        self.gridLayout.addWidget(self.advContr, 0, 25, 2, 12)
-
+        self.scrolledList = QtGui.QComboBox(self)
+        self.gridLayout.addWidget(self.scrolledList, 0, 0, 1, 12 )
+        self.scrolledList.addItem("Select constraint to remove")
 
         self.main_widget.setFocus()
         self.setCentralWidget(self.main_widget)
         self.setWindowTitle('RFGraph')
+        #self.setWindowIcon(QIcon("RFGraph/LOGO_1.png"))
         self.show()
         self.updateView()
-
-
-
 
     def updateView(self):
         self.networkGUI.updateView()
         self.fitGUI.updateView()
         self.eqTableGUI.updateView()
-
-
-
-

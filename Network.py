@@ -2,6 +2,7 @@
 import networkx as nx
 import numpy as np
 
+# TODO Crée les "edges" entre les noeuds et leur donne leur couleur
 class Network:
     def __init__(self,modApp, vwApp, ax):
         self.modApp=modApp
@@ -18,7 +19,7 @@ class Network:
     def updateView(self):
         self.modApp.G.clear()
         self.draw_nodes_labels()
-        edgelist_inOrder = []
+        self.edgelist_inOrder = []
         self.modApp.edgeColor  =  []
         adjThreshold=self.modApp.adjThresholdVal
         comprFitCmplx=self.modApp.comprFitCmplxVal
@@ -39,36 +40,22 @@ class Network:
                     if (r > adjThreshold):
                         self.modApp.G.add_edge(self.modApp.varnames[j], self.modApp.varnames[i], adjsimple=self.modApp.adj_simple[i, j], adjfit=
                         self.modApp.adj_fit[i, j], adjcmplx=self.modApp.adj_cmplx[i, j], adjcontr=self.modApp.adj_contr[i, j])
-                        edgelist_inOrder.append((self.modApp.varnames[j], self.modApp.varnames[i]))
+                        self.edgelist_inOrder.append((self.modApp.varnames[j], self.modApp.varnames[i]))
                         self.modApp.edgeColor.append((dist_lIdxColPareto_valMin + (1 - dist_lIdxColPareto_valMin) * (1 - r)
                                                , (1 - dist_lIdxColPareto_valMin) + dist_lIdxColPareto_valMin * (1 - r)
                                                , 1 - r))
-                        # TODO MODIFIER!!!
+
                     n1= self.modApp.varnames[i]+' - '+self.modApp.varnames[j]
                     n2= self.modApp.varnames[j]+' - '+self.modApp.varnames[i]
-
-                    AllItems = [self.vwApp.listeDeroulante.itemText(i) for i in range(self.vwApp.listeDeroulante.count())]
-
-                    if n1 in AllItems or n2 in AllItems:
-                        print("caca")
-
+                    allItems = [self.vwApp.scrolledList.itemText(i) for i in range(self.vwApp.scrolledList.count())]
+                    if n1 in allItems or n2 in allItems:
                         try:
-                            idx = edgelist_inOrder.index((self.modApp.varnames[i],self.modApp.varnames[j]))
+                            index = self.edgelist_inOrder.index((self.modApp.varnames[i],self.modApp.varnames[j]))
                         except:
-                            idx = edgelist_inOrder.index((self.modApp.varnames[j],self.modApp.varnames[i]))
-                        edgelist_inOrder.pop(idx)
-                        self.modApp.edgeColor.pop(idx)
+                            index = self.edgelist_inOrder.index((self.modApp.varnames[j],self.modApp.varnames[i]))
+                        self.edgelist_inOrder.pop(index)
+                        self.modApp.edgeColor.pop(index)
 
-
-                    #nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=ed, ax=self.axes)
-
-
-                #if ((self.vwApp.listeDeroulante.findData(n1)==-1) or (self.vwApp.listeDeroulante.findData(n2)==-1)):
-        nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=edgelist_inOrder,edge_color=self.modApp.edgeColor, ax=self.axes)
-                #else:
-                #    print("caca")
-                 #   self.modApp.G.remove_edge(self.modApp.varnames[i], self.modApp.varnames[j])
-                 #   ed= self.modApp.G.edges()
-                 #   nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=ed, ax=self.axes)
+        nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=self.edgelist_inOrder,edge_color=self.modApp.edgeColor, ax=self.axes)
 
 

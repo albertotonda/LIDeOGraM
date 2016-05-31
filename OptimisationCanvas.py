@@ -2,9 +2,11 @@
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import *
 
+# TODO
 class OptimisationCanvas(QDialog):
     def __init__(self, parent=None):
         super(OptimisationCanvas, self).__init__(parent)
+        self.setWindowTitle('µGP Optimisation')
         mainBoxLayout = QVBoxLayout(self)
         layout = QHBoxLayout()
         mainBoxLayout.addLayout(layout)
@@ -39,13 +41,32 @@ class OptimisationCanvas(QDialog):
         params = dialog.params()
         return (result, params)
 
-#class Parameters:
-#    def __init__(self):
-#        self.mode_global = False
-#        self.lastNodeClicked = ''
-#        self.mode_cntrt = False
-#        self.click1 = ''
-#        self.click2 = ''
+class ErrorConstraint(QDialog):
+   def __init__(self, parent=None):
+       super(ErrorConstraint, self).__init__(parent)
+       self.setWindowTitle('Error of selection')
+       mainBox = QVBoxLayout(self)
+       boxlayout = QHBoxLayout()
+       mainBox.addLayout(boxlayout)
+       m1 = QVBoxLayout()
+       m1.addWidget(QLabel("Wrong node. Please start again."))
+       boxlayout.addLayout(m1)
+
+       buttons = QDialogButtonBox(QDialogButtonBox.Ok, QtCore.Qt.Horizontal, self)
+       buttons.accepted.connect(self.accept)
+       buttons.rejected.connect(self.reject)
+
+       mainBox.addWidget(buttons)
+
+   def params(self):
+       return 0
+
+   @staticmethod
+   def get_params():
+       error = ErrorConstraint()
+       results = error.exec_()
+       param = error.params()
+       return (results, param)
 
 
 

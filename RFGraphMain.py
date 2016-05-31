@@ -12,4 +12,3 @@ vwApp = RFGraph_View(modApp)
 cntrApp=RFGraph_Controller(modApp,vwApp)
 qtconnector=QtConnector(vwApp,cntrApp)
 sys.exit(qApp.exec_())
-
