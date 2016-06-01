@@ -2,9 +2,13 @@
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import *
 
+# TODO
 class OptimisationCanvas(QDialog):
-    def __init__(self,parent=None):
-        super(OptimisationCanvas,self).__init__(parent)
+    def __init__(self, parent=None):
+        super(OptimisationCanvas, self).__init__(parent)
+        self.setWindowTitle('µGP Optimisation')
+        self.icon = QtGui.QIcon("C:/Users/pault/Documents/RFGraph/icons/icon.png")
+        self.setWindowIcon(self.icon)
         mainBoxLayout = QVBoxLayout(self)
         layout = QHBoxLayout()
         mainBoxLayout.addLayout(layout)
@@ -20,7 +24,6 @@ class OptimisationCanvas(QDialog):
         s2.addWidget(QLabel("Concurrency:"))
         s2.addWidget(concurr)
 
-
         layout.addLayout(s1)
         layout.addLayout(s2)
 
@@ -33,7 +36,6 @@ class OptimisationCanvas(QDialog):
     def params(self):
         return 0
 
-
     @staticmethod
     def get_params(Parent=None):
         dialog = OptimisationCanvas()
@@ -41,13 +43,34 @@ class OptimisationCanvas(QDialog):
         params = dialog.params()
         return (result, params)
 
-#class Parameters:
-#    def __init__(self):
-#        self.mode_global = False
-#        self.lastNodeClicked = ''
-#        self.mode_cntrt = False
-#        self.click1 = ''
-#        self.click2 = ''
+class ErrorConstraint(QDialog):
+   def __init__(self, parent=None):
+       super(ErrorConstraint, self).__init__(parent)
+       self.setWindowTitle('Selection error')
+       self.icon = QtGui.QIcon("C:/Users/pault/Documents/RFGraph/icons/icon.png")
+       self.setWindowIcon(self.icon)
+       mainBox = QVBoxLayout(self)
+       boxlayout = QHBoxLayout()
+       mainBox.addLayout(boxlayout)
+       m1 = QVBoxLayout()
+       m1.addWidget(QLabel("Wrong node. Please start again."))
+       boxlayout.addLayout(m1)
+
+       buttons = QDialogButtonBox(QDialogButtonBox.Ok, QtCore.Qt.Horizontal, self)
+       buttons.accepted.connect(self.accept)
+       buttons.rejected.connect(self.reject)
+
+       mainBox.addWidget(buttons)
+
+   def params(self):
+       return 0
+
+   @staticmethod
+   def get_params():
+       error = ErrorConstraint()
+       results = error.exec_()
+       param = error.params()
+       return (results, param)
 
 
 

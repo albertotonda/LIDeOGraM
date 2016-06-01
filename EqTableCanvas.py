@@ -1,6 +1,7 @@
 #-*- coding: utf-8
 from PyQt4.QtGui import *
 
+# TODO Crée la table contenant les équations du noeud sélectionné
 class EqTableCanvas(QTableWidget):
     def __init__(self, modApp, *args):
         self.modApp = modApp
@@ -15,6 +16,6 @@ class EqTableCanvas(QTableWidget):
             for m in range(len(self.modApp.data[n])):
                 newitem = QTableWidgetItem(self.modApp.data[n][m])
                 self.setItem(n,m,newitem)
-        self.setHorizontalHeaderLabels(['Complexité','Fitness','Equation'])
+        self.setHorizontalHeaderLabels(['Complexity','Fitness','Equation'])
         self.resizeColumnsToContents()
         self.resizeRowsToContents()
