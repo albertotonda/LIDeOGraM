@@ -44,4 +44,5 @@ class Network:
                         self.modApp.edgeColor.append((dist_lIdxColPareto_valMin + (1 - dist_lIdxColPareto_valMin) * (1 - r)
                                                , (1 - dist_lIdxColPareto_valMin) + dist_lIdxColPareto_valMin * (1 - r)
                                                , 1 - r))
+
         nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=edgelist_inOrder, edge_color=self.modApp.edgeColor, ax=self.axes)
