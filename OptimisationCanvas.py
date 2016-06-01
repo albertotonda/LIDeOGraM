@@ -7,6 +7,8 @@ class OptimisationCanvas(QDialog):
     def __init__(self, parent=None):
         super(OptimisationCanvas, self).__init__(parent)
         self.setWindowTitle('µGP Optimisation')
+        self.icon = QtGui.QIcon("C:/Users/pault/Documents/RFGraph/icons/icon.png")
+        self.setWindowIcon(self.icon)
         mainBoxLayout = QVBoxLayout(self)
         layout = QHBoxLayout()
         mainBoxLayout.addLayout(layout)
@@ -44,7 +46,9 @@ class OptimisationCanvas(QDialog):
 class ErrorConstraint(QDialog):
    def __init__(self, parent=None):
        super(ErrorConstraint, self).__init__(parent)
-       self.setWindowTitle('Error of selection')
+       self.setWindowTitle('Selection error')
+       self.icon = QtGui.QIcon("C:/Users/pault/Documents/RFGraph/icons/icon.png")
+       self.setWindowIcon(self.icon)
        mainBox = QVBoxLayout(self)
        boxlayout = QHBoxLayout()
        mainBox.addLayout(boxlayout)

@@ -13,7 +13,9 @@ class RFGraph_View(QtGui.QMainWindow):
 
         QtGui.QMainWindow.__init__(self)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self.setWindowTitle("RFGraph")
+        self.setWindowTitle("Le Logiciel Sans Nom")
+        self.icon = QtGui.QIcon("C:/Users/pault/Documents/RFGraph/icons/icon.png")
+        self.setWindowIcon(self.icon)
 
         self.main_widget = QtGui.QWidget(self)
 
@@ -74,10 +76,9 @@ class RFGraph_View(QtGui.QMainWindow):
 
         self.main_widget.setFocus()
         self.setCentralWidget(self.main_widget)
-        self.setWindowTitle('RFGraph')
-        #self.setWindowIcon(QIcon("RFGraph/LOGO_1.png"))
         self.show()
         self.updateView()
+
 
     def updateView(self):
         self.networkGUI.updateView()
