@@ -25,6 +25,7 @@ class RFGraph_Model:
         self.dataset_cell_popF = genfromtxt('data/dataset_cell_pop.csv', 'float', delimiter=',')
         self.dataset_mol_cellF = genfromtxt('data/dataset_mol_cell.csv', 'float', delimiter=',')
 
+        self.NodeConstraints = []
         self.showGlobalModel = False
         self.lastNodeClicked = ""
         self.last_clicked = None
