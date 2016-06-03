@@ -6,6 +6,10 @@ expr = parse_expr(eq)
 print(srepr(expr))
 tree = srepr(expr)
 
+import re
+
+
+
 
 
 class ctree:

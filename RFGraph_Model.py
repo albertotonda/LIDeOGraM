@@ -4,6 +4,7 @@ import numpy as np
 from numpy import genfromtxt
 import copy
 import networkx as nx
+#nx.use('qt4agg')
 
 class RFGraph_Model:
 

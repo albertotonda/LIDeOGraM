@@ -1,7 +1,10 @@
 #-*- coding: utf-8
 from sys import path
-path.append("fitness/")
+import matplotlib
+matplotlib.use('qt4agg')
+
 import matplotlib.pyplot as plt
+
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 
 from PyQt4 import QtGui
