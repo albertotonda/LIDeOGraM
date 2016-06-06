@@ -111,17 +111,6 @@ class RFGraph_Controller:
                 data.append(data_tmp[i])
             self.modApp.data = data
             self.vwApp.eqTableGUI.updateView()
-        else:
-            pass
-            # if (self.click1 == ''):
-            #    self.click1 = candidates[0]
-            # elif (self.click2 == ''):
-            #    self.click2 = candidates[0]
-            # else:
-            #    print('click1:', self.click1, ' click2:', self.click2)
-            #    self.click1 = ''
-            #    self.click2 = ''
-            #    mode_cntrt = False
 
     # TODO Enlève la contrainte sélectionnée
     def RemoveConstraint (self):
