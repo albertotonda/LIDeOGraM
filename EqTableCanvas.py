@@ -101,7 +101,8 @@ class EqTableCanvas(QTableWidget):
             expr = parse_expr((self.modApp.data[n][2]).replace('^','**'))
             tex = latex(expr)
             return self.tex_to_QPixmap("$" + tex + "$", 12)
-        eqLat = map(getLatex,len(self.modApp.data))
+        eqLat = list(map(lambda x : self.tex_to_QPixmap("$"+latex(parse_expr((self.modApp.data[x][2]).replace('^','**')))+"$"),range(len(self.modApp.data))))
+        return eqLat
 
 
 
@@ -109,15 +110,12 @@ class EqTableCanvas(QTableWidget):
         self.clear()
         self.setRowCount(len(self.modApp.data))
         self.setColumnCount(3)
+        eqList = self.generateLatex()
         for n  in range(len(self.modApp.data)):
             for m in range(len(self.modApp.data[n])):
                 if m == 2:
-                    print(self.modApp.data[n][m])
-                    expr = parse_expr((self.modApp.data[n][m]).replace('^','**'))
-                    tex = latex(expr)
-                    pixmap = self.tex_to_QPixmap("$"+tex+"$",12)
                     t = QTableWidgetItem()
-                    t.setData(Qt.DecorationRole,pixmap)
+                    t.setData(Qt.DecorationRole,eqList[n])
                     newitem = QTableWidgetItem(t)
                     self.setItem(n,m,newitem)
                 else:
