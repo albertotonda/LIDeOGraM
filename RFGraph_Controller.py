@@ -1,5 +1,6 @@
 #-*- coding: utf-8
-from OptimisationCanvas import OptimisationCanvas, ErrorConstraint
+from OptimisationCanvas import OptimisationCanvas
+from ErrorConstraint import ErrorConstraint
 from Network import Network
 import numpy as np
 
@@ -7,7 +8,6 @@ class RFGraph_Controller:
     def __init__(self,modApp,vwApp):
         self.modApp=modApp
         self.vwApp=vwApp
-        self.NodeConstraints = []
 
     # TODO
     def clickFitness(self):
@@ -38,12 +38,11 @@ class RFGraph_Controller:
         self.modApp.mode_cntrt = True
         self.vwApp.selectContrTxt.setText('Select node 1')
 
-    # TODO
     def clickChangeEq(self):
         pass
 
-    # TODO  Affiche le nom du noeud selectionné + change sa couleur
-    def onClick(self, event, radius=0.0005):
+    def onClick(self, event, radius=0.005):
+        # TODO  affichage du nom du noeud selectionné + changer couleur
         (x, y) = (event.xdata, event.ydata)
         if not x or not y :
             return
@@ -57,6 +56,11 @@ class RFGraph_Controller:
         nodeclicked = min(dst, key=(lambda x: x[0]))[1]
 
         if self.modApp.lastNodeClicked != "":
+            pass
+            # Change color back
+        #self.modApp.lastNodeClicked = nodeclicked
+
+        if self.modApp.lastNodeClicked != "":
             self.higlight(nodeclicked, self.modApp.lastNodeClicked)
         else:
             self.higlight(nodeclicked,None)
@@ -64,8 +68,9 @@ class RFGraph_Controller:
             #Change color back
         self.modApp.lastNodeClicked = nodeclicked
 
+
         if (self.modApp.mode_cntrt == True):
-            self.NodeConstraints.append(nodeclicked)
+            self.modApp.NodeConstraints.append(nodeclicked)
             self.atLeastOnce=[]
             self.notEvenOnce =[]
             for i in self.vwApp.networkGUI.network.edgelist_inOrder:
@@ -74,25 +79,25 @@ class RFGraph_Controller:
             for i in self.vwApp.networkGUI.network.edgelist_inOrder:
                 if i[1] not in self.notEvenOnce:
                     self.notEvenOnce.append(i[1])
-            if self.NodeConstraints[0] in self.atLeastOnce:
+            if self.modApp.NodeConstraints[0] in self.atLeastOnce:
                 self.vwApp.selectContrTxt.setText('Select node 2')
-                if (len(self.NodeConstraints) == 2):
-                    if self.NodeConstraints[1] in self.notEvenOnce:
-                        self.constraint = " - ".join(self.NodeConstraints)
+                if (len(self.modApp.NodeConstraints) == 2):
+                    if self.modApp.NodeConstraints[1] in self.notEvenOnce:
+                        self.constraint = " - ".join(self.modApp.NodeConstraints)
                         self.vwApp.scrolledList.addItem(self.constraint)
                         self.vwApp.selectContrTxt.setText('')
                         self.modApp.mode_cntrt = False
-                        self.NodeConstraints = []
+                        self.modApp.NodeConstraints = []
                         self.vwApp.networkGUI.updateView()
                     else:
                         self.vwApp.selectContrTxt.setText('')
                         self.modApp.mode_cntrt = False
-                        self.NodeConstraints = []
+                        self.modApp.NodeConstraints = []
                         self.modApp.error_params = ErrorConstraint.get_params()
             else:
                 self.vwApp.selectContrTxt.setText('')
                 self.modApp.mode_cntrt = False
-                self.NodeConstraints = []
+                self.modApp.NodeConstraints = []
                 self.modApp.error_params = ErrorConstraint.get_params()
 
         if (not self.modApp.mode_cntrt):

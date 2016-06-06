@@ -13,8 +13,8 @@ class RFGraph_View(QtGui.QMainWindow):
 
         QtGui.QMainWindow.__init__(self)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self.setWindowTitle("Le Logiciel Sans Nom")
-        self.icon = QtGui.QIcon("C:/Users/pault/Documents/RFGraph/icons/dessin_4.png")
+        self.setWindowTitle("LSN")
+        self.icon = QtGui.QIcon("iconeLSN.png")
         self.setWindowIcon(self.icon)
 
         self.main_widget = QtGui.QWidget(self)

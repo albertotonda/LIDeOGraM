@@ -2,7 +2,6 @@
 import networkx as nx
 import numpy as np
 
-# TODO Crée les "edges" entre les noeuds et leur donne leur couleur
 class Network:
     def __init__(self,modApp, vwApp, ax):
         self.modApp=modApp

@@ -7,7 +7,7 @@ class OptimisationCanvas(QDialog):
     def __init__(self, parent=None):
         super(OptimisationCanvas, self).__init__(parent)
         self.setWindowTitle('µGP Optimisation')
-        self.icon = QtGui.QIcon("C:/Users/pault/Documents/RFGraph/icons/icon.png")
+        self.icon = QtGui.QIcon("iconeLSN")
         self.setWindowIcon(self.icon)
         mainBoxLayout = QVBoxLayout(self)
         layout = QHBoxLayout()
@@ -43,34 +43,7 @@ class OptimisationCanvas(QDialog):
         params = dialog.params()
         return (result, params)
 
-class ErrorConstraint(QDialog):
-   def __init__(self, parent=None):
-       super(ErrorConstraint, self).__init__(parent)
-       self.setWindowTitle('Selection error')
-       self.icon = QtGui.QIcon("C:/Users/pault/Documents/RFGraph/icons/icon.png")
-       self.setWindowIcon(self.icon)
-       mainBox = QVBoxLayout(self)
-       boxlayout = QHBoxLayout()
-       mainBox.addLayout(boxlayout)
-       m1 = QVBoxLayout()
-       m1.addWidget(QLabel("Wrong node. Please start again."))
-       boxlayout.addLayout(m1)
 
-       buttons = QDialogButtonBox(QDialogButtonBox.Ok, QtCore.Qt.Horizontal, self)
-       buttons.accepted.connect(self.accept)
-       buttons.rejected.connect(self.reject)
-
-       mainBox.addWidget(buttons)
-
-   def params(self):
-       return 0
-
-   @staticmethod
-   def get_params():
-       error = ErrorConstraint()
-       results = error.exec_()
-       param = error.params()
-       return (results, param)
 
 
 
