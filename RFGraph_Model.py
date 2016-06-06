@@ -6,6 +6,7 @@ import copy
 import networkx as nx
 #nx.use('qt4agg')
 
+# TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model:
 
     def __init__(self):
@@ -25,6 +26,7 @@ class RFGraph_Model:
         self.dataset_cell_popF = genfromtxt('data/dataset_cell_pop.csv', 'float', delimiter=',')
         self.dataset_mol_cellF = genfromtxt('data/dataset_mol_cell.csv', 'float', delimiter=',')
 
+        self.NodeConstraints = []
         self.showGlobalModel = False
         self.lastNodeClicked = ""
         self.last_clicked = None
@@ -36,6 +38,7 @@ class RFGraph_Model:
         self.adjThresholdVal=0.5
         self.comprFitCmplxVal=0.5
         self.opt_params= []
+        self.error_paramas= []
         self.clicked_line=-1
         self.old_color=[]
         self.nodeColor = []
@@ -58,8 +61,6 @@ class RFGraph_Model:
         self.labels = {}
         self.edges = None
         self.initGraph()
-
-
 
     def pos_graph(self):
         pos = {}

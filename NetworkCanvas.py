@@ -6,25 +6,25 @@ matplotlib.use('qt4agg')
 import matplotlib.pyplot as plt
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-
 from PyQt4 import QtGui
-
 from Network import Network
 
-
+# TODO Change la couleur des "edges" lorsque l'on déplace le slider
 class NetworkCanvas(FigureCanvas):
-    def __init__(self, modApp):
+    def __init__(self, modApp, vwApp):
         self.modApp=modApp
+        self.vwApp=vwApp
         self.fig, self.axes =  plt.subplots()
         # We want the axes cleared every time plot() is called
         self.axes.hold(False)
         self.fig.patch.set_visible(False)
         self.fig.tight_layout()
-        self.axes.axis('off')
-        self.network = Network(self.modApp, self.axes)
         FigureCanvas.__init__(self, self.fig)
         FigureCanvas.setSizePolicy(self, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         FigureCanvas.updateGeometry(self)
+        self.axes.axis('off')
+        self.network = Network(modApp,vwApp,self.axes)
+
 
     def updateView(self):
         self.network.updateView()

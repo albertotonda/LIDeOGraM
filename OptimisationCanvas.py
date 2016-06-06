@@ -2,9 +2,13 @@
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import *
 
+# TODO
 class OptimisationCanvas(QDialog):
-    def __init__(self,parent=None):
-        super(OptimisationCanvas,self).__init__(parent)
+    def __init__(self, parent=None):
+        super(OptimisationCanvas, self).__init__(parent)
+        self.setWindowTitle('µGP Optimisation')
+        self.icon = QtGui.QIcon("iconeLSN")
+        self.setWindowIcon(self.icon)
         mainBoxLayout = QVBoxLayout(self)
         layout = QHBoxLayout()
         mainBoxLayout.addLayout(layout)
@@ -20,7 +24,6 @@ class OptimisationCanvas(QDialog):
         s2.addWidget(QLabel("Concurrency:"))
         s2.addWidget(concurr)
 
-
         layout.addLayout(s1)
         layout.addLayout(s2)
 
@@ -33,7 +36,6 @@ class OptimisationCanvas(QDialog):
     def params(self):
         return 0
 
-
     @staticmethod
     def get_params(Parent=None):
         dialog = OptimisationCanvas()
@@ -41,13 +43,7 @@ class OptimisationCanvas(QDialog):
         params = dialog.params()
         return (result, params)
 
-#class Parameters:
-#    def __init__(self):
-#        self.mode_global = False
-#        self.lastNodeClicked = ''
-#        self.mode_cntrt = False
-#        self.click1 = ''
-#        self.click2 = ''
+
 
 
 

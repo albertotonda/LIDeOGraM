@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from PyQt4 import QtGui
 
 
-
+# TODO Crée la courbe correpondant à l'équation sélectionnée
 class FitCanvas(FigureCanvas):
     def __init__(self,modApp):
         self.modApp=modApp
