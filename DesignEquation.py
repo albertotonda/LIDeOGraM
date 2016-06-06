@@ -2,11 +2,15 @@ import re
 
 class DesignEquation:
     def __init__(self):
-        self.eq = "0.890420685427687+(12.075341069316*UFAdivSFA+73.2315556415024*UFAdivSFA**3-0.943665542824327-51.5061941345233*UFAdivSFA**2)/(CFAdivUFA-3.83166666666667)"
-        self.eqNumber = re.findall("([0-9]\.[0-9]*)", self.eq)
+        self.eq = "4.06051503725042e-9+1.04280023474994e-7*UFAdivSFA+5.8569531230778e-8*UFAdivSFA^2-2.3477021990823e-9*UFA"
+        self.eqNumber = re.findall("([0-9]+\.[0-9]+[eE]?[+-]?[\d]*)", self.eq)
 
         for i in self.eqNumber:
             newEq= self.eq.replace(i,"{0:.2e}".format(round(float(i), 2)))
 
         output = newEq
         print(output)
+
+
+if __name__ == "__main__":
+    c = DesignEquation()
