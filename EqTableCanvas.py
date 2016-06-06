@@ -101,7 +101,7 @@ class EqTableCanvas(QTableWidget):
             expr = parse_expr((self.modApp.data[n][2]).replace('^','**'))
             tex = latex(expr)
             return self.tex_to_QPixmap("$" + tex + "$", 12)
-        eqLat = list(map(lambda x : self.tex_to_QPixmap("$"+latex(parse_expr((self.modApp.data[x][2]).replace('^','**')))+"$"),range(len(self.modApp.data))))
+        eqLat = list(map(lambda x : self.tex_to_QPixmap("$"+latex(parse_expr((self.modApp.data[x][2]).replace('^','**')))+"$",20),range(len(self.modApp.data))))
         return eqLat
 
 
