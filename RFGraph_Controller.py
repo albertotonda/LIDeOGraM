@@ -1,4 +1,5 @@
 #-*- coding: utf-8
+from Help import Help
 from OptimisationCanvas import OptimisationCanvas
 from ErrorConstraint import ErrorConstraint
 from Network import Network
@@ -8,6 +9,9 @@ class RFGraph_Controller:
     def __init__(self,modApp,vwApp):
         self.modApp=modApp
         self.vwApp=vwApp
+
+    def clickHelp(self):
+        self.modApp.help_params = Help.get_params()
 
     # TODO
     def clickFitness(self):
@@ -34,7 +38,7 @@ class RFGraph_Controller:
         self.modApp.showGlobalModel = True
 
     # TODO Ajoute une contrainte aux noeuds choisis
-    def clickAjContrainte(self, event, radius=0.0005):
+    def clickAddConstraint(self, event, radius=0.0005):
         self.modApp.mode_cntrt = True
         self.vwApp.selectContrTxt.setText('Select node 1')
 
@@ -113,7 +117,7 @@ class RFGraph_Controller:
             self.vwApp.eqTableGUI.updateView()
 
     # TODO Enlève la contrainte sélectionnée
-    def RemoveConstraint (self):
+    def clickRemoveConstraint (self):
         self.vwApp.scrolledList.removeItem(self.vwApp.scrolledList.currentIndex())
         self.vwApp.networkGUI.updateView()
 

@@ -39,6 +39,7 @@ class RFGraph_Model:
         self.comprFitCmplxVal=0.5
         self.opt_params= []
         self.error_paramas= []
+        self.help_params= []
         self.clicked_line=-1
         self.old_color=[]
         self.nodeColor = []
