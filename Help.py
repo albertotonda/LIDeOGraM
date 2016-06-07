@@ -12,11 +12,12 @@ class Help(QDialog):
         self.setWindowTitle('Help')
         self.icon = QtGui.QIcon("C:/Users/pault/Documents/RFGraph/icons/etoile.png")
         self.setWindowIcon(self.icon)
-        self.scrollArea = QScrollArea()
-        self.scrollArea.setWidgetResizable(True)
-        label = QLabel(open("C:/Users/pault/Documents/RFGraph/Help/help.txt").read())
+        self.scrollArea = QScrollArea(self)
+        label = QLabel(open("help/help.txt").read())
         self.scrollArea.setWidget(label)
+        self.scrollArea.setWidgetResizable(True)
         self.scrollArea.ensureWidgetVisible(label, 150, 150)
+        #self.setCentralWidget(self.scrollArea)
 
     def params(self):
         return 0
