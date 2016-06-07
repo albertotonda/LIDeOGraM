@@ -118,8 +118,11 @@ class RFGraph_Controller:
 
     # TODO Enlève la contrainte sélectionnée
     def clickRemoveConstraint (self):
-        self.vwApp.scrolledList.removeItem(self.vwApp.scrolledList.currentIndex())
-        self.vwApp.networkGUI.updateView()
+        if self.vwApp.scrolledList.currentText() == "Select constraint to remove":
+            return
+        else:
+            self.vwApp.scrolledList.removeItem(self.vwApp.scrolledList.currentIndex())
+            self.vwApp.networkGUI.updateView()
 
     # TODO Change la couleur et la densité des "edges" en fonction du déplacement des sliders
     def SliderMoved(self, value):
