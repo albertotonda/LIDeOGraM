@@ -56,8 +56,8 @@ class RFGraph_Model:
         # Charge la base de données d'équations à afficher après chargement
         # TODO: Base de données d'équations à changer
         self.data = []
-        for i in range(len(self.equacolPOs)):
-            self.data.append(self.equacolPOs[i, np.ix_([0, 1, 4])][0])
+       # for i in range(len(self.equacolPOs)):
+        #    self.data.append(self.equacolPOs[i, np.ix_([0, 1, 4])][0])
 
         self.labels = {}
         self.edges = None
@@ -125,6 +125,7 @@ class RFGraph_Model:
         pos['dtpH07tot'] = np.array([random.random() * 0.15 + 0.3, 1.0 / 15.0])
         pos['dtpH07stot'] = np.array([random.random() * 0.15 + 0.55, 1.0 / 15.0])
         pos['dtpH07spe2tot'] = np.array([random.random() * 0.15 + 0.8, 1.0 / 15.0])
+
         return pos
 
     def initGraph(self):

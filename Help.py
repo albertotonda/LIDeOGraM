@@ -7,24 +7,26 @@ from PyQt4.QtGui import *
 class Help(QDialog):
     def __init__(self, parent=None):
         super(Help, self).__init__(parent)
-        self.setMaximumHeight(500)
-        self.setMaximumWidth(500)
+        self.setFixedHeight(600)
+        self.setFixedWidth(800)
         self.setWindowTitle('Help')
-        self.icon = QtGui.QIcon("C:/Users/pault/Documents/RFGraph/icons/etoile.png")
+        self.icon = QtGui.QIcon("C:/Users/pault/Documents/RFGraph/icons/dessin_6-2.png")
         self.setWindowIcon(self.icon)
-        self.scrollArea = QScrollArea(self)
-        label = QLabel(open("help/help.txt").read())
-        self.scrollArea.setWidget(label)
-        self.scrollArea.setWidgetResizable(True)
-        self.scrollArea.ensureWidgetVisible(label, 150, 150)
-        #self.setCentralWidget(self.scrollArea)
+        scrollArea = QScrollArea(self)
+        label = QLabel(open("C:/Users/pault/Documents/RFGraph/Help/help.txt").read())
+        font = QFont('Comic Sans MS')
+        font.setPointSize(20)
+        label.setFont(font)
+        scrollArea.setWidget(label)
+        scrollArea.resize(800, 600)
+        scrollArea.setAlignment(QtCore.Qt.AlignHCenter)
 
     def params(self):
         return 0
 
     @staticmethod
     def get_params():
-        tutorial = Help()
-        tuto = tutorial.exec_()
-        parameters = tutorial.params()
-        return (tuto, parameters)
+        help = Help()
+        tutorial = help.exec_()
+        parameters = help.params()
+        return (tutorial, parameters)

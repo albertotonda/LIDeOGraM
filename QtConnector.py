@@ -8,8 +8,8 @@ class QtConnector:
         self.vwApp.comprFitCmplx_slider.valueChanged.connect(self.cntrApp.SliderMoved)
         self.vwApp.buttonModGlobal.clicked.connect(self.cntrApp.clickModGlobal)
         self.vwApp.buttonOptUgp3.clicked.connect(self.cntrApp.clickOptmuGP)
-        self.vwApp.buttonAddConstraint.clicked.connect(self.cntrApp.clickAddConstraint)
-        self.vwApp.buttonRemoveConstraint.clicked.connect(self.cntrApp.clickRemoveConstraint)
+        self.vwApp.buttonRemoveLink.clicked.connect(self.cntrApp.clickRemoveLink)
+        self.vwApp.buttonReinstateLink.clicked.connect(self.cntrApp.clickReinstateLink)
         self.vwApp.buttonHelp.clicked.connect(self.cntrApp.clickHelp)
         self.vwApp.networkGUI.fig.canvas.mpl_connect('button_press_event', self.cntrApp.onClick)
         self.vwApp.closeEvent = self.cntrApp.closeEvent

@@ -37,8 +37,8 @@ class RFGraph_Controller:
     def clickModGlobal(self):
         self.modApp.showGlobalModel = True
 
-    # TODO Ajoute une contrainte aux noeuds choisis
-    def clickAddConstraint(self, event, radius=0.0005):
+    # TODO Enlève le lien entre les noeuds choisis
+    def clickRemoveLink(self, event, radius=0.0005):
         self.modApp.mode_cntrt = True
         self.vwApp.selectContrTxt.setText('Select node 1')
 
@@ -116,9 +116,9 @@ class RFGraph_Controller:
             self.modApp.data = data
             self.vwApp.eqTableGUI.updateView()
 
-    # TODO Enlève la contrainte sélectionnée
-    def clickRemoveConstraint (self):
-        if self.vwApp.scrolledList.currentText() == "Select constraint to remove":
+    # TODO Réintègre le lien sélectionné
+    def clickReinstateLink (self):
+        if self.vwApp.scrolledList.currentText() == "Select link to reinstate":
             return
         else:
             self.vwApp.scrolledList.removeItem(self.vwApp.scrolledList.currentIndex())

@@ -28,6 +28,6 @@ class ErrorConstraint(QDialog):
    @staticmethod
    def get_params():
        error = ErrorConstraint()
-       results = error.exec_()
+       message = error.exec_()
        param = error.params()
-       return (results, param)
+       return (message, param)

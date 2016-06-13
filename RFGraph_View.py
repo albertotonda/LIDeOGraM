@@ -14,7 +14,7 @@ class RFGraph_View(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.setWindowTitle("LSN")
-        self.icon = QtGui.QIcon("C:/Users/pault/Documents/RFGraph/icons/dessin_4-2.png")
+        self.icon = QtGui.QIcon("C:/Users/pault/Documents/RFGraph/icons/dessin_6-2.png")
         self.setWindowIcon(self.icon)
 
         self.main_widget = QtGui.QWidget(self)
@@ -57,8 +57,8 @@ class RFGraph_View(QtGui.QMainWindow):
         self.buttonModLocal = QtGui.QPushButton('Locals Models', self)
         self.buttonModGlobal = QtGui.QPushButton('Global Model', self)
         self.buttonChangerEq = QtGui.QPushButton('Change equation', self)
-        self.buttonAddConstraint = QtGui.QPushButton('Add constraints', self)
-        self.buttonRemoveConstraint = QtGui.QPushButton('Remove', self)
+        self.buttonRemoveLink = QtGui.QPushButton('Remove Link', self)
+        self.buttonReinstateLink = QtGui.QPushButton('Reinstate', self)
         self.buttonHelp = QtGui.QPushButton('Help', self)
 
         self.gridLayout.addWidget(self.buttonCompromis, 10, 0, 1, 15)
@@ -68,13 +68,14 @@ class RFGraph_View(QtGui.QMainWindow):
         self.gridLayout.addWidget(self.buttonModLocal, 11, 0, 1, 30)
         self.gridLayout.addWidget(self.buttonModGlobal, 11, 30, 1, 30)
         self.gridLayout.addWidget(self.buttonChangerEq, 12, 30, 1, 30)
-        self.gridLayout.addWidget(self.buttonAddConstraint, 12, 0, 1, 30)
-        self.gridLayout.addWidget(self.buttonRemoveConstraint, 0, 12, 1, 8)
+        self.gridLayout.addWidget(self.buttonRemoveLink, 12, 0, 1, 30)
+        self.gridLayout.addWidget(self.buttonReinstateLink, 0, 12, 1, 8)
         self.gridLayout.addWidget(self.buttonHelp, 0, 120, 1, 12)
 
         self.scrolledList = QtGui.QComboBox(self)
         self.gridLayout.addWidget(self.scrolledList, 0, 0, 1, 12 )
-        self.scrolledList.addItem("Select constraint to remove")
+        self.scrolledList.addItem("Select link to reinstate")
+
 
         self.main_widget.setFocus()
         self.setCentralWidget(self.main_widget)

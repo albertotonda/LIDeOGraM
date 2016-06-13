@@ -1,8 +1,9 @@
 #-*- coding: utf-8
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-#import fitness
+from fitness import fitness
 from sympy.parsing.sympy_parser import parse_expr
 import matplotlib.pyplot as plt
+import numpy as np
 from PyQt4 import QtGui
 
 
@@ -93,18 +94,50 @@ class FitCanvas(FigureCanvas):
             ft = fitness.Individual(v, "fitness/ex_indiv.csv","fitness/varnames.csv" )
             x = num_exp
             z = [ft.process(i)[self.modApp.last_clicked] for i in x]
+            z = np.asarray(z)
 
 
         val_node_exp=currdatasetF[1:,currdatasetS[0,:]==self.modApp.last_clicked]
         self.fig.clear()
         currax=self.fig.add_subplot(111)
+        y = np.asarray(y)
         if not self.modApp.showGlobalModel:
-            currax.plot(num_exp, val_node_exp, 'ro')
-            currax.plot(num_exp,y,'k--')
+            mx = np.maximum(val_node_exp.max(), np.float64(y.max()))
+            mn = np.minimum(val_node_exp.min(), np.float64(y.min()))
+            inter = (val_node_exp.max()- val_node_exp.min())*0.1
+            currax.plot(val_node_exp, y, 'ro', label="Local Model")
+            currax.plot([0, mx + inter], [0, mx + inter], 'r-')
+            currax.legend(loc='upper left')
+            plt.xlabel("Mesured")
+            plt.ylabel("Predicted")
+            plt.xlim(mn - inter, mx + inter)
+            plt.ylim(mn - inter, mx + inter)
+
         else:
-            currax.plot(num_exp, val_node_exp, 'ro')
-            currax.plot(num_exp,y,'k--')
-            currax.plot(num_exp,z)
+            if  np.float64(y.max()) >  np.float64(z.max()) and  np.float64(y.min()) <  np.float64(y.min()):
+                mx = np.maximum(val_node_exp.max(), np.float64(y.max()))
+                mn = np.minimum(val_node_exp.min(), np.float64(y.min()))
+                inter = (val_node_exp.max() - val_node_exp.min()) * 0.1
+                currax.plot(val_node_exp, y, 'ro', label="Local Model")
+                currax.plot(val_node_exp, z, 'bo', label="Global Model")
+                currax.plot([0, mx + inter], [0, mx + inter], 'r-')
+                #currax.legend(loc= 'upper left')
+                plt.xlabel("Mesured")
+                plt.ylabel("Predicted")
+                plt.xlim(mn - inter, mx + inter)
+                plt.ylim(mn - inter, mx + inter)
+            else:
+                mx = np.maximum(val_node_exp.max(), np.float64(z.max()))
+                mn = np.minimum(val_node_exp.min(), np.float64(z.min()))
+                inter = (val_node_exp.max() - val_node_exp.min()) * 0.1
+                currax.plot(val_node_exp, y, 'ro', label="Local Model")
+                currax.plot(val_node_exp, z, 'bo', label="Global Model")
+                currax.plot([0, mx + inter], [0, mx + inter], 'r-')
+                #currax.legend(loc='upper left')
+                plt.xlabel("Mesured")
+                plt.ylabel("Predicted")
+                plt.xlim(mn - inter, mx + inter)
+                plt.ylim(mn - inter, mx + inter)
         self.fig.canvas.draw()
 
 
