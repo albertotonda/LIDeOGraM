@@ -2,6 +2,7 @@
 import math
 import multiprocessing
 from multiprocessing.pool import ThreadPool
+import numpy as np
 
 from sympy.parsing.sympy_parser import parse_expr
 
@@ -19,25 +20,27 @@ class Equation:
 
 class Individual:
     """Class to describe the whole system."""
-    def __init__(self, datafile, eqfile, expfile):  # gestion des noeud orphelins
+    def __init__(self, modApp, eqfile):  # gestion des noeud orphelins
         """Create and populate nodes dictionary."""
         self.inodes = {}
         self.equations = []
         self.variables = []
         self.exp = {}
         self.complexity = {}
+        self.modApp = modApp
 
-        for b in open(expfile, 'r'):
-            n, *v = [j.strip() for j in b.split(";")]
-            self.exp[n] = v
 
-        for datum in open(datafile, 'r'):
-            n, *v = [j.strip() for j in datum.split(";")]
-            self.inodes[n] = [float(vf) for vf in v]
+        for i in range(len(self.modApp.dataset[0])):
+            self.exp[self.modApp.dataset[0,i]]=list(self.modApp.dataset[2:, i])
+
+        for varIn in self.modApp.varsIn:
+            self.inodes[varIn] = self.exp[varIn]
 
         for eq in open(eqfile, 'r'):
-            self.variables.append([u.strip() for u in eq.split(",")][2])
-
+            try:
+                self.variables.append([u.strip() for u in eq.split(",")][2])
+            except IndexError:
+                pass
         self.variables.extend(self.inodes.keys())
 
         for eq in open(eqfile, 'r'):

@@ -69,7 +69,7 @@ class RFGraph_Model:
         #self.dataset_mol_cellS = genfromtxt('data/dataset_mol_cell.csv', 'str', delimiter=',')
         #self.dataset_cell_popF = genfromtxt('data/dataset_cell_pop.csv', 'float', delimiter=',')
         #self.dataset_mol_cellF = genfromtxt('data/dataset_mol_cell.csv', 'float', delimiter=',')
-
+        self.varsIn = ['Temperature','Age']
         self.NodeConstraints = []
         self.showGlobalModel = False
         self.lastNodeClicked = ""
