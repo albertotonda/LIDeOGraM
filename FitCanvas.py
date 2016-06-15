@@ -20,33 +20,10 @@ class FitCanvas(FigureCanvas):
         FigureCanvas.setSizePolicy(self, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         FigureCanvas.updateGeometry(self)
 
-        self.computeDictionaries()
 
 
-    #TODO: Rendre plus fonctionelle en ajoutant le parametre NomDuFichier
-    def computeDictionaries(self):
-        #self.cell_pop ans self.mol_cell are dictionary lists.
-        #Each dictionary represents the results for every variables of an experiment.
-        self.cell_pop = []
-        self.mol_cell = []
 
-        cell_pop_HVdatafile = open("data/dataset_cell_pop.csv")
-        cell_pop_line = cell_pop_HVdatafile.readline()  # First line are the variables name
-        variables = []
-        for i in cell_pop_line.split(','):
-            variables.append(i.strip())
-        for line in cell_pop_HVdatafile:
-            cell_pop_line = zip(variables, [float(i.strip()) for i in line.split(',')])
-            self.cell_pop.append(dict(cell_pop_line))
 
-        mol_cellHVdatafile = open("data/dataset_mol_cell.csv")
-        mol_cell_line = mol_cellHVdatafile.readline()  # First line are the variables name
-        variables = []
-        for i in mol_cell_line.split(','):
-            variables.append(i.strip())
-        for line in mol_cellHVdatafile:
-            mol_cell_line = zip(variables, [float(i.strip()) for i in line.split(',')])
-            self.mol_cell.append(dict(mol_cell_line))
 
 
     #TODO : Afficher un plot Initial intéressant
@@ -69,8 +46,7 @@ class FitCanvas(FigureCanvas):
 
         if datafrom=='1':
 
-            currdatasetF = self.modApp.dataset_cell_popF
-            currdatasetS = self.modApp.dataset_cell_popS
+            currdataset = self.modApp.dataset
 
             for n, i in enumerate(self.cell_pop):
                 x.append(n)
@@ -79,15 +55,14 @@ class FitCanvas(FigureCanvas):
 
         else:
 
-            currdatasetF = self.modApp.dataset_mol_cellF
-            currdatasetS = self.modApp.dataset_mol_cellS
+            currdataset = self.modApp.dataset
 
-            for n, i in enumerate(self.mol_cell):
+            for n, i in enumerate(self.modApp.dataDict):
                 x.append(n)
                 y.append(parse_expr(eq.replace("^","**"), i))
             v = "fitness/params_mo_ce.csv"
 
-        num_exp=range(len(currdatasetF[1:,currdatasetS[0,:]==self.modApp.last_clicked]))
+        num_exp=range(len(currdataset[1:,currdataset[0,:]==self.modApp.last_clicked]))
 
         if self.modApp.showGlobalModel:
             ft = fitness.Individual(v, "fitness/ex_indiv.csv","fitness/varnames.csv" )
@@ -95,7 +70,7 @@ class FitCanvas(FigureCanvas):
             z = [ft.process(i)[self.modApp.last_clicked] for i in x]
 
 
-        val_node_exp=currdatasetF[1:,currdatasetS[0,:]==self.modApp.last_clicked]
+        val_node_exp=currdataset[1:,currdataset[0,:]==self.modApp.last_clicked]
         self.fig.clear()
         currax=self.fig.add_subplot(111)
         if not self.modApp.showGlobalModel:

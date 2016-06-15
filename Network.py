@@ -31,11 +31,15 @@ class Network:
                         self.modApp.cmplxMax - self.modApp.cmplxMin)  # Normalisation de la complexité
                     dist_lIdxColPareto = np.sqrt(np.power(np.cos(comprFitCmplx * (np.pi / 2)) * lIdxColPareto[:, 0], 2) +
                                                  np.power(np.sin(comprFitCmplx * (np.pi / 2)) * lIdxColPareto[:, 1], 2))
+
                     dist_lIdxColPareto_idxMin = np.argmin(
                         dist_lIdxColPareto)  # Indice dans dist_lIdxColPareto correspondant au meilleur compromi
                     dist_lIdxColPareto_valMin = dist_lIdxColPareto[dist_lIdxColPareto_idxMin]  # Distance meilleur compromi
                     if self.modApp.nbeq[i] == np.float64(0.0) : continue
-                    r = self.modApp.adj_simple[i, j] / self.modApp.nbeq[i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
+                    try:
+                        r = self.modApp.adj_simple[i, j] / self.modApp.nbeq[i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
+                    except IndexError:
+                        pass
                     if (r > adjThreshold):
                         self.modApp.G.add_edge(self.modApp.varnames[j], self.modApp.varnames[i], adjsimple=self.modApp.adj_simple[i, j], adjfit=
                         self.modApp.adj_fit[i, j], adjcmplx=self.modApp.adj_cmplx[i, j], adjcontr=self.modApp.adj_contr[i, j])
@@ -56,5 +60,4 @@ class Network:
                         self.modApp.edgeColor.pop(index)
 
         nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=self.edgelist_inOrder,edge_color=self.modApp.edgeColor, ax=self.axes)
-
 

@@ -103,9 +103,9 @@ class RFGraph_Controller:
         if (not self.modApp.mode_cntrt):
             print('action:', nodeclicked)
             self.modApp.last_clicked = nodeclicked
-            data_tmp = self.modApp.equacolOs[np.ix_(self.modApp.equacolOs[:, 2] == [nodeclicked], [0, 1, 3])]
-            self.modApp.curr_tabl = self.modApp.equacolOs[
-                np.ix_(self.modApp.equacolOs[:, 2] == [nodeclicked], [0, 1, 3, 4])]
+            data_tmp = self.modApp.equacolO[np.ix_(self.modApp.equacolO[:, 2] == [nodeclicked], [0, 1, 3])]
+            self.modApp.curr_tabl = self.modApp.equacolO[
+                np.ix_(self.modApp.equacolO[:, 2] == [nodeclicked], [0, 1, 3, 4])]
             data = []
             for i in range(len(data_tmp)):
                 data.append(data_tmp[i])
