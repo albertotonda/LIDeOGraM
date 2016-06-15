@@ -3,6 +3,9 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import *
 
 #TODO Crée la fenêtre d'erreur lors de la mauvaise sélection d'un noeud à contraindre
+
+
+
 class ErrorConstraint(QDialog):
    def __init__(self, parent=None):
        super(ErrorConstraint, self).__init__(parent)
@@ -15,6 +18,9 @@ class ErrorConstraint(QDialog):
        m1 = QVBoxLayout()
        m1.addWidget(QLabel("Wrong node. Please start again."))
        boxlayout.addLayout(m1)
+       font = QFont('Liberation Sans Narrow')
+       font.setPointSize(12)
+       self.setFont(font)
 
        buttons = QDialogButtonBox(QDialogButtonBox.Ok, QtCore.Qt.Horizontal, self)
        buttons.accepted.connect(self.accept)

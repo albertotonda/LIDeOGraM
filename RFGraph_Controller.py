@@ -30,11 +30,11 @@ class RFGraph_Controller:
         self.modApp.opt_params = OptimisationCanvas.get_params()
 
     # TODO
-    def clickModLocaux(self):
-        pass
+    def clickHideModGlobal(self):
+        self.modApp.showGlobalModel = False
 
     # TODO Affiche le modèle d'équation global
-    def clickModGlobal(self):
+    def clickShowModGlobal(self):
         self.modApp.showGlobalModel = True
 
     # TODO Enlève le lien entre les noeuds choisis

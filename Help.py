@@ -13,12 +13,13 @@ class Help(QDialog):
         self.icon = QtGui.QIcon("C:/Users/pault/Documents/RFGraph/icons/dessin_6-2.png")
         self.setWindowIcon(self.icon)
         scrollArea = QScrollArea(self)
-        label = QLabel(open("C:/Users/pault/Documents/RFGraph/Help/help.txt").read())
-        font = QFont('Comic Sans MS')
-        font.setPointSize(20)
+        scrollArea.setFixedSize(800, 600)
+        label = QLabel(open("help.txt").read())
+        label.setWordWrap(True)
+        font = QFont('Liberation Sans Narrow')
+        font.setPointSize(13)
         label.setFont(font)
         scrollArea.setWidget(label)
-        scrollArea.resize(800, 600)
         scrollArea.setAlignment(QtCore.Qt.AlignHCenter)
 
     def params(self):
