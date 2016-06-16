@@ -3,9 +3,6 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import *
 
 #TODO Crée la fenêtre d'erreur lors de la mauvaise sélection d'un noeud à contraindre
-
-
-
 class ErrorConstraint(QDialog):
    def __init__(self, parent=None):
        super(ErrorConstraint, self).__init__(parent)
