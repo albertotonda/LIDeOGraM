@@ -36,11 +36,7 @@ class Individual:
         for varIn in self.modApp.varsIn:
             self.inodes[varIn] = self.exp[varIn]
 
-        for eq in open(eqfile, 'r'):
-            try:
-                self.variables.append([u.strip() for u in eq.split(",")][2])
-            except IndexError:
-                pass
+        self.variables = list(self.modApp.varnames)
         self.variables.extend(self.inodes.keys())
 
         for eq in open(eqfile, 'r'):

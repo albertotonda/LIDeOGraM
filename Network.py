@@ -1,6 +1,7 @@
 #-*- coding: utf-8
 import networkx as nx
 import numpy as np
+import copy
 
 class Network:
     def __init__(self,modApp, vwApp, ax):
@@ -12,12 +13,11 @@ class Network:
 
 
     def draw_nodes_labels(self):
-        nx.draw_networkx_nodes(self.modApp.G, self.modApp.pos, nodelist=self.modApp.varnames.tolist(), node_color=self.modApp.nodeColor, with_labels=False, ax=self.axes)
-        nx.draw_networkx_labels(self.modApp.G, self.modApp.lpos, self.modApp.labels, ax=self.axes)
+        nx.draw_networkx(self.modApp.G, self.modApp.pos, nodelist=self.modApp.varnames.tolist(), node_color=self.modApp.nodeColor, with_labels=True, ax=self.axes)
+        #nx.draw_networkx_labels(self.modApp.G, self.modApp.lpos, self.modApp.labels, ax=self.axes)
 
     def updateView(self):
         self.modApp.G.clear()
-        self.draw_nodes_labels()
         self.edgelist_inOrder = []
         self.modApp.edgeColor  =  []
         adjThreshold=self.modApp.adjThresholdVal
@@ -36,11 +36,10 @@ class Network:
                         dist_lIdxColPareto)  # Indice dans dist_lIdxColPareto correspondant au meilleur compromi
                     dist_lIdxColPareto_valMin = dist_lIdxColPareto[dist_lIdxColPareto_idxMin]  # Distance meilleur compromi
                     if self.modApp.nbeq[i] == np.float64(0.0) : continue
-                    try:
-                        r = self.modApp.adj_simple[i, j] / self.modApp.nbeq[i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
-                    except IndexError:
-                        pass
-                    if (r > adjThreshold):
+                    r = self.modApp.adj_simple[i, j] / self.modApp.nbeq[i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
+                    print(r)
+                    #if (r > adjThreshold):
+                    if(r > 0):
                         self.modApp.G.add_edge(self.modApp.varnames[j], self.modApp.varnames[i], adjsimple=self.modApp.adj_simple[i, j], adjfit=
                         self.modApp.adj_fit[i, j], adjcmplx=self.modApp.adj_cmplx[i, j], adjcontr=self.modApp.adj_contr[i, j])
                         self.edgelist_inOrder.append((self.modApp.varnames[j], self.modApp.varnames[i]))
@@ -58,6 +57,11 @@ class Network:
                             index = self.edgelist_inOrder.index((self.modApp.varnames[j],self.modApp.varnames[i]))
                         self.edgelist_inOrder.pop(index)
                         self.modApp.edgeColor.pop(index)
-
+        if(self.modApp.pos==[]):
+            self.modApp.pos=nx.nx_pydot.graphviz_layout(self.modApp.G, prog='dot')
+            self.modApp.lpos = copy.deepcopy(self.modApp.pos)
+            #for p in self.modApp.lpos:  # raise text positions
+            #    self.modApp.lpos[p] = (self.modApp.lpos[p][0],self.modApp.lpos[p][1]+0.04)
+        self.draw_nodes_labels()
         nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=self.edgelist_inOrder,edge_color=self.modApp.edgeColor, ax=self.axes)
 

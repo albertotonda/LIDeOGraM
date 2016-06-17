@@ -65,7 +65,7 @@ class FitCanvas(FigureCanvas):
         num_exp=range(len(currdataset[2:,currdataset[0,:]==self.modApp.last_clicked].astype('float64').flatten()))
 
         if self.modApp.showGlobalModel:
-            ft = fitness.Individual(self.modApp,"fitness/varnames.csv" )
+            ft = fitness.Individual(self.modApp,"fitness/ex_indiv.csv" )
             x = num_exp
             z = [ft.process(i)[self.modApp.last_clicked] for i in x]
 

@@ -2,7 +2,7 @@
 import random
 import numpy as np
 from numpy import genfromtxt
-import copy
+
 import networkx as nx
 from ArrayConverter import ArrayConverter
 import re
@@ -13,7 +13,7 @@ class RFGraph_Model:
     def __init__(self):
 
         equacolPdata = []
-        eureqafile=open('C:/Users/Admin/Dropbox/Thèse/eureqa_sans_calc.txt','r')
+        eureqafile=open('data/eureqa_sans_calc.txt','r')
         for line in eureqafile:
             line = line.replace("\t", ",")
             line=line.replace("\"","")
@@ -43,7 +43,7 @@ class RFGraph_Model:
                     self.adj_cmplx[ind_offspring,ind_parent]*=self.equacolO[l,0] # Moyenne GEOMETRIQUE
                     self.adj_fit[ind_offspring,ind_parent]*=self.equacolO[l,1] # Moyenne GEOMETRIQUE
                     self.equacolPO.append([self.equacolO[l,0],self.equacolO[l,1],self.equacolO[l,2],self.varnames[h],self.equacolO[l,3]])
-                self.nbeq[list(self.varnames).index(self.equacolO[l,2])]+=1 # Comptage du nombre d'équations pour chaque enfant
+            self.nbeq[list(self.varnames).index(self.equacolO[l,2])]+=1 # Comptage du nombre d'équations pour chaque enfant
 
         self.equacolPO=ArrayConverter.convertPO(self.equacolPO)
         self.adj_cmplx=np.power(self.adj_cmplx,1/self.adj_simple)
@@ -54,7 +54,8 @@ class RFGraph_Model:
         self.adj_contrGraph=self.createConstraintsGraph()
         self.adj_contr=self.createConstraints()
 
-        self.pos=self.pos_graph()
+        #self.pos=self.pos_graph()
+        self.pos = []
         #self.adj_simple = genfromtxt('data/adj_simple_withMol.csv', delimiter=',')
         #self.adj_cmplx = genfromtxt('data/adj_cmplx_withMol.csv', delimiter=',')
         #self.adj_fit = genfromtxt('data/adj_fit_withMol.csv', delimiter=',')
@@ -92,9 +93,7 @@ class RFGraph_Model:
         self.cmplxMax = np.amax(self.equacolPO[:, 0])
         self.pareto = []
         #Necessaire de faire une deepcopy ?
-        self.lpos = copy.deepcopy(self.pos)
-        for p in self.lpos:  # raise text positions
-            self.lpos[p][1] += 0.04
+        self.lpos=[]
 
         # Charge la base de données d'équations à afficher après chargement
         # TODO: Base de données d'équations à changer
@@ -192,9 +191,6 @@ class RFGraph_Model:
         for i in range(len(self.adj_simple)):
             self.pareto.append([])
             for j in range(len(self.adj_simple[i])):
-                print(len((self.equacolPO[np.ix_(
-                    np.logical_and(self.equacolPO[:, 2] == self.varnames[i],
-                                   self.equacolPO[:, 3] == self.varnames[j])), 0:2][0]).astype('float64')))
                 self.pareto[i].append((self.equacolPO[np.ix_(
                     np.logical_and(self.equacolPO[:, 2] == self.varnames[i],
                                    self.equacolPO[:, 3] == self.varnames[j])), 0:2][0]).astype('float64'))
