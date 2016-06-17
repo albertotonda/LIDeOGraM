@@ -2,7 +2,7 @@
 import random
 import numpy as np
 from numpy import genfromtxt
-
+import copy
 import networkx as nx
 from ArrayConverter import ArrayConverter
 import re
@@ -54,8 +54,8 @@ class RFGraph_Model:
         self.adj_contrGraph=self.createConstraintsGraph()
         self.adj_contr=self.createConstraints()
 
-        #self.pos=self.pos_graph()
-        self.pos = []
+        self.pos=self.pos_graph()
+        #self.pos = []
         #self.adj_simple = genfromtxt('data/adj_simple_withMol.csv', delimiter=',')
         #self.adj_cmplx = genfromtxt('data/adj_cmplx_withMol.csv', delimiter=',')
         #self.adj_fit = genfromtxt('data/adj_fit_withMol.csv', delimiter=',')
@@ -93,7 +93,10 @@ class RFGraph_Model:
         self.cmplxMax = np.amax(self.equacolPO[:, 0])
         self.pareto = []
         #Necessaire de faire une deepcopy ?
-        self.lpos=[]
+        self.lpos= copy.deepcopy(self.pos)
+        for p in self.lpos:  # raise text positions
+        # self.modApp.lpos[p] = (self.modApp.lpos[p][0],self.modApp.lpos[p][1]+0.04)
+            self.lpos[p][1] +=0.04
 
         # Charge la base de données d'équations à afficher après chargement
         # TODO: Base de données d'équations à changer
