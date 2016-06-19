@@ -26,6 +26,9 @@ class OptimisationCanvas(QDialog):
 
         layout.addLayout(s1)
         layout.addLayout(s2)
+        font = QFont('Liberation Sans Narrow')
+        font.setPointSize(12)
+        self.setFont(font)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, QtCore.Qt.Horizontal, self)
         buttons.accepted.connect(self.accept)

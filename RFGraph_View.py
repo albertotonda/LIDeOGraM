@@ -1,5 +1,6 @@
 #-*- coding: utf-8
 from PyQt4 import QtGui, QtCore
+
 from NetworkCanvas import NetworkCanvas
 from EqTableCanvas import EqTableCanvas
 from FitCanvas import FitCanvas
@@ -14,7 +15,7 @@ class RFGraph_View(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.setWindowTitle("LSN")
-        self.icon = QtGui.QIcon("iconeLSN.png")
+        self.icon = QtGui.QIcon("Icone.png")
         self.setWindowIcon(self.icon)
 
         self.main_widget = QtGui.QWidget(self)
@@ -54,26 +55,31 @@ class RFGraph_View(QtGui.QMainWindow):
         self.buttonFitness = QtGui.QPushButton('Fitness', self)
         self.buttonComplexite = QtGui.QPushButton('Complexity', self)
         self.buttonOptUgp3 = QtGui.QPushButton('µGP Optimisation', self)
-        self.buttonModLocal = QtGui.QPushButton('Locals Models', self)
-        self.buttonModGlobal = QtGui.QPushButton('Global Model', self)
+        self.buttonShowModGlobal = QtGui.QPushButton('Show Global Model', self)
+        self.buttonHideModGlobal = QtGui.QPushButton('Hide Global Model', self)
         self.buttonChangerEq = QtGui.QPushButton('Change equation', self)
-        self.buttonAddConstraint = QtGui.QPushButton('Add constraints', self)
-        self.buttonRemoveConstraint = QtGui.QPushButton('Remove', self)
+        self.buttonRemoveLink = QtGui.QPushButton('Remove Link', self)
+        self.buttonReinstateLink = QtGui.QPushButton('Reinstate', self)
+        self.buttonHelp = QtGui.QPushButton('Help', self)
 
         self.gridLayout.addWidget(self.buttonCompromis, 10, 0, 1, 15)
         self.gridLayout.addWidget(self.buttonFitness, 10, 15, 1, 15)
         self.gridLayout.addWidget(self.buttonComplexite, 10, 30, 1, 15)
         self.gridLayout.addWidget(self.buttonOptUgp3, 10, 45, 1, 15)
-        self.gridLayout.addWidget(self.buttonModLocal, 11, 0, 1, 30)
-        self.gridLayout.addWidget(self.buttonModGlobal, 11, 30, 1, 30)
+        self.gridLayout.addWidget(self.buttonShowModGlobal, 11, 0, 1, 30)
+        self.gridLayout.addWidget(self.buttonHideModGlobal, 11, 30, 1, 30)
         self.gridLayout.addWidget(self.buttonChangerEq, 12, 30, 1, 30)
-        self.gridLayout.addWidget(self.buttonAddConstraint, 12, 0, 1, 30)
-        self.gridLayout.addWidget(self.buttonRemoveConstraint, 0, 12, 1, 12)
+        self.gridLayout.addWidget(self.buttonRemoveLink, 12, 0, 1, 30)
+        self.gridLayout.addWidget(self.buttonReinstateLink, 0, 12, 1, 8)
+        self.gridLayout.addWidget(self.buttonHelp, 0, 120, 1, 12)
 
         self.scrolledList = QtGui.QComboBox(self)
         self.gridLayout.addWidget(self.scrolledList, 0, 0, 1, 12 )
-        self.scrolledList.addItem("Select constraint to remove")
+        self.scrolledList.addItem("Select link to reinstate")
 
+        self.font = QtGui.QFont('Liberation Sans Narrow')
+        self.font.setPointSize(12)
+        self.setFont(self.font)
         self.main_widget.setFocus()
         self.setCentralWidget(self.main_widget)
         self.show()

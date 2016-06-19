@@ -1,0 +1,49 @@
+HERE IS A LITTLE TUTORIAL ABOUT THE UTILISATION OF LSN !
+
+I) General Utilisation:
+I-1) Graphical model
+
+The nodes represent all the multi-scales parameters of the experiment, the more
+we go down, the more the scale of the parameter is small.
+The edges between the nodes represent the links between  them. Those edges are directed,
+their thicker parts are their end and there are only the starting nodes that depend of the ending nodes,
+not the reverse.
+
+I-2) Equations list
+
+To show the equations of a node, click on it in the graphical model, the selected node is red.
+In the list there are 3 columns :
+ * "Complexity", that shows the level of complexity of each equation, the more the level is high the more the equation is complex.
+* "Fitness", that shows the level of adequation between the Equation's solutions and the Experimental values, a low fitness means the equation
+give results close to reality.
+* "Equation", that shows all the equations corresponding tothe select node.
+
+I-3) Mesured VS Predicted plot
+
+To show this graphic, click on an equation in the list.
+The red points correspond to the Local Model's solutions.
+When a red point is close to the red line, the corresponding solution is close to the reality.
+When a lot of red points are fare from the red line, it means the Local Model make a bad prediction.
+
+II) Additional functions:
+II-1) Global Model:
+
+- Click on the button " Show Global Model" to turn on the option.
+- Click on an equation in the list.
+
+The blue points correspond to the Global Model's solutions.
+
+- Click on the button " Hide Global Model" to turn off the option.
+- Click on an equation to refresh the "Mesured VS Predicted Plot"'s graphic.
+
+II-2) Remove Link:
+A) Remove the link
+
+- Click on the button "Remove Link" to turn on the option.
+- Select the first node to constrain, like indicate by the text "Selct node 1".
+- Select the second node to constrain, like indicate by the text "Select node 2".
+
+B) Reinstate the link
+
+- Select the removed link in the scrolled list "Select link to reinstate".
+- Click on the button "Reinstate" to reinstate the link.

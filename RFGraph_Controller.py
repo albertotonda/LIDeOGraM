@@ -1,4 +1,5 @@
 #-*- coding: utf-8
+from Help import Help
 from OptimisationCanvas import OptimisationCanvas
 from ErrorConstraint import ErrorConstraint
 from Network import Network
@@ -8,6 +9,9 @@ class RFGraph_Controller:
     def __init__(self,modApp,vwApp):
         self.modApp=modApp
         self.vwApp=vwApp
+
+    def clickHelp(self):
+        self.modApp.help_params = Help.get_params()
 
     # TODO
     def clickFitness(self):
@@ -26,15 +30,15 @@ class RFGraph_Controller:
         self.modApp.opt_params = OptimisationCanvas.get_params()
 
     # TODO
-    def clickModLocaux(self):
-        pass
+    def clickHideModGlobal(self):
+        self.modApp.showGlobalModel = False
 
     # TODO Affiche le modèle d'équation global
-    def clickModGlobal(self):
+    def clickShowModGlobal(self):
         self.modApp.showGlobalModel = True
 
-    # TODO Ajoute une contrainte aux noeuds choisis
-    def clickAjContrainte(self, event, radius=0.0005):
+    # TODO Enlève le lien entre les noeuds choisis
+    def clickRemoveLink(self, event, radius=0.0005):
         self.modApp.mode_cntrt = True
         self.vwApp.selectContrTxt.setText('Select node 1')
 
@@ -111,22 +115,14 @@ class RFGraph_Controller:
                 data.append(data_tmp[i])
             self.modApp.data = data
             self.vwApp.eqTableGUI.updateView()
-        else:
-            pass
-            # if (self.click1 == ''):
-            #    self.click1 = candidates[0]
-            # elif (self.click2 == ''):
-            #    self.click2 = candidates[0]
-            # else:
-            #    print('click1:', self.click1, ' click2:', self.click2)
-            #    self.click1 = ''
-            #    self.click2 = ''
-            #    mode_cntrt = False
 
-    # TODO Enlève la contrainte sélectionnée
-    def RemoveConstraint (self):
-        self.vwApp.scrolledList.removeItem(self.vwApp.scrolledList.currentIndex())
-        self.vwApp.networkGUI.updateView()
+    # TODO Réintègre le lien sélectionné
+    def clickReinstateLink (self):
+        if self.vwApp.scrolledList.currentText() == "Select link to reinstate":
+            return
+        else:
+            self.vwApp.scrolledList.removeItem(self.vwApp.scrolledList.currentIndex())
+            self.vwApp.networkGUI.updateView()
 
     # TODO Change la couleur et la densité des "edges" en fonction du déplacement des sliders
     def SliderMoved(self, value):
