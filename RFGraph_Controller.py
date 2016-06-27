@@ -45,7 +45,7 @@ class RFGraph_Controller:
     def clickChangeEq(self):
         pass
 
-    def onClick(self, event, radius=0.0005):
+    def onClick(self, event, radius=400):
         # TODO  affichage du nom du noeud selectionné + changer couleur
         (x, y) = (event.xdata, event.ydata)
         if not x or not y :

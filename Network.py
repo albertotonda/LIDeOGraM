@@ -13,11 +13,13 @@ class Network:
 
 
     def draw_nodes_labels(self):
-        nx.draw_networkx_nodes(self.modApp.G, self.modApp.pos, nodelist=self.modApp.varnames.tolist(), node_color=self.modApp.nodeColor, with_labels=False, ax=self.axes)
+        nx.draw_networkx(self.modApp.G, self.modApp.pos, nodelist=self.modApp.varnames.tolist(), node_color=self.modApp.nodeColor, with_labels=False,edgelist=self.edgelist_inOrder,edge_color=self.modApp.edgeColor, ax=self.axes)
         nx.draw_networkx_labels(self.modApp.G, self.modApp.lpos, self.modApp.labels, ax=self.axes)
 
     def updateView(self):
         self.modApp.G.clear()
+        for v in self.modApp.varnames:
+            self.modApp.G.add_node(v)
         self.axes.clear()
         self.edgelist_inOrder = []
         self.modApp.edgeColor  =  []
@@ -39,6 +41,7 @@ class Network:
                     if self.modApp.nbeq[i] == np.float64(0.0) : continue
                     r = self.modApp.adj_simple[i, j] / self.modApp.nbeq[i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
                     print(r)
+                    #adjThreshold=0
                     if (r > adjThreshold):
                         self.modApp.G.add_edge(self.modApp.varnames[j], self.modApp.varnames[i], adjsimple=self.modApp.adj_simple[i, j], adjfit=
                         self.modApp.adj_fit[i, j], adjcmplx=self.modApp.adj_cmplx[i, j], adjcontr=self.modApp.adj_contr[i, j])
@@ -58,16 +61,16 @@ class Network:
                         self.edgelist_inOrder.pop(index)
                         self.modApp.edgeColor.pop(index)
         #if(self.modApp.pos==[]):
-        #    self.modApp.pos=nx.nx_pydot.graphviz_layout(self.modApp.G, prog='dot')
-        #    self.modApp.lpos = copy.deepcopy(self.modApp.pos)
-        #    for p in self.modApp.lpos:  # raise text positions
-            #    self.modApp.lpos[p] = (self.modApp.lpos[p][0],self.modApp.lpos[p][1]+0.04)
-        #    self.modApp.lpos[p][1] +=0.04
+        self.modApp.pos=nx.nx_pydot.graphviz_layout(self.modApp.G, prog='dot')
+        self.modApp.lpos = copy.deepcopy(self.modApp.pos)
+        for p in self.modApp.lpos:  # raise text positions
+            self.modApp.lpos[p] = (self.modApp.lpos[p][0],self.modApp.lpos[p][1]+20)
+            #self.modApp.lpos[p][1] +=0.04
 
-        self.axes.plot([0,1.07],[(self.modApp.pos['REGULFUN'] + self.modApp.pos['C140'])/2,(self.modApp.pos['REGULFUN'] + self.modApp.pos['C140'])/2],'-')
+        #self.axes.plot([0,1.07],[(self.modApp.pos['REGULFUN'] + self.modApp.pos['C140'])/2,(self.modApp.pos['REGULFUN'] + self.modApp.pos['C140'])/2],'-')
         self.axes.hold(True)
         #self.axes.plot([0, 1.07], [(self.modApp.pos['Age'] + self.modApp.pos['AMACBIOSYNTH']) / 2,(self.modApp.pos['Age'] + self.modApp.pos['AMACBIOSYNTH']) / 2],'-')
         #self.axes.plot([0, 1.07], [(self.modApp.pos['C220'] + self.modApp.pos['UFCcentri']) / 2,(self.modApp.pos['C220'] + self.modApp.pos['UFCcentri']) / 2],'-')
         self.draw_nodes_labels()
-        nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=self.edgelist_inOrder,edge_color=self.modApp.edgeColor, ax=self.axes)
+        #nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=self.edgelist_inOrder,edge_color=self.modApp.edgeColor, ax=self.axes)
 
