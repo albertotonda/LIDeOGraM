@@ -29,8 +29,8 @@ class NetworkCanvas(FigureCanvas):
 
 
     def updateView(self):
-        self.network.updateView()
         self.axes.set_xlim([0, 1.07])
         self.axes.set_ylim([0, 1.07])
+        self.network.updateView()
         self.fig.canvas.draw()
 

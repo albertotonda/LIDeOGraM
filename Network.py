@@ -13,11 +13,12 @@ class Network:
 
 
     def draw_nodes_labels(self):
-        nx.draw_networkx(self.modApp.G, self.modApp.pos, nodelist=self.modApp.varnames.tolist(), node_color=self.modApp.nodeColor, with_labels=False, ax=self.axes)
+        nx.draw_networkx_nodes(self.modApp.G, self.modApp.pos, nodelist=self.modApp.varnames.tolist(), node_color=self.modApp.nodeColor, with_labels=False, ax=self.axes)
         nx.draw_networkx_labels(self.modApp.G, self.modApp.lpos, self.modApp.labels, ax=self.axes)
 
     def updateView(self):
         self.modApp.G.clear()
+        self.axes.clear()
         self.edgelist_inOrder = []
         self.modApp.edgeColor  =  []
         adjThreshold=self.modApp.adjThresholdVal
@@ -62,6 +63,11 @@ class Network:
         #    for p in self.modApp.lpos:  # raise text positions
             #    self.modApp.lpos[p] = (self.modApp.lpos[p][0],self.modApp.lpos[p][1]+0.04)
         #    self.modApp.lpos[p][1] +=0.04
+
+        self.axes.plot([0,1.07],[(self.modApp.pos['REGULFUN'] + self.modApp.pos['C140'])/2,(self.modApp.pos['REGULFUN'] + self.modApp.pos['C140'])/2],'-')
+        self.axes.hold(True)
+        #self.axes.plot([0, 1.07], [(self.modApp.pos['Age'] + self.modApp.pos['AMACBIOSYNTH']) / 2,(self.modApp.pos['Age'] + self.modApp.pos['AMACBIOSYNTH']) / 2],'-')
+        #self.axes.plot([0, 1.07], [(self.modApp.pos['C220'] + self.modApp.pos['UFCcentri']) / 2,(self.modApp.pos['C220'] + self.modApp.pos['UFCcentri']) / 2],'-')
         self.draw_nodes_labels()
         nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=self.edgelist_inOrder,edge_color=self.modApp.edgeColor, ax=self.axes)
 
