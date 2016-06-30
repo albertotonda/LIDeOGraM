@@ -28,9 +28,9 @@ class NetworkCanvas(FigureCanvas):
         self.network = Network(modApp,vwApp,self.axes)
 
 
-    def updateView(self):
-        self.axes.set_xlim([0, 1.07])
-        self.axes.set_ylim([0, 1.07])
-        self.network.updateView()
-        self.fig.canvas.draw()
+    #def updateView(self):
+        #self.axes.set_xlim([0, 1.07])
+        #self.axes.set_ylim([0, 1.07])
+        #self.network.updateView()
+        #self.fig.canvas.draw()
 

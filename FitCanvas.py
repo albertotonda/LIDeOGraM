@@ -63,16 +63,16 @@ class FitCanvas(FigureCanvas):
                 y.append(parse_expr(eq.replace("^","**"), i))
             v = "fitness/params_mo_ce.csv"
 
-        num_exp=range(len(currdataset[2:,currdataset[0,:]==self.modApp.last_clicked].astype('float64').flatten()))
+        num_exp=range(len(currdataset[2:,currdataset[0,:]==self.modApp.lastNodeClicked].astype('float64').flatten()))
 
         if self.modApp.showGlobalModel:
             ft = fitness.Individual(self.modApp,"fitness/ex_indiv.csv" )
             x = num_exp
-            z = [ft.process(i)[self.modApp.last_clicked] for i in x]
+            z = [ft.process(i)[self.modApp.lastNodeClicked] for i in x]
             z = np.asarray(z)
 
 
-        val_node_exp=currdataset[2:,currdataset[0,:]==self.modApp.last_clicked].astype('float64').flatten()
+        val_node_exp=currdataset[2:,currdataset[0,:]==self.modApp.lastNodeClicked].astype('float64').flatten()
         self.fig.clear()
         currax=self.fig.add_subplot(111)
         y = np.asarray(y)

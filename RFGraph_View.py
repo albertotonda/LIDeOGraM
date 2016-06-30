@@ -73,9 +73,9 @@ class RFGraph_View(QtGui.QMainWindow):
         self.gridLayout.addWidget(self.buttonReinstateLink, 0, 12, 1, 8)
         self.gridLayout.addWidget(self.buttonHelp, 0, 120, 1, 12)
 
-        self.scrolledList = QtGui.QComboBox(self)
-        self.gridLayout.addWidget(self.scrolledList, 0, 0, 1, 12 )
-        self.scrolledList.addItem("Select link to reinstate")
+        self.scrolledListBox = QtGui.QComboBox(self)
+        self.gridLayout.addWidget(self.scrolledListBox, 0, 0, 1, 12)
+        self.scrolledListBox.addItem("Select link to reinstate")
 
         self.font = QtGui.QFont('Liberation Sans Narrow')
         self.font.setPointSize(12)
@@ -87,6 +87,9 @@ class RFGraph_View(QtGui.QMainWindow):
 
 
     def updateView(self):
-        self.networkGUI.updateView()
+        self.networkGUI.network.updateView()
         self.fitGUI.updateView()
         self.eqTableGUI.updateView()
+        self.scrolledListBox.clear()
+        for item in self.modApp.scrolledList:
+            self.scrolledListBox.addItem(item)

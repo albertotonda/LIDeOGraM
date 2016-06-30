@@ -96,6 +96,10 @@ class RFGraph_Model:
         self.cmplxMin = np.amin(self.equacolPO[:, 0])
         self.cmplxMax = np.amax(self.equacolPO[:, 0])
         self.pareto = []
+        self.scrolledList=[]
+        self.selectContrTxt=""
+        self.edgelist_inOrder = []
+        self.edgeColor = []
         #Necessaire de faire une deepcopy ?
         #self.lpos= copy.deepcopy(self.pos)
         #for p in self.lpos:  # raise text positions
@@ -210,9 +214,25 @@ class RFGraph_Model:
             else:
                 self.nodeWeight.append(0)
         for i in range(len(self.varnames)):
-            self.nodeColor.append(
-                (0.5, 0.5 + 0.5 * self.nodeWeight[i] / np.amax(self.nodeWeight), 0.5))
-
+            #self.nodeColor.append((0.5, 0.5 + 0.5 * self.nodeWeight[i] / np.amax(self.nodeWeight), 0.5))
+            #if(self.varnames[i])
+            #self.
+            if(self.identvarDict[self.varnames[i]]=='Mol'):
+                self.nodeColor.append((0.5, 0, 0.5))
+            if (self.identvarDict[self.varnames[i]] == 'condition'):
+                self.nodeColor.append((0.5, 0.5, 0))
+            if (self.identvarDict[self.varnames[i]] == 'Cell'):
+                self.nodeColor.append((0, 0.5, 0.5))
+            if (self.identvarDict[self.varnames[i]] == 'PopCentri'):
+                self.nodeColor.append((1, 0, 0))
+            if (self.identvarDict[self.varnames[i]] == 'PopLyo'):
+                self.nodeColor.append((1, 0, 0))
+            if (self.identvarDict[self.varnames[i]] == 'PopCong'):
+                self.nodeColor.append((1, 0, 0))
+            if (self.identvarDict[self.varnames[i]] == 'PopSto3'):
+                self.nodeColor.append((1, 0, 0))
+        self.computeInitialPos()
+        self.computeNxGraph()
 
     def loadDataFile(self,datafile):
         # datadict ans self.mol_cell are dictionary lists.
@@ -243,7 +263,7 @@ class RFGraph_Model:
         for i in np.unique(list(self.identvarDict.values())):
             print(i)
             graph.add_node(i)
-
+        graph.add_edge('condition','Mol')
         graph.add_edge('condition','Cell')
         graph.add_edge('Cell','PopCentri')
         graph.add_edge('Cell','PopCong')
@@ -272,3 +292,98 @@ class RFGraph_Model:
                     if(self.identvarDict[self.varnames[var1]]==edge[0] and self.identvarDict[self.varnames[var2]]==edge[1]):
                         adj_contr[var2][var1]-=1
         return adj_contr
+
+    def computeNxGraph(self):
+        self.G.clear()
+        for v in self.varnames:
+            self.G.add_node(v)
+
+        self.edgelist_inOrder = []
+        self.edgeColor = []
+        adjThreshold = self.adjThresholdVal
+        comprFitCmplx = self.comprFitCmplxVal
+
+        for i in range(len(self.pareto)):
+            for j in range(len(self.pareto[i])):
+                lIdxColPareto = self.pareto[i][j]
+                if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
+                    lIdxColPareto[:, 0] = (lIdxColPareto[:, 0] - self.cmplxMin) / (
+                        self.cmplxMax - self.cmplxMin)  # Normalisation de la complexité
+                    dist_lIdxColPareto = np.sqrt(
+                        np.power(np.cos(comprFitCmplx * (np.pi / 2)) * lIdxColPareto[:, 0], 2) +
+                        np.power(np.sin(comprFitCmplx * (np.pi / 2)) * lIdxColPareto[:, 1], 2))
+
+                    dist_lIdxColPareto_idxMin = np.argmin(
+                        dist_lIdxColPareto)  # Indice dans dist_lIdxColPareto correspondant au meilleur compromi
+                    dist_lIdxColPareto_valMin = dist_lIdxColPareto[
+                        dist_lIdxColPareto_idxMin]  # Distance meilleur compromi
+                    if self.nbeq[i] == np.float64(0.0): continue
+                    r = self.adj_simple[i, j] / self.nbeq[
+                        i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
+                    if (r > adjThreshold):
+                        self.G.add_edge(self.varnames[j], self.varnames[i],
+                                               adjsimple=self.adj_simple[i, j], adjfit=
+                                               self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
+                                               adjcontr=self.adj_contr[i, j])
+                        self.edgelist_inOrder.append((self.varnames[j], self.varnames[i]))
+                        self.edgeColor.append(
+                            (dist_lIdxColPareto_valMin + (1 - dist_lIdxColPareto_valMin) * (1 - r)
+                             , (1 - dist_lIdxColPareto_valMin) + dist_lIdxColPareto_valMin * (1 - r)
+                             , 1 - r))
+
+                    n1 = self.varnames[i] + ' - ' + self.varnames[j]
+                    n2 = self.varnames[j] + ' - ' + self.varnames[i]
+                    allItems = [self.scrolledList[i] for i in range(len(self.scrolledList))]
+                    if n1 in allItems or n2 in allItems:
+                        try:
+                            index = self.edgelist_inOrder.index((self.varnames[i], self.varnames[j]))
+                        except:
+                            index = self.edgelist_inOrder.index((self.varnames[j], self.varnames[i]))
+                        self.edgelist_inOrder.pop(index)
+                        self.edgeColor.pop(index)
+
+
+    def computeInitialPos(self):
+        G=nx.DiGraph()
+        G.clear()
+        for v in self.varnames:
+            G.add_node(v)
+
+        edgelist_inOrder = []
+
+
+
+
+        for i in range(len(self.pareto)):
+            for j in range(len(self.pareto[i])):
+                lIdxColPareto = self.pareto[i][j]
+                if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
+                    if self.nbeq[i] == np.float64(0.0): continue
+
+                    G.add_edge(self.varnames[j], self.varnames[i],
+                                    adjsimple=self.adj_simple[i, j], adjfit=
+                                    self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
+                                    adjcontr=self.adj_contr[i, j])
+                    edgelist_inOrder.append((self.varnames[j], self.varnames[i]))
+
+
+        self.pos = nx.nx_pydot.graphviz_layout(G, prog='dot')
+        minx = np.inf
+        maxx = -np.inf
+        miny = np.inf
+        maxy = -np.inf
+        for k, p in list(self.pos.items()):
+            if (minx > p[0]):
+                minx = p[0]
+            if (maxx < p[0]):
+                maxx = p[0]
+            if (miny > p[1]):
+                miny = p[1]
+            if (maxy < p[1]):
+                maxy = p[1]
+        for k in self.pos:
+            self.pos[k] = ((self.pos[k][0] - minx) / (maxx - minx), (self.pos[k][1] - miny) / (maxy - miny))
+
+        self.lpos = copy.deepcopy(self.pos)
+        for p in self.lpos:  # raise text positions
+            self.lpos[p] = (self.lpos[p][0], self.lpos[p][1] + 0.04)

@@ -45,7 +45,31 @@ class RFGraph_Controller:
     def clickChangeEq(self):
         pass
 
-    def onClick(self, event, radius=400):
+    def onPick(self,event):
+        pass
+
+
+    def onMove(self,event):
+        #print(event)
+        if(event.button==1 and self.modApp.lastNodeClicked != ''):
+            print(self.modApp.lastNodeClicked)
+            old_pos=self.modApp.pos[self.modApp.lastNodeClicked]
+            self.modApp.pos[self.modApp.lastNodeClicked]=(event.xdata,event.ydata)
+            try:
+                self.modApp.lpos[self.modApp.lastNodeClicked] = (self.modApp.lpos[self.modApp.lastNodeClicked][0] - old_pos[0] + event.xdata,
+                                                        self.modApp.lpos[self.modApp.lastNodeClicked][1] - old_pos[1] + event.ydata)
+            except:
+                pass
+            self.vwApp.networkGUI.network.axes.clear()
+            self.vwApp.networkGUI.network.updateNodes()
+            self.vwApp.networkGUI.network.updateLabels()
+            self.vwApp.networkGUI.network.drawEdges()
+        else:
+            print(event)
+
+
+
+    def onClick(self, event, radius=2000):
         # TODO  affichage du nom du noeud selectionné + changer couleur
         (x, y) = (event.xdata, event.ydata)
         if not x or not y :
@@ -56,6 +80,8 @@ class RFGraph_Controller:
                self.modApp.pos]
         self.modApp.NodetoConstrain = []
         if len(list(filter(lambda x: x[0] < radius, dst))) == 0:
+            self.higlight(None, self.modApp.lastNodeClicked)
+            self.modApp.lastNodeClicked=""
             return
         nodeclicked = min(dst, key=(lambda x: x[0]))[1]
 
@@ -84,29 +110,28 @@ class RFGraph_Controller:
                 if i[1] not in self.notEvenOnce:
                     self.notEvenOnce.append(i[1])
             if self.modApp.NodeConstraints[0] in self.atLeastOnce:
-                self.vwApp.selectContrTxt.setText('Select node 2')
+                self.modApp.selectContrTxt.setText('Select node 2')
                 if (len(self.modApp.NodeConstraints) == 2):
                     if self.modApp.NodeConstraints[1] in self.notEvenOnce:
                         self.constraint = " - ".join(self.modApp.NodeConstraints)
-                        self.vwApp.scrolledList.addItem(self.constraint)
-                        self.vwApp.selectContrTxt.setText('')
+                        self.modApp.scrolledList.append(self.constraint)
+                        self.modApp.selectContrTxt=""
                         self.modApp.mode_cntrt = False
                         self.modApp.NodeConstraints = []
                         self.vwApp.networkGUI.updateView()
                     else:
-                        self.vwApp.selectContrTxt.setText('')
+                        self.modApp.selectContrTxt.setText('')
                         self.modApp.mode_cntrt = False
                         self.modApp.NodeConstraints = []
                         self.modApp.error_params = ErrorConstraint.get_params()
             else:
-                self.vwApp.selectContrTxt.setText('')
+                self.modApp.selectContrTxt.setText('')
                 self.modApp.mode_cntrt = False
                 self.modApp.NodeConstraints = []
                 self.modApp.error_params = ErrorConstraint.get_params()
 
         if (not self.modApp.mode_cntrt):
             print('action:', nodeclicked)
-            self.modApp.last_clicked = nodeclicked
             data_tmp = self.modApp.equacolO[np.ix_(self.modApp.equacolO[:, 2] == [nodeclicked], [0, 1, 3])]
             self.modApp.curr_tabl = self.modApp.equacolO[
                 np.ix_(self.modApp.equacolO[:, 2] == [nodeclicked], [0, 1, 3, 4])]
@@ -118,34 +143,35 @@ class RFGraph_Controller:
 
     # TODO Réintègre le lien sélectionné
     def clickReinstateLink (self):
-        if self.vwApp.scrolledList.currentText() == "Select link to reinstate":
+        if self.vwApp.scrolledListBox.currentText() == "Select link to reinstate":
             return
         else:
-            self.vwApp.scrolledList.removeItem(self.vwApp.scrolledList.currentIndex())
+            self.modApp.scrolledList.pop(self.vwApp.scrolledListBox.currentIndex())
             self.vwApp.networkGUI.updateView()
 
     # TODO Change la couleur et la densité des "edges" en fonction du déplacement des sliders
     def SliderMoved(self, value):
         self.modApp.adjThresholdVal=self.vwApp.adjThreshold_slider.value() / 100.0
         self.modApp.comprFitCmplxVal=self.vwApp.comprFitCmplx_slider.value() / 100.0
-        self.vwApp.networkGUI.updateView()
+        self.modApp.computeNxGraph()
+        self.vwApp.networkGUI.network.updateView()
 
     # TODO Affiche la courbe de l'équation sélectionnée
     def tableClicked(self, cellClicked):
         self.modApp.clicked_line=cellClicked.row()
         self.vwApp.fitGUI.updateView()
-        self.vwApp.networkGUI.updateView()
+        #self.vwApp.networkGUI.updateView()
 
     # TODO Crée le surlignage des noeuds
     def higlight(self, new_node: str, old_node: str = None):
         self.modApp.G.clear()
         if old_node:
             self.modApp.nodeColor[(self.modApp.varnames.tolist()).index(old_node)] = self.modApp.old_color
+        if new_node:
+            self.modApp.old_color = self.modApp.nodeColor[(self.modApp.varnames.tolist()).index(new_node)]
+            self.modApp.nodeColor[(self.modApp.varnames.tolist()).index(new_node)] = (1.0, 0, 0)
 
-        self.modApp.old_color = self.modApp.nodeColor[(self.modApp.varnames.tolist()).index(new_node)]
-        self.modApp.nodeColor[(self.modApp.varnames.tolist()).index(new_node)] = (1.0, 0, 0)
-
-        self.vwApp.networkGUI.updateView()
+        self.vwApp.networkGUI.network.updateNodes()
 
     def fileQuit(self):
         self.vwApp.close()
