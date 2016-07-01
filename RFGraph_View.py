@@ -14,7 +14,7 @@ class RFGraph_View(QtGui.QMainWindow):
 
         QtGui.QMainWindow.__init__(self)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self.setWindowTitle("LSN")
+        self.setWindowTitle("LIDeoGraM")
         self.icon = QtGui.QIcon("Icone.png")
         self.setWindowIcon(self.icon)
 

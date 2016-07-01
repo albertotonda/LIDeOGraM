@@ -15,15 +15,24 @@ class RFGraph_Controller:
 
     # TODO
     def clickFitness(self):
-        pass
+        print("clic fitness")
+        self.modApp.ColorMode='Fit'
+        self.modApp.computeNxGraph()
+        self.vwApp.networkGUI.network.drawEdges()
 
     # TODO
     def clickCompromis(self):
-        pass
+        print("clic Compr")
+        self.modApp.ColorMode='Compr'
+        self.modApp.computeNxGraph()
+        self.vwApp.networkGUI.network.drawEdges()
 
     # TODO
     def clickCmplx(self):
-        pass
+        print("clic Complx")
+        self.modApp.ColorMode='Cmplx'
+        self.modApp.computeNxGraph()
+        self.vwApp.networkGUI.network.drawEdges()
 
     # TODO
     def clickOptmuGP(self):
@@ -69,7 +78,7 @@ class RFGraph_Controller:
 
 
 
-    def onClick(self, event, radius=2000):
+    def onClick(self, event, radius=0.001):
         # TODO  affichage du nom du noeud selectionné + changer couleur
         (x, y) = (event.xdata, event.ydata)
         if not x or not y :
@@ -92,21 +101,33 @@ class RFGraph_Controller:
 
         if self.modApp.lastNodeClicked != "":
             self.higlight(nodeclicked, self.modApp.lastNodeClicked)
+            self.modApp.lastNodeClicked = nodeclicked
+            self.modApp.computeBoldNodes()
+            self.vwApp.networkGUI.network.axes.clear()
+            self.vwApp.networkGUI.network.updateNodes()
+            self.vwApp.networkGUI.network.updateLabels()
+            self.vwApp.networkGUI.network.drawEdges()
         else:
             self.higlight(nodeclicked,None)
+            self.modApp.lastNodeClicked = nodeclicked
+            self.modApp.computeBoldNodes()
+            self.vwApp.networkGUI.network.axes.clear()
+            self.vwApp.networkGUI.network.updateNodes()
+            self.vwApp.networkGUI.network.updateLabels()
+            self.vwApp.networkGUI.network.drawEdges()
 
             #Change color back
-        self.modApp.lastNodeClicked = nodeclicked
+
 
 
         if (self.modApp.mode_cntrt == True):
             self.modApp.NodeConstraints.append(nodeclicked)
             self.atLeastOnce=[]
             self.notEvenOnce =[]
-            for i in self.vwApp.networkGUI.network.edgelist_inOrder:
+            for i in self.modApp.edgelist_inOrder:
                 if i[0] not in self.atLeastOnce:
                     self.atLeastOnce.append(i[0])
-            for i in self.vwApp.networkGUI.network.edgelist_inOrder:
+            for i in self.modApp.edgelist_inOrder:
                 if i[1] not in self.notEvenOnce:
                     self.notEvenOnce.append(i[1])
             if self.modApp.NodeConstraints[0] in self.atLeastOnce:
