@@ -41,8 +41,8 @@ class RFGraph_View(QtGui.QMainWindow):
         self.gridLayout.addWidget(self.comprFitCmplx_slider, 9, 2, 1, 57)
         self.comprFitCmplx_lab_fit = QtGui.QLabel('Fitness')
         self.gridLayout.addWidget(self.comprFitCmplx_lab_fit, 9, 59, 1, 1)
-        self.selectContrTxt = QtGui.QLabel('')
-        self.gridLayout.addWidget(self.selectContrTxt, 0, 25, 2, 12)
+        self.selectContrTxtLab = QtGui.QLabel('')
+        self.gridLayout.addWidget(self.selectContrTxtLab, 0, 25, 2, 12)
 
         self.eqTableGUI = EqTableCanvas(self.modApp)
 
@@ -61,6 +61,7 @@ class RFGraph_View(QtGui.QMainWindow):
         self.buttonRemoveLink = QtGui.QPushButton('Remove Link', self)
         self.buttonReinstateLink = QtGui.QPushButton('Reinstate', self)
         self.buttonHelp = QtGui.QPushButton('Help', self)
+        self.buttonCompromis.setStyleSheet("background-color: grey")
 
         self.gridLayout.addWidget(self.buttonCompromis, 10, 0, 1, 15)
         self.gridLayout.addWidget(self.buttonFitness, 10, 15, 1, 15)
@@ -75,11 +76,11 @@ class RFGraph_View(QtGui.QMainWindow):
 
         self.scrolledListBox = QtGui.QComboBox(self)
         self.gridLayout.addWidget(self.scrolledListBox, 0, 0, 1, 12)
-        self.scrolledListBox.addItem("Select link to reinstate")
 
-        self.font = QtGui.QFont('Liberation Sans Narrow')
-        self.font.setPointSize(12)
-        self.setFont(self.font)
+
+        #self.font = QtGui.QFont('Liberation Sans Narrow')
+        #self.font.setPointSize(12)
+        #self.setFont(self.font)
         self.main_widget.setFocus()
         self.setCentralWidget(self.main_widget)
         self.show()
@@ -90,6 +91,7 @@ class RFGraph_View(QtGui.QMainWindow):
         self.networkGUI.network.updateView()
         self.fitGUI.updateView()
         self.eqTableGUI.updateView()
+        self.selectContrTxtLab.setText(self.modApp.selectContrTxt)
         self.scrolledListBox.clear()
         for item in self.modApp.scrolledList:
             self.scrolledListBox.addItem(item)

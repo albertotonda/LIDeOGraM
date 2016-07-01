@@ -97,6 +97,7 @@ class RFGraph_Model:
         self.cmplxMax = np.amax(self.equacolPO[:, 0])
         self.pareto = []
         self.scrolledList=[]
+        self.scrolledList.append("Select link to reinstate")
         self.selectContrTxt=""
         self.edgelist_inOrder = []
         self.edgeColor = []
@@ -403,8 +404,8 @@ class RFGraph_Model:
                             self.edgeColorFit.append((cr+(1-cr)*(1-r),cg+(1-cg)*(1-r),cb+(1-cb)*(1-r)))
                         else:
                             self.edgeColorFit.append((cr, cg, cb))
-                        cr=np.minimum((self.adj_cmplx[i, j] / adj_cmplx_max) * 2, 1)
-                        cg=np.minimum((1 - (self.adj_cmplx[i, j] / adj_cmplx_max)) * 2, 1)
+                        cr=np.minimum((self.adj_cmplx[i, j] / self.adj_cmplx_max) * 2, 1)
+                        cg=np.minimum((1 - (self.adj_cmplx[i, j] / self.adj_cmplx_max)) * 2, 1)
                         cb=0
                         if (self.transparentEdges):
                             self.edgeColorCmplx.append((cr+(1-cr)*(1-r),cg+(1-cg)*(1-r),cb+(1-cb)*(1-r)))

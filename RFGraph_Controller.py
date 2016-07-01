@@ -19,6 +19,9 @@ class RFGraph_Controller:
         self.modApp.ColorMode='Fit'
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.drawEdges()
+        self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
+        self.vwApp.buttonFitness.setStyleSheet("background-color: grey")
+        self.vwApp.buttonComplexite.setStyleSheet("background-color: None")
 
     # TODO
     def clickCompromis(self):
@@ -26,6 +29,10 @@ class RFGraph_Controller:
         self.modApp.ColorMode='Compr'
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.drawEdges()
+        self.vwApp.buttonCompromis.setStyleSheet("background-color: grey")
+        self.vwApp.buttonFitness.setStyleSheet("background-color: None")
+        self.vwApp.buttonComplexite.setStyleSheet("background-color: None")
+
 
     # TODO
     def clickCmplx(self):
@@ -33,6 +40,9 @@ class RFGraph_Controller:
         self.modApp.ColorMode='Cmplx'
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.drawEdges()
+        self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
+        self.vwApp.buttonFitness.setStyleSheet("background-color: None")
+        self.vwApp.buttonComplexite.setStyleSheet("background-color: grey")
 
     # TODO
     def clickOptmuGP(self):
@@ -49,7 +59,7 @@ class RFGraph_Controller:
     # TODO Enlève le lien entre les noeuds choisis
     def clickRemoveLink(self, event, radius=0.0005):
         self.modApp.mode_cntrt = True
-        self.vwApp.selectContrTxt.setText('Select node 1')
+        self.modApp.selectContrTxt="Select node 1"
 
     def clickChangeEq(self):
         pass
@@ -131,7 +141,7 @@ class RFGraph_Controller:
                 if i[1] not in self.notEvenOnce:
                     self.notEvenOnce.append(i[1])
             if self.modApp.NodeConstraints[0] in self.atLeastOnce:
-                self.modApp.selectContrTxt.setText('Select node 2')
+                self.modApp.selectContrTxt = "Select node 2"
                 if (len(self.modApp.NodeConstraints) == 2):
                     if self.modApp.NodeConstraints[1] in self.notEvenOnce:
                         self.constraint = " - ".join(self.modApp.NodeConstraints)
@@ -139,14 +149,14 @@ class RFGraph_Controller:
                         self.modApp.selectContrTxt=""
                         self.modApp.mode_cntrt = False
                         self.modApp.NodeConstraints = []
-                        self.vwApp.networkGUI.updateView()
+                        self.vwApp.networkGUI.network.updateView()
                     else:
-                        self.modApp.selectContrTxt.setText('')
+                        self.modApp.selectContrTxt=""
                         self.modApp.mode_cntrt = False
                         self.modApp.NodeConstraints = []
                         self.modApp.error_params = ErrorConstraint.get_params()
             else:
-                self.modApp.selectContrTxt.setText('')
+                self.modApp.selectContrTxt=""
                 self.modApp.mode_cntrt = False
                 self.modApp.NodeConstraints = []
                 self.modApp.error_params = ErrorConstraint.get_params()

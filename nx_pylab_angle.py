@@ -571,7 +571,7 @@ def draw_networkx_edges(G, pos,
 
         edge_collection = LineCollection(edge_pos_bold,
                                           colors=edge_colors_bold,
-                                          linewidths=[3*ww for ww in lw],
+                                          linewidths=[5*ww for ww in lw],
                                           antialiaseds=(1,),
                                           linestyle=style,
                                           transOffset=ax.transData,
