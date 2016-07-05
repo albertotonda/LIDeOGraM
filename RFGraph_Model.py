@@ -1,5 +1,6 @@
 #-*- coding: utf-8
 import random
+import matplotlib as mpl
 import numpy as np
 from numpy import genfromtxt
 import copy
@@ -106,8 +107,8 @@ class RFGraph_Model:
         self.edgeColorCmplx=[]
         self.ColorMode='Compr'
         self.transparentEdges=False
-        self.edgeBold=[]
-        self.adj_cmplx_max=np.inf
+        self.edgeBoldfull=[]
+        self.adj_cmplx_max = np.amax(self.adj_cmplx)
         #Necessaire de faire une deepcopy ?
         #self.lpos= copy.deepcopy(self.pos)
         #for p in self.lpos:  # raise text positions
@@ -123,6 +124,8 @@ class RFGraph_Model:
         self.labels = {}
         self.edges = None
         self.initGraph()
+
+
 
     def pos_graph(self):
         pos = {}
@@ -240,8 +243,11 @@ class RFGraph_Model:
             if (self.identvarDict[self.varnames[i]] == 'PopSto3'):
                 self.nodeColor.append((1, 1, 0))
         self.computeInitialPos()
+        self.computeFitandCmplxEdgeColor()
+        self.computeComprEdgeColor()
+        self.computeEdgeBold()
         self.computeNxGraph()
-        pass
+
 
     def loadDataFile(self,datafile):
         # datadict ans self.mol_cell are dictionary lists.
@@ -292,7 +298,6 @@ class RFGraph_Model:
 
         return graph
 
-
     def createConstraints(self):
         adj_contr=np.ones((self.nbVar,self.nbVar))
         for edge in self.adj_contrGraph.edges():
@@ -302,30 +307,45 @@ class RFGraph_Model:
                         adj_contr[var2][var1]-=1
         return adj_contr
 
-    def computeBoldNodes(self):
+    # def computeBoldNodes(self):
+    #
+    #     self.edgelist_inOrder = []
+    #     self.edgeBold = []
+    #
+    #     for i in range(len(self.pareto)):  # i is child
+    #         for j in range(len(self.pareto[i])):  # j is parent
+    #             lIdxColPareto = self.pareto[i][j]
+    #             if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
+    #                 #if self.nbeq[i] == np.float64(0.0): continue
+    #                 r = self.adj_simple[i, j] / self.nbeq[
+    #                     i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
+    #                 if (r > self.adjThresholdVal):
+    #
+    #                     self.edgelist_inOrder.append((self.varnames[j], self.varnames[i]))
+    #
+    #                     if (self.lastNodeClicked == self.varnames[i]):
+    #                         self.edgeBold.append(True)
+    #                     else:
+    #                         self.edgeBold.append(False)
+    #
+    #
+    #                 n1 = self.varnames[i] + ' - ' + self.varnames[j]
+    #                 n2 = self.varnames[j] + ' - ' + self.varnames[i]
+    #                 allItems = [self.scrolledList[i] for i in range(len(self.scrolledList))]
+    #                 if n1 in allItems or n2 in allItems:
+    #                     try:
+    #                         index = self.edgelist_inOrder.index((self.varnames[i], self.varnames[j]))
+    #                     except:
+    #                         index = self.edgelist_inOrder.index((self.varnames[j], self.varnames[i]))
+    #                     self.edgelist_inOrder.pop(index)
 
 
-        self.edgelist_inOrder = []
-        self.edgeBold = []
 
-        adjThreshold = self.adjThresholdVal
-
+    def removeForbiddenEdges(self):
         for i in range(len(self.pareto)):  # i is child
             for j in range(len(self.pareto[i])):  # j is parent
                 lIdxColPareto = self.pareto[i][j]
                 if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
-                    if self.nbeq[i] == np.float64(0.0): continue
-                    r = self.adj_simple[i, j] / self.nbeq[
-                        i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
-                    if (r > adjThreshold):
-
-                        self.edgelist_inOrder.append((self.varnames[j], self.varnames[i]))
-
-                        if (self.lastNodeClicked == self.varnames[i]):
-                            self.edgeBold.append(True)
-                        else:
-                            self.edgeBold.append(False)
-
 
                     n1 = self.varnames[i] + ' - ' + self.varnames[j]
                     n2 = self.varnames[j] + ' - ' + self.varnames[i]
@@ -336,10 +356,40 @@ class RFGraph_Model:
                         except:
                             index = self.edgelist_inOrder.index((self.varnames[j], self.varnames[i]))
                         self.edgelist_inOrder.pop(index)
+                        self.edgeBold.pop(index)
+                        self.edgeColor.pop(index)
 
 
+    def removeInvisibleEdges(self):
 
+        self.edgeBoldDict=copy.deepcopy(self.edgeBoldfull)
+        if (self.ColorMode == 'Compr'):
+            self.edgeColorfull = copy.deepcopy(self.edgeColorCompr)
+        elif (self.ColorMode == 'Fit'):
+            self.edgeColorfull = copy.deepcopy(self.edgeColorFit)
+        elif (self.ColorMode == 'Cmplx'):
+            self.edgeColorfull = copy.deepcopy(self.edgeColorCmplx)
+        for i in range(len(self.pareto)):  # i is child
+            for j in range(len(self.pareto[i])):  # j is parent
+                lIdxColPareto = self.pareto[i][j]
+                if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
 
+                    # if self.nbeq[i] == np.float64(0.0): continue
+                    r = self.adj_simple[i, j] / self.nbeq[
+                        i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
+                    if (r <= self.adjThresholdVal):
+                        tup = (self.varnames[j], self.varnames[i])
+                        try:
+                            del (self.edgeBoldDict[tup])
+                        except:
+                            pass
+                        try:
+                            del (self.edgeColorfull[tup])
+                        except:
+                            pass
+
+        self.edgeColor = self.colorDictToConstraintedcolorList(self.edgeColorfull,self.edgelist_inOrder)
+        self.edgeBold = self.colorDictToConstraintedcolorList(self.edgeBoldDict,self.edgelist_inOrder)
 
 
     def computeNxGraph(self):
@@ -348,113 +398,134 @@ class RFGraph_Model:
             self.G.add_node(v)
 
         self.edgelist_inOrder = []
-        self.edgeBold=[]
-        self.edgeColor = []
-        self.edgeColorFit=[]
-        self.edgeColorCmplx=[]
-        self.edgeColorCompr=[]
-        adjThreshold = self.adjThresholdVal
-        comprFitCmplx = self.comprFitCmplxVal
-        #adj_fit_max=np.amax(self.adj_fit)
-        self.adj_cmplx_max=np.amax(self.adj_cmplx)
-
-
 
         for i in range(len(self.pareto)):#i is child
             for j in range(len(self.pareto[i])): #j is parent
                 lIdxColPareto = self.pareto[i][j]
                 if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
 
-
-                    if (self.adj_fit[i, j] == 0):
-                        raise Exception('Error on fit color')
-                    if (self.adj_cmplx[i, j] == 0):
-                        raise Exception('Error on cmplx color')
-
-                    lIdxColPareto[:, 0] = (lIdxColPareto[:, 0] - self.cmplxMin) / (
-                        self.cmplxMax - self.cmplxMin)  # Normalisation de la complexité
-                    dist_lIdxColPareto = np.sqrt(
-                        np.power(np.cos(comprFitCmplx * (np.pi / 2)) * lIdxColPareto[:, 0], 2) +
-                        np.power(np.sin(comprFitCmplx * (np.pi / 2)) * lIdxColPareto[:, 1], 2))
-
-                    dist_lIdxColPareto_idxMin = np.argmin(
-                        dist_lIdxColPareto)  # Indice dans dist_lIdxColPareto correspondant au meilleur compromi
-                    dist_lIdxColPareto_valMin = dist_lIdxColPareto[
-                        dist_lIdxColPareto_idxMin]  # Distance meilleur compromi
-                    if self.nbeq[i] == np.float64(0.0): continue
-                    r = self.adj_simple[i, j] / self.nbeq[
-                        i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
-                    if (r > adjThreshold):
+                    #if self.nbeq[i] == np.float64(0.0): continue
+                    r = self.adj_simple[i, j] / self.nbeq[i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
+                    if (r > self.adjThresholdVal):
                         self.G.add_edge(self.varnames[j], self.varnames[i],
                                                adjsimple=self.adj_simple[i, j], adjfit=
                                                self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
                                                adjcontr=self.adj_contr[i, j])
                         self.edgelist_inOrder.append((self.varnames[j], self.varnames[i]))
-                        cr=np.minimum(dist_lIdxColPareto_valMin*2,1)
-                        cg=np.minimum((1 - dist_lIdxColPareto_valMin)*2,1)
-                        cb=0
-                        if(self.transparentEdges):
-                            self.edgeColorCompr.append((cr+(1-cr)*(1-r),cg+(1-cg)*(1-r),cb+(1-cb)*(1-r)))
-                        else:
-                            self.edgeColorCompr.append((cr , cg , cb ))
-                        cr=np.minimum(self.adj_fit[i, j] * 2, 1)
-                        cg=np.minimum((1 - self.adj_fit[i, j]) * 2, 1)
-                        cb=0
-                        if (self.transparentEdges):
-                            self.edgeColorFit.append((cr+(1-cr)*(1-r),cg+(1-cg)*(1-r),cb+(1-cb)*(1-r)))
-                        else:
-                            self.edgeColorFit.append((cr, cg, cb))
-                        cr=np.minimum((self.adj_cmplx[i, j] / self.adj_cmplx_max) * 2, 1)
-                        cg=np.minimum((1 - (self.adj_cmplx[i, j] / self.adj_cmplx_max)) * 2, 1)
-                        cb=0
-                        if (self.transparentEdges):
-                            self.edgeColorCmplx.append((cr+(1-cr)*(1-r),cg+(1-cg)*(1-r),cb+(1-cb)*(1-r)))
-                        else:
-                            self.edgeColorCmplx.append((cr, cg, cb))
 
-                        if(self.lastNodeClicked!=''):
-                            if(self.lastNodeClicked==self.varnames[i]):
-                                self.edgeBold.append(True)
-                            else:
-                                self.edgeBold.append(False)
-                        else:
-                            if (self.lastNodeClicked == self.varnames[i]):
-                                self.edgeBold.append(True)
-                            else:
-                                self.edgeBold.append(False)
+        self.removeInvisibleEdges()
+        self.removeForbiddenEdges()
+        pass
 
-                    n1 = self.varnames[i] + ' - ' + self.varnames[j]
-                    n2 = self.varnames[j] + ' - ' + self.varnames[i]
-                    allItems = [self.scrolledList[i] for i in range(len(self.scrolledList))]
-                    if n1 in allItems or n2 in allItems:
-                        try:
-                            index = self.edgelist_inOrder.index((self.varnames[i], self.varnames[j]))
-                        except:
-                            index = self.edgelist_inOrder.index((self.varnames[j], self.varnames[i]))
-                        self.edgelist_inOrder.pop(index)
-                        self.edgeColorCompr.pop(index)
-                        self.edgeColorFit.pop(index)
-                        self.edgeColorCmplx.pop(index)
+    def colorDictToConstraintedcolorList(self,colorDict,edgesToShow):
+        colorList=[]
+        for edge in edgesToShow:
+            colorList.append(colorDict[edge])
+        return colorList
 
-        if(self.ColorMode=='Compr'):
-            self.edgeColor=self.edgeColorCompr
-        elif(self.ColorMode=='Fit'):
-            self.edgeColor=self.edgeColorFit
-        elif(self.ColorMode=='Cmplx'):
-            self.edgeColor=self.edgeColorCmplx
+    def computeEdgeBold(self):
 
+        self.edgeBoldfull = {}
 
+        for i in range(len(self.pareto)):  # i is child
+            for j in range(len(self.pareto[i])):  # j is parent
+                lIdxColPareto = self.pareto[i][j]
+                if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
+                    #if self.nbeq[i] == np.float64(0.0): continue
+                    if (self.lastNodeClicked == self.varnames[i]):
+                        self.edgeBoldfull[(self.varnames[j], self.varnames[i])]=True
+                    else:
+                        self.edgeBoldfull[(self.varnames[j], self.varnames[i])]=False
+
+    def computeComprEdgeColor(self):
+
+        self.edgeColorCompr = {}
+
+        for i in range(len(self.pareto)):  # i is child
+            for j in range(len(self.pareto[i])):  # j is parent
+                lIdxColPareto = self.pareto[i][j]
+                if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
+
+                    lIdxColPareto[:, 0] = (lIdxColPareto[:, 0] - self.cmplxMin) / (
+                        self.cmplxMax - self.cmplxMin)  # Normalisation de la complexité
+                    dist_lIdxColPareto = np.sqrt(
+                        np.power(np.cos(self.comprFitCmplxVal * (np.pi / 2)) * lIdxColPareto[:, 0], 2) +
+                        np.power(np.sin(self.comprFitCmplxVal * (np.pi / 2)) * lIdxColPareto[:, 1], 2))
+
+                    dist_lIdxColPareto_idxMin = np.argmin(
+                        dist_lIdxColPareto)  # Indice dans dist_lIdxColPareto correspondant au meilleur compromi
+                    dist_lIdxColPareto_valMin = dist_lIdxColPareto[
+                        dist_lIdxColPareto_idxMin]  # Distance meilleur compromi
+                    #if self.nbeq[i] == np.float64(0.0): continue
+                    r = self.adj_simple[i, j] / self.nbeq[
+                        i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
+
+                    #cdict1 = {'red': ((0.0, 0.0, 0.0),
+                    #                  (0.5, 0.0, 0.0),
+                    #                  (1.0, 0.0, 0.0)),
+                    #          'green': ((0.0, 0.0, 0.0),
+                    #                    (0.0, 0.5, 0.0),
+                    #                    (0.0, 1.0, 0.0)),
+                    #          'blue': ((0.0, 0.0, 0.5),
+                    #                   (0.0, 0.0, 0.5),
+                    #                   (0.0, 0.0, 0.5))
+                    #          }
+                    #cmap = mpl.colors.ListedColormap(["red", "grey", "green"], name='from_list')
+                    #mycmap=mpl.colors.LinearSegmentedColormap('CustomMap', cdict1)
+                    #m = mpl.cm.ScalarMappable(norm=[0,1], cmap=mycmap)
+
+                    if(dist_lIdxColPareto_valMin<0.5):
+                        cr = dist_lIdxColPareto_valMin
+                        cg = 1-dist_lIdxColPareto_valMin
+                        cb = dist_lIdxColPareto_valMin
+                    else:
+                        cr = dist_lIdxColPareto_valMin
+                        cg = 1 - dist_lIdxColPareto_valMin
+                        cb = 1 - dist_lIdxColPareto_valMin
+                        #cr = np.minimum(dist_lIdxColPareto_valMin * 2, 1)
+                        #cg = np.minimum((1 - dist_lIdxColPareto_valMin) * 2, 1)
+                        #cb = 0
+
+                    if (self.transparentEdges):
+                        self.edgeColorCompr[(self.varnames[j], self.varnames[i])]=(cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r))
+                    else:
+                        self.edgeColorCompr[(self.varnames[j], self.varnames[i])]=(cr, cg, cb)
+
+    def computeFitandCmplxEdgeColor(self):
+        self.edgeColorFit = {}
+        self.edgeColorCmplx = {}
+
+        for i in range(len(self.pareto)):  # i is child
+            for j in range(len(self.pareto[i])):  # j is parent
+                lIdxColPareto = self.pareto[i][j]
+                if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
+                    if (self.adj_fit[i, j] == 0):
+                        raise Exception('Error on fit color')
+                    if (self.adj_cmplx[i, j] == 0):
+                        raise Exception('Error on cmplx color')
+
+                    #if self.nbeq[i] == np.float64(0.0): continue
+
+                    cr = np.minimum(self.adj_fit[i, j] * 2, 1)
+                    cg = np.minimum((1 - self.adj_fit[i, j]) * 2, 1)
+                    cb = 0
+                    if (self.transparentEdges):
+                        self.edgeColorFit[(self.varnames[j], self.varnames[i])]=(cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r))
+                    else:
+                        self.edgeColorFit[(self.varnames[j], self.varnames[i])]=(cr, cg, cb)
+                    cr = np.minimum((self.adj_cmplx[i, j] / self.adj_cmplx_max) * 2, 1)
+                    cg = np.minimum((1 - (self.adj_cmplx[i, j] / self.adj_cmplx_max)) * 2, 1)
+                    cb = 0
+                    if (self.transparentEdges):
+                        self.edgeColorCmplx[(self.varnames[j], self.varnames[i])]=(cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r))
+                    else:
+                        self.edgeColorCmplx[(self.varnames[j], self.varnames[i])]=(cr, cg, cb)
 
     def computeInitialPos(self):
         G=nx.DiGraph()
         G.clear()
         for v in self.varnames:
             G.add_node(v)
-
-        edgelist_inOrder = []
-
-
-
 
         for i in range(len(self.pareto)):
             for j in range(len(self.pareto[i])):
@@ -466,7 +537,6 @@ class RFGraph_Model:
                                     adjsimple=self.adj_simple[i, j], adjfit=
                                     self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
                                     adjcontr=self.adj_contr[i, j])
-                    edgelist_inOrder.append((self.varnames[j], self.varnames[i]))
 
 
         self.pos = nx.nx_pydot.graphviz_layout(G, prog='dot')

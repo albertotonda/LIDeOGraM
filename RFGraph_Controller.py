@@ -69,16 +69,15 @@ class RFGraph_Controller:
 
 
     def onMove(self,event):
-        #print(event)
+        print(event)
         if(event.button==1 and self.modApp.lastNodeClicked != ''):
             print(self.modApp.lastNodeClicked)
             old_pos=self.modApp.pos[self.modApp.lastNodeClicked]
             self.modApp.pos[self.modApp.lastNodeClicked]=(event.xdata,event.ydata)
-            try:
-                self.modApp.lpos[self.modApp.lastNodeClicked] = (self.modApp.lpos[self.modApp.lastNodeClicked][0] - old_pos[0] + event.xdata,
+
+            self.modApp.lpos[self.modApp.lastNodeClicked] = (self.modApp.lpos[self.modApp.lastNodeClicked][0] - old_pos[0] + event.xdata,
                                                         self.modApp.lpos[self.modApp.lastNodeClicked][1] - old_pos[1] + event.ydata)
-            except:
-                pass
+
             self.vwApp.networkGUI.network.axes.clear()
             self.vwApp.networkGUI.network.updateNodes()
             self.vwApp.networkGUI.network.updateLabels()
@@ -101,6 +100,8 @@ class RFGraph_Controller:
         if len(list(filter(lambda x: x[0] < radius, dst))) == 0:
             self.higlight(None, self.modApp.lastNodeClicked)
             self.modApp.lastNodeClicked=""
+            self.modApp.computeEdgeBold()
+            self.modApp.computeNxGraph()
             return
         nodeclicked = min(dst, key=(lambda x: x[0]))[1]
 
@@ -112,7 +113,8 @@ class RFGraph_Controller:
         if self.modApp.lastNodeClicked != "":
             self.higlight(nodeclicked, self.modApp.lastNodeClicked)
             self.modApp.lastNodeClicked = nodeclicked
-            self.modApp.computeBoldNodes()
+            self.modApp.computeEdgeBold()
+            self.modApp.computeNxGraph()
             self.vwApp.networkGUI.network.axes.clear()
             self.vwApp.networkGUI.network.updateNodes()
             self.vwApp.networkGUI.network.updateLabels()
@@ -120,7 +122,8 @@ class RFGraph_Controller:
         else:
             self.higlight(nodeclicked,None)
             self.modApp.lastNodeClicked = nodeclicked
-            self.modApp.computeBoldNodes()
+            self.modApp.computeEdgeBold()
+            self.modApp.computeNxGraph()
             self.vwApp.networkGUI.network.axes.clear()
             self.vwApp.networkGUI.network.updateNodes()
             self.vwApp.networkGUI.network.updateLabels()
@@ -149,17 +152,23 @@ class RFGraph_Controller:
                         self.modApp.selectContrTxt=""
                         self.modApp.mode_cntrt = False
                         self.modApp.NodeConstraints = []
-                        self.vwApp.networkGUI.network.updateView()
+                        self.modApp.computeEdgeBold()
+                        self.modApp.computeNxGraph()
+                        self.vwApp.networkGUI.network.axes.clear()
+                        self.vwApp.networkGUI.network.updateNodes()
+                        self.vwApp.networkGUI.network.updateLabels()
+                        self.vwApp.networkGUI.network.drawEdges()
+                        self.vwApp.updateView()
                     else:
                         self.modApp.selectContrTxt=""
                         self.modApp.mode_cntrt = False
                         self.modApp.NodeConstraints = []
-                        self.modApp.error_params = ErrorConstraint.get_params()
+                        #self.modApp.error_params = ErrorConstraint.get_params()
             else:
                 self.modApp.selectContrTxt=""
                 self.modApp.mode_cntrt = False
                 self.modApp.NodeConstraints = []
-                self.modApp.error_params = ErrorConstraint.get_params()
+                #self.modApp.error_params = ErrorConstraint.get_params()
 
         if (not self.modApp.mode_cntrt):
             print('action:', nodeclicked)
@@ -178,12 +187,22 @@ class RFGraph_Controller:
             return
         else:
             self.modApp.scrolledList.pop(self.vwApp.scrolledListBox.currentIndex())
-            self.vwApp.networkGUI.updateView()
+            self.modApp.computeEdgeBold()
+            self.modApp.computeNxGraph()
+            self.vwApp.networkGUI.network.axes.clear()
+            self.vwApp.networkGUI.network.updateNodes()
+            self.vwApp.networkGUI.network.updateLabels()
+            self.vwApp.networkGUI.network.drawEdges()
+            self.vwApp.updateView()
 
     # TODO Change la couleur et la densité des "edges" en fonction du déplacement des sliders
     def SliderMoved(self, value):
-        self.modApp.adjThresholdVal=self.vwApp.adjThreshold_slider.value() / 100.0
-        self.modApp.comprFitCmplxVal=self.vwApp.comprFitCmplx_slider.value() / 100.0
+        if( self.modApp.adjThresholdVal!=self.vwApp.adjThreshold_slider.value() / 100.0):
+            self.modApp.adjThresholdVal=self.vwApp.adjThreshold_slider.value() / 100.0
+        if(self.modApp.comprFitCmplxVal != self.vwApp.comprFitCmplx_slider.value() / 100.0 ):
+            self.modApp.comprFitCmplxVal=self.vwApp.comprFitCmplx_slider.value() / 100.0
+            self.modApp.computeComprEdgeColor()
+            self.modApp.computeEdgeBold()
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.updateView()
 

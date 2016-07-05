@@ -547,40 +547,43 @@ def draw_networkx_edges(G, pos,
         else:
             raise ValueError('edge_color must be a single color or list of exactly m colors where m is the number or edges')
 
+
+    npEdge_pos=numpy.array(edge_pos)
+    index_true = [idx-1 for idx, value in enumerate(edge_bold, 1) if value]
+    index_false = [idx - 1 for idx, value in enumerate(edge_bold, 1) if not value]
+
     try:
-        npEdge_pos=numpy.array(edge_pos)
-        index_true = [idx-1 for idx, value in enumerate(edge_bold, 1) if value]
-        index_false = [idx - 1 for idx, value in enumerate(edge_bold, 1) if not value]
-        edge_pos_bold=list(npEdge_pos[index_true])
+        edge_pos_bold = list(npEdge_pos[index_true])
         edge_pos_norm=list(npEdge_pos[index_false])
-        npEdge_colors = numpy.array(edge_colors)
-        edge_colors_norm=list(npEdge_colors[index_false])
-        edge_colors_bold=list(npEdge_colors[index_true])
-        edge_collection = LineCollection(edge_pos_norm,
-                                         colors=edge_colors_norm,
-                                         linewidths=lw,
-                                         antialiaseds=(1,),
-                                         linestyle=style,
-                                         transOffset = ax.transData,
-                                         )
-
-
-        edge_collection.set_zorder(1)  # edges go behind nodes
-        edge_collection.set_label(label)
-        ax.add_collection(edge_collection)
-
-        edge_collection = LineCollection(edge_pos_bold,
-                                          colors=edge_colors_bold,
-                                          linewidths=[5*ww for ww in lw],
-                                          antialiaseds=(1,),
-                                          linestyle=style,
-                                          transOffset=ax.transData,
-                                          )
-        edge_collection.set_zorder(1)  # edges go behind nodes
-        edge_collection.set_label(label)
-        ax.add_collection(edge_collection)
     except:
         pass
+    npEdge_colors = numpy.array(edge_colors)
+    edge_colors_norm=list(npEdge_colors[index_false])
+    edge_colors_bold=list(npEdge_colors[index_true])
+    edge_collection = LineCollection(edge_pos_norm,
+                                     colors=edge_colors_norm,
+                                     linewidths=lw,
+                                     antialiaseds=(1,),
+                                     linestyle=style,
+                                     transOffset = ax.transData,
+                                     )
+
+
+    edge_collection.set_zorder(1)  # edges go behind nodes
+    edge_collection.set_label(label)
+    ax.add_collection(edge_collection)
+
+    edge_collection = LineCollection(edge_pos_bold,
+                                      colors=edge_colors_bold,
+                                      linewidths=[5*ww for ww in lw],
+                                      antialiaseds=(1,),
+                                      linestyle=style,
+                                      transOffset=ax.transData,
+                                      )
+    edge_collection.set_zorder(1)  # edges go behind nodes
+    edge_collection.set_label(label)
+    ax.add_collection(edge_collection)
+
 
     # Note: there was a bug in mpl regarding the handling of alpha values for
     # each line in a LineCollection.  It was fixed in matplotlib in r7184 and
@@ -636,8 +639,8 @@ def draw_networkx_edges(G, pos,
             yr=(y1-y0r)/(d)
             dr=numpy.sqrt(float(xr**2 + yr**2))
             edgeAngle=(numpy.sin(yr)/numpy.abs(numpy.sin(yr)))*numpy.arccos(xr)
-            edgeAngle1=edgeAngle+0.12
-            edgeAngle2=edgeAngle-0.12
+            edgeAngle1=edgeAngle+0.15
+            edgeAngle2=edgeAngle-0.15
             xa1=numpy.cos(edgeAngle1)*0.05+x0r
             ya1=numpy.sin(edgeAngle1)*0.05+y0r
             xa2=numpy.cos(edgeAngle2)*0.05+x0r
