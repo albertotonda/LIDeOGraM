@@ -123,6 +123,16 @@ class RFGraph_Model:
 
         self.labels = {}
         self.edges = None
+
+        self.varEquasize=list(zip(self.varnames,self.nbeq))
+        self.equaPerNode={}
+        for v in self.varnames:
+            if(not v in self.varsIn):
+                self.equaPerNode[v]=self.equacolO[np.ix_(self.equacolO[:, 2] == [v], [0, 1, 2, 3])]
+
+
+
+
         self.initGraph()
 
 

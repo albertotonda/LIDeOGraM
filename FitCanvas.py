@@ -1,6 +1,8 @@
 #-*- coding: utf-8
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
-#from fitness import fitness
+import sys
+sys.path.append("fitness/")
+import fitness
 from sympy.parsing.sympy_parser import parse_expr
 import matplotlib.pyplot as plt
 import numpy as np

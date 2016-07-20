@@ -4,6 +4,7 @@ from OptimisationCanvas import OptimisationCanvas
 from ErrorConstraint import ErrorConstraint
 from Network import Network
 import numpy as np
+from OptimModGlobal import OptimModGlobal
 
 class RFGraph_Controller:
     def __init__(self,modApp,vwApp):
@@ -46,7 +47,9 @@ class RFGraph_Controller:
 
     # TODO
     def clickOptmuGP(self):
-        self.modApp.opt_params = OptimisationCanvas.get_params()
+        #self.modApp.opt_params = OptimisationCanvas.get_params()
+        optModGlob = OptimModGlobal(self.modApp)
+        optModGlob.startOptim()
 
     # TODO
     def clickHideModGlobal(self):

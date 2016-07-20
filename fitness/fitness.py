@@ -39,24 +39,31 @@ class Individual:
         self.variables = list(self.modApp.varnames)
         self.variables.extend(self.inodes.keys())
 
-        for eq in open(eqfile, 'r'):
-            t = [k.strip() for k in eq.split(",")]
-            localvar = []
-            for b in self.variables:
-                if b in t[3]:
-                    localvar.append(b)
-            self.equations.append(Equation(t[2] ,t[3] ,t[0], localvar))
-            self.complexity[t[2]] = float(t[0])
 
+        pass
 
-    def process(self, n: int):
+    def process(self, n: int,chosenEqs={}):
         """Take example i and compute solution.
         :type n: int
         """
         computed = {}
         # computed = {k : v[i] for (k,v) in self.inodes}
         for k in self.inodes.keys():
-            computed[k] = self.inodes[k][n]
+            computed[k] = float(self.inodes[k][n])
+
+        equaLines=[]
+        for v in chosenEqs.keys():
+            if(not v in self.modApp.varsIn):
+                equaLines.append(self.modApp.equaPerNode[v][chosenEqs[v]])
+
+        for t in equaLines:
+            localvar = []
+            for b in self.variables:
+                if b in t[3]:
+                    localvar.append(b)
+            self.equations.append(Equation(t[2], t[3], t[0], localvar))
+            self.complexity[t[2]] = float(t[0])
+
         # computed = self.inodes  # "Age" : value ...
         neq = len(self.equations)
         nnode = len(self.variables)  # Eviter les boules infinies
@@ -65,20 +72,22 @@ class Individual:
                 if eq.name not in computed.keys() and set(eq.variables).issubset(set(computed.keys()))  :
                     #Attention ensemble vide inclus dans n'importe quel autre ensemble !
                     neq -= 1
-                    result = (parse_expr(eq.equation.replace("^","**"), local_dict=computed))
+                    eq.equation=eq.equation.replace("^","**")
+                    #eq.equation=eq.equation.replace(".",",")
+                    result = (parse_expr(eq.equation, local_dict=computed))
                     computed[eq.name] = result
             nnode -= 1
-        if nnode == 0:
-            print("Error in process, variables not found")
+        #if nnode == 0:
+            #print("Error in process, variables not found") ATTENTION ERREUR LEVE LORS DE L'EXECUTION !!!
         return computed
 
-    def get_fitness(self, fun=(lambda x, y: math.fabs(x - y)/x), penalty=0):
+    def get_fitness(self,chosenEqs,  fun=(lambda x, y: math.fabs(x - y)/x), penalty=0):
         """match solution against given data."""
         bkeys = self.variables
         ncases = len(self.exp[list(self.inodes.keys())[0]])
         results = []
         for case in range(ncases):
-            results.append(self.process(case))
+            results.append(self.process(case,chosenEqs))
         var = 0.
         acc = 0
         cpx = 0
@@ -86,10 +95,16 @@ class Individual:
             for i in bkeys:
                 if i in results[case] and i in self.exp:
                     acc+=1
-                    var += fun(float(results[case][i]), float(self.exp[i][case].replace(",",".")))
+                    if(float(results[case][i])!= float(self.exp[i][case].replace(",","."))):
+                        if(float(results[case][i])==0.0):
+                            var += fun(float(self.exp[i][case].replace(",", ".")),float(results[case][i]))
+                        else:
+                            var += fun(float(results[case][i]), float(self.exp[i][case].replace(",", ".")))
                 else:
                     #Si un noeuds présent dans les données n'est pas calcul par le systeme on ajoute une penalité
+                    #Option non utilisé (normalement)
                     var += penalty
+                    raise NotImplementedError
         for i in bkeys:
             if i in self.complexity:
                 cpx += self.complexity[i]
