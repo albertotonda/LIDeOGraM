@@ -1,13 +1,17 @@
 class Observer:
-    def update(self):
+    def update(self, values: dict):
         pass
 
 class Subject:
-    def registerObs(self,o):
-        pass
+    def __init__(self):
+        self.obs = []
 
-    def removeObs(self,o):
-        pass
+    def registerObs(self,o : Observer):
+        self.obs.append(o)
 
-    def notifyObs(self):
-        pass
+    def removeObs(self,o : Observer):
+        self.obs.remove(o)
+
+    def notifyObs(self, values : dict):
+        for o in self.obs:
+            o.update(values)
