@@ -4,9 +4,10 @@ from OptimisationCanvas import OptimisationCanvas
 from ErrorConstraint import ErrorConstraint
 from Network import Network
 import numpy as np
-from OptimModGlobal import OptimModGlobal
+from optimModGlobal import OptimModGlobal
+import observers
 
-class RFGraph_Controller:
+class RFGraph_Controller(observers.Subject,observers.Observer):
     def __init__(self,modApp,vwApp):
         self.modApp=modApp
         self.vwApp=vwApp
@@ -23,6 +24,7 @@ class RFGraph_Controller:
         self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
         self.vwApp.buttonFitness.setStyleSheet("background-color: grey")
         self.vwApp.buttonComplexite.setStyleSheet("background-color: None")
+        self.notifyObs({"click":"fitness"})
 
     # TODO
     def clickCompromis(self):
@@ -33,6 +35,8 @@ class RFGraph_Controller:
         self.vwApp.buttonCompromis.setStyleSheet("background-color: grey")
         self.vwApp.buttonFitness.setStyleSheet("background-color: None")
         self.vwApp.buttonComplexite.setStyleSheet("background-color: None")
+        self.notifyObs({"click":"compromis"})
+
 
 
     # TODO
@@ -44,6 +48,8 @@ class RFGraph_Controller:
         self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
         self.vwApp.buttonFitness.setStyleSheet("background-color: None")
         self.vwApp.buttonComplexite.setStyleSheet("background-color: grey")
+        self.notifyObs({"click":"cmplx"})
+
 
     # TODO
     def clickOptmuGP(self):
@@ -54,15 +60,21 @@ class RFGraph_Controller:
     # TODO
     def clickHideModGlobal(self):
         self.modApp.showGlobalModel = False
+        self.notifyObs({"click":"hideglobal"})
+
 
     # TODO Affiche le modèle d'équation global
     def clickShowModGlobal(self):
         self.modApp.showGlobalModel = True
+        self.notifyObs({"click":"showglobal"})
+
 
     # TODO Enlève le lien entre les noeuds choisis
     def clickRemoveLink(self, event, radius=0.0005):
         self.modApp.mode_cntrt = True
         self.modApp.selectContrTxt="Select node 1"
+        self.notifyObs({"click":"rmlink"})
+
 
     def clickChangeEq(self):
         pass
@@ -107,6 +119,7 @@ class RFGraph_Controller:
             self.modApp.computeNxGraph()
             return
         nodeclicked = min(dst, key=(lambda x: x[0]))[1]
+
 
         if self.modApp.lastNodeClicked != "":
             pass
@@ -162,6 +175,8 @@ class RFGraph_Controller:
                         self.vwApp.networkGUI.network.updateLabels()
                         self.vwApp.networkGUI.network.drawEdges()
                         self.vwApp.updateView()
+                        self.notifyObs({"click": {"node": self.modApp.NodeConstraints}})
+
                     else:
                         self.modApp.selectContrTxt=""
                         self.modApp.mode_cntrt = False
@@ -174,6 +189,7 @@ class RFGraph_Controller:
                 #self.modApp.error_params = ErrorConstraint.get_params()
 
         if (not self.modApp.mode_cntrt):
+            self.notifyObs({"click": {"node": nodeclicked}})
             print('action:', nodeclicked)
             data_tmp = self.modApp.equacolO[np.ix_(self.modApp.equacolO[:, 2] == [nodeclicked], [0, 1, 3])]
             self.modApp.curr_tabl = self.modApp.equacolO[
@@ -189,7 +205,9 @@ class RFGraph_Controller:
         if self.vwApp.scrolledListBox.currentText() == "Select link to reinstate":
             return
         else:
-            self.modApp.scrolledList.pop(self.vwApp.scrolledListBox.currentIndex())
+            link = self.modApp.scrolledList.pop(self.vwApp.scrolledListBox.currentIndex())
+            self.notifyObs({"click": {"node": link}})
+
             self.modApp.computeEdgeBold()
             self.modApp.computeNxGraph()
             self.vwApp.networkGUI.network.axes.clear()

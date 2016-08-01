@@ -1,6 +1,6 @@
 class Observer:
     def update(self, values: dict):
-        pass
+        print(values)
 
 class Subject:
     def __init__(self):

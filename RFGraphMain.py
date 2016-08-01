@@ -5,10 +5,14 @@ from RFGraph_Controller import RFGraph_Controller
 from QtConnector import QtConnector
 import sys
 from PyQt4 import QtGui
+import observers
 
 modApp=RFGraph_Model()
 qApp = QtGui.QApplication(sys.argv)
 vwApp = RFGraph_View(modApp)
+o = osbserver()
 cntrApp=RFGraph_Controller(modApp,vwApp)
+cntrApp.registerObs(o)
 qtconnector=QtConnector(vwApp,cntrApp)
+
 sys.exit(qApp.exec_())
