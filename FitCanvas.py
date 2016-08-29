@@ -70,7 +70,7 @@ class FitCanvas(FigureCanvas):
         if self.modApp.showGlobalModel:
             ft = fitness.Individual(self.modApp,"fitness/ex_indiv.csv" )
             x = num_exp
-            z = [ft.process(i)[self.modApp.lastNodeClicked] for i in x]
+            z = [ft.process(i,self.modApp.selectedEq)[self.modApp.lastNodeClicked] for i in x]
             z = np.asarray(z)
 
 

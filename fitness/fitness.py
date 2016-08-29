@@ -3,7 +3,8 @@ import math
 import multiprocessing
 from multiprocessing.pool import ThreadPool
 import numpy as np
-
+from scipy.stats.stats import pearsonr
+from scipy import stats
 from sympy.parsing.sympy_parser import parse_expr
 
 
@@ -20,7 +21,7 @@ class Equation:
 
 class Individual:
     """Class to describe the whole system."""
-    def __init__(self, modApp, eqfile):  # gestion des noeud orphelins
+    def __init__(self, modApp, eq):  # gestion des noeud orphelins
         """Create and populate nodes dictionary."""
         self.inodes = {}
         self.equations = []
@@ -29,6 +30,8 @@ class Individual:
         self.complexity = {}
         self.modApp = modApp
 
+        #for e in eq:
+        #    self.equations.append(Equation(e,e,e,e))
 
         for i in range(len(self.modApp.dataset[0])):
             self.exp[self.modApp.dataset[0,i]]=list(self.modApp.dataset[2:, i])
@@ -37,7 +40,7 @@ class Individual:
             self.inodes[varIn] = self.exp[varIn]
 
         self.variables = list(self.modApp.varnames)
-        self.variables.extend(self.inodes.keys())
+        #self.variables.extend(self.inodes.keys())
 
 
         pass
@@ -54,8 +57,10 @@ class Individual:
         equaLines=[]
         for v in chosenEqs.keys():
             if(not v in self.modApp.varsIn):
-                equaLines.append(self.modApp.equaPerNode[v][chosenEqs[v]])
-
+                try:
+                    equaLines.append(self.modApp.equaPerNode[v][chosenEqs[v]])
+                except:
+                    pass
         for t in equaLines:
             localvar = []
             for b in self.variables:
@@ -81,7 +86,8 @@ class Individual:
             #print("Error in process, variables not found") ATTENTION ERREUR LEVE LORS DE L'EXECUTION !!!
         return computed
 
-    def get_fitness(self,chosenEqs,  fun=(lambda x, y: math.fabs(x - y)/x), penalty=0):
+    def get_fitness(self,chosenEqs,  fun=(lambda x, y: math.fabs(x - y)/math.fabs(x)), penalty=0):
+    #def get_fitness(self,chosenEqs,  fun=(lambda x, y: np.maximum(math.fabs(x / y),math.fabs(y / x))), penalty=0):
         """match solution against given data."""
         bkeys = self.variables
         ncases = len(self.exp[list(self.inodes.keys())[0]])
@@ -91,24 +97,63 @@ class Individual:
         var = 0.
         acc = 0
         cpx = 0
-        for case in range(ncases):
-            for i in bkeys:
-                if i in results[case] and i in self.exp:
-                    acc+=1
-                    if(float(results[case][i])!= float(self.exp[i][case].replace(",","."))):
-                        if(float(results[case][i])==0.0):
-                            var += fun(float(self.exp[i][case].replace(",", ".")),float(results[case][i]))
-                        else:
-                            var += fun(float(results[case][i]), float(self.exp[i][case].replace(",", ".")))
+        errVarSum = {}
+        errTot=0
+        for i in range(len(bkeys)):  # For all variables in the data
+            if(not(bkeys[i] in self.modApp.varsIn)):
+                errVarSum[bkeys[i]]=0
+                xr=[]
+                yr=[]
+                for j in range(len(results)):
+                 if bkeys[i] in results[case] and bkeys[i] in self.exp:
+                     yr.append(float(results[j][bkeys[i]]))
+                     xr.append(float(self.exp[bkeys[i]][j].replace(",",".")))
+                acc+=1
+                allEqual=True
+                for yri in range(len(yr)-1):
+                    allEqual=allEqual and yr[yri]==yr[yri+1]
+                if(allEqual):
+                    errVarSum[bkeys[i]]=1
                 else:
-                    #Si un noeuds présent dans les données n'est pas calcul par le systeme on ajoute une penalité
-                    #Option non utilisé (normalement)
-                    var += penalty
-                    raise NotImplementedError
+                    linslope,intercept, r_value, p_value, std_err =stats.linregress(xr,yr)
+                    if(linslope>1):
+                        directionErr=1/linslope
+                    else:
+                        directionErr=linslope
+                    #errVarSum[bkeys[i]]=1-(pearsonr(xr,yr)[0]*directionErr)
+                    #errVarSum[bkeys[i]] = 1 - (np.maximum(pearsonr(xr, yr)[0],0) * directionErr)
+                    #errVarSum[bkeys[i]] = 1 - (np.maximum(pearsonr(xr, yr)[0], 0) )
+                    #errVarSum[bkeys[i]] = 1 - pearsonr(xr, yr)[0]
+                    p=pearsonr(xr, yr)[0]
+                    if(p>0):
+                        errVarSum[bkeys[i]] = 1 - p*directionErr
+                    else:
+                        errVarSum[bkeys[i]] = 1 + p*directionErr
+
+                errTot+=errVarSum[bkeys[i]]
+
+        # for case in range(ncases): #For all experiments
+        #     for i in bkeys:
+        #         if bkeys[i] in results[case] and bkeys[i] in self.exp: #If the variable has been computed with the global model for all experiment
+        #             acc+=1
+        #             if(float(results[case][bkeys[i]])!= float(self.exp[bkeys[i]][case].replace(",","."))):
+        #                 if(float(results[case][bkeys[i]])==0.0):
+        #                  err=fun(float(self.exp[bkeys[i]][case].replace(",", ".")),float(results[case][bkeys[i]]))
+        #                  errVarSum[bkeys[i]] += err
+        #                  var += err
+        #                 else:
+        #                  err=fun(float(results[case][bkeys[i]]), float(self.exp[bkeys[i]][case].replace(",", ".")))
+        #                  errVarSum[bkeys[i]] += err
+        #                  var += err
+        #         else:
+        #             #Si un noeuds présent dans les données n'est pas calcul par le systeme on ajoute une penalité
+        #             #Option non utilisé (normalement)
+        #             var += penalty
+        #             raise NotImplementedError
         for i in bkeys:
-            if i in self.complexity:
-                cpx += self.complexity[i]
-        return var/acc, cpx
+         if i in self.complexity and not i in self.modApp.varsIn:
+             cpx += self.complexity[i]
+        return errTot, cpx,errVarSum
 
 def get_multithread_fitness(var,exps,initv):
     tasks = [Individual(initv,var,exp) for exp in exps]

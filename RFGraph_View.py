@@ -88,6 +88,8 @@ class RFGraph_View(QtGui.QMainWindow):
 
 
     def updateView(self):
+        if(self.modApp.globalModelView==True):
+            pass
         self.networkGUI.network.updateView()
         self.fitGUI.updateView()
         self.eqTableGUI.updateView()
@@ -95,3 +97,4 @@ class RFGraph_View(QtGui.QMainWindow):
         self.scrolledListBox.clear()
         for item in self.modApp.scrolledList:
             self.scrolledListBox.addItem(item)
+

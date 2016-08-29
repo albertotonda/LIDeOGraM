@@ -49,7 +49,12 @@ class RFGraph_Controller:
     def clickOptmuGP(self):
         #self.modApp.opt_params = OptimisationCanvas.get_params()
         optModGlob = OptimModGlobal(self.modApp)
-        optModGlob.startOptim()
+        self.modApp.showGlobalModel=True
+        self.modApp.best_indv=optModGlob.startOptim()
+        self.modApp.globalModelView=True
+        self.modApp.bestindvToSelectedEq()
+        self.modApp.computeGlobalView()
+        self.vwApp.updateView()
 
     # TODO
     def clickHideModGlobal(self):
@@ -65,7 +70,8 @@ class RFGraph_Controller:
         self.modApp.selectContrTxt="Select node 1"
 
     def clickChangeEq(self):
-        pass
+        print("clickChangeEq")
+        self.modApp.mode_changeEq=True
 
     def onPick(self,event):
         pass
@@ -81,10 +87,17 @@ class RFGraph_Controller:
             self.modApp.lpos[self.modApp.lastNodeClicked] = (self.modApp.lpos[self.modApp.lastNodeClicked][0] - old_pos[0] + event.xdata,
                                                         self.modApp.lpos[self.modApp.lastNodeClicked][1] - old_pos[1] + event.ydata)
 
-            self.vwApp.networkGUI.network.axes.clear()
-            self.vwApp.networkGUI.network.updateNodes()
-            self.vwApp.networkGUI.network.updateLabels()
-            self.vwApp.networkGUI.network.drawEdges()
+            self.modApp.fpos[self.modApp.lastNodeClicked] = (
+            self.modApp.fpos[self.modApp.lastNodeClicked][0] - old_pos[0] + event.xdata,
+            self.modApp.fpos[self.modApp.lastNodeClicked][1] - old_pos[1] + event.ydata)
+
+            if (self.modApp.globalModelView):
+                self.vwApp.updateView()
+            else:
+                self.vwApp.networkGUI.network.axes.clear()
+                self.vwApp.networkGUI.network.updateNodes()
+                self.vwApp.networkGUI.network.updateLabels()
+                self.vwApp.networkGUI.network.drawEdges()
         else:
             print(event)
 
@@ -116,21 +129,27 @@ class RFGraph_Controller:
         if self.modApp.lastNodeClicked != "":
             self.higlight(nodeclicked, self.modApp.lastNodeClicked)
             self.modApp.lastNodeClicked = nodeclicked
-            self.modApp.computeEdgeBold()
-            self.modApp.computeNxGraph()
-            self.vwApp.networkGUI.network.axes.clear()
-            self.vwApp.networkGUI.network.updateNodes()
-            self.vwApp.networkGUI.network.updateLabels()
-            self.vwApp.networkGUI.network.drawEdges()
+            if(self.modApp.globalModelView):
+                self.vwApp.networkGUI.network.updateView()
+            else:
+                self.modApp.computeEdgeBold()
+                self.modApp.computeNxGraph()
+                self.vwApp.networkGUI.network.axes.clear()
+                self.vwApp.networkGUI.network.updateNodes()
+                self.vwApp.networkGUI.network.updateLabels()
+                self.vwApp.networkGUI.network.drawEdges()
         else:
             self.higlight(nodeclicked,None)
             self.modApp.lastNodeClicked = nodeclicked
-            self.modApp.computeEdgeBold()
-            self.modApp.computeNxGraph()
-            self.vwApp.networkGUI.network.axes.clear()
-            self.vwApp.networkGUI.network.updateNodes()
-            self.vwApp.networkGUI.network.updateLabels()
-            self.vwApp.networkGUI.network.drawEdges()
+            if (self.modApp.globalModelView):
+                self.vwApp.networkGUI.network.updateView()
+            else:
+                self.modApp.computeEdgeBold()
+                self.modApp.computeNxGraph()
+                self.vwApp.networkGUI.network.axes.clear()
+                self.vwApp.networkGUI.network.updateNodes()
+                self.vwApp.networkGUI.network.updateLabels()
+                self.vwApp.networkGUI.network.drawEdges()
 
             #Change color back
 
@@ -155,13 +174,16 @@ class RFGraph_Controller:
                         self.modApp.selectContrTxt=""
                         self.modApp.mode_cntrt = False
                         self.modApp.NodeConstraints = []
-                        self.modApp.computeEdgeBold()
-                        self.modApp.computeNxGraph()
-                        self.vwApp.networkGUI.network.axes.clear()
-                        self.vwApp.networkGUI.network.updateNodes()
-                        self.vwApp.networkGUI.network.updateLabels()
-                        self.vwApp.networkGUI.network.drawEdges()
-                        self.vwApp.updateView()
+                        if (self.modApp.globalModelView):
+                            self.vwApp.networkGUI.network.updateView()
+                        else:
+                            self.modApp.computeEdgeBold()
+                            self.modApp.computeNxGraph()
+                            self.vwApp.networkGUI.network.axes.clear()
+                            self.vwApp.networkGUI.network.updateNodes()
+                            self.vwApp.networkGUI.network.updateLabels()
+                            self.vwApp.networkGUI.network.drawEdges()
+                            self.vwApp.updateView()
                     else:
                         self.modApp.selectContrTxt=""
                         self.modApp.mode_cntrt = False
@@ -213,6 +235,11 @@ class RFGraph_Controller:
     def tableClicked(self, cellClicked):
         self.modApp.clicked_line=cellClicked.row()
         self.vwApp.fitGUI.updateView()
+        if(self.modApp.mode_changeEq):
+            self.modApp.selectedEq[self.modApp.lastNodeClicked] = cellClicked.row()
+            self.modApp.computeGlobalView()
+            self.vwApp.updateView()
+            self.modApp.mode_changeEq=False
         #self.vwApp.networkGUI.updateView()
 
     # TODO Crée le surlignage des noeuds

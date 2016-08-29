@@ -8,6 +8,9 @@ import networkx as nx
 #nx.use('qt4agg')
 from ArrayConverter import ArrayConverter
 import re
+import sys
+sys.path.append("fitness/")
+import fitness
 
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model:
@@ -39,7 +42,7 @@ class RFGraph_Model:
 
         for l in range(self.nbequa):
             for h in range(self.nbVar):       #Possible parents for the equations
-                cont_h=len(re.findall(r'\b%s\b' % re.escape(self.varnames[h]),self.equacolO[l,3]))  #How many times the variable self.varname[h] is found in the equation self.
+                cont_h=len(re.findall(r'\b%s\b' % re.escape(self.varnames[h]),self.equacolO[l,3]))  #How many times the variable self.varname[h] is found in the equation self.equacolO[l,3]
                 if(cont_h>0):
                     ind_parent=h
                     ind_offspring=list(self.varnames).index(self.equacolO[l,2])
@@ -109,6 +112,11 @@ class RFGraph_Model:
         self.transparentEdges=False
         self.edgeBoldfull=[]
         self.adj_cmplx_max = np.amax(self.adj_cmplx)
+        self.best_indv=[]
+        self.globalModelView = False
+        self.selectedEq={}
+        self.global_Edge_Color = []
+        self.mode_changeEq=False
         #Necessaire de faire une deepcopy ?
         #self.lpos= copy.deepcopy(self.pos)
         #for p in self.lpos:  # raise text positions
@@ -425,7 +433,7 @@ class RFGraph_Model:
 
         self.removeInvisibleEdges()
         self.removeForbiddenEdges()
-        pass
+
 
     def colorDictToConstraintedcolorList(self,colorDict,edgesToShow):
         colorList=[]
@@ -569,3 +577,84 @@ class RFGraph_Model:
         self.lpos = copy.deepcopy(self.pos)
         for p in self.lpos:  # raise text positions
             self.lpos[p] = (self.lpos[p][0], self.lpos[p][1] + 0.04)
+
+        self.fpos = copy.deepcopy(self.pos)
+        for p in self.fpos:
+            self.fpos[p] = (self.fpos[p][0], self.fpos[p][1] - 0.04)
+
+
+
+    def computeGlobalNxGraph(self):
+        self.G.clear()
+        for v in self.varnames:
+            self.G.add_node(v)
+
+        self.edgelist_inOrder = []
+
+        for i in range(len(self.pareto)):  # i is child
+            for j in range(len(self.pareto[i])):  # j is parent
+                lIdxColPareto = self.pareto[i][j]
+                if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
+
+                    # if self.nbeq[i] == np.float64(0.0): continue
+                    r = self.adj_simple[i, j] / self.nbeq[
+                        i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
+                    if (r > self.adjThresholdVal):
+                        self.G.add_edge(self.varnames[j], self.varnames[i],
+                                        adjsimple=self.adj_simple[i, j], adjfit=
+                                        self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
+                                        adjcontr=self.adj_contr[i, j])
+                        self.edgelist_inOrder.append((self.varnames[j], self.varnames[i]))
+
+        self.removeInvisibleEdges()
+        self.removeForbiddenEdges()
+
+    def bestindvToSelectedEq(self):
+        self.selectedEq = {}
+        for v in self.varnames:
+            try:
+                self.selectedEq[v] = self.best_indv[v]
+            except:
+                pass
+    def computeGlobalView(self):
+
+        ft = fitness.Individual(self, "fitness/ex_indiv.csv")
+        res=ft.get_fitness(self.selectedEq)
+        self.globErr=copy.deepcopy(res[2])
+        self.sumGlobErr=np.sum(list(self.globErr.values()))
+        self.globErrLab = copy.deepcopy(res[2])
+        for k in self.globErrLab.keys():
+            self.globErrLab[k] = "{0:.2f}".format(self.globErr[k])
+
+        equaLines=[]
+
+        for v in self.selectedEq.keys():
+            if(not v in self.varsIn):
+                equaLines.append(self.equaPerNode[v][self.selectedEq[v]])
+        self.edgelist_inOrder = []
+        self.global_Edge_Color = []
+        for l in range(len(equaLines)):
+            for h in range(self.nbVar):  # Possible parents for the equations
+                cont_h = len(re.findall(r'\b%s\b' % re.escape(self.varnames[h]), equaLines[l][3]))  # How many times the variable self.varname[h] is found in the equation self.
+                if (cont_h > 0):
+                    self.G.add_edge(self.varnames[h], equaLines[l][2])
+                    self.edgelist_inOrder.append((self.varnames[h], equaLines[l][2]))
+        err_max=-np.inf
+        for (h, l) in self.edgelist_inOrder:
+            err_max = np.maximum(res[2][l],err_max)
+
+        for (h, l) in self.edgelist_inOrder:
+            err_coef= res[2][l]/err_max
+            print(res[2][l])
+            if(err_coef==1):
+                pass
+            cr = np.minimum(err_coef * 2, 1)
+            cg = np.minimum((1 - err_coef) * 2, 1)
+            cb = 0
+            self.global_Edge_Color.append((cr,cg,cb))
+        pass
+
+
+        #edge
+        #edge color
+        #edge bold
