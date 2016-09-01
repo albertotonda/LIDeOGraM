@@ -9,6 +9,7 @@ import observers
 
 class RFGraph_Controller(observers.Subject,observers.Observer):
     def __init__(self,modApp,vwApp):
+        super().__init__()
         self.modApp=modApp
         self.vwApp=vwApp
 

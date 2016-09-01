@@ -10,7 +10,7 @@ import observers
 modApp=RFGraph_Model()
 qApp = QtGui.QApplication(sys.argv)
 vwApp = RFGraph_View(modApp)
-o = osbserver()
+o = observers.Observer()
 cntrApp=RFGraph_Controller(modApp,vwApp)
 cntrApp.registerObs(o)
 qtconnector=QtConnector(vwApp,cntrApp)

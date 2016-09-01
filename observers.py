@@ -1,5 +1,6 @@
 class Observer:
     def update(self, values: dict):
+        print("Observer says : ")
         print(values)
 
 class Subject:
