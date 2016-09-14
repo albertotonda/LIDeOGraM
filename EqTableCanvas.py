@@ -6,6 +6,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as fca
 from sympy import *
 from sympy.parsing.sympy_parser import parse_expr
 import numpy as np
+import DesignEquation
 
 # TODO Crée la table contenant les équations du noeud sélectionné
 class EqTableCanvas(QTableWidget):
@@ -128,7 +129,10 @@ class EqTableCanvas(QTableWidget):
             newitem.setBackground(QColor(cr * 255, cg * 255, cb * 255))
             self.setItem(n, 1, newitem)
 
-            newitem = QTableWidgetItem(str(self.modApp.data[n][2]))
+            eq = str(self.modApp.data[n][2])
+            eq =  str(DesignEquation.DesignEquation(eq))
+
+            newitem = QTableWidgetItem(eq)
             cr = 1
             cg = 1
             cb = 1
