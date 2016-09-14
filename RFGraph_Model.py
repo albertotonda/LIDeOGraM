@@ -648,8 +648,8 @@ class RFGraph_Model:
             print(res[2][l])
             if(err_coef==1):
                 pass
-            cr = np.minimum(err_coef * 2, 1)
-            cg = np.minimum((1 - err_coef) * 2, 1)
+            cr = np.maximum(np.minimum(err_coef * 2, 1),0)
+            cg = np.maximum(np.minimum((1 - err_coef) * 2, 1),0)
             cb = 0
             self.global_Edge_Color.append((cr,cg,cb))
         pass

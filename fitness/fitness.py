@@ -113,7 +113,7 @@ class Individual:
                 for yri in range(len(yr)-1):
                     allEqual=allEqual and yr[yri]==yr[yri+1]
                 if(allEqual):
-                    errVarSum[bkeys[i]]=1
+                    errVarSum[bkeys[i]]=0
                 else:
                     linslope,intercept, r_value, p_value, std_err =stats.linregress(xr,yr)
                     if(linslope>1):
@@ -129,7 +129,7 @@ class Individual:
                         errVarSum[bkeys[i]] = 1 - p*directionErr
                     else:
                         errVarSum[bkeys[i]] = 1 + p*directionErr
-
+                    #errVarSum[bkeys[i]] = p
                 errTot+=errVarSum[bkeys[i]]
 
         # for case in range(ncases): #For all experiments

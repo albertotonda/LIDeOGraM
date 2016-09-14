@@ -28,7 +28,7 @@ class Network:
         nxa.draw_networkx_labels_angle(self.modApp.G, self.modApp.lpos, self.modApp.labels, ax=self.axes, rotate=45)
         nx.draw_networkx_labels(self.modApp.G, self.modApp.fpos, self.modApp.globErrLab, ax=self.axes)
         lab={}
-        lab['sumGlobErr']=' Erreur Global: '+"{0:.2f}".format(self.modApp.sumGlobErr)
+        lab['sumGlobErr']=' Global fitness: '+"{0:.2f}".format(self.modApp.sumGlobErr)
         labpos={}
         allposx=[]
         allposy=[]
