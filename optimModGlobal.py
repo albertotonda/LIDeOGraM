@@ -91,11 +91,11 @@ class OptimModGlobal:
 
 
 
-        NGEN=200
+        NGEN=100
         CXPB=0.8
         MUTPB=0.2
-        mu=200
-        lmbd=150
+        mu=100
+        lmbd=80
         halloffame=tools.HallOfFame(1)
         pop=toolbox.new_population(n=mu)
         fitnesses=toolbox.map(toolbox.evaluate, pop)
