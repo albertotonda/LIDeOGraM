@@ -3,6 +3,7 @@ from PyQt4 import QtGui, QtCore
 
 from NetworkCanvas import NetworkCanvas
 from EqTableCanvas import EqTableCanvas
+from IncMatrixCanvas import IncMatrixCanvas
 from FitCanvas import FitCanvas
 
 # TODO Crée tout les boutons (or graphes + équations)
@@ -24,7 +25,8 @@ class RFGraph_View(QtGui.QMainWindow):
         self.gridLayout.setSpacing(5)
         self.networkGUI = NetworkCanvas(self.modApp, self)
         self.gridLayout.addWidget(self.networkGUI, 1, 0, 8, 60)
-
+        self.incMatGUI = IncMatrixCanvas(self.modApp,self)
+        self.gridLayout.addWidget(self.incMatGUI,1,61,12,20)
         self.adjThreshold_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
         self.adjThreshold_slider.setValue(self.modApp.adjThresholdVal * 100)
 
@@ -46,10 +48,10 @@ class RFGraph_View(QtGui.QMainWindow):
 
         self.eqTableGUI = EqTableCanvas(self.modApp)
 
-        self.gridLayout.addWidget(self.eqTableGUI, 1, 60, 6, 60)
+        self.gridLayout.addWidget(self.eqTableGUI, 1, 85, 6, 60)
 
         self.fitGUI = FitCanvas(self.modApp)
-        self.gridLayout.addWidget(self.fitGUI, 7, 60, 6, 60)
+        self.gridLayout.addWidget(self.fitGUI, 7, 85, 6, 60)
 
         self.buttonCompromis = QtGui.QPushButton('Compromise', self)
         self.buttonFitness = QtGui.QPushButton('Fitness', self)

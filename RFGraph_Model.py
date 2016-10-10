@@ -11,6 +11,7 @@ import re
 import sys
 sys.path.append("fitness/")
 import fitness
+import pandas as pd
 
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model:
@@ -125,6 +126,8 @@ class RFGraph_Model:
 
         # Charge la base de données d'équations à afficher après chargement
         # TODO: Base de données d'équations à changer
+
+
         self.data = []
         for i in range(len(self.equacolPO)):
             self.data.append(self.equacolPO[i, np.ix_([0, 1, 4])][0])
@@ -138,12 +141,39 @@ class RFGraph_Model:
             if(not v in self.varsIn):
                 self.equaPerNode[v]=self.equacolO[np.ix_(self.equacolO[:, 2] == [v], [0, 1, 2, 3])]
 
+        ##########################
+        #self.datumIncMat = pd.read_csv("data/equa_with_col_Parent_withMol.csv", header=None)
+        #self.datumIncMat = self.datumIncMat.sort(2)
+        self.datumIncMat=pd.DataFrame(self.equacolO)
+        variables = ["Temperature", "Age"] + sorted(self.datumIncMat[2].unique().tolist())
 
+        self.df_IncMat = pd.DataFrame(index=self.datumIncMat[2], columns=["Temperature", "Age"] + self.datumIncMat[2].unique().tolist())
+        for row in range(self.df_IncMat.shape[0]):
+            v = self.df_IncMat.index.values[row]
+            self.df_IncMat.ix[row] = self.getV(self.df_IncMat.columns.values, self.datumIncMat.irow(row)[3], v)
+
+        self.dataIncMat = self.df_IncMat
+        self.shapeIncMat = self.dataIncMat.shape
+        ##########################
 
 
         self.initGraph()
 
-
+    def getV(self,variables, line, v):
+        table = []
+        for i in variables:
+            # g = "\W"+i+"\W"
+            # if re.search(g, line):
+            if (re.findall(r'\b%s\b' % re.escape(i), line)):
+                # if i in line:
+                table.append(1)
+            elif v == i:
+                table.append(-1)
+            else:
+                table.append(0)
+        # print(v)
+        # print(table)
+        return table
 
     def pos_graph(self):
         pos = {}
