@@ -157,6 +157,7 @@ class RFGraph_Model:
         ##########################
 
 
+
         self.initGraph()
 
     def getV(self,variables, line, v):

@@ -31,9 +31,9 @@ class IncMatrixCanvas(QTableWidget):
         self.setVerticalHeaderLabels(self.modApp.dataIncMat.index.tolist())
 
         for i in range(self.modApp.shapeIncMat[0]):
-            self.setRowHeight(i, 5)
+            self.setRowHeight(i, 15)
             for j in range(self.modApp.shapeIncMat[1]):
-                self.setColumnWidth(j, 5)
+                self.setColumnWidth(j, 15)
                 fnt = QFont()
                 fnt.setPointSize(5)
                 value = self.modApp.dataIncMat.ix[i, j]

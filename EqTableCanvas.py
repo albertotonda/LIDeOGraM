@@ -129,10 +129,10 @@ class EqTableCanvas(QTableWidget):
             self.setItem(n, 1, newitem)
 
             newitem = QTableWidgetItem(str(self.modApp.data[n][2]))
-            cr = 1
-            cg = 1
-            cb = 1
-            newitem.setBackground(QColor(cr * 255, cg * 255, cb * 255))
+            if(self.modApp.clicked_line==n):
+                newitem.setBackground(QColor(130, 130, 110))
+            else:
+                newitem.setBackground(QColor(255, 255, 255))
             self.setItem(n, 2, newitem)
 
             #newitem = QTableWidgetItem(self.modApp.data[n][m])

@@ -116,6 +116,7 @@ class RFGraph_Controller:
         if len(list(filter(lambda x: x[0] < radius, dst))) == 0:
             self.higlight(None, self.modApp.lastNodeClicked)
             self.modApp.lastNodeClicked=""
+            self.modApp.clicked_line=-1
             self.modApp.computeEdgeBold()
             self.modApp.computeNxGraph()
             return
@@ -129,6 +130,7 @@ class RFGraph_Controller:
         if self.modApp.lastNodeClicked != "":
             self.higlight(nodeclicked, self.modApp.lastNodeClicked)
             self.modApp.lastNodeClicked = nodeclicked
+            self.modApp.clicked_line = -1
             if(self.modApp.globalModelView):
                 self.vwApp.networkGUI.network.updateView()
             else:
@@ -141,6 +143,7 @@ class RFGraph_Controller:
         else:
             self.higlight(nodeclicked,None)
             self.modApp.lastNodeClicked = nodeclicked
+            self.modApp.clicked_line = -1
             if (self.modApp.globalModelView):
                 self.vwApp.networkGUI.network.updateView()
             else:
@@ -232,8 +235,9 @@ class RFGraph_Controller:
         self.vwApp.networkGUI.network.updateView()
 
     # TODO Affiche la courbe de l'équation sélectionnée
-    def tableClicked(self, cellClicked):
+    def eqTableClicked(self, cellClicked):
         self.modApp.clicked_line=cellClicked.row()
+        self.vwApp.eqTableGUI.updateView()
         self.vwApp.fitGUI.updateView()
         if(self.modApp.mode_changeEq):
             self.modApp.selectedEq[self.modApp.lastNodeClicked] = cellClicked.row()
@@ -241,6 +245,32 @@ class RFGraph_Controller:
             self.vwApp.updateView()
             self.modApp.mode_changeEq=False
         #self.vwApp.networkGUI.updateView()
+
+    def incMatClicked(self,cellClicked):
+        print(cellClicked.row)
+        nodeToClick=self.modApp.datumIncMat.iloc[cellClicked.row()][2]
+        posNode=self.modApp.pos[nodeToClick]
+        class MyEvent:
+            def __init__(self,xdata,ydata):
+                self.xdata=xdata
+                self.ydata=ydata
+        ev=MyEvent(self.modApp.pos[self.modApp.datumIncMat.iloc[cellClicked.row()][2]][0],self.modApp.pos[self.modApp.datumIncMat.iloc[cellClicked.row()][2]][1])
+        self.onClick(ev)
+        eqCellToClick = -1
+        for i in range(len(self.modApp.data)):
+            if(self.modApp.data[i][2]==self.modApp.datumIncMat.iloc[cellClicked.row()][3]):
+                eqCellToClick=i
+                break
+        class MyWidgetItem:
+            self.row2=-1
+            def __init__(self,row2):
+                self.row2=row2
+            def row(self):
+                return self.row2
+        eqCellToClickWid=MyWidgetItem(eqCellToClick)
+
+        self.eqTableClicked(eqCellToClickWid)
+
 
     # TODO Crée le surlignage des noeuds
     def higlight(self, new_node: str, old_node: str = None):

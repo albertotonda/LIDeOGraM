@@ -26,7 +26,7 @@ class RFGraph_View(QtGui.QMainWindow):
         self.networkGUI = NetworkCanvas(self.modApp, self)
         self.gridLayout.addWidget(self.networkGUI, 1, 0, 8, 60)
         self.incMatGUI = IncMatrixCanvas(self.modApp,self)
-        self.gridLayout.addWidget(self.incMatGUI,1,61,12,20)
+        self.gridLayout.addWidget(self.incMatGUI,1,61,12,60)
         self.adjThreshold_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
         self.adjThreshold_slider.setValue(self.modApp.adjThresholdVal * 100)
 
@@ -48,10 +48,10 @@ class RFGraph_View(QtGui.QMainWindow):
 
         self.eqTableGUI = EqTableCanvas(self.modApp)
 
-        self.gridLayout.addWidget(self.eqTableGUI, 1, 85, 6, 60)
+        self.gridLayout.addWidget(self.eqTableGUI, 1, 130, 6, 60)
 
         self.fitGUI = FitCanvas(self.modApp)
-        self.gridLayout.addWidget(self.fitGUI, 7, 85, 6, 60)
+        self.gridLayout.addWidget(self.fitGUI, 7, 130, 6, 60)
 
         self.buttonCompromis = QtGui.QPushButton('Compromise', self)
         self.buttonFitness = QtGui.QPushButton('Fitness', self)
