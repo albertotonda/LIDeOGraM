@@ -92,7 +92,7 @@ class OptimModGlobal:
 
 
 
-        NGEN=100
+        NGEN=1000
         CXPB=0.8
         MUTPB=0.2
         mu=10
