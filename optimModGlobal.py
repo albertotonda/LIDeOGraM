@@ -85,17 +85,18 @@ class OptimModGlobal:
         stats.register("max", np.max)
         logbook = tools.Logbook()
 
-        with open('bestIndv.dat', 'rb') as f:
-            ret = pickle.load(f)
-        return ret
+        #with open('bestIndv.dat', 'rb') as f:
+        #with open('bestIndv_soussurexpr.dat', 'rb') as f:
+        #    ret = pickle.load(f)
+        #return ret
 
 
 
-        NGEN=100
+        NGEN=10
         CXPB=0.8
         MUTPB=0.2
-        mu=100
-        lmbd=80
+        mu=10
+        lmbd=8
         halloffame=tools.HallOfFame(1)
         pop=toolbox.new_population(n=mu)
         fitnesses=toolbox.map(toolbox.evaluate, pop)
@@ -191,7 +192,7 @@ class OptimModGlobal:
 
         #bestindvDict=[]
 
-        with open('bestIndv.dat', 'wb') as f:
+        with open('bestIndv_soussurexpr2.dat', 'wb') as f:
             pickle.dump(bestindvDict, f)
 
         return bestindvDict

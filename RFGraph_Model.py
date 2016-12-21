@@ -20,7 +20,7 @@ class RFGraph_Model:
 
         equacolPdata = []
         #eureqafile=open('data/eureqa_sans_calc.txt','r')
-        eureqafile = open('data/eureqa_sans_calcmol.txt', 'r')
+        eureqafile = open('data/eureqa_sans_calcmol_soussurexpr.txt', 'r')
         for line in eureqafile:
             line = line.replace("\t", ",")
             line=line.replace("\"","")
@@ -32,7 +32,7 @@ class RFGraph_Model:
         self.equacolO=ArrayConverter.convertP(equacolPdata)
         self.nbequa=len(self.equacolO)
         #self.dataDict,self.identvarDict,self.dataset=self.loadDataFile("data/dataset_cell_pop_nocalc.csv")
-        self.dataDict, self.identvarDict, self.dataset = self.loadDataFile("data/dataset_mol_cell_pop_nocalc.csv")
+        self.dataDict, self.identvarDict, self.dataset = self.loadDataFile("data/dataset_mol_cell_pop_nocalc_sursousexpr.csv")
         self.varnames=np.array(list(self.dataDict[0].keys()))
         self.nbVar=len(self.varnames)
         self.adj_simple=np.zeros((self.nbVar,self.nbVar))
@@ -204,9 +204,9 @@ class RFGraph_Model:
         pos['C161cis'] = np.array([random.random() * 0.15 + 0.80,9.0/15.0])
         pos['C170'] = np.array([random.random() * 0.15 + 0.05,8.0/15.0])
         pos['C180'] = np.array([random.random() * 0.15 + 0.30,8.0/15.0])
-        pos['C181trans9'] = np.array([random.random() * 0.15 + 0.55,8.0/15.0])
+        pos['C181trans'] = np.array([random.random() * 0.15 + 0.55,8.0/15.0])
         pos['C181trans11'] = np.array([random.random() * 0.15 + 0.80,8.0/15.0])
-        pos['C181cis9'] = np.array([random.random() * 0.1 + 0.05,7.0/15.0])
+        pos['C181cis'] = np.array([random.random() * 0.1 + 0.05,7.0/15.0])
         pos['C181cis11'] = np.array([random.random() * 0.1 + 0.25,7.0/15.0])
         pos['C19cyc'] = np.array([random.random() * 0.1 + 0.45,7.0/15.0])
         pos['C220'] = np.array([random.random() * 0.1 + 0.65,7.0/15.0])
@@ -281,8 +281,10 @@ class RFGraph_Model:
                 self.nodeColor.append((0.5, 0, 0.5))
             if (self.identvarDict[self.varnames[i]] == 'condition'):
                 self.nodeColor.append((0.5, 0.5, 0))
-            if (self.identvarDict[self.varnames[i]] == 'Cell'):
+            if (self.identvarDict[self.varnames[i]] == 'Cell'):#CellAniso
                 self.nodeColor.append((0, 0.5, 0.5))
+            if (self.identvarDict[self.varnames[i]] == 'CellAniso'):
+                self.nodeColor.append((0.5, 0.7, 0.2))
             if (self.identvarDict[self.varnames[i]] == 'PopCentri'):
                 self.nodeColor.append((1, 1, 0))
             if (self.identvarDict[self.varnames[i]] == 'PopLyo'):
