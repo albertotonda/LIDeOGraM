@@ -18,18 +18,7 @@ class RFGraph_Model:
 
     def __init__(self):
 
-        equacolPdata = []
-        #eureqafile=open('data/eureqa_sans_calc.txt','r')
-        eureqafile = open('data/eureqa_sans_calcmol_soussurexpr.txt', 'r')
-        for line in eureqafile:
-            line = line.replace("\t", ",")
-            line=line.replace("\"","")
-            line=line.replace(" = ",",")
-            line=line.replace(" ","")
-            line=line.replace("\n","")
-            line=line.split(',')
-            equacolPdata.append(line)
-        self.equacolO=ArrayConverter.convertP(equacolPdata)
+        self.equacolO=self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr.txt')
         self.nbequa=len(self.equacolO)
         #self.dataDict,self.identvarDict,self.dataset=self.loadDataFile("data/dataset_cell_pop_nocalc.csv")
         self.dataDict, self.identvarDict, self.dataset = self.loadDataFile("data/dataset_mol_cell_pop_nocalc_sursousexpr.csv")
@@ -159,6 +148,33 @@ class RFGraph_Model:
 
 
         self.initGraph()
+
+    def readEureqaResults(self,file):
+        #Read eureqa file
+        stringTab=[]
+        eureqafile = open(file, 'r')
+        for line in eureqafile:
+            line = line.replace("\t", ",")
+            line=line.replace("\"","")
+            line=line.replace(" = ",",")
+            line=line.replace(" ","")
+            line=line.replace("\n","")
+            line=line.split(',')
+            stringTab.append(line)
+
+        #Convert the table of String to a nice table with float and String
+        convertArr = []
+        for s in stringTab:
+            convertArr.append(np.float32(s[0]))
+            convertArr.append(np.float32(s[1]))
+            convertArr.append(s[2])
+            convertArr.append(s[3])
+            convertArr.append(1)
+
+        finalTab = np.array(convertArr, dtype=object)
+        shp = np.shape(stringTab)
+        finalTab = finalTab.reshape((shp[0], shp[1] + 1))
+        return finalTab
 
     def getV(self,variables, line, v):
         table = []
