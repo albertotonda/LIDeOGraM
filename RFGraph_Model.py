@@ -293,7 +293,7 @@ class RFGraph_Model:
             #self.nodeColor.append((0.5, 0.5 + 0.5 * self.nodeWeight[i] / np.amax(self.nodeWeight), 0.5))
             #if(self.varnames[i])
             #self.
-            if(self.identvarDict[self.varnames[i]]=='Mol'):
+            if(self.identvarDict[self.varnames[i]]=='Molss' or self.identvarDict[self.varnames[i]]=='Molsur'):
                 self.nodeColor.append((0.5, 0, 0.5))
             if (self.identvarDict[self.varnames[i]] == 'condition'):
                 self.nodeColor.append((0.5, 0.5, 0))
@@ -345,12 +345,21 @@ class RFGraph_Model:
         for i in np.unique(list(self.identvarDict.values())):
             print(i)
             graph.add_node(i)
-        graph.add_edge('condition','Mol')
+        graph.add_edge('condition','Molss')
+        graph.add_edge('condition', 'Molsur')
         graph.add_edge('condition','Cell')
+        graph.add_edge('Molss','Cell')
+        graph.add_edge('Molsur', 'Cell')
+        graph.add_edge('Molsur','Molss')
+        graph.add_edge('Cell', 'CellAniso')
         graph.add_edge('Cell','PopCentri')
         graph.add_edge('Cell','PopCong')
         graph.add_edge('Cell','PopLyo')
         graph.add_edge('Cell','PopSto3')
+        graph.add_edge('CellAniso', 'PopCentri')
+        graph.add_edge('CellAniso', 'PopCong')
+        graph.add_edge('CellAniso', 'PopLyo')
+        graph.add_edge('CellAniso', 'PopSto3')
         graph.add_edge('condition','PopCentri')
         graph.add_edge('condition','PopCong')
         graph.add_edge('condition','PopLyo')
@@ -361,6 +370,7 @@ class RFGraph_Model:
         graph.add_edge('PopCong','PopLyo')
         graph.add_edge('PopCong', 'PopSto3')
         graph.add_edge('PopLyo','PopSto3')
+
         nx.draw(graph,with_labels=True)
 
         return graph
@@ -596,14 +606,15 @@ class RFGraph_Model:
 
         for i in range(len(self.pareto)):
             for j in range(len(self.pareto[i])):
-                lIdxColPareto = self.pareto[i][j]
-                if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
-                    if self.nbeq[i] == np.float64(0.0): continue
-
-                    G.add_edge(self.varnames[j], self.varnames[i],
-                                    adjsimple=self.adj_simple[i, j], adjfit=
-                                    self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
-                                    adjcontr=self.adj_contr[i, j])
+                #lIdxColPareto = self.pareto[i][j]
+                #if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
+                    #if self.nbeq[i] == np.float64(0.0): continue
+                    if self.adj_contrGraph.has_edge(self.identvarDict[self.varnames[j]],self.identvarDict[self.varnames[i]]):
+                        print(self.varnames[j] + " --> " + self.varnames[i] + " : " + self.identvarDict[self.varnames[j]] + " --> " + self.identvarDict[self.varnames[i]])
+                        G.add_edge(self.varnames[j], self.varnames[i],
+                                        adjsimple=self.adj_simple[i, j], adjfit=
+                                        self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
+                                        adjcontr=self.adj_contr[i, j])
 
 
         self.pos = nx.nx_pydot.graphviz_layout(G, prog='dot')
@@ -622,6 +633,7 @@ class RFGraph_Model:
                 maxy = p[1]
         for k in self.pos:
             self.pos[k] = ((self.pos[k][0] - minx) / (maxx - minx), (self.pos[k][1] - miny) / (maxy - miny))
+            print(k +" : (" + str(self.pos[k][0]) + ","+str(self.pos[k][1])+")")
 
         self.lpos = copy.deepcopy(self.pos)
         for p in self.lpos:  # raise text positions
