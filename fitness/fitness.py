@@ -30,20 +30,17 @@ class Individual:
         self.complexity = {}
         self.modApp = modApp
 
-        #for e in eq:
-        #    self.equations.append(Equation(e,e,e,e))
 
-        for i in range(len(self.modApp.dataset[0])):
-            self.exp[self.modApp.dataset[0,i]]=list(self.modApp.dataset[2:, i])
+        for v in self.modApp.dataset.varnames:
+            self.exp[v]=list(self.modApp.dataset.getAllExpsforVar(v))
 
         for varIn in self.modApp.varsIn:
             self.inodes[varIn] = self.exp[varIn]
 
-        self.variables = list(self.modApp.varnames)
-        #self.variables.extend(self.inodes.keys())
+        self.variables = list(self.modApp.dataset.varnames)
 
 
-        pass
+
 
     def process(self, n: int,chosenEqs={}):
         """Take example i and compute solution.
@@ -107,7 +104,7 @@ class Individual:
                 for j in range(len(results)):
                  if bkeys[i] in results[case] and bkeys[i] in self.exp:
                      yr.append(float(results[j][bkeys[i]]))
-                     xr.append(float(self.exp[bkeys[i]][j].replace(",",".")))
+                     xr.append(float(self.exp[bkeys[i]][j]))
                 acc+=1
                 allEqual=True
                 for yri in range(len(yr)-1):
@@ -132,24 +129,6 @@ class Individual:
                     #errVarSum[bkeys[i]] = p
                 errTot+=errVarSum[bkeys[i]]
 
-        # for case in range(ncases): #For all experiments
-        #     for i in bkeys:
-        #         if bkeys[i] in results[case] and bkeys[i] in self.exp: #If the variable has been computed with the global model for all experiment
-        #             acc+=1
-        #             if(float(results[case][bkeys[i]])!= float(self.exp[bkeys[i]][case].replace(",","."))):
-        #                 if(float(results[case][bkeys[i]])==0.0):
-        #                  err=fun(float(self.exp[bkeys[i]][case].replace(",", ".")),float(results[case][bkeys[i]]))
-        #                  errVarSum[bkeys[i]] += err
-        #                  var += err
-        #                 else:
-        #                  err=fun(float(results[case][bkeys[i]]), float(self.exp[bkeys[i]][case].replace(",", ".")))
-        #                  errVarSum[bkeys[i]] += err
-        #                  var += err
-        #         else:
-        #             #Si un noeuds présent dans les données n'est pas calcul par le systeme on ajoute une penalité
-        #             #Option non utilisé (normalement)
-        #             var += penalty
-        #             raise NotImplementedError
         for i in bkeys:
          if i in self.complexity and not i in self.modApp.varsIn:
              cpx += self.complexity[i]

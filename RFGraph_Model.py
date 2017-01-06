@@ -12,6 +12,7 @@ import sys
 sys.path.append("fitness/")
 import fitness
 import pandas as pd
+from Dataset import Dataset
 
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model:
@@ -19,30 +20,31 @@ class RFGraph_Model:
     def __init__(self):
 
         self.equacolO=self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr.txt')
-        self.nbequa=len(self.equacolO)
-        #self.dataDict,self.identvarDict,self.dataset=self.loadDataFile("data/dataset_cell_pop_nocalc.csv")
-        self.dataDict, self.identvarDict, self.dataset = self.loadDataFile("data/dataset_mol_cell_pop_nocalc_sursousexpr.csv")
-        self.varnames=np.array(list(self.dataDict[0].keys()))
-        self.nbVar=len(self.varnames)
-        self.adj_simple=np.zeros((self.nbVar,self.nbVar))
-        self.adj_fit=np.ones((self.nbVar,self.nbVar))
-        self.adj_cmplx=np.ones((self.nbVar,self.nbVar))
-        self.nbeq=np.zeros(self.nbVar)
+        self.nbequa=len(self.equacolO) # Number of Equation for all variables taken together
+
+        self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr.csv")
+
+
+        self.adj_simple=np.zeros((self.dataset.nbVar,self.dataset.nbVar))
+        self.adj_fit=np.ones((self.dataset.nbVar,self.dataset.nbVar))
+        self.adj_cmplx=np.ones((self.dataset.nbVar,self.dataset.nbVar))
+        self.nbeq=np.zeros(self.dataset.nbVar) # Number of equations for each variables
+
         self.equacolPO=[]
-
         for l in range(self.nbequa):
-            for h in range(self.nbVar):       #Possible parents for the equations
-                cont_h=len(re.findall(r'\b%s\b' % re.escape(self.varnames[h]),self.equacolO[l,3]))  #How many times the variable self.varname[h] is found in the equation self.equacolO[l,3]
-                if(cont_h>0):
+            for h in range(self.dataset.nbVar):       #Possible parents for the equations
+                cont_h=len(re.findall(r'\b%s\b' % re.escape(self.dataset.varnames[h]),self.equacolO[l,3]))  #How many times the variable self.varname[h] is found in the equation self.equacolO[l,3]
+                if(cont_h>0): #If present, add infos in adjacence matrix
                     ind_parent=h
-                    ind_offspring=list(self.varnames).index(self.equacolO[l,2])
+                    ind_offspring=list(self.dataset.varnames).index(self.equacolO[l,2])
                     self.adj_simple[ind_offspring,ind_parent]+=1
-                    self.adj_cmplx[ind_offspring,ind_parent]*=self.equacolO[l,0] # Moyenne GEOMETRIQUE
-                    self.adj_fit[ind_offspring,ind_parent]*=self.equacolO[l,1] # Moyenne GEOMETRIQUE
-                    self.equacolPO.append([self.equacolO[l,0],self.equacolO[l,1],self.equacolO[l,2],self.varnames[h],self.equacolO[l,3]])
-            self.nbeq[list(self.varnames).index(self.equacolO[l,2])]+=1 # Comptage du nombre d'équations pour chaque enfant
+                    self.adj_cmplx[ind_offspring,ind_parent]*=self.equacolO[l,0] #  GEOMETRIC mean
+                    self.adj_fit[ind_offspring,ind_parent]*=self.equacolO[l,1] #  GEOMETRIC mean
+                    self.equacolPO.append([self.equacolO[l,0],self.equacolO[l,1],self.equacolO[l,2],self.dataset.varnames[h],self.equacolO[l,3]])
+            self.nbeq[list(self.dataset.varnames).index(self.equacolO[l,2])]+=1 # Comptage du nombre d'équations pour chaque enfant
 
-        self.equacolPO=ArrayConverter.convertPO(self.equacolPO)
+        #self.equacolPO=ArrayConverter.convertPO(self.equacolPO)
+        self.equacolPO =np.array(self.equacolPO, dtype=object)
         self.adj_cmplx=np.power(self.adj_cmplx,1/self.adj_simple)
         self.adj_cmplx[self.adj_simple==0]=0
         self.adj_fit = np.power(self.adj_fit, 1 / self.adj_simple)
@@ -57,16 +59,16 @@ class RFGraph_Model:
         #self.adj_cmplx = genfromtxt('data/adj_cmplx_withMol.csv', delimiter=',')
         #self.adj_fit = genfromtxt('data/adj_fit_withMol.csv', delimiter=',')
         #self.adj_contr = genfromtxt('data/adj_contraintes_withMol.csv', delimiter=',')
-        #self.varnames = genfromtxt('data/varnames_withMol.csv', dtype='str', delimiter=',')
+        #self.dataset.varnames = genfromtxt('data/varnames_withMol.csv', dtype='str', delimiter=',')
         #self.nbeq = genfromtxt('data/nbeq_withMol.csv', delimiter=',')
         #self.equacolPOf = genfromtxt('data/equa_with_col_ParentOffspring_withMol.csv', 'float', delimiter=',')
         #self.equacolPOs = genfromtxt('data/equa_with_col_ParentOffspring_withMol.csv', 'str', delimiter=',')
         #self.equacolOf = genfromtxt('data/equa_with_col_Parent_withMol.csv', 'float', delimiter=',')
         #self.equacolOs = genfromtxt('data/equa_with_col_Parent_withMol.csv', 'str', delimiter=',')
-        #self.dataset_cell_popS = genfromtxt('data/dataset_cell_pop.csv', 'str', delimiter=',')
-        #self.dataset_mol_cellS = genfromtxt('data/dataset_mol_cell.csv', 'str', delimiter=',')
-        #self.dataset_cell_popF = genfromtxt('data/dataset_cell_pop.csv', 'float', delimiter=',')
-        #self.dataset_mol_cellF = genfromtxt('data/dataset_mol_cell.csv', 'float', delimiter=',')
+        #self.datasetset_cell_popS = genfromtxt('data/dataset_cell_pop.csv', 'str', delimiter=',')
+        #self.datasetset_mol_cellS = genfromtxt('data/dataset_mol_cell.csv', 'str', delimiter=',')
+        #self.datasetset_cell_popF = genfromtxt('data/dataset_cell_pop.csv', 'float', delimiter=',')
+        #self.datasetset_mol_cellF = genfromtxt('data/dataset_mol_cell.csv', 'float', delimiter=',')
         self.varsIn = ['Temperature','Age']
         self.NodeConstraints = []
         self.showGlobalModel = False
@@ -124,9 +126,9 @@ class RFGraph_Model:
         self.labels = {}
         self.edges = None
 
-        self.varEquasize=list(zip(self.varnames,self.nbeq))
+        self.varEquasize=list(zip(self.dataset.varnames,self.nbeq))
         self.equaPerNode={}
-        for v in self.varnames:
+        for v in self.dataset.varnames:
             if(not v in self.varsIn):
                 self.equaPerNode[v]=self.equacolO[np.ix_(self.equacolO[:, 2] == [v], [0, 1, 2, 3])]
 
@@ -271,7 +273,7 @@ class RFGraph_Model:
     def initGraph(self):
         self.G = nx.DiGraph()
 
-        for v in self.varnames:
+        for v in self.dataset.varnames:
             self.G.add_node(v)
             self.labels[v] = v
 
@@ -279,35 +281,35 @@ class RFGraph_Model:
             self.pareto.append([])
             for j in range(len(self.adj_simple[i])):
                 self.pareto[i].append((self.equacolPO[np.ix_(
-                    np.logical_and(self.equacolPO[:, 2] == self.varnames[i],
-                                   self.equacolPO[:, 3] == self.varnames[j])), 0:2][0]).astype('float64'))
+                    np.logical_and(self.equacolPO[:, 2] == self.dataset.varnames[i],
+                                   self.equacolPO[:, 3] == self.dataset.varnames[j])), 0:2][0]).astype('float64'))
 
-        for i in range(len(self.varnames)):
-            if ((len(self.varnames) - np.sum(self.adj_contr, axis=0)[i]) != 0):
+        for i in range(len(self.dataset.varnames)):
+            if ((len(self.dataset.varnames) - np.sum(self.adj_contr, axis=0)[i]) != 0):
                 self.nodeWeight.append(
                     np.sum(self.adj_simple, axis=0)[i] / (
-                    len(self.varnames) - np.sum(self.adj_contr, axis=0)[i]))
+                    len(self.dataset.varnames) - np.sum(self.adj_contr, axis=0)[i]))
             else:
                 self.nodeWeight.append(0)
-        for i in range(len(self.varnames)):
+        for i in range(len(self.dataset.varnames)):
             #self.nodeColor.append((0.5, 0.5 + 0.5 * self.nodeWeight[i] / np.amax(self.nodeWeight), 0.5))
-            #if(self.varnames[i])
+            #if(self.dataset.varnames[i])
             #self.
-            if(self.identvarDict[self.varnames[i]]=='Molss' or self.identvarDict[self.varnames[i]]=='Molsur'):
+            if(self.dataset.variablesClass[self.dataset.varnames[i]]== 'Molss' or self.dataset.variablesClass[self.dataset.varnames[i]]== 'Molsur'):
                 self.nodeColor.append((0.5, 0, 0.5))
-            if (self.identvarDict[self.varnames[i]] == 'condition'):
+            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'condition'):
                 self.nodeColor.append((0.5, 0.5, 0))
-            if (self.identvarDict[self.varnames[i]] == 'Cell'):#CellAniso
+            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'Cell'):#CellAniso
                 self.nodeColor.append((0, 0.5, 0.5))
-            if (self.identvarDict[self.varnames[i]] == 'CellAniso'):
+            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'CellAniso'):
                 self.nodeColor.append((0.5, 0.7, 0.2))
-            if (self.identvarDict[self.varnames[i]] == 'PopCentri'):
+            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopCentri'):
                 self.nodeColor.append((1, 1, 0))
-            if (self.identvarDict[self.varnames[i]] == 'PopLyo'):
+            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopLyo'):
                 self.nodeColor.append((1, 1, 0))
-            if (self.identvarDict[self.varnames[i]] == 'PopCong'):
+            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopCong'):
                 self.nodeColor.append((1, 1, 0))
-            if (self.identvarDict[self.varnames[i]] == 'PopSto3'):
+            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopSto3'):
                 self.nodeColor.append((1, 1, 0))
         self.computeInitialPos()
         self.computeFitandCmplxEdgeColor()
@@ -316,33 +318,10 @@ class RFGraph_Model:
         self.computeNxGraph()
 
 
-    def loadDataFile(self,datafile):
-        # datadict ans self.mol_cell are dictionary lists.
-        # Each dictionary represents the results for every variables of an experiment.
-        dataset=genfromtxt(datafile, 'str', delimiter=',')
-        datadict = []
-        datafileReader = open(datafile)
-        line = datafileReader.readline()  # First line are the variables name
-        variables = []
-        for i in line.split(','):
-            variables.append(i.strip())
-        line =  datafileReader.readline() # Second line is variables scale/step identifiers
-        identvar = []
-        for i in line.split(','):
-            identvar.append(i.strip())
-
-        for line in datafileReader:
-            line = zip(variables, [float(i.strip()) for i in line.split(',')])
-            datadict.append(dict(line))
-        identvarDict={}
-        for i in range(len(variables)):
-            identvarDict[variables[i]]=identvar[i]
-
-        return datadict,identvarDict,dataset
 
     def createConstraintsGraph(self):
         graph = nx.DiGraph()
-        for i in np.unique(list(self.identvarDict.values())):
+        for i in np.unique(list(self.dataset.variablesClass.values())):
             print(i)
             graph.add_node(i)
         graph.add_edge('condition','Molss')
@@ -376,11 +355,11 @@ class RFGraph_Model:
         return graph
 
     def createConstraints(self):
-        adj_contr=np.ones((self.nbVar,self.nbVar))
+        adj_contr=np.ones((self.dataset.nbVar,self.dataset.nbVar))
         for edge in self.adj_contrGraph.edges():
-            for var1 in range(len(self.varnames)):
-                for var2 in range(len(self.varnames)):
-                    if(self.identvarDict[self.varnames[var1]]==edge[0] and self.identvarDict[self.varnames[var2]]==edge[1]):
+            for var1 in range(len(self.dataset.varnames)):
+                for var2 in range(len(self.dataset.varnames)):
+                    if(self.dataset.variablesClass[self.dataset.varnames[var1]]==edge[0] and self.dataset.variablesClass[self.dataset.varnames[var2]]==edge[1]):
                         adj_contr[var2][var1]-=1
         return adj_contr
 
@@ -398,22 +377,22 @@ class RFGraph_Model:
     #                     i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
     #                 if (r > self.adjThresholdVal):
     #
-    #                     self.edgelist_inOrder.append((self.varnames[j], self.varnames[i]))
+    #                     self.edgelist_inOrder.append((self.data.varnames[j], self.data.varnames[i]))
     #
-    #                     if (self.lastNodeClicked == self.varnames[i]):
+    #                     if (self.lastNodeClicked == self.data.varnames[i]):
     #                         self.edgeBold.append(True)
     #                     else:
     #                         self.edgeBold.append(False)
     #
     #
-    #                 n1 = self.varnames[i] + ' - ' + self.varnames[j]
-    #                 n2 = self.varnames[j] + ' - ' + self.varnames[i]
+    #                 n1 = self.data.varnames[i] + ' - ' + self.data.varnames[j]
+    #                 n2 = self.data.varnames[j] + ' - ' + self.data.varnames[i]
     #                 allItems = [self.scrolledList[i] for i in range(len(self.scrolledList))]
     #                 if n1 in allItems or n2 in allItems:
     #                     try:
-    #                         index = self.edgelist_inOrder.index((self.varnames[i], self.varnames[j]))
+    #                         index = self.edgelist_inOrder.index((self.data.varnames[i], self.data.varnames[j]))
     #                     except:
-    #                         index = self.edgelist_inOrder.index((self.varnames[j], self.varnames[i]))
+    #                         index = self.edgelist_inOrder.index((self.data.varnames[j], self.data.varnames[i]))
     #                     self.edgelist_inOrder.pop(index)
 
 
@@ -424,14 +403,14 @@ class RFGraph_Model:
                 lIdxColPareto = self.pareto[i][j]
                 if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
 
-                    n1 = self.varnames[i] + ' - ' + self.varnames[j]
-                    n2 = self.varnames[j] + ' - ' + self.varnames[i]
+                    n1 = self.dataset.varnames[i] + ' - ' + self.dataset.varnames[j]
+                    n2 = self.dataset.varnames[j] + ' - ' + self.dataset.varnames[i]
                     allItems = [self.scrolledList[i] for i in range(len(self.scrolledList))]
                     if n1 in allItems or n2 in allItems:
                         try:
-                            index = self.edgelist_inOrder.index((self.varnames[i], self.varnames[j]))
+                            index = self.edgelist_inOrder.index((self.dataset.varnames[i], self.dataset.varnames[j]))
                         except:
-                            index = self.edgelist_inOrder.index((self.varnames[j], self.varnames[i]))
+                            index = self.edgelist_inOrder.index((self.dataset.varnames[j], self.dataset.varnames[i]))
                         self.edgelist_inOrder.pop(index)
                         self.edgeBold.pop(index)
                         self.edgeColor.pop(index)
@@ -455,7 +434,7 @@ class RFGraph_Model:
                     r = self.adj_simple[i, j] / self.nbeq[
                         i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
                     if (r <= self.adjThresholdVal):
-                        tup = (self.varnames[j], self.varnames[i])
+                        tup = (self.dataset.varnames[j], self.dataset.varnames[i])
                         try:
                             del (self.edgeBoldDict[tup])
                         except:
@@ -471,7 +450,7 @@ class RFGraph_Model:
 
     def computeNxGraph(self):
         self.G.clear()
-        for v in self.varnames:
+        for v in self.dataset.varnames:
             self.G.add_node(v)
 
         self.edgelist_inOrder = []
@@ -484,11 +463,11 @@ class RFGraph_Model:
                     #if self.nbeq[i] == np.float64(0.0): continue
                     r = self.adj_simple[i, j] / self.nbeq[i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
                     if (r > self.adjThresholdVal):
-                        self.G.add_edge(self.varnames[j], self.varnames[i],
+                        self.G.add_edge(self.dataset.varnames[j], self.dataset.varnames[i],
                                                adjsimple=self.adj_simple[i, j], adjfit=
                                                self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
                                                adjcontr=self.adj_contr[i, j])
-                        self.edgelist_inOrder.append((self.varnames[j], self.varnames[i]))
+                        self.edgelist_inOrder.append((self.dataset.varnames[j], self.dataset.varnames[i]))
 
         self.removeInvisibleEdges()
         self.removeForbiddenEdges()
@@ -509,10 +488,10 @@ class RFGraph_Model:
                 lIdxColPareto = self.pareto[i][j]
                 if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
                     #if self.nbeq[i] == np.float64(0.0): continue
-                    if (self.lastNodeClicked == self.varnames[i]):
-                        self.edgeBoldfull[(self.varnames[j], self.varnames[i])]=True
+                    if (self.lastNodeClicked == self.dataset.varnames[i]):
+                        self.edgeBoldfull[(self.dataset.varnames[j], self.dataset.varnames[i])]=True
                     else:
-                        self.edgeBoldfull[(self.varnames[j], self.varnames[i])]=False
+                        self.edgeBoldfull[(self.dataset.varnames[j], self.dataset.varnames[i])]=False
 
     def computeComprEdgeColor(self):
 
@@ -564,9 +543,9 @@ class RFGraph_Model:
                         #cb = 0
 
                     if (self.transparentEdges):
-                        self.edgeColorCompr[(self.varnames[j], self.varnames[i])]=(cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r))
+                        self.edgeColorCompr[(self.dataset.varnames[j], self.dataset.varnames[i])]=(cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r))
                     else:
-                        self.edgeColorCompr[(self.varnames[j], self.varnames[i])]=(cr, cg, cb)
+                        self.edgeColorCompr[(self.dataset.varnames[j], self.dataset.varnames[i])]=(cr, cg, cb)
 
     def computeFitandCmplxEdgeColor(self):
         self.edgeColorFit = {}
@@ -587,21 +566,21 @@ class RFGraph_Model:
                     cg = np.minimum((1 - self.adj_fit[i, j]) * 2, 1)
                     cb = 0
                     if (self.transparentEdges):
-                        self.edgeColorFit[(self.varnames[j], self.varnames[i])]=(cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r))
+                        self.edgeColorFit[(self.dataset.varnames[j], self.dataset.varnames[i])]=(cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r))
                     else:
-                        self.edgeColorFit[(self.varnames[j], self.varnames[i])]=(cr, cg, cb)
+                        self.edgeColorFit[(self.dataset.varnames[j], self.dataset.varnames[i])]=(cr, cg, cb)
                     cr = np.minimum((self.adj_cmplx[i, j] / self.adj_cmplx_max) * 2, 1)
                     cg = np.minimum((1 - (self.adj_cmplx[i, j] / self.adj_cmplx_max)) * 2, 1)
                     cb = 0
                     if (self.transparentEdges):
-                        self.edgeColorCmplx[(self.varnames[j], self.varnames[i])]=(cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r))
+                        self.edgeColorCmplx[(self.dataset.varnames[j], self.dataset.varnames[i])]=(cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r))
                     else:
-                        self.edgeColorCmplx[(self.varnames[j], self.varnames[i])]=(cr, cg, cb)
+                        self.edgeColorCmplx[(self.dataset.varnames[j], self.dataset.varnames[i])]=(cr, cg, cb)
 
     def computeInitialPos(self):
         G=nx.DiGraph()
         G.clear()
-        for v in self.varnames:
+        for v in self.dataset.varnames:
             G.add_node(v)
 
         for i in range(len(self.pareto)):
@@ -609,9 +588,9 @@ class RFGraph_Model:
                 #lIdxColPareto = self.pareto[i][j]
                 #if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
                     #if self.nbeq[i] == np.float64(0.0): continue
-                    if self.adj_contrGraph.has_edge(self.identvarDict[self.varnames[j]],self.identvarDict[self.varnames[i]]):
-                        print(self.varnames[j] + " --> " + self.varnames[i] + " : " + self.identvarDict[self.varnames[j]] + " --> " + self.identvarDict[self.varnames[i]])
-                        G.add_edge(self.varnames[j], self.varnames[i],
+                    if self.adj_contrGraph.has_edge(self.dataset.variablesClass[self.dataset.varnames[j]], self.dataset.variablesClass[self.dataset.varnames[i]]):
+                        print(self.dataset.varnames[j] + " --> " + self.dataset.varnames[i] + " : " + self.dataset.variablesClass[self.dataset.varnames[j]] + " --> " + self.dataset.variablesClass[self.dataset.varnames[i]])
+                        G.add_edge(self.dataset.varnames[j], self.dataset.varnames[i],
                                         adjsimple=self.adj_simple[i, j], adjfit=
                                         self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
                                         adjcontr=self.adj_contr[i, j])
@@ -647,7 +626,7 @@ class RFGraph_Model:
 
     def computeGlobalNxGraph(self):
         self.G.clear()
-        for v in self.varnames:
+        for v in self.dataset.varnames:
             self.G.add_node(v)
 
         self.edgelist_inOrder = []
@@ -661,18 +640,18 @@ class RFGraph_Model:
                     r = self.adj_simple[i, j] / self.nbeq[
                         i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
                     if (r > self.adjThresholdVal):
-                        self.G.add_edge(self.varnames[j], self.varnames[i],
+                        self.G.add_edge(self.dataset.varnames[j], self.dataset.varnames[i],
                                         adjsimple=self.adj_simple[i, j], adjfit=
                                         self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
                                         adjcontr=self.adj_contr[i, j])
-                        self.edgelist_inOrder.append((self.varnames[j], self.varnames[i]))
+                        self.edgelist_inOrder.append((self.dataset.varnames[j], self.dataset.varnames[i]))
 
         self.removeInvisibleEdges()
         self.removeForbiddenEdges()
 
     def bestindvToSelectedEq(self):
         self.selectedEq = {}
-        for v in self.varnames:
+        for v in self.dataset.varnames:
             try:
                 self.selectedEq[v] = self.best_indv[v]
             except:
@@ -695,11 +674,11 @@ class RFGraph_Model:
         self.edgelist_inOrder = []
         self.global_Edge_Color = []
         for l in range(len(equaLines)):
-            for h in range(self.nbVar):  # Possible parents for the equations
-                cont_h = len(re.findall(r'\b%s\b' % re.escape(self.varnames[h]), equaLines[l][3]))  # How many times the variable self.varname[h] is found in the equation self.
+            for h in range(self.dataset.nbVar):  # Possible parents for the equations
+                cont_h = len(re.findall(r'\b%s\b' % re.escape(self.dataset.varnames[h]), equaLines[l][3]))  # How many times the variable self.varname[h] is found in the equation self.
                 if (cont_h > 0):
-                    self.G.add_edge(self.varnames[h], equaLines[l][2])
-                    self.edgelist_inOrder.append((self.varnames[h], equaLines[l][2]))
+                    self.G.add_edge(self.dataset.varnames[h], equaLines[l][2])
+                    self.edgelist_inOrder.append((self.dataset.varnames[h], equaLines[l][2]))
         err_max=-np.inf
         for (h, l) in self.edgelist_inOrder:
             err_max = np.maximum(res[2][l],err_max)
@@ -716,6 +695,3 @@ class RFGraph_Model:
         pass
 
 
-        #edge
-        #edge color
-        #edge bold
