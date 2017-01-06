@@ -6,49 +6,27 @@ from numpy import genfromtxt
 import copy
 import networkx as nx
 #nx.use('qt4agg')
-from ArrayConverter import ArrayConverter
+
 import re
 import sys
 sys.path.append("fitness/")
 import fitness
 import pandas as pd
 from Dataset import Dataset
-
+from LocalModels import LocalModels
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model:
 
     def __init__(self):
 
-        self.equacolO=self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr.txt')
-        self.nbequa=len(self.equacolO) # Number of Equation for all variables taken together
 
+
+
+        self.localModels=LocalModels('data/eureqa_sans_calcmol_soussurexpr.txt')
         self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr.csv")
 
 
-        self.adj_simple=np.zeros((self.dataset.nbVar,self.dataset.nbVar))
-        self.adj_fit=np.ones((self.dataset.nbVar,self.dataset.nbVar))
-        self.adj_cmplx=np.ones((self.dataset.nbVar,self.dataset.nbVar))
-        self.nbeq=np.zeros(self.dataset.nbVar) # Number of equations for each variables
 
-        self.equacolPO=[]
-        for l in range(self.nbequa):
-            for h in range(self.dataset.nbVar):       #Possible parents for the equations
-                cont_h=len(re.findall(r'\b%s\b' % re.escape(self.dataset.varnames[h]),self.equacolO[l,3]))  #How many times the variable self.varname[h] is found in the equation self.equacolO[l,3]
-                if(cont_h>0): #If present, add infos in adjacence matrix
-                    ind_parent=h
-                    ind_offspring=list(self.dataset.varnames).index(self.equacolO[l,2])
-                    self.adj_simple[ind_offspring,ind_parent]+=1
-                    self.adj_cmplx[ind_offspring,ind_parent]*=self.equacolO[l,0] #  GEOMETRIC mean
-                    self.adj_fit[ind_offspring,ind_parent]*=self.equacolO[l,1] #  GEOMETRIC mean
-                    self.equacolPO.append([self.equacolO[l,0],self.equacolO[l,1],self.equacolO[l,2],self.dataset.varnames[h],self.equacolO[l,3]])
-            self.nbeq[list(self.dataset.varnames).index(self.equacolO[l,2])]+=1 # Comptage du nombre d'équations pour chaque enfant
-
-        #self.equacolPO=ArrayConverter.convertPO(self.equacolPO)
-        self.equacolPO =np.array(self.equacolPO, dtype=object)
-        self.adj_cmplx=np.power(self.adj_cmplx,1/self.adj_simple)
-        self.adj_cmplx[self.adj_simple==0]=0
-        self.adj_fit = np.power(self.adj_fit, 1 / self.adj_simple)
-        self.adj_fit[self.adj_simple == 0] = 0
 
         self.adj_contrGraph=self.createConstraintsGraph()
         self.adj_contr=self.createConstraints()
@@ -151,32 +129,7 @@ class RFGraph_Model:
 
         self.initGraph()
 
-    def readEureqaResults(self,file):
-        #Read eureqa file
-        stringTab=[]
-        eureqafile = open(file, 'r')
-        for line in eureqafile:
-            line = line.replace("\t", ",")
-            line=line.replace("\"","")
-            line=line.replace(" = ",",")
-            line=line.replace(" ","")
-            line=line.replace("\n","")
-            line=line.split(',')
-            stringTab.append(line)
 
-        #Convert the table of String to a nice table with float and String
-        convertArr = []
-        for s in stringTab:
-            convertArr.append(np.float32(s[0]))
-            convertArr.append(np.float32(s[1]))
-            convertArr.append(s[2])
-            convertArr.append(s[3])
-            convertArr.append(1)
-
-        finalTab = np.array(convertArr, dtype=object)
-        shp = np.shape(stringTab)
-        finalTab = finalTab.reshape((shp[0], shp[1] + 1))
-        return finalTab
 
     def getV(self,variables, line, v):
         table = []
