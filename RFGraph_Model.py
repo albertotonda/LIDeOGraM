@@ -22,7 +22,7 @@ class RFGraph_Model:
 
 
 
-        self.localModels=LocalModels('data/eureqa_sans_calcmol_soussurexpr.txt')
+        self.localModels=LocalModels(self,'data/eureqa_sans_calcmol_soussurexpr.txt')
         self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr.csv")
 
 
