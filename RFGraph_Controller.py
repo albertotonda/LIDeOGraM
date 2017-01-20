@@ -236,14 +236,16 @@ class RFGraph_Controller:
 
     # TODO Affiche la courbe de l'équation sélectionnée
     def eqTableClicked(self, cellClicked):
-        self.modApp.clicked_line=cellClicked.row()
-        self.vwApp.eqTableGUI.updateView()
-        self.vwApp.fitGUI.updateView()
-        if(self.modApp.mode_changeEq):
+        self.modApp.clicked_line = cellClicked.row()
+        #print("self.modApp.mode_changeEq:" + str(self.modApp.mode_changeEq))
+        if (self.modApp.mode_changeEq):
             self.modApp.selectedEq[self.modApp.lastNodeClicked] = cellClicked.row()
             self.modApp.computeGlobalView()
             self.vwApp.updateView()
-            self.modApp.mode_changeEq=False
+            self.modApp.mode_changeEq = False
+        else:
+            self.vwApp.eqTableGUI.updateView()
+            self.vwApp.fitGUI.updateView()
         #self.vwApp.networkGUI.updateView()
 
     def incMatClicked(self,cellClicked):
