@@ -27,8 +27,8 @@ class OptimModGlobal:
     def evaluate(self,indv):
         ft = fitness.Individual(self.modApp, "fitness/ex_indiv.csv")
         indvDict={}
-        for i in range(len(self.modApp.varnames)):
-            indvDict[self.modApp.varnames[i]]=indv[i]
+        for i in range(len(self.modApp.dataset.varnames)):
+            indvDict[self.modApp.dataset.varnames[i]]=indv[i]
         res = ft.get_fitness(indvDict)
         return (res[0],)
 
@@ -184,9 +184,9 @@ class OptimModGlobal:
 
 
         bestindvDict = {}
-        for i in range(len(self.modApp.varnames)):
-            bestindvDict[self.modApp.varnames[i]] = halloffame[0][i]
-            #bestindvDict[self.modApp.varnames[i]] = pop[np.argmin(flatPopFit[-1])][i]
+        for i in range(len(self.modApp.dataset.varnames)):
+            bestindvDict[self.modApp.dataset.varnames[i]] = halloffame[0][i]
+            #bestindvDict[self.modApp.dataset.varnames[i]] = pop[np.argmin(flatPopFit[-1])][i]
         #with open('retOptim.dat', 'wb') as f:
         #    pickle.dump(pop[np.argmin(flatPopFit[-1])], f)
 
