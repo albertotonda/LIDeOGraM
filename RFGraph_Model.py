@@ -161,6 +161,7 @@ class RFGraph_Model:
         for i in range(len(self.localModels.adj_simple)):
             self.pareto.append([])
             for j in range(len(self.localModels.adj_simple[i])):
+                toAppend=np.array()
                 self.pareto[i].append((self.equacolPO[np.ix_(
                     np.logical_and(self.equacolPO[:, 2] == self.dataset.varnames[i],
                                    self.equacolPO[:, 3] == self.dataset.varnames[j])), 0:2][0]).astype('float64'))
