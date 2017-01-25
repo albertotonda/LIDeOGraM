@@ -1,12 +1,8 @@
 #-*- coding: utf-8
 import random
-import matplotlib as mpl
 import numpy as np
-from numpy import genfromtxt
 import copy
 import networkx as nx
-#nx.use('qt4agg')
-
 import re
 import sys
 sys.path.append("fitness/")
@@ -14,39 +10,18 @@ import fitness
 import pandas as pd
 from Dataset import Dataset
 from LocalModels import LocalModels
-# TODO  Définie la position des noeuds et les initialise
+
+
 class RFGraph_Model:
 
     def __init__(self):
-
-
-
-
         self.localModels=LocalModels(self,'data/eureqa_sans_calcmol_soussurexpr.txt')
         self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr.csv")
 
 
-
-
         self.adj_contrGraph=self.createConstraintsGraph()
         self.adj_contr=self.createConstraints()
-
-        #self.pos=self.pos_graph()
         self.pos = []
-        #self.adj_simple = genfromtxt('data/adj_simple_withMol.csv', delimiter=',')
-        #self.adj_cmplx = genfromtxt('data/adj_cmplx_withMol.csv', delimiter=',')
-        #self.adj_fit = genfromtxt('data/adj_fit_withMol.csv', delimiter=',')
-        #self.adj_contr = genfromtxt('data/adj_contraintes_withMol.csv', delimiter=',')
-        #self.dataset.varnames = genfromtxt('data/varnames_withMol.csv', dtype='str', delimiter=',')
-        #self.nbeq = genfromtxt('data/nbeq_withMol.csv', delimiter=',')
-        #self.equacolPOf = genfromtxt('data/equa_with_col_ParentOffspring_withMol.csv', 'float', delimiter=',')
-        #self.equacolPOs = genfromtxt('data/equa_with_col_ParentOffspring_withMol.csv', 'str', delimiter=',')
-        #self.equacolOf = genfromtxt('data/equa_with_col_Parent_withMol.csv', 'float', delimiter=',')
-        #self.equacolOs = genfromtxt('data/equa_with_col_Parent_withMol.csv', 'str', delimiter=',')
-        #self.datasetset_cell_popS = genfromtxt('data/dataset_cell_pop.csv', 'str', delimiter=',')
-        #self.datasetset_mol_cellS = genfromtxt('data/dataset_mol_cell.csv', 'str', delimiter=',')
-        #self.datasetset_cell_popF = genfromtxt('data/dataset_cell_pop.csv', 'float', delimiter=',')
-        #self.datasetset_mol_cellF = genfromtxt('data/dataset_mol_cell.csv', 'float', delimiter=',')
         self.varsIn = ['Temperature','Age']
         self.NodeConstraints = []
         self.showGlobalModel = False
@@ -67,8 +42,6 @@ class RFGraph_Model:
         self.nodeColor = []
         self.edgeColor = []
         self.nodeWeight = []
-        self.cmplxMin = np.amin(self.equacolPO[:, 0])
-        self.cmplxMax = np.amax(self.equacolPO[:, 0])
         self.pareto = []
         self.scrolledList=[]
         self.scrolledList.append("Select link to reinstate")
@@ -81,38 +54,29 @@ class RFGraph_Model:
         self.ColorMode='Compr'
         self.transparentEdges=False
         self.edgeBoldfull=[]
-        self.adj_cmplx_max = np.amax(self.adj_cmplx)
         self.best_indv=[]
         self.globalModelView = False
         self.selectedEq={}
         self.global_Edge_Color = []
         self.mode_changeEq=False
-        #Necessaire de faire une deepcopy ?
-        #self.lpos= copy.deepcopy(self.pos)
-        #for p in self.lpos:  # raise text positions
-        # self.modApp.lpos[p] = (self.modApp.lpos[p][0],self.modApp.lpos[p][1]+0.04)
-        #    self.lpos[p][1] +=0.04
+
 
         # Charge la base de données d'équations à afficher après chargement
         # TODO: Base de données d'équations à changer
-
-
-        self.data = []
-        for i in range(len(self.equacolPO)):
-            self.data.append(self.equacolPO[i, np.ix_([0, 1, 4])][0])
+        self.eqTableData = []
+        for e in self.localModels.allEquations:
+            self.eqTableData.append([e.fit,e.cmplx,e.eq])
 
         self.labels = {}
         self.edges = None
 
-        self.varEquasize=list(zip(self.dataset.varnames,self.nbeq))
-        self.equaPerNode={}
-        for v in self.dataset.varnames:
-            if(not v in self.varsIn):
-                self.equaPerNode[v]=self.equacolO[np.ix_(self.equacolO[:, 2] == [v], [0, 1, 2, 3])]
+        #self.varEquasize=list(zip(self.dataset.varnames,self.localModels.nbeq))
+        #self.equaPerNode={}
+        #for v in self.dataset.varnames:
+        #    if(not v in self.varsIn):
+        #        self.equaPerNode[v]=self.equacolO[np.ix_(self.equacolO[:, 2] == [v], [0, 1, 2, 3])]
 
         ##########################
-        #self.datumIncMat = pd.read_csv("data/equa_with_col_Parent_withMol.csv", header=None)
-        #self.datumIncMat = self.datumIncMat.sort(2)
         self.datumIncMat=pd.DataFrame(self.equacolO)
         variables = ["Temperature", "Age"] + sorted(self.datumIncMat[2].unique().tolist())
 
@@ -124,8 +88,6 @@ class RFGraph_Model:
         self.dataIncMat = self.df_IncMat
         self.shapeIncMat = self.dataIncMat.shape
         ##########################
-
-
 
         self.initGraph()
 
@@ -166,9 +128,6 @@ class RFGraph_Model:
         pos['TRANSCRIPTION'] = np.array([random.random() * 0.1 + 0.45,12.0/15.0])
         pos['TRANSLATION'] = np.array([random.random() * 0.1 + 0.65,12.0/15.0])
         pos['TRANSPORTPROTEINS'] = np.array([random.random() * 0.1 + 0.85,12.0/15.0])
-        #pos['UFA'] = np.array([1 / 4.0, 11.0 / 15.0])
-        #pos['SFA'] = np.array([2 / 4.0, 11.0 / 15.0])
-        #pos['CFA'] = np.array([3 / 4.0, 11.0 / 15.0])
         pos['C140'] = np.array([random.random() * 0.15 + 0.05,9.0/15.0])
         pos['C150'] = np.array([random.random() * 0.15 + 0.30,9.0/15.0])
         pos['C160'] = np.array([random.random() * 0.15 + 0.55,9.0/15.0])
@@ -182,45 +141,14 @@ class RFGraph_Model:
         pos['C19cyc'] = np.array([random.random() * 0.1 + 0.45,7.0/15.0])
         pos['C220'] = np.array([random.random() * 0.1 + 0.65,7.0/15.0])
         pos['Anisotropie'] = np.array([random.random() * 0.1 + 0.85, 7.0 / 15.0])
-        #pos['UFAdivSFA'] = np.array([random.random() * 0.15 + 0.3, 10.0 / 15.0])
-        #pos['CFAdivSFA'] = np.array([random.random() * 0.15 + 0.55, 10.0 / 15.0])
-        #pos['CFAdivUFA'] = np.array([random.random() * 0.15 + 0.8, 10.0 / 15.0])
         pos['UFCcentri'] = np.array([random.random() * 0.2 + 0.15, 4.0 / 15.0])
         pos['tpH07centri'] = np.array([random.random() * 0.2 + 0.65, 4.0 / 15.0])
-        #pos['tpH07scentri'] = np.array([random.random() * 0.15 + 0.55, 9.0 / 15.0])
-        #pos['tpH07spe2centri'] = np.array([random.random() * 0.15 + 0.85, 9.0 / 15.0])
         pos['UFCcong'] = np.array([random.random() * 0.2 + 0.15, 3.00 / 15.0])
         pos['tpH07cong'] = np.array([random.random() * 0.2 + 0.65, 3.0 / 15.0])
-        #pos['tpH07scong'] = np.array([random.random() * 0.15 + 0.55, 8.0 / 15.0])
-        #pos['tpH07spe2cong'] = np.array([random.random() * 0.15 + 0.8, 8.0 / 15.0])
-        #pos['dUFCcong'] = np.array([random.random() * 0.15 + 0.05, 7.0 / 15.0])
-        #pos['dtpH07cong'] = np.array([random.random() * 0.15 + 0.3, 7.0 / 15.0])
-        #pos['dtpH07scong'] = np.array([random.random() * 0.15 + 0.55, 7.0 / 15.0])
-        #pos['dtpH07spe2cong'] = np.array([random.random() * 0.15 + 0.8, 7.0 / 15.0])
         pos['UFClyo'] = np.array([random.random() * 0.2 + 0.15, 2.0 / 15.0])
         pos['TpH07lyo'] = np.array([random.random() * 0.2 + 0.65, 2.0 / 15.0])
-        #pos['tpH07slyo'] = np.array([random.random() * 0.15 + 0.55, 6.0 / 15.0])
-        #pos['tpH07spe2lyo'] = np.array([random.random() * 0.15 + 0.8, 6.0 / 15.0])
-        #pos['dUFCdes'] = np.array([random.random() * 0.15 + 0.05, 5.0 / 15.0])
-        #pos['dtpH07des'] = np.array([random.random() * 0.15 + 0.3, 5.0 / 15.0])
-        #pos['dtpH07sdes'] = np.array([random.random() * 0.15 + 0.55, 5.0 / 15.0])
-        #pos['dtpH07spe2des'] = np.array([random.random() * 0.15 + 0.8, 5.0 / 15.0])
-        #pos['dtUFClyo'] = np.array([random.random() * 0.15 + 0.05, 4.0 / 15.0])
-        #pos['dtpH07lyo'] = np.array([random.random() * 0.15 + 0.3, 4.0 / 15.0])
-        #pos['dtpH07slyo'] = np.array([random.random() * 0.15 + 0.55, 4.0 / 15.0])
-        #pos['dtpH07spe2lyo'] = np.array([random.random() * 0.15 + 0.8, 4.0 / 15.0])
         pos['UFCsto3'] = np.array([random.random() * 0.2 + 0.15, 1.0 / 15.0])
         pos['tpH07sto3'] = np.array([random.random() * 0.2 + 0.65, 1.0 / 15.0])
-        #pos['tpH07ssto3'] = np.array([random.random() * 0.15 + 0.55, 3.0 / 15.0])
-        #pos['tpH07spe2sto3'] = np.array([random.random() * 0.15 + 0.8, 3.0 / 15.0])
-        #pos['dUFCsto3'] = np.array([random.random() * 0.15 + 0.05, 2.0 / 15.0])
-        #pos['dtpH07sto3'] = np.array([random.random() * 0.15 + 0.3, 2.0 / 15.0])
-        #pos['dtpH07ssto3'] = np.array([random.random() * 0.15 + 0.55, 2.0 / 15.0])
-        #pos['dtpH07spe2sto3'] = np.array([random.random() * 0.15 + 0.8, 2.0 / 15.0])
-        #pos['dUFCtot'] = np.array([random.random() * 0.15 + 0.05, 1.0 / 15.0])
-        #pos['dtpH07tot'] = np.array([random.random() * 0.15 + 0.3, 1.0 / 15.0])
-        #pos['dtpH07stot'] = np.array([random.random() * 0.15 + 0.55, 1.0 / 15.0])
-        #pos['dtpH07spe2tot'] = np.array([random.random() * 0.15 + 0.8, 1.0 / 15.0])
         return pos
 
     def initGraph(self):

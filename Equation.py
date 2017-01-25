@@ -4,3 +4,5 @@ class Equation:
         self.cmplx=cmplx
         self.var=var
         self.eq=eq
+        self.parents=[]
+
