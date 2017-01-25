@@ -77,13 +77,13 @@ class RFGraph_Model:
         #        self.equaPerNode[v]=self.equacolO[np.ix_(self.equacolO[:, 2] == [v], [0, 1, 2, 3])]
 
         ##########################
-        self.datumIncMat=pd.DataFrame(self.equacolO)
-        variables = ["Temperature", "Age"] + sorted(self.datumIncMat[2].unique().tolist())
+        self.datumIncMat=list(map(lambda x: x.var, self.localModels.allEquations))
+        variables = ["Temperature", "Age"] + sorted(list(set(self.datumIncMat)))
 
-        self.df_IncMat = pd.DataFrame(index=self.datumIncMat[2], columns=["Temperature", "Age"] + self.datumIncMat[2].unique().tolist())
+        self.df_IncMat = pd.DataFrame(index=self.datumIncMat, columns=["Temperature", "Age"] +sorted(list(set(self.datumIncMat))))
         for row in range(self.df_IncMat.shape[0]):
             v = self.df_IncMat.index.values[row]
-            self.df_IncMat.ix[row] = self.getV(self.df_IncMat.columns.values, self.datumIncMat.irow(row)[3], v)
+            self.df_IncMat.ix[row] = self.getV(self.df_IncMat.columns.values, self.datumIncMat[row], v)
 
         self.dataIncMat = self.df_IncMat
         self.shapeIncMat = self.dataIncMat.shape
@@ -158,9 +158,9 @@ class RFGraph_Model:
             self.G.add_node(v)
             self.labels[v] = v
 
-        for i in range(len(self.adj_simple)):
+        for i in range(len(self.localModels.adj_simple)):
             self.pareto.append([])
-            for j in range(len(self.adj_simple[i])):
+            for j in range(len(self.localModels.adj_simple[i])):
                 self.pareto[i].append((self.equacolPO[np.ix_(
                     np.logical_and(self.equacolPO[:, 2] == self.dataset.varnames[i],
                                    self.equacolPO[:, 3] == self.dataset.varnames[j])), 0:2][0]).astype('float64'))

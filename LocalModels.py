@@ -21,13 +21,13 @@ class LocalModels:
             stringTab.append(line)
 
         # Convert the table of String to a  list of Equations
-        convertArr = []
+
         self.allEquations=[]
         for s in stringTab:
-            fit=convertArr.append(np.float32(s[0]))
-            cmplx=convertArr.append(np.float32(s[1]))
-            var=convertArr.append(s[2])
-            eq=convertArr.append(s[3])
+            fit=np.float32(s[0])
+            cmplx=np.float32(s[1])
+            var=s[2]
+            eq=s[3]
             self.allEquations.append(Equation(fit,cmplx,var,eq))
 
         # Number of Equation for all variables taken together
