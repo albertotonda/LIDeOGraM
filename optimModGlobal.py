@@ -86,13 +86,13 @@ class OptimModGlobal:
         logbook = tools.Logbook()
 
         #with open('bestIndv.dat', 'rb') as f:
-        #with open('bestIndv_soussurexpr.dat', 'rb') as f:
-        #    ret = pickle.load(f)
-        #return ret
+        with open('bestIndv_soussurexpr2.dat', 'rb') as f:
+            ret = pickle.load(f)
+        return ret
 
 
 
-        NGEN=1000
+        NGEN=30
         CXPB=0.8
         MUTPB=0.2
         mu=10

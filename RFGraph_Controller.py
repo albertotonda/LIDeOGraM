@@ -4,7 +4,7 @@ from OptimisationCanvas import OptimisationCanvas
 from ErrorConstraint import ErrorConstraint
 from Network import Network
 import numpy as np
-from OptimModGlobal import OptimModGlobal
+from optimModGlobal import OptimModGlobal
 
 class RFGraph_Controller:
     def __init__(self,modApp,vwApp):

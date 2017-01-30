@@ -89,7 +89,7 @@ class Individual:
             #print("Error in process, variables not found") ATTENTION ERREUR LEVE LORS DE L'EXECUTION !!!
         return computed
 
-    def get_fitness(self,chosenEqs,  fun=(lambda x, y: math.fabs(x - y)/math.fabs(x)), penalty=0):
+    def get_fitness(self,chosenEqs,  fun=(lambda x, y: np.abs(x - y)/np.abs(y+x+1)), penalty=0):
     #def get_fitness(self,chosenEqs,  fun=(lambda x, y: np.maximum(math.fabs(x / y),math.fabs(y / x))), penalty=0):
         """match solution against given data."""
         bkeys = self.variables
@@ -112,7 +112,30 @@ class Individual:
                      yr.append(float(results[j][bkeys[i]]))
                      xr.append(float(self.exp[bkeys[i]][j]))
                 acc+=1
-                errVarSum[bkeys[i]]=fitness(xr, yr)
+                #errVarSum[bkeys[i]]=np.sum(fun(np.array(xr), np.array(yr)))
+                tmp = 0
+                for xt,yt in zip(xr,yr):
+                    if xt > yt and xt != 0:
+                        tmp += 1- yt/xt
+                    elif xt > yt and xt == 0:
+                        tmp += 1
+                    elif yt > xt and yt != 0:
+                        tmp += 1- xt/yt
+                    elif yt > xt and yt == 0:
+                        tmp += 1
+                    else:
+                        tmp += 0
+                    # if xt == 0 and yt != 0:
+                    #tmp += fun(xt,yt)
+                    # elif yt == 0 and xt != 0:
+                    #     tmp += fun(yt,xt)
+                    # elif yt != 0 and xt != 0:
+                    #     tmp += fun(xt,yt)
+                    # else:
+                        #tmp += 1
+                        #print("C4DEST LA FIN DUMONDE")
+
+                errVarSum[bkeys[i]] = tmp
                     #errVarSum[bkeys[i]] = p
                 errTot+=errVarSum[bkeys[i]]
 
