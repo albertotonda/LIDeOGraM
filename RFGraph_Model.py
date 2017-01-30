@@ -10,20 +10,22 @@ from ArrayConverter import ArrayConverter
 import re
 import sys
 sys.path.append("fitness/")
-import fitness
+from fitness import fitness
+from fitness import Individual
 import pandas as pd
 from Dataset import Dataset
+from sympy.parsing.sympy_parser import parse_expr
+from sympy import sympify
 
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model:
 
     def __init__(self):
 
-        self.equacolO=self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr.txt')
-        self.nbequa=len(self.equacolO) # Number of Equation for all variables taken together
 
         self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr.csv")
-
+        self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr.txt')
+        self.nbequa = len(self.equacolO)  # Number of Equation for all variables taken together
 
         self.adj_simple=np.zeros((self.dataset.nbVar,self.dataset.nbVar))
         self.adj_fit=np.ones((self.dataset.nbVar,self.dataset.nbVar))
@@ -130,7 +132,7 @@ class RFGraph_Model:
         self.equaPerNode={}
         for v in self.dataset.varnames:
             if(not v in self.varsIn):
-                self.equaPerNode[v]=self.equacolO[np.ix_(self.equacolO[:, 2] == [v], [0, 1, 2, 3])]
+                self.equaPerNode[v]=self.equacolO[np.ix_(self.equacolO[:, 2] == [v], [0, 1, 2, 3, 4])]
 
         ##########################
         #self.datumIncMat = pd.read_csv("data/equa_with_col_Parent_withMol.csv", header=None)
@@ -168,10 +170,20 @@ class RFGraph_Model:
         convertArr = []
         for s in stringTab:
             convertArr.append(np.float32(s[0]))
+            xr=self.dataset.getAllExpsforVar(s[2])
+            yr=[]
+            #for numExp in range(self.dataset.nbExp):
+            #    yr.append(parse_expr(s[3], local_dict=self.dataset.getAllVarsforExp(numExp)))
+            #try:
+            #    recomputedFitness=fitness(xr,yr)
+            #except:
+            #    pass
             convertArr.append(np.float32(s[1]))
+            #convertArr.append(recomputedFitness)
             convertArr.append(s[2])
             convertArr.append(s[3])
-            convertArr.append(1)
+            convertArr.append(sympify(s[3]))
+
 
         finalTab = np.array(convertArr, dtype=object)
         shp = np.shape(stringTab)
@@ -658,7 +670,7 @@ class RFGraph_Model:
                 pass
     def computeGlobalView(self):
 
-        ft = fitness.Individual(self, "fitness/ex_indiv.csv")
+        ft = Individual(self, "fitness/ex_indiv.csv")
         res=ft.get_fitness(self.selectedEq)
         self.globErr=copy.deepcopy(res[2])
         self.sumGlobErr=np.sum(list(self.globErr.values()))
