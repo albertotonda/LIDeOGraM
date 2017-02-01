@@ -138,15 +138,18 @@ class RFGraph_Model:
         #self.datumIncMat = pd.read_csv("data/equa_with_col_Parent_withMol.csv", header=None)
         #self.datumIncMat = self.datumIncMat.sort(2)
         self.datumIncMat=pd.DataFrame(self.equacolO)
-        variables = ["Temperature", "Age"] + sorted(self.datumIncMat[2].unique().tolist())
+        #variables = ["Temperature", "Age"] + sorted(self.datumIncMat[2].unique().tolist())
 
-        self.df_IncMat = pd.DataFrame(index=self.datumIncMat[2], columns=["Temperature", "Age"] + self.datumIncMat[2].unique().tolist())
-        for row in range(self.df_IncMat.shape[0]):
-            v = self.df_IncMat.index.values[row]
-            self.df_IncMat.ix[row] = self.getV(self.df_IncMat.columns.values, self.datumIncMat.irow(row)[3], v)
+        df_IncMat = pd.DataFrame(index=self.datumIncMat[2], columns=["Temperature", "Age"] + self.datumIncMat[2].unique().tolist())
+        for row in range(df_IncMat.shape[0]):
+            v = df_IncMat.index.values[row]
+            df_IncMat.ix[row] = self.getV(df_IncMat.columns.values, self.datumIncMat.irow(row)[3], v)
 
-        self.dataIncMat = self.df_IncMat
+        self.dataIncMat = df_IncMat
         self.shapeIncMat = self.dataIncMat.shape
+
+        #self.dataIncMat.to_csv('debugMat.csv',header = True, index = True)
+
         ##########################
 
 

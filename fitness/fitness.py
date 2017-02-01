@@ -15,7 +15,7 @@ class Equation:
         self.name = name
         self.variables = v
         self.complexity = cmplx
-        self.computedEq=computedEq
+        self.computedEq = computedEq
 
 
 
@@ -172,11 +172,6 @@ def fitness(xr,yr):
         else:
             fit = 1 + p * directionErr
     return fit
-
-        for i in bkeys:
-         if i in self.complexity and not i in self.modApp.varsIn:
-             cpx += self.complexity[i]
-        return errTot, cpx,errVarSum
 
 def get_multithread_fitness(var,exps,initv):
     tasks = [Individual(initv,var,exp) for exp in exps]

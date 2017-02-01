@@ -19,6 +19,8 @@ class RFGraph_View(QtGui.QMainWindow):
         self.icon = QtGui.QIcon("Icone.png")
         self.setWindowIcon(self.icon)
 
+        self.setWindowState(QtCore.Qt.WindowMaximized)
+
         self.main_widget = QtGui.QWidget(self)
 
         self.gridLayout = QtGui.QGridLayout(self.main_widget)
