@@ -26,6 +26,8 @@ class IncMatrixCanvas(QTableWidget):
         self.setRowCount(len(self.modApp.dataIncMat.index))
         self.setColumnCount(len(self.modApp.dataIncMat.columns))
 
+        self.previousStates = []
+
         # set label
         self.setHorizontalHeaderLabels(self.modApp.dataIncMat.columns.values)
         self.setVerticalHeaderLabels(self.modApp.dataIncMat.index.tolist())
@@ -60,8 +62,11 @@ class IncMatrixCanvas(QTableWidget):
 
 
     def updateView(self):
-        best_ind = self.modApp.best_indv
-        if best_ind == []: return
+        best_ind = self.modApp.selectedEq
+        if self.modApp.best_indv == []: return
+        self.previousStates.append(best_ind)
+        print(best_ind)
+        print(self.modApp.selectedEq)
         tableOrder = self.modApp.dataIncMat.columns
         eqs = []
         for place, col in enumerate(tableOrder):
