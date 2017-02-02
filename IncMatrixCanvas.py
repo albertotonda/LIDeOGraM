@@ -14,10 +14,10 @@ import re
 from PyQt4.QtGui import *
 
 class IncMatrixCanvas(QTableWidget):
-    def __init__(self, modApp, vwApp):
+    def __init__(self, modApp, vwApp, parent):
         self.modApp = modApp
         self.vwApp = vwApp
-        QTableWidget.__init__(self)
+        QTableWidget.__init__(self, parent)
 
 
 
@@ -84,7 +84,7 @@ class IncMatrixCanvas(QTableWidget):
 
 
 
-    def updateView(self):
+    def updateView(self) :
         best_ind = self.modApp.selectedEq
         if self.modApp.best_indv == []: return
         self.previousStates.append(best_ind)
@@ -175,6 +175,7 @@ class IncMatrixCanvas(QTableWidget):
                 self.setItem(i, j, cell)
 
         self.show()
+
 
 
 
