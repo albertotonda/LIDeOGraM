@@ -99,12 +99,12 @@ class RFGraph_Controller:
                 self.vwApp.networkGUI.network.updateLabels()
                 self.vwApp.networkGUI.network.drawEdges()
         else:
-            print(event)
+            pass
 
 
 
     def onClick(self, event, radius=0.001):
-        # TODO  affichage du nom du noeud selectionné + changer couleur
+        # TODO  affichage du nom du noeud selectionné
         (x, y) = (event.xdata, event.ydata)
         if not x or not y :
             return
