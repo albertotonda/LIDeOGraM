@@ -2,3 +2,6 @@
 *.xml
 __pycache__/*
 *.dat
+__pycache__/
+debugMat.csv
+fitness/__pycache__/
