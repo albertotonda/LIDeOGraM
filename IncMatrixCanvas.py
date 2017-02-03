@@ -10,6 +10,8 @@ import pandas as pd
 
 import re
 
+# TODO remove vertical header
+
 from PyQt4.QtGui import *
 
 class IncMatrixCanvas(QTableWidget):
@@ -22,21 +24,40 @@ class IncMatrixCanvas(QTableWidget):
 
         # initiate table
         self.setWindowTitle("Tableau de correspondance")
-        self.resize(*self.modApp.shapeIncMat)
         self.setRowCount(len(self.modApp.dataIncMat.index))
-        self.setColumnCount(len(self.modApp.dataIncMat.columns))
+        self.setColumnCount(len(self.modApp.dataIncMat.columns)+3)
 
         # set label
-        self.setHorizontalHeaderLabels(self.modApp.dataIncMat.columns.values)
-        self.setVerticalHeaderLabels(self.modApp.dataIncMat.index.tolist())
+        self.setHorizontalHeaderLabels(["Fitness","Complexity","Name"]+self.modApp.dataIncMat.columns.values.tolist())
+        #self.setVerticalHeaderLabels(self.modApp.dataIncMat.index.tolist())
 
         for i in range(self.modApp.shapeIncMat[0]):
             self.setRowHeight(i, 15)
-            for j in range(self.modApp.shapeIncMat[1]):
+            for j in range(self.modApp.shapeIncMat[1]+3):
+                if j == 0:
+                    self.setColumnWidth(j, 15)
+                    color = QColor.fromRgb(0, 255, 0)
+                    cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
+                    cell.setBackgroundColor(color)
+                    cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
+                    self.setItem(i, j, cell)
+                    continue
+                if j == 1:
+                    self.setColumnWidth(j, 15)
+                    color = QColor.fromRgb(0, 255, 0)
+                    cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
+                    cell.setBackgroundColor(color)
+                    cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
+                    self.setItem(i, j, cell)
+                    continue
+                if j == 2:
+                    cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
+                    self.setItem(i, j, cell)
+                    continue
                 self.setColumnWidth(j, 15)
                 fnt = QFont()
                 fnt.setPointSize(5)
-                value = self.modApp.dataIncMat.ix[i, j]
+                value = self.modApp.dataIncMat.ix[i, j-3]
                 cell = QTableWidgetItem(value)
                 cell.setFont(fnt)
                 color = None
@@ -51,8 +72,8 @@ class IncMatrixCanvas(QTableWidget):
                 self.setItem(i, j, cell)
 
                 # tooltip text
-        self.horizontalHeaderItem(0).setToolTip("Column 1 ")
-        self.horizontalHeaderItem(1).setToolTip("Column 2 ")
+        #self.horizontalHeaderItem(0).setToolTip("Column 1 ")
+#        self.horizontalHeaderItem(1).setToolTip("Column 2 ")
 
         # show table
         self.show()
@@ -83,31 +104,52 @@ class IncMatrixCanvas(QTableWidget):
 
         for i,k in enumerate(eqs) : #range(self.modApp.shapeIncMat[0]):
             self.setRowHeight(i, 15)
-            for j in range(self.modApp.shapeIncMat[1]):
+            for j in range(self.modApp.shapeIncMat[1] + 3):
+                if j == 0:
+                    self.setColumnWidth(j, 15)
+                    color = QColor.fromRgb(0, 255, 0)
+                    cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
+                    cell.setBackgroundColor(color)
+                    cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
+                    self.setItem(i, j, cell)
+                    continue
+                if j == 1:
+                    self.setColumnWidth(j, 15)
+                    color = QColor.fromRgb(0, 255, 0)
+                    cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
+                    cell.setBackgroundColor(color)
+                    cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
+                    self.setItem(i, j, cell)
+                    continue
+                if j == 2:
+                    if i < gmodelSize:
+                        t = [0, 0, 0]
+                    else:
+                        t = [125, 125, 125]
+                    cell = QTableWidgetItem(nameOrder[i])
+                    cell.setTextColor(QColor.fromRgb(*t))
+                    self.setItem(i, j, cell)
+                    continue
                 self.setColumnWidth(j, 15)
                 fnt = QFont()
                 fnt.setPointSize(5)
-                value = self.modApp.dataIncMat.iloc[k, j]
+                value = self.modApp.dataIncMat.iloc[k, j-3]
                 cell = QTableWidgetItem(value)
                 cell.setFont(fnt)
-                text = QTableWidgetItem(nameOrder[i])
+
                 #Si on depasse gmodelSize, nous ne somme plus dans le model global mais dans les restes, on attenu donc la couleurs
                 if i < gmodelSize:
                     g = [0,255,0]
                     b = [0,0,255]
-                    t = [0,0,0]
                 else:
                     g = [200,225,200]
                     b = [200,200,225]
-                    t = [125,125,125]
                 if value == 1:
                     color = QColor.fromRgb(*g)
                 elif value == -1:
                     color = QColor.fromRgb(*b)
                 else:
                     color = QColor.fromRgb(255, 255, 255)
-                text.setTextColor(QColor.fromRgb(*t))
-                self.setVerticalHeaderItem(i,text)
                 cell.setBackgroundColor(color)
                 cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
                 self.setItem(i, j, cell)

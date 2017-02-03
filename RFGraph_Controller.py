@@ -78,7 +78,7 @@ class RFGraph_Controller:
 
 
     def onMove(self,event):
-        print(event)
+#        print(event)
         if(event.button==1 and self.modApp.lastNodeClicked != ''):
             print(self.modApp.lastNodeClicked)
             old_pos=self.modApp.pos[self.modApp.lastNodeClicked]
@@ -99,7 +99,7 @@ class RFGraph_Controller:
                 self.vwApp.networkGUI.network.updateLabels()
                 self.vwApp.networkGUI.network.drawEdges()
         else:
-            print(event)
+            pass
 
 
 

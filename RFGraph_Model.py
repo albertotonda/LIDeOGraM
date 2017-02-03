@@ -337,7 +337,7 @@ class RFGraph_Model:
     def createConstraintsGraph(self):
         graph = nx.DiGraph()
         for i in np.unique(list(self.dataset.variablesClass.values())):
-            print(i)
+#            print(i)
             graph.add_node(i)
         graph.add_edge('condition','Molss')
         graph.add_edge('condition', 'Molsur')
@@ -604,7 +604,7 @@ class RFGraph_Model:
                 #if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
                     #if self.nbeq[i] == np.float64(0.0): continue
                     if self.adj_contrGraph.has_edge(self.dataset.variablesClass[self.dataset.varnames[j]], self.dataset.variablesClass[self.dataset.varnames[i]]):
-                        print(self.dataset.varnames[j] + " --> " + self.dataset.varnames[i] + " : " + self.dataset.variablesClass[self.dataset.varnames[j]] + " --> " + self.dataset.variablesClass[self.dataset.varnames[i]])
+#                        print(self.dataset.varnames[j] + " --> " + self.dataset.varnames[i] + " : " + self.dataset.variablesClass[self.dataset.varnames[j]] + " --> " + self.dataset.variablesClass[self.dataset.varnames[i]])
                         G.add_edge(self.dataset.varnames[j], self.dataset.varnames[i],
                                         adjsimple=self.adj_simple[i, j], adjfit=
                                         self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
@@ -627,7 +627,7 @@ class RFGraph_Model:
                 maxy = p[1]
         for k in self.pos:
             self.pos[k] = ((self.pos[k][0] - minx) / (maxx - minx), (self.pos[k][1] - miny) / (maxy - miny))
-            print(k +" : (" + str(self.pos[k][0]) + ","+str(self.pos[k][1])+")")
+#            print(k +" : (" + str(self.pos[k][0]) + ","+str(self.pos[k][1])+")")
 
         self.lpos = copy.deepcopy(self.pos)
         for p in self.lpos:  # raise text positions
@@ -700,7 +700,7 @@ class RFGraph_Model:
 
         for (h, l) in self.edgelist_inOrder:
             err_coef= res[2][l]/err_max
-            print(res[2][l])
+#            print(res[2][l])
             if(err_coef==1):
                 pass
             cr = np.maximum(np.minimum(err_coef * 2, 1),0)
