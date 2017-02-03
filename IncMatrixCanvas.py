@@ -13,7 +13,7 @@ import re
 from PyQt4.QtGui import *
 
 class IncMatrixCanvas(QTableWidget):
-    def __init__(self, modApp, vwApp, parent):
+    def __init__(self, modApp, vwApp, parent, se = None):
         self.modApp = modApp
         self.vwApp = vwApp
         QTableWidget.__init__(self, parent)
@@ -31,6 +31,11 @@ class IncMatrixCanvas(QTableWidget):
         # set label
         self.setHorizontalHeaderLabels(self.modApp.dataIncMat.columns.values)
         self.setVerticalHeaderLabels(self.modApp.dataIncMat.index.tolist())
+
+        if se != {} and se != None:
+            self.updateView(se)
+            return
+
 
         for i in range(self.modApp.shapeIncMat[0]):
             self.setRowHeight(i, 15)
@@ -61,8 +66,9 @@ class IncMatrixCanvas(QTableWidget):
 
 
 
-    def updateView(self) :
-        best_ind = self.modApp.selectedEq
+    def updateView(self,ses):
+        print("Updated")
+        best_ind = ses
         if self.modApp.best_indv == []: return
         self.previousStates.append(best_ind)
         print(best_ind)

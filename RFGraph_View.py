@@ -38,12 +38,15 @@ class RFGraph_View(QtGui.QMainWindow):
 
         self.incmatWidget = QtGui.QWidget(self.main_widget)
         self.incmatLayout = QtGui.QVBoxLayout(self.incmatWidget)
-        self.incMatGUI1 = IncMatrixCanvas(self.modApp, self, self.incmatWidget)
-        self.incMatGUI1.setGeometry(QtCore.QRect(30, 0, 300, 1000))
+
+
+        self.incMatGUI1 = [IncMatrixCanvas(self.modApp, self, self.incmatWidget)]
+        self.incMatGUI1[0].setGeometry(QtCore.QRect(30, 0, 300, 1000))
+        self.incMatGUI1[0].clicked.connect(self.incMatGUI1[0].show)
         # self.incmatLayout.addWidget(self.incMatGUI1)
 
-        self.incMatGUI2 = IncMatrixCanvas(self.modApp, self, self.incmatWidget)
-        self.incMatGUI2.setGeometry(QtCore.QRect(0, 30, 300, 1000))
+        #self.incMatGUI2 = IncMatrixCanvas(self.modApp, self, self.incmatWidget)
+        #self.incMatGUI2.setGeometry(QtCore.QRect(0, 30, 300, 1000))
         # self.incmatLayout.addWidget(self.incMatGUI2)
 
 
@@ -123,5 +126,9 @@ class RFGraph_View(QtGui.QMainWindow):
         self.scrolledListBox.clear()
         for item in self.modApp.scrolledList:
             self.scrolledListBox.addItem(item)
-        self.incMatGUI1.updateView()
+        if self.modApp.selectedEq != {}:
+            self.incMatGUI1.append(IncMatrixCanvas(self.modApp, self, self.incmatWidget,self.modApp.selectedEq))
+            self.incMatGUI1[-1].setGeometry(QtCore.QRect(0, 30, 300, 1000))
+            self.incMatGUI1[-1].show()
+            self.incMatGUI1[-1].clicked.connect(self.incMatGUI1[-1].show)
 
