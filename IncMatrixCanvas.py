@@ -10,7 +10,6 @@ import pandas as pd
 
 import re
 
-# TODO remove vertical header
 
 from PyQt4.QtGui import *
 
@@ -30,6 +29,7 @@ class IncMatrixCanvas(QTableWidget):
         # set label
         self.setHorizontalHeaderLabels(["Fitness","Complexity","Name"]+self.modApp.dataIncMat.columns.values.tolist())
         #self.setVerticalHeaderLabels(self.modApp.dataIncMat.index.tolist())
+        self.verticalHeader().hide()
 
         for i in range(self.modApp.shapeIncMat[0]):
             self.setRowHeight(i, 15)
