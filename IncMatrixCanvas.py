@@ -28,10 +28,17 @@ class IncMatrixCanvas(QTableWidget):
 
         self.previousStates = []
 
+        self.previousStates = []
+
         # set label
         self.setHorizontalHeaderLabels(["Fitness","Complexity","Name"]+self.modApp.dataIncMat.columns.values.tolist())
         #self.setVerticalHeaderLabels(self.modApp.dataIncMat.index.tolist())
         self.verticalHeader().hide()
+
+        if se != {} and se != None:
+            self.updateView(se)
+            return
+
 
         if se != {} and se != None:
             self.updateView(se)
