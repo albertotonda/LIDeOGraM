@@ -44,7 +44,10 @@ class IncMatrixCanvas(QTableWidget):
                     continue
                 if j == 1:
                     self.setColumnWidth(j, 15)
-                    color = QColor.fromRgb(0, 255, 0)
+                    cr = min((self.modApp.data[i][0] / self.modApp.cmplxMax) * 2, 1)
+                    cg = min((1 - self.modApp.data[i][0] / self.modApp.cmplxMax) * 2, 1)
+                    cb = 0
+                    color = QColor.fromRgb(255*cr, 255*cg, cb)
                     cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
                     cell.setBackgroundColor(color)
                     cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
@@ -60,11 +63,10 @@ class IncMatrixCanvas(QTableWidget):
                 value = self.modApp.dataIncMat.ix[i, j-3]
                 cell = QTableWidgetItem(value)
                 cell.setFont(fnt)
-                color = None
                 if value == 1:
-                    color = QColor.fromRgb(0, 255, 0)
+                    color = QColor.fromRgb(123,204,196)
                 elif value == -1:
-                    color = QColor.fromRgb(0, 0, 255)
+                    color = QColor.fromRgb(8,104,172)
                 else:
                     color = QColor.fromRgb(255, 255, 255)
                 cell.setBackgroundColor(color)
@@ -107,7 +109,16 @@ class IncMatrixCanvas(QTableWidget):
             for j in range(self.modApp.shapeIncMat[1] + 3):
                 if j == 0:
                     self.setColumnWidth(j, 15)
-                    color = QColor.fromRgb(0, 255, 0)
+                    value = self.modApp.globErr[nameOrder[i]]
+                    if i < gmodelSize:
+                        cr = int(min(value * 2, 1)*255)
+                        cg = int(min((1 - min(value,1)) * 2, 1)*255)
+                        cb = 0
+                    else:
+                        cr = 255
+                        cg = 255
+                        cb = 255
+                    color = QColor.fromRgb(cr, cg, cb)
                     cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
                     cell.setBackgroundColor(color)
                     cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
@@ -115,7 +126,10 @@ class IncMatrixCanvas(QTableWidget):
                     continue
                 if j == 1:
                     self.setColumnWidth(j, 15)
-                    color = QColor.fromRgb(0, 255, 0)
+                    cr = min((self.modApp.data[eqs[i]][0] / self.modApp.cmplxMax) * 2, 1)
+                    cg = min((1 - self.modApp.data[eqs[i]][0] / self.modApp.cmplxMax) * 2, 1)
+                    cb = 0
+                    color = QColor.fromRgb(255*cr, 255*cg, cb)
                     cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
                     cell.setBackgroundColor(color)
                     cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
@@ -138,12 +152,13 @@ class IncMatrixCanvas(QTableWidget):
                 cell.setFont(fnt)
 
                 #Si on depasse gmodelSize, nous ne somme plus dans le model global mais dans les restes, on attenu donc la couleurs
-                if i < gmodelSize:
-                    g = [0,255,0]
-                    b = [0,0,255]
-                else:
-                    g = [200,225,200]
-                    b = [200,200,225]
+                g = [123, 204, 196]
+                b = [8, 104, 172]
+                if i >= gmodelSize:
+                    mash = 0.4
+                    g = list(map(lambda x : (x + (255-x)*(1-mash)), g))
+                    b = list(map(lambda x : (x + (255-x)*(1-mash)), b))
+
                 if value == 1:
                     color = QColor.fromRgb(*g)
                 elif value == -1:

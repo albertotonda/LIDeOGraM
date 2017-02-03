@@ -112,37 +112,13 @@ class Individual:
                      yr.append(float(results[j][bkeys[i]]))
                      xr.append(float(self.exp[bkeys[i]][j]))
                 acc+=1
-                #errVarSum[bkeys[i]]=np.sum(fun(np.array(xr), np.array(yr)))
-                tmp = 0
-                for xt,yt in zip(xr,yr):
-                    if xt > yt and xt != 0:
-                        tmp += 1- yt/xt
-                    elif xt > yt and xt == 0:
-                        tmp += 1
-                    elif yt > xt and yt != 0:
-                        tmp += 1- xt/yt
-                    elif yt > xt and yt == 0:
-                        tmp += 1
-                    else:
-                        tmp += 0
-                    # if xt == 0 and yt != 0:
-                    #tmp += fun(xt,yt)
-                    # elif yt == 0 and xt != 0:
-                    #     tmp += fun(yt,xt)
-                    # elif yt != 0 and xt != 0:
-                    #     tmp += fun(xt,yt)
-                    # else:
-                        #tmp += 1
-                        #print("C4DEST LA FIN DUMONDE")
-
-                errVarSum[bkeys[i]] = tmp
-                    #errVarSum[bkeys[i]] = p
+                errVarSum[bkeys[i]]= fitness(xr,yr) #np.sum(fun(np.array(xr), np.array(yr)))
                 errTot+=errVarSum[bkeys[i]]
 
         for i in bkeys:
          if i in self.complexity and not i in self.modApp.varsIn:
              cpx += self.complexity[i]
-        return errTot, cpx,errVarSum
+        return errTot, cpx ,errVarSum
 
 def get_multithread_fitness(var,exps,initv):
     tasks = [Individual(initv,var,exp) for exp in exps]
