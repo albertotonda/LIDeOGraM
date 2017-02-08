@@ -34,7 +34,7 @@ class IncMatrixCanvas(QTableWidget):
         for i in range(self.modApp.shapeIncMat[0]):
             self.setRowHeight(i, 15)
             for j in range(self.modApp.shapeIncMat[1]+3):
-                if j == 0:
+                if j == 1:
                     self.setColumnWidth(j, 15)
                     color = QColor.fromRgb(0, 255, 0)
                     cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
@@ -42,7 +42,7 @@ class IncMatrixCanvas(QTableWidget):
                     cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
                     self.setItem(i, j, cell)
                     continue
-                if j == 1:
+                if j == 0:
                     self.setColumnWidth(j, 15)
                     cr = min((self.modApp.data[i][0] / self.modApp.cmplxMax) * 2, 1)
                     cg = min((1 - self.modApp.data[i][0] / self.modApp.cmplxMax) * 2, 1)
@@ -107,7 +107,7 @@ class IncMatrixCanvas(QTableWidget):
         for i,k in enumerate(eqs) : #range(self.modApp.shapeIncMat[0]):
             self.setRowHeight(i, 15)
             for j in range(self.modApp.shapeIncMat[1] + 3):
-                if j == 0:
+                if j == 1:
                     self.setColumnWidth(j, 15)
                     value = self.modApp.globErr[nameOrder[i]]
                     if i < gmodelSize:
@@ -124,7 +124,7 @@ class IncMatrixCanvas(QTableWidget):
                     cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
                     self.setItem(i, j, cell)
                     continue
-                if j == 1:
+                if j == 0:
                     self.setColumnWidth(j, 15)
                     cr = min((self.modApp.data[eqs[i]][0] / self.modApp.cmplxMax) * 2, 1)
                     cg = min((1 - self.modApp.data[eqs[i]][0] / self.modApp.cmplxMax) * 2, 1)
