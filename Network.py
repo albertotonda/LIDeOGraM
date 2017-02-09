@@ -52,9 +52,12 @@ class Network:
         #                         edge_color=self.modApp.global_Edge_Color,
         #                         #edge_bold=self.modApp.edgeBold,
         #                         ax=self.axes)
-        nx.draw_networkx(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
+        try:
+            nx.draw_networkx(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
                                node_color=self.modApp.nodeColor,
                                with_labels=False, edgelist=self.modApp.edgelist_inOrder,edge_color=self.modApp.global_Edge_Color,ax=self.axes)
+        except:
+            pass
         self.vwApp.networkGUI.fig.canvas.draw()
 
     def updateNodes(self):
@@ -88,7 +91,8 @@ class Network:
             self.draw_global_nodes_labels()
         else:
             self.draw_nodes_labels()
-        self.vwApp.networkGUI.fig.canvas.draw()
+
+        #self.vwApp.networkGUI.fig.canvas.draw()
         #self.axes.clear()
         #self.axes.hold(True)
         #self.draw_nodes_labels()

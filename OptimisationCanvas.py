@@ -6,7 +6,7 @@ from PyQt4.QtGui import *
 class OptimisationCanvas(QDialog):
     def __init__(self, parent=None):
         super(OptimisationCanvas, self).__init__(parent)
-        self.setWindowTitle('µGP Optimisation')
+        self.setWindowTitle('Global Optimisation')
         self.icon = QtGui.QIcon("iconeLSN")
         self.setWindowIcon(self.icon)
         mainBoxLayout = QVBoxLayout(self)

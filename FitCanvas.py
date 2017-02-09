@@ -38,6 +38,8 @@ class FitCanvas(FigureCanvas):
 
     def updateView(self):
         if self.modApp.clicked_line==-1:
+            self.fig.clear()
+            self.fig.canvas.draw()
             return
 
         eq = self.modApp.data[self.modApp.clicked_line][2]

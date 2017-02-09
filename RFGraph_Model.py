@@ -102,7 +102,6 @@ class RFGraph_Model:
         self.pareto = []
         self.scrolledList=[]
         self.scrolledList.append("Select link to reinstate")
-        self.selectContrTxt=""
         self.edgelist_inOrder = []
         self.edgeColor = []
         self.edgeColorCompr=[]

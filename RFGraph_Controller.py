@@ -131,6 +131,10 @@ class RFGraph_Controller:
             self.modApp.computeEdgeBold()
             self.modApp.computeNxGraph()
             self.vwApp.networkGUI.fig.canvas.draw()
+            self.modApp.data=[]
+            self.vwApp.eqTableGUI.updateView()
+            self.vwApp.fitGUI.updateView()
+            self.vwApp.clickedNodeLab.setText(self.modApp.lastNodeClicked)
             QCoreApplication.processEvents()
             return
         nodeclicked = min(dst, key=(lambda x: x[0]))[1]
@@ -221,8 +225,23 @@ class RFGraph_Controller:
                 data.append(data_tmp[i])
             self.modApp.data = data
             self.vwApp.eqTableGUI.updateView()
-        print("refresh")
+
+        if (self.modApp.globalModelView):
+            class MyWidgetItem:
+                self.row2=-1
+                def __init__(self,row2):
+                    self.row2=row2
+                def row(self):
+                    return self.row2
+            eqCellToClick=self.modApp.selectedEq[self.modApp.lastNodeClicked]
+            eqCellToClickWid=MyWidgetItem(eqCellToClick)
+            print("clickedEq:"+str(eqCellToClick))
+            self.eqTableClicked(eqCellToClickWid)
+        else:
+            self.vwApp.fitGUI.updateView()
         self.vwApp.networkGUI.fig.canvas.draw()
+        self.vwApp.clickedNodeLab.setText(self.modApp.lastNodeClicked)
+
         QCoreApplication.processEvents()
 
     # TODO Réintègre le lien sélectionné

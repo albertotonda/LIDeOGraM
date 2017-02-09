@@ -44,11 +44,18 @@ class RFGraph_View(QtGui.QMainWindow):
         self.comprFitCmplx_lab_fit = QtGui.QLabel('Fitness')
         self.gridLayout.addWidget(self.comprFitCmplx_lab_fit, 9, 59, 1, 1)
         self.selectContrTxtLab = QtGui.QLabel('')
-        self.gridLayout.addWidget(self.selectContrTxtLab, 0, 25, 2, 12)
+        self.gridLayout.addWidget(self.selectContrTxtLab, 0, 10, 2, 12)
 
+
+        self.clickedNodeLab = QtGui.QLabel('test')
+        selNodeFont=QtGui.QFont("AnyStyle",12,QtGui.QFont.Normal)
+        self.clickedNodeLab.setFont(selNodeFont)
         self.eqTableGUI = EqTableCanvas(self.modApp)
-
         self.gridLayout.addWidget(self.eqTableGUI, 1, 130, 6, 60)
+        selNodeLab=QtGui.QLabel('Selected node:')
+        selNodeLab.setFont(selNodeFont)
+        self.gridLayout.addWidget(selNodeLab,0,140,1,30)
+        self.gridLayout.addWidget(self.clickedNodeLab, 0, 153, 1, 30)
 
         self.fitGUI = FitCanvas(self.modApp)
         self.gridLayout.addWidget(self.fitGUI, 7, 130, 6, 60)
@@ -56,7 +63,7 @@ class RFGraph_View(QtGui.QMainWindow):
         self.buttonCompromis = QtGui.QPushButton('Compromise', self)
         self.buttonFitness = QtGui.QPushButton('Fitness', self)
         self.buttonComplexite = QtGui.QPushButton('Complexity', self)
-        self.buttonOptUgp3 = QtGui.QPushButton('µGP Optimisation', self)
+        self.buttonOptUgp3 = QtGui.QPushButton('Global Optimisation', self)
         self.buttonShowModGlobal = QtGui.QPushButton('Show Global Model', self)
         self.buttonHideModGlobal = QtGui.QPushButton('Hide Global Model', self)
         self.buttonChangerEq = QtGui.QPushButton('Change equation', self)
@@ -95,8 +102,10 @@ class RFGraph_View(QtGui.QMainWindow):
         self.networkGUI.network.updateView()
         self.fitGUI.updateView()
         self.eqTableGUI.updateView()
-        self.selectContrTxtLab.setText(self.modApp.selectContrTxt)
+        self.selectContrTxtLab.setText(self.modApp.lastNodeClicked)
         self.scrolledListBox.clear()
+        self.clickedNodeLab.setText(self.modApp.lastNodeClicked)
+        #
         for item in self.modApp.scrolledList:
             self.scrolledListBox.addItem(item)
 
