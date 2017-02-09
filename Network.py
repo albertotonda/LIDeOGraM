@@ -13,6 +13,7 @@ class Network:
         self.axes.get_yaxis().set_visible(False)
 
 
+
     def draw_nodes_labels(self):
         nxa.draw_networkx_labels_angle(self.modApp.G, self.modApp.lpos, self.modApp.labels, ax=self.axes, rotate=45)
         #nx.draw_networkx_labels(self.modApp.G, self.modApp.lpos, self.modApp.labels, ax=self.axes)
@@ -28,7 +29,7 @@ class Network:
         nxa.draw_networkx_labels_angle(self.modApp.G, self.modApp.lpos, self.modApp.labels, ax=self.axes, rotate=45)
         nx.draw_networkx_labels(self.modApp.G, self.modApp.fpos, self.modApp.globErrLab, ax=self.axes)
         lab={}
-        lab['sumGlobErr']=' Global fitness: '+"{0:.2f}".format(self.modApp.sumGlobErr)
+        lab['GlobErr']=' Global fitness: '+"{0:.5f}".format(self.modApp.GlobErr)
         labpos={}
         allposx=[]
         allposy=[]
@@ -38,19 +39,22 @@ class Network:
         minx=np.min(allposx)
         miny=np.min(allposy)
 
-        labpos['sumGlobErr']=(minx,miny)
+        labpos['GlobErr']=(minx,miny)
         nx.draw_networkx_labels(self.modApp.G,labpos,lab,ax=self.axes)
-        nx.draw_networkx_nodes(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
+        # nx.draw_networkx_nodes(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
+        #                        node_color=self.modApp.nodeColor,
+        #                        with_labels=False, edgelist=self.modApp.edgelist_inOrder,
+        #                        #edge_color=self.modApp.edgeColor,
+        #                        ax=self.axes)
+        # nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
+        #                         node_color=self.modApp.nodeColor, with_labels=False,
+        #                         edgelist=self.modApp.edgelist_inOrder,
+        #                         edge_color=self.modApp.global_Edge_Color,
+        #                         #edge_bold=self.modApp.edgeBold,
+        #                         ax=self.axes)
+        nx.draw_networkx(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
                                node_color=self.modApp.nodeColor,
-                               with_labels=False, edgelist=self.modApp.edgelist_inOrder,
-                               #edge_color=self.modApp.edgeColor,
-                               ax=self.axes)
-        nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
-                                node_color=self.modApp.nodeColor, with_labels=False,
-                                edgelist=self.modApp.edgelist_inOrder,
-                                edge_color=self.modApp.global_Edge_Color,
-                                #edge_bold=self.modApp.edgeBold,
-                                ax=self.axes)
+                               with_labels=False, edgelist=self.modApp.edgelist_inOrder,edge_color=self.modApp.global_Edge_Color,ax=self.axes)
         self.vwApp.networkGUI.fig.canvas.draw()
 
     def updateNodes(self):
@@ -58,19 +62,19 @@ class Network:
                                node_color=self.modApp.nodeColor,
                                with_labels=False, edgelist=self.modApp.edgelist_inOrder, edge_color=self.modApp.edgeColor,
                                ax=self.axes)
-        self.vwApp.networkGUI.fig.canvas.draw()
+        #self.vwApp.networkGUI.fig.canvas.draw()
     def updateLabels(self):
         nxa.draw_networkx_labels_angle(self.modApp.G, self.modApp.lpos, self.modApp.labels, ax=self.axes, rotate=45)
         #nx.draw_networkx_labels(self.modApp.G, self.modApp.lpos, self.modApp.labels, ax=self.axes)
 
-        self.vwApp.networkGUI.fig.canvas.draw()
+        #self.vwApp.networkGUI.fig.canvas.draw()
 
     def drawEdges(self):
         nxa.draw_networkx_edges(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
                                node_color=self.modApp.nodeColor, with_labels=False,
                                edgelist=self.modApp.edgelist_inOrder,
                                edge_color=self.modApp.edgeColor,edge_bold=self.modApp.edgeBold, ax=self.axes)
-        self.vwApp.networkGUI.fig.canvas.draw()
+        #self.vwApp.networkGUI.fig.canvas.draw()
 
     def updateView(self):
 

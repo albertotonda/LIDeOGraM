@@ -23,8 +23,12 @@ class RFGraph_Model:
     def __init__(self):
 
 
-        self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr.csv")
-        self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr.txt')
+        self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected.csv")
+        #self.dataset = Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr.csv")
+        #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr.txt')
+        #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_noMol.txt')
+        self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_expertcorrected.txt')
+        #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_expertcorrected_noMol.txt')
         self.nbequa = len(self.equacolO)  # Number of Equation for all variables taken together
 
         self.adj_simple=np.zeros((self.dataset.nbVar,self.dataset.nbVar))
@@ -71,7 +75,8 @@ class RFGraph_Model:
         #self.datasetset_mol_cellS = genfromtxt('data/dataset_mol_cell.csv', 'str', delimiter=',')
         #self.datasetset_cell_popF = genfromtxt('data/dataset_cell_pop.csv', 'float', delimiter=',')
         #self.datasetset_mol_cellF = genfromtxt('data/dataset_mol_cell.csv', 'float', delimiter=',')
-        self.varsIn = ['Temperature','Age']
+        #self.varsIn = ['Temperature','Age','AMACBIOSYNTHsousexpr','BIOSYNTH_CARRIERSsousexpr','CELLENVELOPEsousexpr','CELLPROCESSESsousexpr','CENTRINTMETABOsousexpr','ENMETABOsousexpr','FATTYACIDMETABOsousexpr','Hypoprotsousexpr','OTHERCATsousexpr','PURINESsousexpr','REGULFUNsousexpr','REPLICATIONsousexpr','TRANSCRIPTIONsousexpr','TRANSLATIONsousexpr','TRANSPORTPROTEINSsousexpr','AMACBIOSYNTHsurexpr','BIOSYNTH_CARRIERSsurexpr','CELLENVELOPEsurexpr','CELLPROCESSESsurexpr','CENTRINTMETABOsurexpr','ENMETABOsurexpr','FATTYACIDMETABOsurexpr','Hypoprotsurexpr','OTHERCATsurexpr','PURINESsurexpr','REGULFUNsurexpr','REPLICATIONsurexpr','TRANSCRIPTIONsurexpr','TRANSLATIONsurexpr','TRANSPORTPROTEINSsurexpr']
+        self.varsIn = ['Temperature', 'Age']
         self.NodeConstraints = []
         self.showGlobalModel = False
         self.lastNodeClicked = ""
@@ -138,9 +143,9 @@ class RFGraph_Model:
         #self.datumIncMat = pd.read_csv("data/equa_with_col_Parent_withMol.csv", header=None)
         #self.datumIncMat = self.datumIncMat.sort(2)
         self.datumIncMat=pd.DataFrame(self.equacolO)
-        variables = ["Temperature", "Age"] + sorted(self.datumIncMat[2].unique().tolist())
+        variables = self.varsIn + sorted(self.datumIncMat[2].unique().tolist())
 
-        self.df_IncMat = pd.DataFrame(index=self.datumIncMat[2], columns=["Temperature", "Age"] + self.datumIncMat[2].unique().tolist())
+        self.df_IncMat = pd.DataFrame(index=self.datumIncMat[2], columns=self.varsIn + self.datumIncMat[2].unique().tolist())
         for row in range(self.df_IncMat.shape[0]):
             v = self.df_IncMat.index.values[row]
             self.df_IncMat.ix[row] = self.getV(self.df_IncMat.columns.values, self.datumIncMat.irow(row)[3], v)
@@ -182,7 +187,8 @@ class RFGraph_Model:
             #convertArr.append(recomputedFitness)
             convertArr.append(s[2])
             convertArr.append(s[3])
-            convertArr.append(sympify(s[3]))
+            convertArr.append(-1)
+            #convertArr.append(sympify(s[3]))
 
 
         finalTab = np.array(convertArr, dtype=object)
@@ -672,11 +678,11 @@ class RFGraph_Model:
 
         ft = Individual(self, "fitness/ex_indiv.csv")
         res=ft.get_fitness(self.selectedEq)
-        self.globErr=copy.deepcopy(res[2])
-        self.sumGlobErr=np.sum(list(self.globErr.values()))
+        self.globErrDet=copy.deepcopy(res[2])
+        self.GlobErr=res[0]#np.sum(list(self.globErr.values()))
         self.globErrLab = copy.deepcopy(res[2])
         for k in self.globErrLab.keys():
-            self.globErrLab[k] = "{0:.2f}".format(self.globErr[k])
+            self.globErrLab[k] = "{0:.2f}".format(self.globErrDet[k])
 
         equaLines=[]
 

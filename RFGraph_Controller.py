@@ -1,15 +1,18 @@
 #-*- coding: utf-8
 from Help import Help
+from PyQt4.QtCore import QCoreApplication
 from OptimisationCanvas import OptimisationCanvas
 from ErrorConstraint import ErrorConstraint
 from Network import Network
 import numpy as np
 from OptimModGlobal import OptimModGlobal
+import threading
 
 class RFGraph_Controller:
     def __init__(self,modApp,vwApp):
         self.modApp=modApp
         self.vwApp=vwApp
+        self.onMoveMutex = threading.Lock()
 
     def clickHelp(self):
         self.modApp.help_params = Help.get_params()
@@ -78,18 +81,21 @@ class RFGraph_Controller:
 
 
     def onMove(self,event):
-        print(event)
+        #print(event)
         if(event.button==1 and self.modApp.lastNodeClicked != ''):
-            print(self.modApp.lastNodeClicked)
-            old_pos=self.modApp.pos[self.modApp.lastNodeClicked]
-            self.modApp.pos[self.modApp.lastNodeClicked]=(event.xdata,event.ydata)
+            if (self.onMoveMutex.locked() or event.inaxes == None):
+                return
+            self.onMoveMutex.acquire()
+            old_pos = self.modApp.pos[self.modApp.lastNodeClicked]
+            self.modApp.pos[self.modApp.lastNodeClicked] = (event.xdata, event.ydata)
 
-            self.modApp.lpos[self.modApp.lastNodeClicked] = (self.modApp.lpos[self.modApp.lastNodeClicked][0] - old_pos[0] + event.xdata,
-                                                        self.modApp.lpos[self.modApp.lastNodeClicked][1] - old_pos[1] + event.ydata)
+            self.modApp.lpos[self.modApp.lastNodeClicked] = (
+                self.modApp.lpos[self.modApp.lastNodeClicked][0] - old_pos[0] + event.xdata,
+                self.modApp.lpos[self.modApp.lastNodeClicked][1] - old_pos[1] + event.ydata)
 
             self.modApp.fpos[self.modApp.lastNodeClicked] = (
-            self.modApp.fpos[self.modApp.lastNodeClicked][0] - old_pos[0] + event.xdata,
-            self.modApp.fpos[self.modApp.lastNodeClicked][1] - old_pos[1] + event.ydata)
+                self.modApp.fpos[self.modApp.lastNodeClicked][0] - old_pos[0] + event.xdata,
+                self.modApp.fpos[self.modApp.lastNodeClicked][1] - old_pos[1] + event.ydata)
 
             if (self.modApp.globalModelView):
                 self.vwApp.updateView()
@@ -98,9 +104,12 @@ class RFGraph_Controller:
                 self.vwApp.networkGUI.network.updateNodes()
                 self.vwApp.networkGUI.network.updateLabels()
                 self.vwApp.networkGUI.network.drawEdges()
+                self.vwApp.networkGUI.fig.canvas.draw()
+            QCoreApplication.processEvents()
+            self.onMoveMutex.release()
         else:
-            print(event)
-
+            pass
+            #print(event)
 
 
     def onClick(self, event, radius=0.001):
@@ -119,6 +128,8 @@ class RFGraph_Controller:
             self.modApp.clicked_line=-1
             self.modApp.computeEdgeBold()
             self.modApp.computeNxGraph()
+            self.vwApp.networkGUI.fig.canvas.draw()
+            QCoreApplication.processEvents()
             return
         nodeclicked = min(dst, key=(lambda x: x[0]))[1]
 
@@ -208,6 +219,9 @@ class RFGraph_Controller:
                 data.append(data_tmp[i])
             self.modApp.data = data
             self.vwApp.eqTableGUI.updateView()
+        print("refresh")
+        self.vwApp.networkGUI.fig.canvas.draw()
+        QCoreApplication.processEvents()
 
     # TODO Réintègre le lien sélectionné
     def clickReinstateLink (self):
@@ -276,13 +290,13 @@ class RFGraph_Controller:
 
     # TODO Crée le surlignage des noeuds
     def higlight(self, new_node: str, old_node: str = None):
+        print("higlight:"+new_node)
         self.modApp.G.clear()
         if old_node:
             self.modApp.nodeColor[(self.modApp.dataset.varnames.tolist()).index(old_node)] = self.modApp.old_color
         if new_node:
             self.modApp.old_color = self.modApp.nodeColor[(self.modApp.dataset.varnames.tolist()).index(new_node)]
             self.modApp.nodeColor[(self.modApp.dataset.varnames.tolist()).index(new_node)] = (1.0, 0, 0)
-
         self.vwApp.networkGUI.network.updateNodes()
 
     def fileQuit(self):

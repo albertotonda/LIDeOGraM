@@ -19,6 +19,7 @@ class FitCanvas(FigureCanvas):
         self.axes.axis('off')
         self.compute_initial_figure()
 
+
         FigureCanvas.__init__(self, self.fig)
         FigureCanvas.setSizePolicy(self, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         FigureCanvas.updateGeometry(self)

@@ -86,17 +86,22 @@ class OptimModGlobal:
         logbook = tools.Logbook()
 
         #with open('bestIndv.dat', 'rb') as f:
-        #with open('bestIndv_soussurexpr.dat', 'rb') as f:
-        #    ret = pickle.load(f)
-        #return ret
+        #with open('bestIndv_soussurexpr2.dat', 'rb') as f:
+        #with open('bestIndv_soussurexpr_evoExp1_nomol.dat', 'rb') as f:
+        #with open('bestIndv_soussurexpr_evoNoExp1.dat', 'rb') as f:
+        with open('bestIndv_soussurexpr_evoExp1.dat', 'rb') as f:
+            ret = pickle.load(f)
+        return ret
 
+        #with open('fitEvo1.dat', 'rb') as f:
+        #    r = pickle.load(f)
 
-
-        NGEN=1000
+        #print('r:\n'+r)
+        NGEN=100
         CXPB=0.8
         MUTPB=0.2
-        mu=10
-        lmbd=8
+        mu=100
+        lmbd=80
         halloffame=tools.HallOfFame(1)
         pop=toolbox.new_population(n=mu)
         fitnesses=toolbox.map(toolbox.evaluate, pop)
@@ -173,6 +178,9 @@ class OptimModGlobal:
             tl.set_color("b")
         plt.show()
 
+        with open('fitEvolNoExpNoMol10.dat','wb') as f:
+            pickle.dump([fit_mins,fit_avgs,fit_stds,fit_maxs],f)
+
         #popfitnesses = logbook.select("popfitnesses")
         #flatPopFit = []
         #for popGenI in popfitnesses:
@@ -192,7 +200,7 @@ class OptimModGlobal:
 
         #bestindvDict=[]
 
-        with open('bestIndv_soussurexpr2.dat', 'wb') as f:
+        with open('bestIndv_soussurexpr_evoNoExpNoMol10.dat', 'wb') as f:
             pickle.dump(bestindvDict, f)
 
         return bestindvDict

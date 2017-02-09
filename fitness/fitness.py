@@ -114,8 +114,9 @@ class Individual:
                 acc+=1
                 errVarSum[bkeys[i]]=fitness(xr, yr)
                     #errVarSum[bkeys[i]] = p
-                errTot+=errVarSum[bkeys[i]]
-
+                if(bkeys[i] != 'C150' and bkeys[i] != 'C181trans'):
+                    errTot+=errVarSum[bkeys[i]]
+        errTot=errTot/(len(bkeys)-len(self.modApp.varsIn))
         for i in bkeys:
          if i in self.complexity and not i in self.modApp.varsIn:
              cpx += self.complexity[i]
