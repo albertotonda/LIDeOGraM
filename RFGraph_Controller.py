@@ -92,7 +92,7 @@ class RFGraph_Controller:
             self.modApp.lpos[self.modApp.lastNodeClicked] = (
                 self.modApp.lpos[self.modApp.lastNodeClicked][0] - old_pos[0] + event.xdata,
                 self.modApp.lpos[self.modApp.lastNodeClicked][1] - old_pos[1] + event.ydata)
-
+            #print("old_pos:"+str(old_pos))
             self.modApp.fpos[self.modApp.lastNodeClicked] = (
                 self.modApp.fpos[self.modApp.lastNodeClicked][0] - old_pos[0] + event.xdata,
                 self.modApp.fpos[self.modApp.lastNodeClicked][1] - old_pos[1] + event.ydata)
@@ -290,7 +290,7 @@ class RFGraph_Controller:
 
     # TODO Crée le surlignage des noeuds
     def higlight(self, new_node: str, old_node: str = None):
-        print("higlight:"+new_node)
+        #print("higlight:"+new_node)
         self.modApp.G.clear()
         if old_node:
             self.modApp.nodeColor[(self.modApp.dataset.varnames.tolist()).index(old_node)] = self.modApp.old_color
