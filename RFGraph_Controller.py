@@ -82,6 +82,7 @@ class RFGraph_Controller:
 
     def onMove(self,event):
         #print(event)
+
         if(event.button==1 and self.modApp.lastNodeClicked != ''):
             if (self.onMoveMutex.locked() or event.inaxes == None):
                 return
@@ -114,6 +115,7 @@ class RFGraph_Controller:
 
     def onClick(self, event, radius=0.001):
         # TODO  affichage du nom du noeud selectionné + changer couleur
+        print("clicked")
         (x, y) = (event.xdata, event.ydata)
         if not x or not y :
             return

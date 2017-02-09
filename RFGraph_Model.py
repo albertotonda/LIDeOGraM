@@ -16,6 +16,7 @@ import pandas as pd
 from Dataset import Dataset
 from sympy.parsing.sympy_parser import parse_expr
 from sympy import sympify
+import pickle
 
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model:
@@ -613,8 +614,9 @@ class RFGraph_Model:
                                         self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
                                         adjcontr=self.adj_contr[i, j])
 
-
-        self.pos = nx.nx_pydot.graphviz_layout(G, prog='dot')
+        with open('initpos.dat', 'rb') as f:
+            self.pos=pickle.load(f)
+        #self.pos = nx.nx_pydot.graphviz_layout(G, prog='dot')
         minx = np.inf
         maxx = -np.inf
         miny = np.inf
