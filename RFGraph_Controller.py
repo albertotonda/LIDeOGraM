@@ -129,7 +129,8 @@ class RFGraph_Controller:
             self.modApp.lastNodeClicked=""
             self.modApp.clicked_line=-1
             self.modApp.computeEdgeBold()
-            self.modApp.computeNxGraph()
+            if(not self.modApp.globalModelView):
+                self.modApp.computeNxGraph()
             self.vwApp.networkGUI.fig.canvas.draw()
             self.modApp.data=[]
             self.vwApp.eqTableGUI.updateView()

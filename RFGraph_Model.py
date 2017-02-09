@@ -489,6 +489,7 @@ class RFGraph_Model:
 
         self.removeInvisibleEdges()
         self.removeForbiddenEdges()
+        pass
 
 
     def colorDictToConstraintedcolorList(self,colorDict,edgesToShow):
