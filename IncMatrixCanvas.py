@@ -109,7 +109,10 @@ class IncMatrixCanvas(QTableWidget):
             for j in range(self.modApp.shapeIncMat[1] + 3):
                 if j == 0:
                     self.setColumnWidth(j, 15)
-                    cmap = self.vwApp.colors.get("complexity",self.modApp.data[eqs[i]][0] / self.modApp.cmplxMax)
+                    try:
+                        cmap = self.vwApp.colors.get("complexity",self.modApp.equacolO[eqs[i],0] / self.modApp.cmplxMax)
+                    except:
+                        pass
                     color = QColor.fromRgb(*cmap)
                     cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
                     cell.setBackgroundColor(color)
@@ -118,7 +121,7 @@ class IncMatrixCanvas(QTableWidget):
                     continue
                 if j == 1:
                     self.setColumnWidth(j, 15)
-                    value = self.modApp.globErr[nameOrder[i]]
+                    value = self.modApp.globErrDet[nameOrder[i]]
 
                     if i < gmodelSize:
                         cmap = self.vwApp.colors.get("global", value)
