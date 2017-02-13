@@ -90,6 +90,7 @@ class RFGraph_View(QtGui.QMainWindow):
         #self.font = QtGui.QFont('Liberation Sans Narrow')
         #self.font.setPointSize(12)
         #self.setFont(self.font)
+
         self.main_widget.setFocus()
         self.setCentralWidget(self.main_widget)
         self.show()
