@@ -128,6 +128,8 @@ class EqTableCanvas(QTableWidget):
             newitem = QTableWidgetItem(str(self.modApp.data[n][0]))
             cmap = self.colors.get("complexity",(self.modApp.data[n][0]/self.modApp.cmplxMax))
             newitem.setBackground(QColor(*cmap))
+            if(sum(cmap)<128*3):
+                newitem.setTextColor(Qt.white)
             self.setItem(n, 0, newitem)
 
             newitem = QTableWidgetItem(str(self.modApp.data[n][1]))

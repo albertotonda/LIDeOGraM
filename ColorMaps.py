@@ -1,11 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+from matplotlib.colors import LinearSegmentedColormap
 class colorm:
     def __init__(self):
-        self.complexity = plt.get_cmap("cool")
-        self.globalm = plt.get_cmap("winter")
-        self.localm = plt.get_cmap("summer")
+        aggr1=0.4
+        aggr2 = 0.3
+        fitnessCmap=LinearSegmentedColormap.from_list('fitness_map',[(aggr1,1,aggr1),(1,1,aggr1),(1,aggr1,aggr1)])
+        complexityCmap = LinearSegmentedColormap.from_list('complexity_map', [(1,1,1),(aggr2, 1, 1), (aggr2,aggr2,1),(aggr2, aggr2, aggr2)])
+
+        self.complexity = complexityCmap#plt.get_cmap("cool")
+        self.globalm = fitnessCmap
+        self.localm = fitnessCmap#plt.get_cmap("RdYlGn")
 
 
     def multiply(self,cmap):

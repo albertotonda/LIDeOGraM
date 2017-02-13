@@ -62,7 +62,7 @@ class IncMatrixCanvas(QTableWidget):
                 cell = QTableWidgetItem(value)
                 cell.setFont(fnt)
                 if value == 1:
-                    color = QColor.fromRgb(123,204,196)
+                    color = QColor.fromRgb(180,180,180)
                 elif value == -1:
                     color = QColor.fromRgb(8,104,172)
                 else:
@@ -151,7 +151,7 @@ class IncMatrixCanvas(QTableWidget):
                 cell.setFont(fnt)
 
                 #Si on depasse gmodelSize, nous ne somme plus dans le model global mais dans les restes, on attenu donc la couleurs
-                g = [123, 204, 196]
+                g = [180, 180, 180]
                 b = colorClasses[nameOrder[i]]#[8, 104, 172]
                 b = [int(i * 255) for i in b]
                 if i >= gmodelSize:

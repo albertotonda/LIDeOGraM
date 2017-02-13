@@ -89,7 +89,7 @@ class OptimModGlobal:
         #with open('bestIndv_soussurexpr2.dat', 'rb') as f:
         #with open('bestIndv_soussurexpr_evoExp1_nomol.dat', 'rb') as f:
         #with open('bestIndv_soussurexpr_evoNoExp1.dat', 'rb') as f:
-        with open('bestIndv_soussurexpr_evoExp1.dat', 'rb') as f:
+        with open('testOptim/bestIndv_soussurexpr_evoExp1.dat', 'rb') as f:
             ret = pickle.load(f)
         return ret
 
