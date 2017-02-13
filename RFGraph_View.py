@@ -47,7 +47,7 @@ class RFGraph_View(QtGui.QMainWindow):
         self.gridLayout.addWidget(self.selectContrTxtLab, 0, 10, 2, 12)
 
 
-        self.clickedNodeLab = QtGui.QLabel('test')
+        self.clickedNodeLab = QtGui.QLabel('error')
         selNodeFont=QtGui.QFont("AnyStyle",12,QtGui.QFont.Normal)
         self.clickedNodeLab.setFont(selNodeFont)
         self.eqTableGUI = EqTableCanvas(self.modApp)
@@ -102,7 +102,7 @@ class RFGraph_View(QtGui.QMainWindow):
         self.networkGUI.network.updateView()
         self.fitGUI.updateView()
         self.eqTableGUI.updateView()
-        self.selectContrTxtLab.setText(self.modApp.lastNodeClicked)
+        # self.selectContrTxtLab.setText(self.modApp.lastNodeClicked)
         self.scrolledListBox.clear()
         self.clickedNodeLab.setText(self.modApp.lastNodeClicked)
         #

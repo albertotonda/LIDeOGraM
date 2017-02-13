@@ -1,4 +1,6 @@
 #-*- coding: utf-8
+from PyQt4 import QtGui, QtCore
+
 from PyQt4.QtGui import *
 from PyQt4.QtCore import Qt
 import matplotlib as mpl
@@ -12,6 +14,7 @@ class EqTableCanvas(QTableWidget):
     def __init__(self, modApp, *args):
         self.modApp = modApp
         QTableWidget.__init__(self)
+
 
     def paintSection(self, painter, rect, logicalIndex):
 
@@ -111,6 +114,14 @@ class EqTableCanvas(QTableWidget):
         self.clear()
         self.setRowCount(len(self.modApp.data))
         self.setColumnCount(3)
+        self.wordWrap()
+        self.setTextElideMode(Qt.ElideNone)
+        self.setHorizontalHeaderLabels(['Complexity', 'Fitness', 'Equation'])
+
+        #self.horizontalHeader().setMaximumWidth(1000)
+        self.resizeColumnsToContents()
+        #self.resizeRowsToContents()
+        #self.resizeColumnsToContents()
         #eqList = self.generateLatex()
         for n  in range(len(self.modApp.data)):
             newitem = QTableWidgetItem(str(self.modApp.data[n][0]))
@@ -128,11 +139,13 @@ class EqTableCanvas(QTableWidget):
             newitem.setBackground(QColor(cr * 255, cg * 255, cb * 255))
             self.setItem(n, 1, newitem)
 
-            newitem = QTableWidgetItem(str(self.modApp.data[n][2]))
+            newitem = QTableWidgetItem(self.reformatNumberEquation(str(self.modApp.data[n][2])))
+            #newitem = QTableWidgetItem(str(self.modApp.data[n][2]))
             if(self.modApp.clicked_line==n):
                 newitem.setBackground(QColor(130, 130, 110))
             else:
                 newitem.setBackground(QColor(255, 255, 255))
+            #newitem.setSizeHint(QtCore.QSize(300,5))
             self.setItem(n, 2, newitem)
 
             #newitem = QTableWidgetItem(self.modApp.data[n][m])
@@ -144,11 +157,28 @@ class EqTableCanvas(QTableWidget):
             #    self.setItem(n, m, newitem)
             #else:
             #    self.setItem(n, m, QTableWidgetItem(self.modApp.data[n][m]))
-
-        self.setHorizontalHeaderLabels(['Complexity','Fitness','Equation'])
-        self.resizeColumnsToContents()
+        self.wordWrap()
+        #self.setHorizontalHeaderLabels(['Complexity','Fitness','Equation'])
+        #self.resizeColumnsToContents()
+        self.resizeRowsToContents()
+        self.horizontalHeader().setResizeMode(2,QtGui.QHeaderView.Stretch)
+        #self.resizeColumnsToContents()
         self.resizeRowsToContents()
 
         if(self.modApp.globalModelView and not self.modApp.lastNodeClicked in self.modApp.varsIn and self.modApp.lastNodeClicked != ''):
             self.item(self.modApp.selectedEq[self.modApp.lastNodeClicked], 2).setBackground(QColor(100, 100, 150))
+
+
+    def reformatNumberEquation(self,eq):
+        eqlist=eq.split()
+        eqRet=""
+        for t in eqlist:
+            try:
+                eqRet=eqRet+"{:.2E}".format(float(t))
+            except:
+                if(t=="(" or t==")" or t=="log"):
+                    eqRet = eqRet + t
+                else:
+                    eqRet=eqRet+" "+t+" "
+        return eqRet
 
