@@ -6,6 +6,8 @@ from EqTableCanvas import EqTableCanvas
 from IncMatrixCanvas import IncMatrixCanvas
 from FitCanvas import FitCanvas
 
+import ColorMaps
+
 # TODO Crée tout les boutons (or graphes + équations)
 class RFGraph_View(QtGui.QMainWindow):
 
@@ -13,11 +15,15 @@ class RFGraph_View(QtGui.QMainWindow):
 
         self.modApp=modApp
 
+        self.colors = ColorMaps.colorm()
+
         QtGui.QMainWindow.__init__(self)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         self.setWindowTitle("LIDeoGraM")
         self.icon = QtGui.QIcon("Icone.png")
         self.setWindowIcon(self.icon)
+
+        self.setWindowState(QtCore.Qt.WindowMaximized)
 
         self.main_widget = QtGui.QWidget(self)
 
@@ -25,8 +31,8 @@ class RFGraph_View(QtGui.QMainWindow):
         self.gridLayout.setSpacing(5)
         self.networkGUI = NetworkCanvas(self.modApp, self)
         self.gridLayout.addWidget(self.networkGUI, 1, 0, 8, 60)
-        # self.incMatGUI = IncMatrixCanvas(self.modApp,self)
-        # self.gridLayout.addWidget(self.incMatGUI,1,61,12,60)
+        self.incMatGUI = IncMatrixCanvas(self.modApp,self)
+        self.gridLayout.addWidget(self.incMatGUI,1,61,12,60)
         self.adjThreshold_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
         self.adjThreshold_slider.setValue(self.modApp.adjThresholdVal * 100)
 
@@ -109,4 +115,5 @@ class RFGraph_View(QtGui.QMainWindow):
         #
         for item in self.modApp.scrolledList:
             self.scrolledListBox.addItem(item)
+        self.incMatGUI.updateView()
 

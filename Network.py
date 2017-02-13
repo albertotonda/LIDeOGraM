@@ -97,7 +97,7 @@ class Network:
 
         #self.vwApp.networkGUI.fig.canvas.draw()
         #self.axes.clear()
-        #self.axes.hold(True)
+        self.axes.hold(True)
         #self.draw_nodes_labels()
         #nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=self.edgelist_inOrder,edge_color=self.modApp.edgeColor, ax=self.axes)
 
