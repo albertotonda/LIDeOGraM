@@ -99,7 +99,8 @@ class RFGraph_Controller:
                 self.modApp.fpos[self.modApp.lastNodeClicked][1] - old_pos[1] + event.ydata)
 
             if (self.modApp.globalModelView):
-                self.vwApp.updateView()
+                #self.vwApp.updateView()
+                self.vwApp.networkGUI.network.updateView()
             else:
                 self.vwApp.networkGUI.network.axes.clear()
                 self.vwApp.networkGUI.network.updateNodes()

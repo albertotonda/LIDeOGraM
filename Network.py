@@ -27,10 +27,7 @@ class Network:
 
     def draw_global_nodes_labels(self):
         nxa.draw_networkx_labels_angle(self.modApp.G, self.modApp.lpos, self.modApp.labels, ax=self.axes, rotate=45)
-        nx.draw_networkx_labels(self.modApp.G, self.modApp.fpos, self.modApp.globErrLab, ax=self.axes)
-        lab={}
-        lab['GlobErr']=' Global fitness: '+"{0:.5f}".format(self.modApp.GlobErr)
-        labpos={}
+
         allposx=[]
         allposy=[]
         for (x,y) in self.modApp.pos.values():
@@ -39,8 +36,15 @@ class Network:
         minx=np.min(allposx)
         miny=np.min(allposy)
 
-        labpos['GlobErr']=(minx,miny)
-        nx.draw_networkx_labels(self.modApp.G,labpos,lab,ax=self.axes)
+        self.modApp.fpos['GlobErr']=(minx,miny)
+
+        self.modApp.globErrLab['GlobErr'] = ' Global fitness: ' + "{0:.5f}".format(self.modApp.GlobErr)
+        self.modApp.fpos
+        nx.draw_networkx_labels(self.modApp.G, self.modApp.fpos, self.modApp.globErrLab, ax=self.axes)
+
+        labpos={}
+
+        #nx.draw_networkx_labels(self.modApp.G,labpos,lab,ax=self.axes)
         # nx.draw_networkx_nodes(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
         #                        node_color=self.modApp.nodeColor,
         #                        with_labels=False, edgelist=self.modApp.edgelist_inOrder,
@@ -52,12 +56,11 @@ class Network:
         #                         edge_color=self.modApp.global_Edge_Color,
         #                         #edge_bold=self.modApp.edgeBold,
         #                         ax=self.axes)
-        try:
-            nx.draw_networkx(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
+
+        nx.draw_networkx(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
                                node_color=self.modApp.nodeColor,
                                with_labels=False, edgelist=self.modApp.edgelist_inOrder,edge_color=self.modApp.global_Edge_Color,ax=self.axes)
-        except:
-            pass
+
         self.vwApp.networkGUI.fig.canvas.draw()
 
     def updateNodes(self):
