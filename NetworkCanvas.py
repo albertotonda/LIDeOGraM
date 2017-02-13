@@ -1,13 +1,14 @@
 #-*- coding: utf-8
 from sys import path
 path.append("fitness/")
-
 import matplotlib
 matplotlib.use("qt4agg")
+#matplotlib.rcParams['backend'] = 'Q'
 import matplotlib.pyplot as plt
+#plt.switch_backend("qt4agg")
+
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from PyQt4 import QtGui
-
 from Network import Network
 
 # TODO Change la couleur des "edges" lorsque l'on déplace le slider
@@ -27,9 +28,9 @@ class NetworkCanvas(FigureCanvas):
         self.network = Network(modApp,vwApp,self.axes)
 
 
-    def updateView(self):
-        self.network.updateView()
-        self.axes.set_xlim([0, 1.07])
-        self.axes.set_ylim([0, 1.07])
-        self.fig.canvas.draw()
+    #def updateView(self):
+        #self.axes.set_xlim([0, 1.07])
+        #self.axes.set_ylim([0, 1.07])
+        #self.network.updateView()
+        #self.fig.canvas.draw()
 

@@ -1,7 +1,9 @@
 #-*- coding: utf-8
 from PyQt4 import QtGui, QtCore
+
 from NetworkCanvas import NetworkCanvas
 from EqTableCanvas import EqTableCanvas
+from IncMatrixCanvas import IncMatrixCanvas
 from FitCanvas import FitCanvas
 
 # TODO Crée tout les boutons (or graphes + équations)
@@ -13,8 +15,8 @@ class RFGraph_View(QtGui.QMainWindow):
 
         QtGui.QMainWindow.__init__(self)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self.setWindowTitle("LSN")
-        self.icon = QtGui.QIcon("iconeLSN.png")
+        self.setWindowTitle("LIDeoGraM")
+        self.icon = QtGui.QIcon("Icone.png")
         self.setWindowIcon(self.icon)
 
         self.main_widget = QtGui.QWidget(self)
@@ -23,7 +25,8 @@ class RFGraph_View(QtGui.QMainWindow):
         self.gridLayout.setSpacing(5)
         self.networkGUI = NetworkCanvas(self.modApp, self)
         self.gridLayout.addWidget(self.networkGUI, 1, 0, 8, 60)
-
+        # self.incMatGUI = IncMatrixCanvas(self.modApp,self)
+        # self.gridLayout.addWidget(self.incMatGUI,1,61,12,60)
         self.adjThreshold_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
         self.adjThreshold_slider.setValue(self.modApp.adjThresholdVal * 100)
 
@@ -40,40 +43,53 @@ class RFGraph_View(QtGui.QMainWindow):
         self.gridLayout.addWidget(self.comprFitCmplx_slider, 9, 2, 1, 57)
         self.comprFitCmplx_lab_fit = QtGui.QLabel('Fitness')
         self.gridLayout.addWidget(self.comprFitCmplx_lab_fit, 9, 59, 1, 1)
-        self.selectContrTxt = QtGui.QLabel('')
-        self.gridLayout.addWidget(self.selectContrTxt, 0, 25, 2, 12)
+        self.selectContrTxtLab = QtGui.QLabel('')
+        self.gridLayout.addWidget(self.selectContrTxtLab, 0, 10, 2, 12)
 
+
+        self.clickedNodeLab = QtGui.QLabel('error')
+        selNodeFont=QtGui.QFont("AnyStyle",12,QtGui.QFont.Normal)
+        self.clickedNodeLab.setFont(selNodeFont)
         self.eqTableGUI = EqTableCanvas(self.modApp)
-
-        self.gridLayout.addWidget(self.eqTableGUI, 1, 60, 6, 60)
+        self.gridLayout.addWidget(self.eqTableGUI, 1, 130, 6, 60)
+        selNodeLab=QtGui.QLabel('Selected node:')
+        selNodeLab.setFont(selNodeFont)
+        self.gridLayout.addWidget(selNodeLab,0,140,1,30)
+        self.gridLayout.addWidget(self.clickedNodeLab, 0, 153, 1, 30)
 
         self.fitGUI = FitCanvas(self.modApp)
-        self.gridLayout.addWidget(self.fitGUI, 7, 60, 6, 60)
+        self.gridLayout.addWidget(self.fitGUI, 7, 130, 6, 60)
 
         self.buttonCompromis = QtGui.QPushButton('Compromise', self)
         self.buttonFitness = QtGui.QPushButton('Fitness', self)
         self.buttonComplexite = QtGui.QPushButton('Complexity', self)
-        self.buttonOptUgp3 = QtGui.QPushButton('µGP Optimisation', self)
-        self.buttonModLocal = QtGui.QPushButton('Locals Models', self)
-        self.buttonModGlobal = QtGui.QPushButton('Global Model', self)
+        self.buttonOptUgp3 = QtGui.QPushButton('Global Optimisation', self)
+        self.buttonShowModGlobal = QtGui.QPushButton('Show Global Model', self)
+        self.buttonHideModGlobal = QtGui.QPushButton('Hide Global Model', self)
         self.buttonChangerEq = QtGui.QPushButton('Change equation', self)
-        self.buttonAddConstraint = QtGui.QPushButton('Add constraints', self)
-        self.buttonRemoveConstraint = QtGui.QPushButton('Remove', self)
+        self.buttonRemoveLink = QtGui.QPushButton('Remove Link', self)
+        self.buttonReinstateLink = QtGui.QPushButton('Reinstate', self)
+        self.buttonHelp = QtGui.QPushButton('Help', self)
+        self.buttonCompromis.setStyleSheet("background-color: grey")
 
         self.gridLayout.addWidget(self.buttonCompromis, 10, 0, 1, 15)
         self.gridLayout.addWidget(self.buttonFitness, 10, 15, 1, 15)
         self.gridLayout.addWidget(self.buttonComplexite, 10, 30, 1, 15)
         self.gridLayout.addWidget(self.buttonOptUgp3, 10, 45, 1, 15)
-        self.gridLayout.addWidget(self.buttonModLocal, 11, 0, 1, 30)
-        self.gridLayout.addWidget(self.buttonModGlobal, 11, 30, 1, 30)
+        self.gridLayout.addWidget(self.buttonShowModGlobal, 11, 0, 1, 30)
+        self.gridLayout.addWidget(self.buttonHideModGlobal, 11, 30, 1, 30)
         self.gridLayout.addWidget(self.buttonChangerEq, 12, 30, 1, 30)
-        self.gridLayout.addWidget(self.buttonAddConstraint, 12, 0, 1, 30)
-        self.gridLayout.addWidget(self.buttonRemoveConstraint, 0, 12, 1, 12)
+        self.gridLayout.addWidget(self.buttonRemoveLink, 12, 0, 1, 30)
+        self.gridLayout.addWidget(self.buttonReinstateLink, 0, 12, 1, 8)
+        self.gridLayout.addWidget(self.buttonHelp, 0, 120, 1, 12)
 
-        self.scrolledList = QtGui.QComboBox(self)
-        self.gridLayout.addWidget(self.scrolledList, 0, 0, 1, 12 )
-        self.scrolledList.addItem("Select constraint to remove")
+        self.scrolledListBox = QtGui.QComboBox(self)
+        self.gridLayout.addWidget(self.scrolledListBox, 0, 0, 1, 12)
 
+
+        #self.font = QtGui.QFont('Liberation Sans Narrow')
+        #self.font.setPointSize(12)
+        #self.setFont(self.font)
         self.main_widget.setFocus()
         self.setCentralWidget(self.main_widget)
         self.show()
@@ -81,6 +97,15 @@ class RFGraph_View(QtGui.QMainWindow):
 
 
     def updateView(self):
-        self.networkGUI.updateView()
+        if(self.modApp.globalModelView==True):
+            pass
+        self.networkGUI.network.updateView()
         self.fitGUI.updateView()
         self.eqTableGUI.updateView()
+        # self.selectContrTxtLab.setText(self.modApp.lastNodeClicked)
+        self.scrolledListBox.clear()
+        self.clickedNodeLab.setText(self.modApp.lastNodeClicked)
+        #
+        for item in self.modApp.scrolledList:
+            self.scrolledListBox.addItem(item)
+

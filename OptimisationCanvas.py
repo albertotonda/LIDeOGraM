@@ -6,7 +6,7 @@ from PyQt4.QtGui import *
 class OptimisationCanvas(QDialog):
     def __init__(self, parent=None):
         super(OptimisationCanvas, self).__init__(parent)
-        self.setWindowTitle('µGP Optimisation')
+        self.setWindowTitle('Global Optimisation')
         self.icon = QtGui.QIcon("iconeLSN")
         self.setWindowIcon(self.icon)
         mainBoxLayout = QVBoxLayout(self)
@@ -26,6 +26,9 @@ class OptimisationCanvas(QDialog):
 
         layout.addLayout(s1)
         layout.addLayout(s2)
+        font = QFont('Liberation Sans Narrow')
+        font.setPointSize(12)
+        self.setFont(font)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, QtCore.Qt.Horizontal, self)
         buttons.accepted.connect(self.accept)
