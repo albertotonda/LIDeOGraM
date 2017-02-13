@@ -319,6 +319,7 @@ class RFGraph_Controller:
         if new_node:
             self.modApp.old_color = self.modApp.nodeColor[(self.modApp.dataset.varnames.tolist()).index(new_node)]
             self.modApp.nodeColor[(self.modApp.dataset.varnames.tolist()).index(new_node)] = (1.0, 0, 0)
+
         self.vwApp.networkGUI.network.updateNodes()
 
     def fileQuit(self):

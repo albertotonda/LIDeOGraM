@@ -127,8 +127,14 @@ class RFGraph_Model:
 
 
         self.data = []
+        self.dataMaxFitness = 0
+        self.dataMaxComplexity = 0
         for i in range(len(self.equacolPO)):
             self.data.append(self.equacolPO[i, np.ix_([0, 1, 4])][0])
+            self.dataMaxComplexity = max(self.dataMaxComplexity, self.equacolPO[i,np.ix_([0])][0][0])
+            self.dataMaxFitness = max(self.dataMaxFitness, self.equacolPO[i,np.ix_([1])][0][0])
+
+
 
         self.labels = {}
         self.edges = None
@@ -152,6 +158,9 @@ class RFGraph_Model:
 
         self.dataIncMat = self.df_IncMat
         self.shapeIncMat = self.dataIncMat.shape
+
+        #self.dataIncMat.to_csv('debugMat.csv',header = True, index = True)
+
         ##########################
 
 
@@ -179,8 +188,8 @@ class RFGraph_Model:
         convertArr = []
         for s in stringTab:
             convertArr.append(np.float32(s[0]))
-            xr=self.dataset.getAllExpsforVar(s[2])
-            yr=[]
+            #xr=self.dataset.getAllExpsforVar(s[2])
+            #yr=[]
             #for numExp in range(self.dataset.nbExp):
             #    yr.append(parse_expr(s[3], local_dict=self.dataset.getAllVarsforExp(numExp)))
             #try:
@@ -344,7 +353,7 @@ class RFGraph_Model:
     def createConstraintsGraph(self):
         graph = nx.DiGraph()
         for i in np.unique(list(self.dataset.variablesClass.values())):
-            print(i)
+#            print(i)
             graph.add_node(i)
         graph.add_edge('condition','Molss')
         graph.add_edge('condition', 'Molsur')
@@ -451,10 +460,8 @@ class RFGraph_Model:
             for j in range(len(self.pareto[i])):  # j is parent
                 lIdxColPareto = self.pareto[i][j]
                 if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
-
                     # if self.nbeq[i] == np.float64(0.0): continue
-                    r = self.adj_simple[i, j] / self.nbeq[
-                        i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
+                    r = self.adj_simple[i, j] / self.nbeq[i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
                     if (r <= self.adjThresholdVal):
                         tup = (self.dataset.varnames[j], self.dataset.varnames[i])
                         try:
@@ -493,7 +500,6 @@ class RFGraph_Model:
 
         self.removeInvisibleEdges()
         self.removeForbiddenEdges()
-        pass
 
 
     def colorDictToConstraintedcolorList(self,colorDict,edgesToShow):
@@ -536,8 +542,7 @@ class RFGraph_Model:
                     dist_lIdxColPareto_valMin = dist_lIdxColPareto[
                         dist_lIdxColPareto_idxMin]  # Distance meilleur compromi
                     #if self.nbeq[i] == np.float64(0.0): continue
-                    r = self.adj_simple[i, j] / self.nbeq[
-                        i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
+                    r = self.adj_simple[i, j] / self.nbeq[i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
 
                     #cdict1 = {'red': ((0.0, 0.0, 0.0),
                     #                  (0.5, 0.0, 0.0),
@@ -612,7 +617,7 @@ class RFGraph_Model:
                 #if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
                     #if self.nbeq[i] == np.float64(0.0): continue
                     if self.adj_contrGraph.has_edge(self.dataset.variablesClass[self.dataset.varnames[j]], self.dataset.variablesClass[self.dataset.varnames[i]]):
-                        print(self.dataset.varnames[j] + " --> " + self.dataset.varnames[i] + " : " + self.dataset.variablesClass[self.dataset.varnames[j]] + " --> " + self.dataset.variablesClass[self.dataset.varnames[i]])
+#                        print(self.dataset.varnames[j] + " --> " + self.dataset.varnames[i] + " : " + self.dataset.variablesClass[self.dataset.varnames[j]] + " --> " + self.dataset.variablesClass[self.dataset.varnames[i]])
                         G.add_edge(self.dataset.varnames[j], self.dataset.varnames[i],
                                         adjsimple=self.adj_simple[i, j], adjfit=
                                         self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
@@ -636,7 +641,7 @@ class RFGraph_Model:
                 maxy = p[1]
         for k in self.pos:
             self.pos[k] = ((self.pos[k][0] - minx) / (maxx - minx), (self.pos[k][1] - miny) / (maxy - miny))
-            print(k +" : (" + str(self.pos[k][0]) + ","+str(self.pos[k][1])+")")
+#            print(k +" : (" + str(self.pos[k][0]) + ","+str(self.pos[k][1])+")")
 
         self.lpos = copy.deepcopy(self.pos)
         for p in self.lpos:  # raise text positions
@@ -709,7 +714,7 @@ class RFGraph_Model:
 
         for (h, l) in self.edgelist_inOrder:
             err_coef= res[2][l]/err_max
-            print(res[2][l])
+#            print(res[2][l])
             if(err_coef==1):
                 pass
             cr = np.maximum(np.minimum(err_coef * 2, 1),0)

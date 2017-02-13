@@ -127,5 +127,3 @@ class FitCanvas(FigureCanvas):
                 plt.ylim(mn - inter, mx + inter)
         self.fig.canvas.draw()
 
-
-
