@@ -14,7 +14,6 @@ from fitness import fitness
 from fitness import Individual
 import pandas as pd
 from Dataset import Dataset
-from sympy.parsing.sympy_parser import parse_expr
 from sympy import sympify
 
 # TODO  Définie la position des noeuds et les initialise
@@ -55,22 +54,7 @@ class RFGraph_Model:
         self.adj_contrGraph=self.createConstraintsGraph()
         self.adj_contr=self.createConstraints()
 
-        #self.pos=self.pos_graph()
         self.pos = []
-        #self.adj_simple = genfromtxt('data/adj_simple_withMol.csv', delimiter=',')
-        #self.adj_cmplx = genfromtxt('data/adj_cmplx_withMol.csv', delimiter=',')
-        #self.adj_fit = genfromtxt('data/adj_fit_withMol.csv', delimiter=',')
-        #self.adj_contr = genfromtxt('data/adj_contraintes_withMol.csv', delimiter=',')
-        #self.dataset.varnames = genfromtxt('data/varnames_withMol.csv', dtype='str', delimiter=',')
-        #self.nbeq = genfromtxt('data/nbeq_withMol.csv', delimiter=',')
-        #self.equacolPOf = genfromtxt('data/equa_with_col_ParentOffspring_withMol.csv', 'float', delimiter=',')
-        #self.equacolPOs = genfromtxt('data/equa_with_col_ParentOffspring_withMol.csv', 'str', delimiter=',')
-        #self.equacolOf = genfromtxt('data/equa_with_col_Parent_withMol.csv', 'float', delimiter=',')
-        #self.equacolOs = genfromtxt('data/equa_with_col_Parent_withMol.csv', 'str', delimiter=',')
-        #self.datasetset_cell_popS = genfromtxt('data/dataset_cell_pop.csv', 'str', delimiter=',')
-        #self.datasetset_mol_cellS = genfromtxt('data/dataset_mol_cell.csv', 'str', delimiter=',')
-        #self.datasetset_cell_popF = genfromtxt('data/dataset_cell_pop.csv', 'float', delimiter=',')
-        #self.datasetset_mol_cellF = genfromtxt('data/dataset_mol_cell.csv', 'float', delimiter=',')
         self.varsIn = ['Temperature','Age']
         self.NodeConstraints = []
         self.showGlobalModel = False
@@ -122,8 +106,14 @@ class RFGraph_Model:
 
 
         self.data = []
+        self.dataMaxFitness = 0
+        self.dataMaxComplexity = 0
         for i in range(len(self.equacolPO)):
             self.data.append(self.equacolPO[i, np.ix_([0, 1, 4])][0])
+            self.dataMaxComplexity = max(self.dataMaxComplexity, self.equacolPO[i,np.ix_([0])][0][0])
+            self.dataMaxFitness = max(self.dataMaxFitness, self.equacolPO[i,np.ix_([1])][0][0])
+
+
 
         self.labels = {}
         self.edges = None
@@ -143,7 +133,7 @@ class RFGraph_Model:
         df_IncMat = pd.DataFrame(index=self.datumIncMat[2], columns=["Temperature", "Age"] + self.datumIncMat[2].unique().tolist())
         for row in range(df_IncMat.shape[0]):
             v = df_IncMat.index.values[row]
-            df_IncMat.ix[row] = self.getV(df_IncMat.columns.values, self.datumIncMat.irow(row)[3], v)
+            df_IncMat.ix[row] = self.getV(df_IncMat.columns.values, self.datumIncMat.iloc[row][3], v)
 
         self.dataIncMat = df_IncMat
         self.shapeIncMat = self.dataIncMat.shape
@@ -173,8 +163,8 @@ class RFGraph_Model:
         convertArr = []
         for s in stringTab:
             convertArr.append(np.float32(s[0]))
-            xr=self.dataset.getAllExpsforVar(s[2])
-            yr=[]
+            #xr=self.dataset.getAllExpsforVar(s[2])
+            #yr=[]
             #for numExp in range(self.dataset.nbExp):
             #    yr.append(parse_expr(s[3], local_dict=self.dataset.getAllVarsforExp(numExp)))
             #try:
@@ -444,10 +434,8 @@ class RFGraph_Model:
             for j in range(len(self.pareto[i])):  # j is parent
                 lIdxColPareto = self.pareto[i][j]
                 if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
-
                     # if self.nbeq[i] == np.float64(0.0): continue
-                    r = self.adj_simple[i, j] / self.nbeq[
-                        i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
+                    r = self.adj_simple[i, j] / self.nbeq[i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
                     if (r <= self.adjThresholdVal):
                         tup = (self.dataset.varnames[j], self.dataset.varnames[i])
                         try:
@@ -528,8 +516,7 @@ class RFGraph_Model:
                     dist_lIdxColPareto_valMin = dist_lIdxColPareto[
                         dist_lIdxColPareto_idxMin]  # Distance meilleur compromi
                     #if self.nbeq[i] == np.float64(0.0): continue
-                    r = self.adj_simple[i, j] / self.nbeq[
-                        i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
+                    r = self.adj_simple[i, j] / self.nbeq[i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
 
                     #cdict1 = {'red': ((0.0, 0.0, 0.0),
                     #                  (0.5, 0.0, 0.0),

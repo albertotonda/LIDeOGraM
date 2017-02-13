@@ -6,12 +6,16 @@ from EqTableCanvas import EqTableCanvas
 from IncMatrixCanvas import IncMatrixCanvas
 from FitCanvas import FitCanvas
 
+import ColorMaps
+
 # TODO Crée tout les boutons (or graphes + équations)
 class RFGraph_View(QtGui.QMainWindow):
 
     def __init__(self,modApp):
 
         self.modApp=modApp
+
+        self.colors = ColorMaps.colorm()
 
         QtGui.QMainWindow.__init__(self)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)

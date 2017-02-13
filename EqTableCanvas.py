@@ -6,11 +6,13 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as fca
 from sympy import *
 from sympy.parsing.sympy_parser import parse_expr
 import numpy as np
+import ColorMaps
 
 # TODO Crée la table contenant les équations du noeud sélectionné
 class EqTableCanvas(QTableWidget):
     def __init__(self, modApp, *args):
         self.modApp = modApp
+        self.colors = ColorMaps.colorm()
         QTableWidget.__init__(self)
 
     def paintSection(self, painter, rect, logicalIndex):
@@ -114,18 +116,14 @@ class EqTableCanvas(QTableWidget):
         #eqList = self.generateLatex()
         for n  in range(len(self.modApp.data)):
             newitem = QTableWidgetItem(str(self.modApp.data[n][0]))
-            cr=np.minimum((self.modApp.data[n][0]/self.modApp.cmplxMax)*2,1)
-            cg=np.minimum((1-self.modApp.data[n][0]/self.modApp.cmplxMax)*2,1)
-            cb=0
-            newitem.setBackground(QColor(cr*255,cg*255,cb*255))
+            cmap = self.colors.get("complexity",(self.modApp.data[n][0]/self.modApp.cmplxMax))
+            newitem.setBackground(QColor(*cmap))
             self.setItem(n, 0, newitem)
 
             newitem = QTableWidgetItem(str(self.modApp.data[n][1]))
 
-            cr = np.minimum((self.modApp.data[n][1] ) * 2, 1)
-            cg = np.minimum((1 - self.modApp.data[n][1]) * 2, 1)
-            cb = 0
-            newitem.setBackground(QColor(cr * 255, cg * 255, cb * 255))
+            cmap = self.colors.get("local",(self.modApp.data[n][1]/self.modApp.dataMaxFitness))
+            newitem.setBackground(QColor(*cmap))
             self.setItem(n, 1, newitem)
 
             newitem = QTableWidgetItem(str(self.modApp.data[n][2]))
@@ -134,16 +132,6 @@ class EqTableCanvas(QTableWidget):
             else:
                 newitem.setBackground(QColor(255, 255, 255))
             self.setItem(n, 2, newitem)
-
-            #newitem = QTableWidgetItem(self.modApp.data[n][m])
-            #self.setItem(n,m,newitem)
-            #if m == 2:
-            #    t = QTableWidgetItem()
-            #    t.setData(Qt.DecorationRole, eqList[n])
-            #    newitem = QTableWidgetItem(t)
-            #    self.setItem(n, m, newitem)
-            #else:
-            #    self.setItem(n, m, QTableWidgetItem(self.modApp.data[n][m]))
 
         self.setHorizontalHeaderLabels(['Complexity','Fitness','Equation'])
         self.resizeColumnsToContents()
