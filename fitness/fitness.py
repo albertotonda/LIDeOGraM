@@ -23,7 +23,7 @@ class Equation:
 
 class Individual:
     """Class to describe the whole system."""
-    def __init__(self, modApp, eq):  # gestion des noeud orphelins
+    def __init__(self, modApp):  # gestion des noeud orphelins
         """Create and populate nodes dictionary."""
         self.inodes = {}
         self.equations = []

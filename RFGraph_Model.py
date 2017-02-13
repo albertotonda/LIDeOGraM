@@ -10,7 +10,7 @@ from ArrayConverter import ArrayConverter
 import re
 import sys
 sys.path.append("fitness/")
-from fitness import fitness
+#from fitness import fitness
 from fitness import Individual
 import pandas as pd
 from Dataset import Dataset
@@ -682,7 +682,7 @@ class RFGraph_Model:
                 pass
     def computeGlobalView(self):
 
-        ft = Individual(self, "fitness/ex_indiv.csv")
+        ft = Individual(self)
         res=ft.get_fitness(self.selectedEq)
         self.globErrDet=copy.deepcopy(res[2])
         self.GlobErr=res[0]#np.sum(list(self.globErr.values()))
