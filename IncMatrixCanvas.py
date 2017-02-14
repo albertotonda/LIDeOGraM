@@ -30,6 +30,8 @@ class IncMatrixCanvas(QTableWidget):
         self.setHorizontalHeaderLabels(["Complexity","Fitness","Name"]+self.modApp.dataIncMat.columns.values.tolist())
         self.verticalHeader().hide()
 
+        self.order = self.modApp.dataIncMat.index
+
         for i in range(self.modApp.shapeIncMat[0]):
             self.setRowHeight(i, 15)
             for j in range(self.modApp.shapeIncMat[1]+3):
@@ -99,6 +101,7 @@ class IncMatrixCanvas(QTableWidget):
         nameOrder = []
         for i in eqs:
             nameOrder.append(self.modApp.dataIncMat.index.tolist()[i])
+        self.order = nameOrder
 
         #self.setVerticalHeaderLabels(nameOrder)
 
