@@ -106,7 +106,7 @@ class RFGraph_Controller:
     def onClick(self, event, radius=0.001):
         # TODO  affichage du nom du noeud selectionné + changer couleur
         (x, y) = (event.xdata, event.ydata)
-        if not x or not y :
+        if  x == None or y == None :
             return
         print("x=",x," y=",y)
 
@@ -249,20 +249,24 @@ class RFGraph_Controller:
         #self.vwApp.networkGUI.updateView()
 
     def incMatClicked(self,cellClicked):
-        print(cellClicked.row)
-        nodeToClick=self.modApp.datumIncMat.iloc[cellClicked.row()][2]
+        print(cellClicked.row())
+        nodeToClick=self.vwApp.incMatGUI.order[cellClicked.row()]
+        print(nodeToClick)
         posNode=self.modApp.pos[nodeToClick]
         class MyEvent:
             def __init__(self,xdata,ydata):
                 self.xdata=xdata
                 self.ydata=ydata
-        ev=MyEvent(self.modApp.pos[self.modApp.datumIncMat.iloc[cellClicked.row()][2]][0],self.modApp.pos[self.modApp.datumIncMat.iloc[cellClicked.row()][2]][1])
+        ev=MyEvent(*posNode)
         self.onClick(ev)
         eqCellToClick = -1
-        for i in range(len(self.modApp.data)):
-            if(self.modApp.data[i][2]==self.modApp.datumIncMat.iloc[cellClicked.row()][3]):
-                eqCellToClick=i
-                break
+        if(not self.modApp.best_indv):
+            for i in range(len(self.modApp.data)):
+                if(self.modApp.data[i][2]==self.modApp.datumIncMat.iloc[cellClicked.row()][3]):
+                    eqCellToClick=i
+                    break
+        else:
+            eqCellToClick = self.modApp.best_indv[nodeToClick]
         class MyWidgetItem:
             self.row2=-1
             def __init__(self,row2):
