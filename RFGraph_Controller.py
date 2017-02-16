@@ -81,8 +81,7 @@ class RFGraph_Controller:
 
 
     def onMove(self,event):
-        #print(event)
-
+#        print(event)
         if(event.button==1 and self.modApp.lastNodeClicked != ''):
             if (self.onMoveMutex.locked() or event.inaxes == None):
                 return
@@ -110,12 +109,11 @@ class RFGraph_Controller:
             self.onMoveMutex.release()
         else:
             pass
-            #print(event)
+
 
 
     def onClick(self, event, radius=0.001):
         # TODO  affichage du nom du noeud selectionné + changer couleur
-        print("clicked")
         (x, y) = (event.xdata, event.ydata)
         if  x == None or y == None :
             return
@@ -317,7 +315,6 @@ class RFGraph_Controller:
 
     # TODO Crée le surlignage des noeuds
     def higlight(self, new_node: str, old_node: str = None):
-        #print("higlight:"+new_node)
         self.modApp.G.clear()
         if old_node:
             self.modApp.nodeColor[(self.modApp.dataset.varnames.tolist()).index(old_node)] = self.modApp.old_color
