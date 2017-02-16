@@ -57,6 +57,7 @@ class RFGraph_Controller:
         self.modApp.globalModelView=True
         self.modApp.bestindvToSelectedEq()
         self.modApp.computeGlobalView()
+        self.vwApp.incMatGUI.highlight(-1)
         self.vwApp.updateView()
 
     # TODO

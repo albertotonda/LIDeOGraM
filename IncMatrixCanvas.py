@@ -19,7 +19,7 @@ class MyHeaderView(QHeaderView):
 
      def __init__(self, parent=None):
          super().__init__(Qt.Horizontal, parent)
-         self._font = QFont("helvetica", 15)
+         self._font = QFont("helvetica", 8)
          self._metrics = QFontMetrics(self._font)
          self._descent = self._metrics.descent()
          self._margin = 10
@@ -58,7 +58,7 @@ class IncMatrixCanvas(QTableWidget):
         #"""
 
         #self.setStyleSheet("QTableView::item:selected{  background: rgba(255, 0, 0, 50%); }")
-        #self.setStyleSheet("QTableView{ selection-background-color: rgba(255, 0, 0, 50);  }")
+        #self.setStyleSheet("QTableView{background-color: rgba(255, 255, 255, 50%)};")
 
 
         # initiate table
@@ -67,6 +67,8 @@ class IncMatrixCanvas(QTableWidget):
         self.setColumnCount(len(self.modApp.dataIncMat.columns)+3)
 
         # set label
+        headerView = MyHeaderView()
+        self.setHorizontalHeader(headerView)
         self.setHorizontalHeaderLabels(["Complexity","Fitness","Name"]+self.modApp.dataIncMat.columns.values.tolist())
         self.verticalHeader().hide()
 
@@ -95,6 +97,7 @@ class IncMatrixCanvas(QTableWidget):
 
                 if j == 2:
                     cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
+                    cell.setBackgroundColor(QColor.fromRgb(255,255,255,255))
                     self.setItem(i, j, cell)
                     continue
                 self.setColumnWidth(j, 15)
@@ -178,6 +181,7 @@ class IncMatrixCanvas(QTableWidget):
                     else:
                         t = [125, 125, 125]
                     cell = QTableWidgetItem(nameOrder[i])
+                    cell.setBackgroundColor(QColor.fromRgb(255,255,255,255))
                     cell.setTextColor(QColor.fromRgb(*t))
                     self.setItem(i, j, cell)
                     continue
@@ -220,18 +224,25 @@ class IncMatrixCanvas(QTableWidget):
             for i in range(len(self.modApp.dataIncMat.columns) + 3):
                 cell = self.item(self.lastSelected, i)
                 color = cell.background().color().getRgb()
-                if color == (125, 125, 125, 255):
+                if color == (190, 190, 190, 255):
                     color = [255, 255, 255, 255]
                     cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
-                    #self.setItem(value, i,cell)
+                else:
+                    color = [int((255 / 190) * i) for i in color]
+                    cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
+        if value == -1:
+            self.lastSelected = False
+            return
         self.lastSelected = value
         for i in range(len(self.modApp.dataIncMat.columns)+3):
             cell = self.item(value, i)
             color = cell.background().color().getRgb()
             if color == (255,255,255,255):
-                color = [125,125,125,125]
+                color = [190,190,190,125]
                 cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
-                #self.setItem(value, i, cell)
+            else:
+                color = [int((190/255)*i) for i in color]
+                cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
 
             print(cell)
 
