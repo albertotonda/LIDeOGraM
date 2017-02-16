@@ -154,7 +154,7 @@ class RFGraph_Model:
         self.df_IncMat = pd.DataFrame(index=self.datumIncMat[2], columns=self.varsIn + self.datumIncMat[2].unique().tolist())
         for row in range(self.df_IncMat.shape[0]):
             v = self.df_IncMat.index.values[row]
-            self.df_IncMat.ix[row] = self.getV(self.df_IncMat.columns.values, self.datumIncMat.irow(row)[3], v)
+            self.df_IncMat.ix[row] = self.getV(self.df_IncMat.columns.values, self.datumIncMat.iloc[row][3], v)
 
         self.dataIncMat = self.df_IncMat
         self.shapeIncMat = self.dataIncMat.shape
@@ -381,7 +381,7 @@ class RFGraph_Model:
         graph.add_edge('PopCong', 'PopSto3')
         graph.add_edge('PopLyo','PopSto3')
 
-        nx.draw(graph,with_labels=True)
+        #nx.draw(graph,with_labels=True)
 
         return graph
 

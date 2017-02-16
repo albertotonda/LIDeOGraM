@@ -12,13 +12,53 @@ import re
 
 
 from PyQt4.QtGui import *
+from PyQt4.QtCore import Qt
+
+
+class MyHeaderView(QHeaderView):
+
+     def __init__(self, parent=None):
+         super().__init__(Qt.Horizontal, parent)
+         self._font = QFont("helvetica", 15)
+         self._metrics = QFontMetrics(self._font)
+         self._descent = self._metrics.descent()
+         self._margin = 10
+
+     def paintSection(self, painter, rect, index):
+         data = self._get_data(index)
+         painter.rotate(-90)
+         painter.setFont(self._font)
+         painter.drawText(- rect.height() + self._margin,
+                          rect.left() + (rect.width() + self._descent) / 2, data)
+
+     def sizeHint(self):
+         return QSize(0, self._get_text_width() + 2 * self._margin)
+
+     def _get_text_width(self):
+         return max([self._metrics.width(self._get_data(i))
+                     for i in range(0, self.model().columnCount())])
+
+     def _get_data(self, index):
+         return self.model().headerData(index, self.orientation())
+
 
 class IncMatrixCanvas(QTableWidget):
     def __init__(self, modApp, vwApp):
         self.modApp = modApp
         self.vwApp = vwApp
         QTableWidget.__init__(self)
+        #self.setSelectionBehavior(QAbstractItemView.SelectRows)
 
+        self.lastSelected = ""
+
+        self.setSelectionMode(QAbstractItemView.NoSelection)
+
+        #style = """
+        #QTableWidget::item{ background-color: rgba(255, 0, 0, 50%);
+        #"""
+
+        #self.setStyleSheet("QTableView::item:selected{  background: rgba(255, 0, 0, 50%); }")
+        #self.setStyleSheet("QTableView{ selection-background-color: rgba(255, 0, 0, 50);  }")
 
 
         # initiate table
@@ -72,12 +112,8 @@ class IncMatrixCanvas(QTableWidget):
                 cell.setBackgroundColor(color)
                 cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
                 self.setItem(i, j, cell)
+        self.colorClasses = dict(zip(self.modApp.dataset.varnames, self.modApp.nodeColor))
 
-                # tooltip text
-        #self.horizontalHeaderItem(0).setToolTip("Column 1 ")
-#        self.horizontalHeaderItem(1).setToolTip("Column 2 ")
-
-        # show table
         self.show()
 
 
@@ -105,7 +141,6 @@ class IncMatrixCanvas(QTableWidget):
 
         #self.setVerticalHeaderLabels(nameOrder)
 
-        colorClasses = dict(zip(self.modApp.dataset.varnames, self.modApp.nodeColor))
 
         for i,k in enumerate(eqs) : #range(self.modApp.shapeIncMat[0]):
             self.setRowHeight(i, 15)
@@ -155,7 +190,7 @@ class IncMatrixCanvas(QTableWidget):
 
                 #Si on depasse gmodelSize, nous ne somme plus dans le model global mais dans les restes, on attenu donc la couleurs
                 g = [123, 204, 196]
-                b = colorClasses[nameOrder[i]]#[8, 104, 172]
+                b = self.colorClasses[nameOrder[i]]#[8, 104, 172]
                 b = [int(i * 255) for i in b]
                 if i >= gmodelSize:
                     mash = 0.4
@@ -173,6 +208,35 @@ class IncMatrixCanvas(QTableWidget):
                 self.setItem(i, j, cell)
 
         self.show()
+
+    def selected(self,value : str):
+        if value == None:
+            #resetSelection
+            pass
+        pass
+
+    def highlight(self, value : int):
+        if self.lastSelected :
+            for i in range(len(self.modApp.dataIncMat.columns) + 3):
+                cell = self.item(self.lastSelected, i)
+                color = cell.background().color().getRgb()
+                if color == (125, 125, 125, 255):
+                    color = [255, 255, 255, 255]
+                    cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
+                    #self.setItem(value, i,cell)
+        self.lastSelected = value
+        for i in range(len(self.modApp.dataIncMat.columns)+3):
+            cell = self.item(value, i)
+            color = cell.background().color().getRgb()
+            if color == (255,255,255,255):
+                color = [125,125,125,125]
+                cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
+                #self.setItem(value, i, cell)
+
+            print(cell)
+
+    def StructureChange(self):
+        pass
 
 
 

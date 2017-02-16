@@ -286,6 +286,7 @@ class RFGraph_Controller:
 
     def incMatClicked(self,cellClicked):
         print(cellClicked.row())
+        self.vwApp.incMatGUI.highlight(cellClicked.row())
         nodeToClick=self.vwApp.incMatGUI.order[cellClicked.row()]
         print(nodeToClick)
         posNode=self.modApp.pos[nodeToClick]

@@ -13,6 +13,7 @@ class RFGraph_View(QtGui.QMainWindow):
 
     def __init__(self,modApp):
 
+
         self.modApp=modApp
 
         self.colors = ColorMaps.colorm()
@@ -106,12 +107,11 @@ class RFGraph_View(QtGui.QMainWindow):
         if(self.modApp.globalModelView==True):
             pass
         self.networkGUI.network.updateView()
+        #self.networkGUI.updateGeometry()
         self.fitGUI.updateView()
         self.eqTableGUI.updateView()
-        # self.selectContrTxtLab.setText(self.modApp.lastNodeClicked)
         self.scrolledListBox.clear()
         self.clickedNodeLab.setText(self.modApp.lastNodeClicked)
-        #
         for item in self.modApp.scrolledList:
             self.scrolledListBox.addItem(item)
         self.incMatGUI.updateView()

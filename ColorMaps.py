@@ -12,6 +12,13 @@ class colorm:
         f = list(map(lambda x : int(x*255), cmap))
         return f
 
+    @staticmethod
+    def selection(normed=False):
+        if normed:
+            return (0.5,0.5,0.5)
+        return (125,125,125)
+
+
     def get(self, type, normalizedValue):
         if type == "complexity":
             return self.multiply(self.complexity(normalizedValue)[0:3])
