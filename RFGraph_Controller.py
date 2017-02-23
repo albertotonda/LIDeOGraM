@@ -338,4 +338,6 @@ class RFGraph_Controller:
     def onOffClicked(self,objClicked):
         lineToModify=np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][objClicked.id]
         self.modApp.equacolO[lineToModify][4]=objClicked.isChecked()
+        self.modApp.data[objClicked.id][3]=objClicked.isChecked()
+        self.vwApp.eqTableGUI.updateView()
         pass

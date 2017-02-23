@@ -132,15 +132,24 @@ class EqTableCanvas(QTableWidget):
             newitem.setBackground(QColor(*cmap))
             if(sum(cmap)<128*3):
                 newitem.setTextColor(Qt.white)
+            if (self.modApp.data[n][3] == False):
+                mash = 0.6;
+                newitem.setTextColor(QColor(int(255 * mash), int(255 * mash), int(255 * mash)))
             self.setItem(n, 0, newitem)
 
             newitem = QTableWidgetItem(str(self.modApp.data[n][1]))
 
             cmap = self.colors.get("local",(self.modApp.data[n][1]/self.modApp.dataMaxFitness))
             newitem.setBackground(QColor(*cmap))
+            if (self.modApp.data[n][3] == False):
+                mash = 0.6;
+                newitem.setTextColor(QColor(int(255 * mash), int(255 * mash), int(255 * mash)))
             self.setItem(n, 1, newitem)
 
             newitem = QTableWidgetItem(self.reformatNumberEquation(str(self.modApp.data[n][2])))
+            if(self.modApp.data[n][3]==False):
+                mash=0.6;
+                newitem.setTextColor(QColor(int(255*mash),int(255*mash),int(255*mash)))
             #newitem = QTableWidgetItem(str(self.modApp.data[n][2]))
             if(self.modApp.clicked_line==n):
                 newitem.setBackground(QColor(130, 130, 110))
