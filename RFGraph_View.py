@@ -5,8 +5,8 @@ from NetworkCanvas import NetworkCanvas
 from EqTableCanvas import EqTableCanvas
 from IncMatrixCanvas import IncMatrixCanvas
 from FitCanvas import FitCanvas
+from OnOffCheckBox import *
 
-import ColorMaps
 
 # TODO Crée tout les boutons (or graphes + équations)
 class RFGraph_View(QtGui.QMainWindow):
@@ -15,7 +15,8 @@ class RFGraph_View(QtGui.QMainWindow):
 
         self.modApp=modApp
 
-        self.colors = ColorMaps.colorm()
+
+
 
         QtGui.QMainWindow.__init__(self)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
@@ -62,6 +63,9 @@ class RFGraph_View(QtGui.QMainWindow):
         selNodeLab.setFont(selNodeFont)
         self.gridLayout.addWidget(selNodeLab,0,140,1,30)
         self.gridLayout.addWidget(self.clickedNodeLab, 0, 153, 1, 30)
+
+
+
 
         self.fitGUI = FitCanvas(self.modApp)
         self.gridLayout.addWidget(self.fitGUI, 7, 130, 6, 60)

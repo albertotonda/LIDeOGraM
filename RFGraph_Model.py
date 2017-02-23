@@ -17,6 +17,8 @@ from Dataset import Dataset
 from sympy.parsing.sympy_parser import parse_expr
 from sympy import sympify
 import pickle
+from PyQt4.QtGui import *
+import ColorMaps
 
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model:
@@ -47,7 +49,7 @@ class RFGraph_Model:
                     self.adj_simple[ind_offspring,ind_parent]+=1
                     self.adj_cmplx[ind_offspring,ind_parent]*=self.equacolO[l,0] #  GEOMETRIC mean
                     self.adj_fit[ind_offspring,ind_parent]*=self.equacolO[l,1] #  GEOMETRIC mean
-                    self.equacolPO.append([self.equacolO[l,0],self.equacolO[l,1],self.equacolO[l,2],self.dataset.varnames[h],self.equacolO[l,3]])
+                    self.equacolPO.append([self.equacolO[l,0],self.equacolO[l,1],self.equacolO[l,2],self.dataset.varnames[h],self.equacolO[l,3], self.equacolO[l,4]])
             self.nbeq[list(self.dataset.varnames).index(self.equacolO[l,2])]+=1 # Comptage du nombre d'équations pour chaque enfant
 
         #self.equacolPO=ArrayConverter.convertPO(self.equacolPO)
@@ -116,6 +118,7 @@ class RFGraph_Model:
         self.selectedEq={}
         self.global_Edge_Color = []
         self.mode_changeEq=False
+        self.colors = ColorMaps.colorm()
         #Necessaire de faire une deepcopy ?
         #self.lpos= copy.deepcopy(self.pos)
         #for p in self.lpos:  # raise text positions
@@ -130,7 +133,7 @@ class RFGraph_Model:
         self.dataMaxFitness = 0
         self.dataMaxComplexity = 0
         for i in range(len(self.equacolPO)):
-            self.data.append(self.equacolPO[i, np.ix_([0, 1, 4])][0])
+            self.data.append(self.equacolPO[i, np.ix_([0, 1, 4, 5])][0])
             self.dataMaxComplexity = max(self.dataMaxComplexity, self.equacolPO[i,np.ix_([0])][0][0])
             self.dataMaxFitness = max(self.dataMaxFitness, self.equacolPO[i,np.ix_([1])][0][0])
 
@@ -200,7 +203,7 @@ class RFGraph_Model:
             #convertArr.append(recomputedFitness)
             convertArr.append(s[2])
             convertArr.append(s[3])
-            convertArr.append(-1)
+            convertArr.append(True)
             #convertArr.append(sympify(s[3]))
 
 
@@ -596,14 +599,18 @@ class RFGraph_Model:
                     if (self.transparentEdges):
                         self.edgeColorFit[(self.dataset.varnames[j], self.dataset.varnames[i])]=(cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r))
                     else:
-                        self.edgeColorFit[(self.dataset.varnames[j], self.dataset.varnames[i])]=(cr, cg, cb)
+                        cmap = self.colors.get("local",self.adj_fit[i, j])
+                        #color = QColor.fromRgb(*cmap)
+                        self.edgeColorFit[(self.dataset.varnames[j], self.dataset.varnames[i])]= tuple(np.array(cmap)/255)  #(cr, cg, cb)
                     cr = np.minimum((self.adj_cmplx[i, j] / self.adj_cmplx_max) * 2, 1)
                     cg = np.minimum((1 - (self.adj_cmplx[i, j] / self.adj_cmplx_max)) * 2, 1)
                     cb = 0
                     if (self.transparentEdges):
                         self.edgeColorCmplx[(self.dataset.varnames[j], self.dataset.varnames[i])]=(cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r))
                     else:
-                        self.edgeColorCmplx[(self.dataset.varnames[j], self.dataset.varnames[i])]=(cr, cg, cb)
+                        cmap = self.colors.get("complexity", self.adj_cmplx[i, j]/self.cmplxMax)
+                        #color = QColor.fromRgb(*cmap)
+                        self.edgeColorCmplx[(self.dataset.varnames[j], self.dataset.varnames[i])]=tuple(np.array(cmap)/255)
 
     def computeInitialPos(self):
         G=nx.DiGraph()

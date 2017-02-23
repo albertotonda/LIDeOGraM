@@ -8,11 +8,13 @@ from sympy import *
 from sympy.parsing.sympy_parser import parse_expr
 import numpy as np
 import ColorMaps
+from OnOffCheckBox import *
 
 # TODO Crée la table contenant les équations du noeud sélectionné
 class EqTableCanvas(QTableWidget):
     def __init__(self, modApp, *args):
         self.modApp = modApp
+        self.cntrApp=None #Defined in RFGraphMain
         self.colors = ColorMaps.colorm()
         QTableWidget.__init__(self)
 
@@ -114,10 +116,10 @@ class EqTableCanvas(QTableWidget):
     def updateView(self):
         self.clear()
         self.setRowCount(len(self.modApp.data))
-        self.setColumnCount(3)
+        self.setColumnCount(4)
         self.wordWrap()
         self.setTextElideMode(Qt.ElideNone)
-        self.setHorizontalHeaderLabels(['Complexity', 'Fitness', 'Equation'])
+        self.setHorizontalHeaderLabels(['Complexity', 'Fitness', 'Equation','On/Off'])
 
         #self.horizontalHeader().setMaximumWidth(1000)
         self.resizeColumnsToContents()
@@ -146,6 +148,12 @@ class EqTableCanvas(QTableWidget):
                 newitem.setBackground(QColor(255, 255, 255))
             #newitem.setSizeHint(QtCore.QSize(300,5))
             self.setItem(n, 2, newitem)
+
+
+            cb = OnOffCheckBox(self.cntrApp, n)
+            cb.setParent(self)
+            cb.setCheckState(self.modApp.data[n][3])
+            self.setCellWidget(n,3,cb)
 
             #newitem = QTableWidgetItem(self.modApp.data[n][m])
             #self.setItem(n,m,newitem)

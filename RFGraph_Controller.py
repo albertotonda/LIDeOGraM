@@ -7,6 +7,7 @@ from Network import Network
 import numpy as np
 from OptimModGlobal import OptimModGlobal
 import threading
+from OnOffCheckBox import *
 
 class RFGraph_Controller:
     def __init__(self,modApp,vwApp):
@@ -26,6 +27,8 @@ class RFGraph_Controller:
         self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
         self.vwApp.buttonFitness.setStyleSheet("background-color: grey")
         self.vwApp.buttonComplexite.setStyleSheet("background-color: None")
+        self.vwApp.networkGUI.fig.canvas.draw()
+        QCoreApplication.processEvents()
 
     # TODO
     def clickCompromis(self):
@@ -47,6 +50,8 @@ class RFGraph_Controller:
         self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
         self.vwApp.buttonFitness.setStyleSheet("background-color: None")
         self.vwApp.buttonComplexite.setStyleSheet("background-color: grey")
+        self.vwApp.networkGUI.fig.canvas.draw()
+        QCoreApplication.processEvents()
 
     # TODO
     def clickOptmuGP(self):
@@ -219,7 +224,7 @@ class RFGraph_Controller:
 
         if (not self.modApp.mode_cntrt):
             print('action:', nodeclicked)
-            data_tmp = self.modApp.equacolO[np.ix_(self.modApp.equacolO[:, 2] == [nodeclicked], [0, 1, 3])]
+            data_tmp = self.modApp.equacolO[np.ix_(self.modApp.equacolO[:, 2] == [nodeclicked], [0, 1, 3, 4])]
             self.modApp.curr_tabl = self.modApp.equacolO[
                 np.ix_(self.modApp.equacolO[:, 2] == [nodeclicked], [0, 1, 3, 4])]
             data = []
@@ -330,3 +335,7 @@ class RFGraph_Controller:
     def closeEvent(self, ce):
         self.fileQuit()
 
+    def onOffClicked(self,objClicked):
+        lineToModify=np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][objClicked.id]
+        self.modApp.equacolO[lineToModify][4]=objClicked.isChecked()
+        pass
