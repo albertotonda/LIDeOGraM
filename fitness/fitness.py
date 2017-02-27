@@ -56,10 +56,9 @@ class Individual:
         equaLines=[]
         for v in chosenEqs.keys():
             if(not v in self.modApp.varsIn):
-                try:
-                    equaLines.append(self.modApp.equaPerNode[v][chosenEqs[v]])
-                except:
-                    pass
+                idxs=np.logical_and(self.modApp.equacolO[:, 4] == True , self.modApp.equacolO[:, 2] == v)
+                equaLines.append(self.modApp.equacolO[idxs][chosenEqs[v]])
+
         for t in equaLines:
             localvar = []
             for b in self.variables:

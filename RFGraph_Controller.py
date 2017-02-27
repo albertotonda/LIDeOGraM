@@ -23,7 +23,7 @@ class RFGraph_Controller:
         print("clic fitness")
         self.modApp.ColorMode='Fit'
         self.modApp.computeNxGraph()
-        self.vwApp.networkGUI.network.drawEdges()
+        self.vwApp.networkGUI.network.updateView()
         self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
         self.vwApp.buttonFitness.setStyleSheet("background-color: grey")
         self.vwApp.buttonComplexite.setStyleSheet("background-color: None")
@@ -35,7 +35,7 @@ class RFGraph_Controller:
         print("clic Compr")
         self.modApp.ColorMode='Compr'
         self.modApp.computeNxGraph()
-        self.vwApp.networkGUI.network.drawEdges()
+        self.vwApp.networkGUI.network.updateView()
         self.vwApp.buttonCompromis.setStyleSheet("background-color: grey")
         self.vwApp.buttonFitness.setStyleSheet("background-color: None")
         self.vwApp.buttonComplexite.setStyleSheet("background-color: None")
@@ -46,7 +46,7 @@ class RFGraph_Controller:
         print("clic Complx")
         self.modApp.ColorMode='Cmplx'
         self.modApp.computeNxGraph()
-        self.vwApp.networkGUI.network.drawEdges()
+        self.vwApp.networkGUI.network.updateView()
         self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
         self.vwApp.buttonFitness.setStyleSheet("background-color: None")
         self.vwApp.buttonComplexite.setStyleSheet("background-color: grey")
@@ -66,11 +66,18 @@ class RFGraph_Controller:
 
     # TODO
     def clickHideModGlobal(self):
-        self.modApp.showGlobalModel = False
+        self.modApp.globalModelView = False
+        self.modApp.computeNxGraph()
+        self.vwApp.networkGUI.network.updateView()
+        self.clickFitness()
+        #self.vwApp.updateView()
 
     # TODO Affiche le modèle d'équation global
     def clickShowModGlobal(self):
-        self.modApp.showGlobalModel = True
+        self.modApp.globalModelView = True
+        self.modApp.computeGlobalView()
+        self.vwApp.networkGUI.network.updateView()
+        #self.vwApp.updateView()
 
     # TODO Enlève le lien entre les noeuds choisis
     def clickRemoveLink(self, event, radius=0.0005):
@@ -339,5 +346,9 @@ class RFGraph_Controller:
         lineToModify=np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][objClicked.id]
         self.modApp.equacolO[lineToModify][4]=objClicked.isChecked()
         self.modApp.data[objClicked.id][3]=objClicked.isChecked()
+        if objClicked.isChecked():
+            self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked]+=1
+        else:
+            self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked]-=1
         self.vwApp.eqTableGUI.updateView()
-        pass
+

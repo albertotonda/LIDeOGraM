@@ -19,6 +19,7 @@ from sympy import sympify
 import pickle
 from PyQt4.QtGui import *
 import ColorMaps
+from collections import OrderedDict
 
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model:
@@ -142,11 +143,9 @@ class RFGraph_Model:
         self.labels = {}
         self.edges = None
 
-        self.varEquasize=list(zip(self.dataset.varnames,self.nbeq))
-        self.equaPerNode={}
-        for v in self.dataset.varnames:
-            if(not v in self.varsIn):
-                self.equaPerNode[v]=self.equacolO[np.ix_(self.equacolO[:, 2] == [v], [0, 1, 2, 3, 4])]
+        self.varEquasize=OrderedDict(list(zip(self.dataset.varnames,self.nbeq)))
+        self.varEquasizeOnlyTrue=self.varEquasize.copy()
+        self.computeEquaPerNode()
 
         ##########################
         #self.datumIncMat = pd.read_csv("data/equa_with_col_Parent_withMol.csv", header=None)
@@ -169,6 +168,12 @@ class RFGraph_Model:
 
 
         self.initGraph()
+
+    def computeEquaPerNode(self):
+        self.equaPerNode = {}
+        for v in self.dataset.varnames:
+            if (not v in self.varsIn):
+                self.equaPerNode[v] = self.equacolO[np.ix_(self.equacolO[:, 2] == [v], [0, 1, 2, 3, 4])]
 
     def readEureqaResults(self,file):
         #Read eureqa file
