@@ -23,9 +23,9 @@ class RFGraph_Controller:
         self.modApp.ColorMode='Fit'
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.drawEdges()
-        self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
-        self.vwApp.buttonFitness.setStyleSheet("background-color: grey")
-        self.vwApp.buttonComplexite.setStyleSheet("background-color: None")
+        #self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
+        #self.vwApp.buttonFitness.setStyleSheet("background-color: grey")
+        #self.vwApp.buttonComplexite.setStyleSheet("background-color: None")
 
     # TODO
     def clickCompromis(self):
@@ -33,9 +33,9 @@ class RFGraph_Controller:
         self.modApp.ColorMode='Compr'
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.drawEdges()
-        self.vwApp.buttonCompromis.setStyleSheet("background-color: grey")
-        self.vwApp.buttonFitness.setStyleSheet("background-color: None")
-        self.vwApp.buttonComplexite.setStyleSheet("background-color: None")
+        #self.vwApp.buttonCompromis.setStyleSheet("background-color: grey")
+        #self.vwApp.buttonFitness.setStyleSheet("background-color: None")
+        #self.vwApp.buttonComplexite.setStyleSheet("background-color: None")
 
 
     # TODO
@@ -44,9 +44,9 @@ class RFGraph_Controller:
         self.modApp.ColorMode='Cmplx'
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.drawEdges()
-        self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
-        self.vwApp.buttonFitness.setStyleSheet("background-color: None")
-        self.vwApp.buttonComplexite.setStyleSheet("background-color: grey")
+        #self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
+        #self.vwApp.buttonFitness.setStyleSheet("background-color: None")
+        #self.vwApp.buttonComplexite.setStyleSheet("background-color: grey")
 
     # TODO
     def clickOptmuGP(self):
@@ -58,15 +58,20 @@ class RFGraph_Controller:
         self.modApp.bestindvToSelectedEq()
         self.modApp.computeGlobalView()
         self.vwApp.incMatGUI.highlight(-1)
+        self.vwApp.incMatGUI.mutipleHighlight(-1)
         self.vwApp.updateView()
+        self.vwApp.showAction.setChecked(True)
 
     # TODO
     def clickHideModGlobal(self):
         self.modApp.showGlobalModel = False
+        self.vwApp.cmAction.setEnabled(True)
+
 
     # TODO Affiche le modèle d'équation global
     def clickShowModGlobal(self):
         self.modApp.showGlobalModel = True
+        self.vwApp.cmAction.setDisabled(True)
 
     # TODO Enlève le lien entre les noeuds choisis
     def clickRemoveLink(self, event, radius=0.0005):
@@ -138,6 +143,8 @@ class RFGraph_Controller:
             QCoreApplication.processEvents()
             return
         nodeclicked = min(dst, key=(lambda x: x[0]))[1]
+        self.vwApp.incMatGUI.mutipleHighlight(nodeclicked)
+        self.vwApp.incMatGUI.highlight(-1)
 
         if self.modApp.lastNodeClicked != "":
             pass

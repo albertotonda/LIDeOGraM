@@ -50,6 +50,7 @@ class IncMatrixCanvas(QTableWidget):
         #self.setSelectionBehavior(QAbstractItemView.SelectRows)
 
         self.lastSelected = ""
+        self.lastSelectedRows = ""
 
         self.setSelectionMode(QAbstractItemView.NoSelection)
 
@@ -73,6 +74,8 @@ class IncMatrixCanvas(QTableWidget):
         self.verticalHeader().hide()
 
         self.order = self.modApp.dataIncMat.index
+        self.colorClasses = dict(zip(self.modApp.dataset.varnames, self.modApp.nodeColor))
+
 
         for i in range(self.modApp.shapeIncMat[0]):
             self.setRowHeight(i, 15)
@@ -109,13 +112,13 @@ class IncMatrixCanvas(QTableWidget):
                 if value == 1:
                     color = QColor.fromRgb(123,204,196)
                 elif value == -1:
-                    color = QColor.fromRgb(8,104,172)
+                    c = self.colorClasses[self.order[i]]
+                    color = QColor.fromRgb(*[int(i * 255) for i in c])
                 else:
                     color = QColor.fromRgb(255, 255, 255)
                 cell.setBackgroundColor(color)
                 cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
                 self.setItem(i, j, cell)
-        self.colorClasses = dict(zip(self.modApp.dataset.varnames, self.modApp.nodeColor))
 
         self.show()
 
@@ -244,7 +247,39 @@ class IncMatrixCanvas(QTableWidget):
                 color = [int((190/255)*i) for i in color]
                 cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
 
-            print(cell)
+    def mutipleHighlight(self, label: str):
+        if self.lastSelectedRows:
+            for row in self.lastSelectedRows:
+                for i in range(len(self.modApp.dataIncMat.columns) + 3):
+                    cell = self.item(row, i)
+                    color = cell.background().color().getRgb()
+                    if color == (190, 190, 190, 255):
+                        color = [255, 255, 255, 255]
+                        cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
+                    else:
+                        color = [int((255 / 190) * i) for i in color]
+                        cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
+        if label == -1:
+            self.lastSelectedRows = ""
+            return
+        #temporaryDataFrame = self.modApp.dataIncMat
+        #temporaryDataFrame["idx"] = temporaryDataFrame.index
+        #rows = temporaryDataFrame.idx == label  # True False Serie ?
+        matchingRows = []
+        for i, j in enumerate(self.order):
+            if j == label:
+                matchingRows.append(i)
+        self.lastSelectedRows = matchingRows
+        for row in matchingRows:
+            for i in range(len(self.modApp.dataIncMat.columns) + 3):
+                cell = self.item(row, i)
+                color = cell.background().color().getRgb()
+                if color == (255, 255, 255, 255):
+                    color = [190, 190, 190, 125]
+                    cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
+                else:
+                    color = [int((190 / 255) * i) for i in color]
+                    cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
 
     def StructureChange(self):
         pass
