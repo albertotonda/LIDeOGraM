@@ -16,20 +16,27 @@ class NetworkCanvas(FigureCanvas):
     def __init__(self, modApp, vwApp):
         self.modApp=modApp
         self.vwApp=vwApp
-        self.fig, self.axes =  plt.subplots(nrows=1, ncols=1)
-        self.fig.subplots_adjust(left=0.05,right=0.98,
-                            bottom=0.05,top=0.98)
-                            #hspace=0.1,wspace=0.1)
-        # We want the axes cleared every time plot() is called
+        self.fig, self.axes =  plt.subplots()
+
+        self.fig.frameon=False
+        self.fig.tight_layout()
+        self.fig.subplots_adjust(left=0.05, bottom=0.05, right=0.98, top=0.98)
+        #self.axes.get_xaxis().set_visible(False)
+        #self.axes.get_yaxis().set_visible(False)
+        #self.fig.subplots_adjust(left=0,right=1,bottom=0,top=1)
+
+        # We want theaxes cleared every time plot() is called
         self.axes.hold(False)
         self.fig.patch.set_visible(False)
-        self.fig.tight_layout()
+        #self.fig.tight_layout()
+        #self.fig.tight_layout(pad=0.5)
+        #self.fig.figsize=(6,6)
+        plt.margins(0.01, 0.005,tight=True)
         FigureCanvas.__init__(self, self.fig)
         FigureCanvas.setSizePolicy(self, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         FigureCanvas.updateGeometry(self)
-        #FigureCanvas.setParent(self.vwApp, Qt)
         self.axes.axis('off')
-        self.network = Network(modApp,vwApp,self.axes)
+        self.network = Network(modApp,vwApp,self.axes,self.fig)
 
 
     #def updateView(self):

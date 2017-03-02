@@ -82,7 +82,7 @@ class IncMatrixCanvas(QTableWidget):
             for j in range(self.modApp.shapeIncMat[1]+3):
                 if j == 0:
                     self.setColumnWidth(j, 15)
-                    cmap = self.vwApp.colors.get("complexity",self.modApp.data[i][0]/self.modApp.cmplxMax)
+                    cmap = self.modApp.colors.get("complexity",self.modApp.data[i][0]/self.modApp.cmplxMax)
                     color = QColor.fromRgb(*cmap)
                     cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
                     cell.setBackgroundColor(color)
@@ -110,7 +110,7 @@ class IncMatrixCanvas(QTableWidget):
                 cell = QTableWidgetItem(value)
                 cell.setFont(fnt)
                 if value == 1:
-                    color = QColor.fromRgb(123,204,196)
+                    color = QColor.fromRgb(180,180,180)
                 elif value == -1:
                     c = self.colorClasses[self.order[i]]
                     color = QColor.fromRgb(*[int(i * 255) for i in c])
@@ -148,15 +148,13 @@ class IncMatrixCanvas(QTableWidget):
         #self.setVerticalHeaderLabels(nameOrder)
 
 
+
         for i,k in enumerate(eqs) : #range(self.modApp.shapeIncMat[0]):
             self.setRowHeight(i, 15)
             for j in range(self.modApp.shapeIncMat[1] + 3):
                 if j == 0:
                     self.setColumnWidth(j, 15)
-                    try:
-                        cmap = self.vwApp.colors.get("complexity",self.modApp.equacolO[eqs[i],0] / self.modApp.cmplxMax)
-                    except:
-                        pass
+                    cmap = self.modApp.colors.get("complexity",self.modApp.equacolO[eqs[i],0] / self.modApp.cmplxMax)
                     color = QColor.fromRgb(*cmap)
                     cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
                     cell.setBackgroundColor(color)
@@ -168,7 +166,7 @@ class IncMatrixCanvas(QTableWidget):
                     value = self.modApp.globErrDet[nameOrder[i]]
 
                     if i < gmodelSize:
-                        cmap = self.vwApp.colors.get("global", value)
+                        cmap = self.modApp.colors.get("global", value)
                     else:
                         cmap=[255,255,255]
                     color = QColor.fromRgb(*cmap)
@@ -196,7 +194,7 @@ class IncMatrixCanvas(QTableWidget):
                 cell.setFont(fnt)
 
                 #Si on depasse gmodelSize, nous ne somme plus dans le model global mais dans les restes, on attenu donc la couleurs
-                g = [123, 204, 196]
+                g = [180, 180, 180]
                 b = self.colorClasses[nameOrder[i]]#[8, 104, 172]
                 b = [int(i * 255) for i in b]
                 if i >= gmodelSize:

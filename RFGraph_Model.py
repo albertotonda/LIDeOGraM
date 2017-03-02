@@ -17,6 +17,9 @@ from Dataset import Dataset
 from sympy.parsing.sympy_parser import parse_expr
 from sympy import sympify
 import pickle
+from PyQt4.QtGui import *
+import ColorMaps
+from collections import OrderedDict
 
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model:
@@ -47,7 +50,7 @@ class RFGraph_Model:
                     self.adj_simple[ind_offspring,ind_parent]+=1
                     self.adj_cmplx[ind_offspring,ind_parent]*=self.equacolO[l,0] #  GEOMETRIC mean
                     self.adj_fit[ind_offspring,ind_parent]*=self.equacolO[l,1] #  GEOMETRIC mean
-                    self.equacolPO.append([self.equacolO[l,0],self.equacolO[l,1],self.equacolO[l,2],self.dataset.varnames[h],self.equacolO[l,3]])
+                    self.equacolPO.append([self.equacolO[l,0],self.equacolO[l,1],self.equacolO[l,2],self.dataset.varnames[h],self.equacolO[l,3], self.equacolO[l,4]])
             self.nbeq[list(self.dataset.varnames).index(self.equacolO[l,2])]+=1 # Comptage du nombre d'équations pour chaque enfant
 
         #self.equacolPO=ArrayConverter.convertPO(self.equacolPO)
@@ -80,14 +83,14 @@ class RFGraph_Model:
         self.varsIn = ['Temperature', 'Age']
         self.NodeConstraints = []
         self.showGlobalModel = False
-        self.lastNodeClicked = ""
+        self.lastNodeClicked = None
         self.last_clicked = None
         self.mode_cntrt = False
         self.cntrt_FirstClick = ''
         self.cntrt_SecondClick = ''
         self.forbidden_edge = []
         self.curr_tabl=[]
-        self.adjThresholdVal=0.5
+        self.adjThresholdVal=0.0
         self.comprFitCmplxVal=0.5
         self.opt_params= []
         self.error_paramas= []
@@ -107,7 +110,7 @@ class RFGraph_Model:
         self.edgeColorCompr=[]
         self.edgeColorFit=[]
         self.edgeColorCmplx=[]
-        self.ColorMode='Compr'
+        self.ColorMode='Fit'
         self.transparentEdges=False
         self.edgeBoldfull=[]
         self.adj_cmplx_max = np.amax(self.adj_cmplx)
@@ -116,6 +119,14 @@ class RFGraph_Model:
         self.selectedEq={}
         self.global_Edge_Color = []
         self.mode_changeEq=False
+        self.colors = ColorMaps.colorm()
+        self.radius=0.001
+        self.lastHover=''
+        self.fitCmplxPos={}
+        self.fitCmplxfPos = {}
+        self.fitCmplxlPos = {}
+        self.rmByRmEq = []
+        self.rmByRmEdge = []
         #Necessaire de faire une deepcopy ?
         #self.lpos= copy.deepcopy(self.pos)
         #for p in self.lpos:  # raise text positions
@@ -130,7 +141,7 @@ class RFGraph_Model:
         self.dataMaxFitness = 0
         self.dataMaxComplexity = 0
         for i in range(len(self.equacolPO)):
-            self.data.append(self.equacolPO[i, np.ix_([0, 1, 4])][0])
+            self.data.append(self.equacolPO[i, np.ix_([0, 1, 4, 5])][0])
             self.dataMaxComplexity = max(self.dataMaxComplexity, self.equacolPO[i,np.ix_([0])][0][0])
             self.dataMaxFitness = max(self.dataMaxFitness, self.equacolPO[i,np.ix_([1])][0][0])
 
@@ -139,11 +150,9 @@ class RFGraph_Model:
         self.labels = {}
         self.edges = None
 
-        self.varEquasize=list(zip(self.dataset.varnames,self.nbeq))
-        self.equaPerNode={}
-        for v in self.dataset.varnames:
-            if(not v in self.varsIn):
-                self.equaPerNode[v]=self.equacolO[np.ix_(self.equacolO[:, 2] == [v], [0, 1, 2, 3, 4])]
+        self.varEquasize=OrderedDict(list(zip(self.dataset.varnames,self.nbeq)))
+        self.varEquasizeOnlyTrue=self.varEquasize.copy()
+        self.computeEquaPerNode()
 
         ##########################
         #self.datumIncMat = pd.read_csv("data/equa_with_col_Parent_withMol.csv", header=None)
@@ -166,6 +175,12 @@ class RFGraph_Model:
 
 
         self.initGraph()
+
+    def computeEquaPerNode(self):
+        self.equaPerNode = {}
+        for v in self.dataset.varnames:
+            if (not v in self.varsIn):
+                self.equaPerNode[v] = self.equacolO[np.ix_(self.equacolO[:, 2] == [v], [0, 1, 2, 3, 4])]
 
     def readEureqaResults(self,file):
         #Read eureqa file
@@ -200,7 +215,7 @@ class RFGraph_Model:
             #convertArr.append(recomputedFitness)
             convertArr.append(s[2])
             convertArr.append(s[3])
-            convertArr.append(-1)
+            convertArr.append(True)
             #convertArr.append(sympify(s[3]))
 
 
@@ -596,14 +611,18 @@ class RFGraph_Model:
                     if (self.transparentEdges):
                         self.edgeColorFit[(self.dataset.varnames[j], self.dataset.varnames[i])]=(cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r))
                     else:
-                        self.edgeColorFit[(self.dataset.varnames[j], self.dataset.varnames[i])]=(cr, cg, cb)
+                        cmap = self.colors.get("local",self.adj_fit[i, j])
+                        #color = QColor.fromRgb(*cmap)
+                        self.edgeColorFit[(self.dataset.varnames[j], self.dataset.varnames[i])]= tuple(np.array(cmap)/255)  #(cr, cg, cb)
                     cr = np.minimum((self.adj_cmplx[i, j] / self.adj_cmplx_max) * 2, 1)
                     cg = np.minimum((1 - (self.adj_cmplx[i, j] / self.adj_cmplx_max)) * 2, 1)
                     cb = 0
                     if (self.transparentEdges):
                         self.edgeColorCmplx[(self.dataset.varnames[j], self.dataset.varnames[i])]=(cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r))
                     else:
-                        self.edgeColorCmplx[(self.dataset.varnames[j], self.dataset.varnames[i])]=(cr, cg, cb)
+                        cmap = self.colors.get("complexity", self.adj_cmplx[i, j]/self.cmplxMax)
+                        #color = QColor.fromRgb(*cmap)
+                        self.edgeColorCmplx[(self.dataset.varnames[j], self.dataset.varnames[i])]=tuple(np.array(cmap)/255)
 
     def computeInitialPos(self):
         G=nx.DiGraph()
@@ -715,12 +734,26 @@ class RFGraph_Model:
         for (h, l) in self.edgelist_inOrder:
             err_coef= res[2][l]/err_max
 #            print(res[2][l])
-            if(err_coef==1):
-                pass
+
+
             cr = np.maximum(np.minimum(err_coef * 2, 1),0)
             cg = np.maximum(np.minimum((1 - err_coef) * 2, 1),0)
             cb = 0
             self.global_Edge_Color.append((cr,cg,cb))
         pass
 
+        maxcmplx=max(list(res[3].values()))
+        for v in self.dataset.varnames:
+            if(v in self.varsIn):
+                self.fitCmplxPos[v] = (0,0)
+            else:
+                self.fitCmplxPos[v] = (res[2][v], res[3][v]/maxcmplx)
+
+
+        self.fitCmplxlPos= dict(list(map(lambda x: (x[0], (x[1][0] + 0.04, x[1][1] + 0.04)), list(self.fitCmplxPos.items()))))
+        self.fitCmplxfPos = dict(list(map(lambda x: (x[0], (x[1][0] - 0.04, x[1][1] - 0.04)), list(self.fitCmplxPos.items()))))
+        #self.fitCmplxlPos = 0
+        #self.pos=self.fitCmplxPos
+        #self.fpos=self.fitCmplxfPos
+        #self.lpos=self.fitCmplxlPos
 

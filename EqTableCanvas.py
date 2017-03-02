@@ -8,11 +8,13 @@ from sympy import *
 from sympy.parsing.sympy_parser import parse_expr
 import numpy as np
 import ColorMaps
+from OnOffCheckBox import *
 
 # TODO Crée la table contenant les équations du noeud sélectionné
 class EqTableCanvas(QTableWidget):
     def __init__(self, modApp, *args):
         self.modApp = modApp
+        self.cntrApp=None #Defined in RFGraphMain
         self.colors = ColorMaps.colorm()
         QTableWidget.__init__(self)
 
@@ -114,10 +116,10 @@ class EqTableCanvas(QTableWidget):
     def updateView(self):
         self.clear()
         self.setRowCount(len(self.modApp.data))
-        self.setColumnCount(3)
+        self.setColumnCount(4)
         self.wordWrap()
         self.setTextElideMode(Qt.ElideNone)
-        self.setHorizontalHeaderLabels(['Complexity', 'Fitness', 'Equation'])
+        self.setHorizontalHeaderLabels(['Complexity', 'Fitness', 'Equation','On/Off'])
 
         #self.horizontalHeader().setMaximumWidth(1000)
         self.resizeColumnsToContents()
@@ -128,15 +130,26 @@ class EqTableCanvas(QTableWidget):
             newitem = QTableWidgetItem(str(self.modApp.data[n][0]))
             cmap = self.colors.get("complexity",(self.modApp.data[n][0]/self.modApp.cmplxMax))
             newitem.setBackground(QColor(*cmap))
+            if(sum(cmap)<128*3):
+                newitem.setTextColor(Qt.white)
+            if (self.modApp.data[n][3] == False):
+                mash = 0.6;
+                newitem.setTextColor(QColor(int(255 * mash), int(255 * mash), int(255 * mash)))
             self.setItem(n, 0, newitem)
 
             newitem = QTableWidgetItem(str(self.modApp.data[n][1]))
 
             cmap = self.colors.get("local",(self.modApp.data[n][1]/self.modApp.dataMaxFitness))
             newitem.setBackground(QColor(*cmap))
+            if (self.modApp.data[n][3] == False):
+                mash = 0.6;
+                newitem.setTextColor(QColor(int(255 * mash), int(255 * mash), int(255 * mash)))
             self.setItem(n, 1, newitem)
 
             newitem = QTableWidgetItem(self.reformatNumberEquation(str(self.modApp.data[n][2])))
+            if(self.modApp.data[n][3]==False):
+                mash=0.6;
+                newitem.setTextColor(QColor(int(255*mash),int(255*mash),int(255*mash)))
             #newitem = QTableWidgetItem(str(self.modApp.data[n][2]))
             if(self.modApp.clicked_line==n):
                 newitem.setBackground(QColor(130, 130, 110))
@@ -144,6 +157,12 @@ class EqTableCanvas(QTableWidget):
                 newitem.setBackground(QColor(255, 255, 255))
             #newitem.setSizeHint(QtCore.QSize(300,5))
             self.setItem(n, 2, newitem)
+
+
+            cb = OnOffCheckBox(self.cntrApp, n)
+            cb.setParent(self)
+            cb.setCheckState(self.modApp.data[n][3])
+            self.setCellWidget(n,3,cb)
 
             #newitem = QTableWidgetItem(self.modApp.data[n][m])
             #self.setItem(n,m,newitem)

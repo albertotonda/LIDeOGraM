@@ -56,10 +56,9 @@ class Individual:
         equaLines=[]
         for v in chosenEqs.keys():
             if(not v in self.modApp.varsIn):
-                try:
-                    equaLines.append(self.modApp.equaPerNode[v][chosenEqs[v]])
-                except:
-                    pass
+                idxs=np.logical_and(self.modApp.equacolO[:, 4] == True , self.modApp.equacolO[:, 2] == v)
+                equaLines.append(self.modApp.equacolO[idxs][chosenEqs[v]])
+
         for t in equaLines:
             localvar = []
             for b in self.variables:
@@ -120,7 +119,7 @@ class Individual:
         for i in bkeys:
          if i in self.complexity and not i in self.modApp.varsIn:
              cpx += self.complexity[i]
-        return errTot, cpx ,errVarSum
+        return errTot, cpx ,errVarSum, self.complexity
 
 def get_multithread_fitness(var,exps,initv):
     tasks = [Individual(initv,var,exp) for exp in exps]

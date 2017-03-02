@@ -7,6 +7,9 @@ from Network import Network
 import numpy as np
 from OptimModGlobal import OptimModGlobal
 import threading
+import re
+from itertools import compress
+from OnOffCheckBox import *
 
 class RFGraph_Controller:
     def __init__(self,modApp,vwApp):
@@ -26,33 +29,35 @@ class RFGraph_Controller:
         #self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
         #self.vwApp.buttonFitness.setStyleSheet("background-color: grey")
         #self.vwApp.buttonComplexite.setStyleSheet("background-color: None")
-
+        self.vwApp.networkGUI.fig.canvas.draw()
+        QCoreApplication.processEvents()
     # TODO
     def clickCompromis(self):
         print("clic Compr")
         self.modApp.ColorMode='Compr'
         self.modApp.computeNxGraph()
-        self.vwApp.networkGUI.network.drawEdges()
+        self.vwApp.networkGUI.network.updateView()
         #self.vwApp.buttonCompromis.setStyleSheet("background-color: grey")
         #self.vwApp.buttonFitness.setStyleSheet("background-color: None")
         #self.vwApp.buttonComplexite.setStyleSheet("background-color: None")
-
+        self.vwApp.networkGUI.fig.canvas.draw()
+        QCoreApplication.processEvents()
 
     # TODO
     def clickCmplx(self):
         print("clic Complx")
         self.modApp.ColorMode='Cmplx'
         self.modApp.computeNxGraph()
-        self.vwApp.networkGUI.network.drawEdges()
+        self.vwApp.networkGUI.network.updateView()
         #self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
         #self.vwApp.buttonFitness.setStyleSheet("background-color: None")
         #self.vwApp.buttonComplexite.setStyleSheet("background-color: grey")
-
+        self.vwApp.networkGUI.fig.canvas.draw()
+        QCoreApplication.processEvents()
     # TODO
     def clickOptmuGP(self):
         #self.modApp.opt_params = OptimisationCanvas.get_params()
         optModGlob = OptimModGlobal(self.modApp)
-        self.modApp.showGlobalModel=True
         self.modApp.best_indv=optModGlob.startOptim()
         self.modApp.globalModelView=True
         self.modApp.bestindvToSelectedEq()
@@ -66,17 +71,22 @@ class RFGraph_Controller:
     def clickHideModGlobal(self):
         self.modApp.showGlobalModel = False
         self.vwApp.cmAction.setEnabled(True)
+        self.modApp.computeNxGraph()
+        self.vwApp.networkGUI.network.updateView()
+        self.clickFitness()
 
 
     # TODO Affiche le modèle d'équation global
     def clickShowModGlobal(self):
-        self.modApp.showGlobalModel = True
+        self.modApp.globalModelView = True
         self.vwApp.cmAction.setDisabled(True)
+        self.modApp.computeGlobalView()
+        self.vwApp.networkGUI.network.updateView()
 
     # TODO Enlève le lien entre les noeuds choisis
-    def clickRemoveLink(self, event, radius=0.0005):
+    def clickRemoveLink(self, event):
         self.modApp.mode_cntrt = True
-        self.modApp.selectContrTxt="Select node 1"
+        self.vwApp.selectContrTxtLab.setText("Select the starting node")
 
     def clickChangeEq(self):
         print("clickChangeEq")
@@ -85,10 +95,37 @@ class RFGraph_Controller:
     def onPick(self,event):
         pass
 
+    def onHover(self,event):
+        (x, y) = (event.xdata, event.ydata)
+        if not x or not y :
+            if(self.modApp.lastHover != ''):
+                self.vwApp.networkGUI.network.updateView()
+                self.modApp.lastHover=''
+            return
+        dst = [(pow(x - self.modApp.pos[node][0], 2) + pow(y - self.modApp.pos[node][1], 2), node) for node in
+               self.modApp.pos]
+        dst=list(filter(lambda x: x[0] < self.modApp.radius, dst))
+        if(len(dst)==0):
+            if (self.modApp.lastHover != ''):
+                self.vwApp.networkGUI.network.updateView()
+                self.modApp.lastHover = ''
+            return
+
+        dstMin = min(dst, key=(lambda x: x[0]))
+
+        self.vwApp.networkGUI.network.updateView(dstMin[1])
+        self.modApp.lastHover=dstMin[1]
+        #print('hover: '+dstMin[1])
+
 
     def onMove(self,event):
 #        print(event)
-        if(event.button==1 and self.modApp.lastNodeClicked != ''):
+
+        if (event.button == None):
+            self.onHover(event)
+            return
+
+        if(event.button==1 and self.modApp.lastNodeClicked != None):
             if (self.onMoveMutex.locked() or event.inaxes == None):
                 return
             self.onMoveMutex.acquire()
@@ -104,7 +141,8 @@ class RFGraph_Controller:
                 self.modApp.fpos[self.modApp.lastNodeClicked][1] - old_pos[1] + event.ydata)
 
             if (self.modApp.globalModelView):
-                self.vwApp.updateView()
+                #self.vwApp.updateView()
+                self.vwApp.networkGUI.network.updateView()
             else:
                 self.vwApp.networkGUI.network.axes.clear()
                 self.vwApp.networkGUI.network.updateNodes()
@@ -113,144 +151,135 @@ class RFGraph_Controller:
                 self.vwApp.networkGUI.fig.canvas.draw()
             QCoreApplication.processEvents()
             self.onMoveMutex.release()
+
+
+
+    def p(self,s):
+        if s==None:
+            return ""
         else:
-            pass
+            return s
 
-
-
-    def onClick(self, event, radius=0.001):
+    def onClick(self, event):
         # TODO  affichage du nom du noeud selectionné + changer couleur
+        #print("clicked")
         (x, y) = (event.xdata, event.ydata)
         if  x == None or y == None :
             return
-        print("x=",x," y=",y)
 
-        dst = [(pow(x - self.modApp.pos[node][0], 2) + pow(y - self.modApp.pos[node][1], 2), node) for node in
+        dst = [(pow(x - self.modApp.pos[node][0], 2) + pow(y - self.modApp.pos[node][1], 2), node) for node in #compute the distance to each node
                self.modApp.pos]
-        self.modApp.NodetoConstrain = []
-        if len(list(filter(lambda x: x[0] < radius, dst))) == 0:
-            self.higlight(None, self.modApp.lastNodeClicked)
-            self.modApp.lastNodeClicked=""
-            self.modApp.clicked_line=-1
+
+        if len(list(filter(lambda x: x[0] < self.modApp.radius, dst))) == 0: #If no node is close enougth, select no node update view and exit
+            self.higlight(None, self.p(self.modApp.lastNodeClicked))
+            self.modApp.lastNodeClicked=None
             self.modApp.computeEdgeBold()
-            if(not self.modApp.globalModelView):
-                self.modApp.computeNxGraph()
-            self.vwApp.networkGUI.fig.canvas.draw()
             self.modApp.data=[]
-            self.vwApp.eqTableGUI.updateView()
-            self.vwApp.fitGUI.updateView()
-            self.vwApp.clickedNodeLab.setText(self.modApp.lastNodeClicked)
-            QCoreApplication.processEvents()
-            return
-        nodeclicked = min(dst, key=(lambda x: x[0]))[1]
-        self.vwApp.incMatGUI.mutipleHighlight(nodeclicked)
-        self.vwApp.incMatGUI.highlight(-1)
+            self.vwApp.eqTableGUI.updateView() #Clean the equation table
+            self.vwApp.fitGUI.updateView()      # and the measured/predicted plot
+            self.vwApp.clickedNodeLab.setText('Selected node: ' + self.p(self.modApp.lastNodeClicked))
 
-        if self.modApp.lastNodeClicked != "":
-            pass
-            # Change color back
-        #self.modApp.lastNodeClicked = nodeclicked
-
-        if self.modApp.lastNodeClicked != "":
-            self.higlight(nodeclicked, self.modApp.lastNodeClicked)
-            self.modApp.lastNodeClicked = nodeclicked
-            self.modApp.clicked_line = -1
-            if(self.modApp.globalModelView):
-                self.vwApp.networkGUI.network.updateView()
-            else:
-                self.modApp.computeEdgeBold()
-                self.modApp.computeNxGraph()
-                self.vwApp.networkGUI.network.axes.clear()
-                self.vwApp.networkGUI.network.updateNodes()
-                self.vwApp.networkGUI.network.updateLabels()
-                self.vwApp.networkGUI.network.drawEdges()
         else:
-            self.higlight(nodeclicked,None)
+            nodeclicked = min(dst, key=(lambda x: x[0]))[1] #Closest node
+            self.vwApp.incMatGUI.mutipleHighlight(nodeclicked)
+            self.vwApp.incMatGUI.highlight(-1)
+
+            self.higlight(nodeclicked, self.p(self.modApp.lastNodeClicked))
             self.modApp.lastNodeClicked = nodeclicked
-            self.modApp.clicked_line = -1
-            if (self.modApp.globalModelView):
-                self.vwApp.networkGUI.network.updateView()
+
+            if (self.modApp.mode_cntrt == True):                    #Click action when we are deleting a link
+                self.deleteLink(nodeclicked)
+
+
+            if (not self.modApp.mode_cntrt):        #Update the Equation table
+                #print('action:', nodeclicked)
+                data_tmp = self.modApp.equacolO[np.ix_(self.modApp.equacolO[:, 2] == [nodeclicked], [0, 1, 3, 4])]
+                self.modApp.curr_tabl = self.modApp.equacolO[
+                    np.ix_(self.modApp.equacolO[:, 2] == [nodeclicked], [0, 1, 3, 4])]
+                data = []
+                for i in range(len(data_tmp)):
+                    data.append(data_tmp[i])
+                self.modApp.data = data
+                self.vwApp.eqTableGUI.updateView()
+
+            if (self.modApp.globalModelView):       #Simulate a click on the equation selected for a node when viewing a global model
+                class MyWidgetItem:
+                    self.row2=-1
+                    def __init__(self,row2):
+                        self.row2=row2
+                    def row(self):
+                        return self.row2
+                eqCellToClick=self.modApp.selectedEq[self.modApp.lastNodeClicked]
+                eqCellToClickWid=MyWidgetItem(eqCellToClick)
+                #print("clickedEq:"+str(eqCellToClick))
+                self.eqTableClicked(eqCellToClickWid)
             else:
-                self.modApp.computeEdgeBold()
-                self.modApp.computeNxGraph()
-                self.vwApp.networkGUI.network.axes.clear()
-                self.vwApp.networkGUI.network.updateNodes()
-                self.vwApp.networkGUI.network.updateLabels()
-                self.vwApp.networkGUI.network.drawEdges()
+                self.vwApp.fitGUI.updateView()
+            self.vwApp.clickedNodeLab.setText('Selected node: ' + self.p(self.modApp.lastNodeClicked))
 
-            #Change color back
+        self.modApp.clicked_line = -1
 
-
-
-        if (self.modApp.mode_cntrt == True):
-            self.modApp.NodeConstraints.append(nodeclicked)
-            self.atLeastOnce=[]
-            self.notEvenOnce =[]
-            for i in self.modApp.edgelist_inOrder:
-                if i[0] not in self.atLeastOnce:
-                    self.atLeastOnce.append(i[0])
-            for i in self.modApp.edgelist_inOrder:
-                if i[1] not in self.notEvenOnce:
-                    self.notEvenOnce.append(i[1])
-            if self.modApp.NodeConstraints[0] in self.atLeastOnce:
-                self.modApp.selectContrTxt = "Select node 2"
-                if (len(self.modApp.NodeConstraints) == 2):
-                    if self.modApp.NodeConstraints[1] in self.notEvenOnce:
-                        self.constraint = " - ".join(self.modApp.NodeConstraints)
-                        #self.modApp.scrolledList.append(self.constraint)
-                        self.modApp.selectContrTxt=""
-                        self.modApp.mode_cntrt = False
-                        self.modApp.NodeConstraints = []
-                        if (self.modApp.globalModelView):
-                            self.vwApp.networkGUI.network.updateView()
-                        else:
-                            self.modApp.computeEdgeBold()
-                            self.modApp.computeNxGraph()
-                            self.vwApp.networkGUI.network.axes.clear()
-                            self.vwApp.networkGUI.network.updateNodes()
-                            self.vwApp.networkGUI.network.updateLabels()
-                            self.vwApp.networkGUI.network.drawEdges()
-                            self.vwApp.updateView()
-                        self.vwApp.addConstrain(self.constraint)
-                    else:
-                        self.modApp.selectContrTxt=""
-                        self.modApp.mode_cntrt = False
-                        self.modApp.NodeConstraints = []
-                        #self.modApp.error_params = ErrorConstraint.get_params()
-            else:
-                self.modApp.selectContrTxt=""
-                self.modApp.mode_cntrt = False
-                self.modApp.NodeConstraints = []
-                #self.modApp.error_params = ErrorConstraint.get_params()
-
-        if (not self.modApp.mode_cntrt):
-            print('action:', nodeclicked)
-            data_tmp = self.modApp.equacolO[np.ix_(self.modApp.equacolO[:, 2] == [nodeclicked], [0, 1, 3])]
-            self.modApp.curr_tabl = self.modApp.equacolO[
-                np.ix_(self.modApp.equacolO[:, 2] == [nodeclicked], [0, 1, 3, 4])]
-            data = []
-            for i in range(len(data_tmp)):
-                data.append(data_tmp[i])
-            self.modApp.data = data
-            self.vwApp.eqTableGUI.updateView()
-
-        if (self.modApp.globalModelView):
-            class MyWidgetItem:
-                self.row2=-1
-                def __init__(self,row2):
-                    self.row2=row2
-                def row(self):
-                    return self.row2
-            eqCellToClick=self.modApp.selectedEq[self.modApp.lastNodeClicked]
-            eqCellToClickWid=MyWidgetItem(eqCellToClick)
-            print("clickedEq:"+str(eqCellToClick))
-            self.eqTableClicked(eqCellToClickWid)
-        else:
-            self.vwApp.fitGUI.updateView()
+        if (not self.modApp.globalModelView):
+            self.modApp.computeEdgeBold()
+            self.modApp.computeNxGraph()
+        self.vwApp.networkGUI.network.updateView()
         self.vwApp.networkGUI.fig.canvas.draw()
-        self.vwApp.clickedNodeLab.setText(self.modApp.lastNodeClicked)
+
 
         QCoreApplication.processEvents()
+
+    def deleteLink(self,nodeclicked):
+        self.modApp.NodeConstraints.append(nodeclicked)
+        self.atLeastOnce = []
+        self.notEvenOnce = []
+        for i in self.modApp.edgelist_inOrder:
+            if i[0] not in self.atLeastOnce:        #List of the beginning element of every arrow
+                self.atLeastOnce.append(i[0])
+        for i in self.modApp.edgelist_inOrder:
+            if i[1] not in self.notEvenOnce:        #List of the end element of every arrow
+                self.notEvenOnce.append(i[1])
+        if self.modApp.NodeConstraints[0] in self.atLeastOnce: #If the first clicked not correspond to a least a begining element of an arrow
+            self.vwApp.selectContrTxtLab.setText("Select the ending node")
+            if (len(self.modApp.NodeConstraints) == 2):   # If there are 2 elements in the list of clicked nodes
+                if self.modApp.NodeConstraints[1] in self.notEvenOnce \
+                        and (self.modApp.NodeConstraints[0],self.modApp.NodeConstraints[1]) in self.modApp.edgelist_inOrder: #verify if the second element clicked corespond to at least the end of an arrow
+                    self.constraint = " - ".join(self.modApp.NodeConstraints)
+                    #self.modApp.scrolledList.append(self.constraint)
+                    #self.vwApp.scrolledListBox.clear()
+                    #for item in self.modApp.scrolledList:
+                    #    self.vwApp.scrolledListBox.addItem(item)
+
+
+                    self.modApp.selectContrTxt = ""
+                    self.modApp.mode_cntrt = False
+
+                    self.vwApp.selectContrTxtLab.setText("")
+                    #linesInEquaPO=np.logical_and(self.modApp.equacolPO[:, 3] == self.modApp.NodeConstraints[0],
+                    #               self.modApp.equacolPO[:, 2] == self.modApp.NodeConstraints[1])
+                    #a = self.modApp.equacolPO[linesInEquaPO]
+
+                    r = re.compile(r'\b%s\b' % re.escape(self.modApp.NodeConstraints[0]))
+                    rsearch = np.vectorize(lambda x: bool(r.search(x)))
+                    ix1 = np.ix_(self.modApp.equacolO[:, 2] == self.modApp.NodeConstraints[1])
+                    rcontain=rsearch(self.modApp.equacolO[ix1, 3])
+
+                    linesToRemove=list(compress(ix1[0].tolist(), rcontain.tolist()[0]))
+                    self.modApp.rmByRmEdge.append(linesToRemove)
+                    self.modApp.equacolO[linesToRemove, 4] = False
+
+
+                    self.modApp.NodeConstraints = []
+                    self.vwApp.addConstrain(self.constraint)
+
+                else:
+                    self.modApp.selectContrTxt = ""
+                    self.modApp.mode_cntrt = False
+                    self.modApp.NodeConstraints = []
+                    self.vwApp.selectContrTxtLab.setText("Error, please retry")
+        else:
+            self.modApp.selectContrTxt = ""
+            self.modApp.mode_cntrt = False
+            self.modApp.NodeConstraints = []
 
     # TODO Réintègre le lien sélectionné
     def clickReinstateLink (self):
@@ -258,13 +287,23 @@ class RFGraph_Controller:
             return
         else:
             self.modApp.scrolledList.pop(self.vwApp.scrolledListBox.currentIndex())
+            linesToReinstate=self.modApp.rmByRmEdge.pop(self.vwApp.scrolledListBox.currentIndex() - 1)
+            flist = [item for sublist in self.modApp.rmByRmEdge for item in sublist]
+            linesToReinstate=[av for av in linesToReinstate if not av in flist]
+            linesToReinstate = [av for av in linesToReinstate if not av in self.modApp.rmByRmEq]
+            self.modApp.equacolO[linesToReinstate, 4] = True
+            self.modApp.data= self.modApp.equacolO[np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked], [0, 1, 3, 4])]
+
+            self.vwApp.eqTableGUI.updateView()
+            self.vwApp.scrolledListBox.clear()
+            for item in self.modApp.scrolledList:
+                self.vwApp.scrolledListBox.addItem(item)
             self.modApp.computeEdgeBold()
             self.modApp.computeNxGraph()
-            self.vwApp.networkGUI.network.axes.clear()
-            self.vwApp.networkGUI.network.updateNodes()
-            self.vwApp.networkGUI.network.updateLabels()
-            self.vwApp.networkGUI.network.drawEdges()
-            self.vwApp.updateView()
+            self.vwApp.networkGUI.network.updateView()
+            self.vwApp.networkGUI.fig.canvas.draw()
+
+            QCoreApplication.processEvents()
 
     # TODO Change la couleur et la densité des "edges" en fonction du déplacement des sliders
     def SliderMoved(self, value):
@@ -339,4 +378,17 @@ class RFGraph_Controller:
 
     def closeEvent(self, ce):
         self.fileQuit()
+
+    def onOffClicked(self,objClicked):
+        lineToModify=np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][objClicked.id]
+        self.modApp.equacolO[lineToModify][4]=objClicked.isChecked()
+        self.modApp.data[objClicked.id][3]=objClicked.isChecked()
+        if objClicked.isChecked():
+            self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked]+=1
+            self.modApp.rmByRmEq.remove(lineToModify)
+        else:
+            self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked]-=1
+            self.modApp.rmByRmEq.append(lineToModify)
+
+        self.vwApp.eqTableGUI.updateView()
 

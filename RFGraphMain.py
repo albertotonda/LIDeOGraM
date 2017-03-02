@@ -10,6 +10,7 @@ modApp=RFGraph_Model()
 qApp = QtGui.QApplication(sys.argv)
 vwApp = RFGraph_View(modApp)
 cntrApp=RFGraph_Controller(modApp,vwApp)
+vwApp.eqTableGUI.cntrApp=cntrApp
 vwApp.updateMenuBar(cntrApp)
 qtconnector=QtConnector(vwApp,cntrApp)
 sys.exit(qApp.exec_())

@@ -9,6 +9,7 @@ from deap import algorithms
 import numpy as np
 import pickle
 
+
 class OptimModGlobal:
 
 
@@ -67,7 +68,7 @@ class OptimModGlobal:
         creator.create("Individual", list, fitness=creator.FitnessMin)
 
         self.sizes=[]
-        for v,s in self.modApp.varEquasize:
+        for v,s in self.modApp.varEquasizeOnlyTrue.items():
             self.sizes.append(s)
 
         toolbox = base.Toolbox()
@@ -89,7 +90,7 @@ class OptimModGlobal:
         #with open('bestIndv_soussurexpr2.dat', 'rb') as f:
         #with open('bestIndv_soussurexpr_evoExp1_nomol.dat', 'rb') as f:
         #with open('bestIndv_soussurexpr_evoNoExp1.dat', 'rb') as f:
-        #with open('bestIndv_soussurexpr_evoExp1.dat', 'rb') as f:
+        #with open('testOptim/bestIndv_soussurexpr_evoExp1.dat', 'rb') as f:
         #    ret = pickle.load(f)
         #return ret
 
@@ -100,8 +101,8 @@ class OptimModGlobal:
         NGEN=2
         CXPB=0.8
         MUTPB=0.2
-        mu=10
-        lmbd=8
+        mu=2
+        lmbd=1
         halloffame=tools.HallOfFame(1)
         pop=toolbox.new_population(n=mu)
         fitnesses=toolbox.map(toolbox.evaluate, pop)
