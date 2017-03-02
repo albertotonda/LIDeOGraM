@@ -197,7 +197,7 @@ class RFGraph_Controller:
                 if (len(self.modApp.NodeConstraints) == 2):
                     if self.modApp.NodeConstraints[1] in self.notEvenOnce:
                         self.constraint = " - ".join(self.modApp.NodeConstraints)
-                        self.modApp.scrolledList.append(self.constraint)
+                        #self.modApp.scrolledList.append(self.constraint)
                         self.modApp.selectContrTxt=""
                         self.modApp.mode_cntrt = False
                         self.modApp.NodeConstraints = []
@@ -211,6 +211,7 @@ class RFGraph_Controller:
                             self.vwApp.networkGUI.network.updateLabels()
                             self.vwApp.networkGUI.network.drawEdges()
                             self.vwApp.updateView()
+                        self.vwApp.addConstrain(self.constraint)
                     else:
                         self.modApp.selectContrTxt=""
                         self.modApp.mode_cntrt = False

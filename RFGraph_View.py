@@ -74,11 +74,11 @@ class RFGraph_View(QtGui.QMainWindow):
         #self.buttonFitness = QtGui.QPushButton('Fitness', self)
         #self.buttonComplexite = QtGui.QPushButton('Complexity', self)
         #self.buttonOptUgp3 = QtGui.QPushButton('Global Optimisation', self)
-        self.buttonShowModGlobal = QtGui.QPushButton('Show Global Model', self)
-        self.buttonHideModGlobal = QtGui.QPushButton('Hide Global Model', self)
+        #self.buttonShowModGlobal = QtGui.QPushButton('Show Global Model', self)
+        #self.buttonHideModGlobal = QtGui.QPushButton('Hide Global Model', self)
         self.buttonChangerEq = QtGui.QPushButton('Change equation', self)
-        self.buttonRemoveLink = QtGui.QPushButton('Remove Link', self)
-        self.buttonReinstateLink = QtGui.QPushButton('Reinstate', self)
+        #self.buttonRemoveLink = QtGui.QPushButton('Remove Link', self)
+        #self.buttonReinstateLink = QtGui.QPushButton('Reinstate', self)
         #self.buttonHelp = QtGui.QPushButton('Help', self)
         #self.buttonCompromis.setStyleSheet("background-color: grey")
 
@@ -86,11 +86,11 @@ class RFGraph_View(QtGui.QMainWindow):
         #self.gridLayout.addWidget(self.buttonFitness, 10, 15, 1, 15)
         #self.gridLayout.addWidget(self.buttonComplexite, 10, 30, 1, 15)
         #self.gridLayout.addWidget(self.buttonOptUgp3, 10, 45, 1, 15)
-        self.gridLayout.addWidget(self.buttonShowModGlobal, 11, 0, 1, 30)
-        self.gridLayout.addWidget(self.buttonHideModGlobal, 11, 30, 1, 30)
+        #self.gridLayout.addWidget(self.buttonShowModGlobal, 11, 0, 1, 30)
+        #self.gridLayout.addWidget(self.buttonHideModGlobal, 11, 30, 1, 30)
         self.gridLayout.addWidget(self.buttonChangerEq, 12, 30, 1, 30)
-        self.gridLayout.addWidget(self.buttonRemoveLink, 12, 0, 1, 30)
-        self.gridLayout.addWidget(self.buttonReinstateLink, 0, 12, 1, 8)
+        #self.gridLayout.addWidget(self.buttonRemoveLink, 12, 0, 1, 30)
+        #self.gridLayout.addWidget(self.buttonReinstateLink, 0, 12, 1, 8)
 #        self.gridLayout.addWidget(self.buttonHelp, 0, 120, 1, 12)
 
         self.scrolledListBox = QtGui.QComboBox(self)
@@ -132,6 +132,12 @@ class RFGraph_View(QtGui.QMainWindow):
         compleAction = viewGroupAction.addAction(cpAction)
 
         self.showAction = QtGui.QAction("&Show Global model", self, checkable=True)
+        self.showAction.triggered.connect(self.viewGlobalModel)
+        self.showActionS = cntrApp.clickShowModGlobal
+        self.showActionH = cntrApp.clickHideModGlobal
+        #TODO ShowAction connectors
+
+#        self.constrainAction =
 
 
         menubar = self.menuBar()
@@ -149,11 +155,61 @@ class RFGraph_View(QtGui.QMainWindow):
         opmMenu = menubar.addMenu("&Optimisation")
         opmMenu.addAction(optmAction)
 
+        constrainAction = QtGui.QAction("&Add constrain", self)
+        constrainAction.triggered.connect(cntrApp.clickRemoveLink)
+
+
+        self.constrainMenu = menubar.addMenu("&Constrains")
+        self.constrainMenu.addAction(constrainAction)
+        self.constrainMenu.addSeparator()
+
         helpMenu = menubar.addMenu("&Help")
         helpMenu.addAction(helpAction)
 
+        self.mapper = QtCore.QSignalMapper(self)
 
 
+    def viewGlobalModel(self):
+        if self.showAction.isChecked():
+            print("ok")
+            self.showActionS()
+        else:
+            print("nok")
+            self.showActionH()
+
+    def addConstrain(self, name):
+        constrainAction = QtGui.QAction(name, self)
+        constrainAction.setStatusTip('Remove this constrain')
+        self.mapper.setMapping(constrainAction,name)
+        constrainAction.triggered.connect(self.mapper.map)
+        self.mapper.mapped['QString'].connect(self.removeConstrain)
+        self.constrainMenu.addAction(constrainAction)
+        self.modApp.scrolledList.append(name)
+        self.modApp.computeEdgeBold()
+        self.modApp.computeNxGraph()
+        self.networkGUI.network.axes.clear()
+        self.networkGUI.network.updateNodes()
+        self.networkGUI.network.updateLabels()
+        self.networkGUI.network.drawEdges()
+        self.updateView()
+
+
+    def removeConstrain(self,name):
+        print("Inside")
+        self.constrainMenu.removeAction(self.mapper.mapping(name))
+        try:
+            self.modApp.scrolledList.remove(name)
+        except:
+            print("No such link.")
+            return
+        self.modApp.computeEdgeBold()
+        self.modApp.computeNxGraph()
+        self.networkGUI.network.axes.clear()
+        self.networkGUI.network.updateNodes()
+        self.networkGUI.network.updateLabels()
+        self.networkGUI.network.drawEdges()
+        self.updateView()
+        #remove de la liste aussi peu être histoire que ça soit pas trop inutile.
 
 
     def updateView(self):
