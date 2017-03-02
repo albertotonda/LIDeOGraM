@@ -83,14 +83,14 @@ class RFGraph_Model:
         self.varsIn = ['Temperature', 'Age']
         self.NodeConstraints = []
         self.showGlobalModel = False
-        self.lastNodeClicked = ""
+        self.lastNodeClicked = None
         self.last_clicked = None
         self.mode_cntrt = False
         self.cntrt_FirstClick = ''
         self.cntrt_SecondClick = ''
         self.forbidden_edge = []
         self.curr_tabl=[]
-        self.adjThresholdVal=0.5
+        self.adjThresholdVal=0.0
         self.comprFitCmplxVal=0.5
         self.opt_params= []
         self.error_paramas= []
@@ -110,7 +110,7 @@ class RFGraph_Model:
         self.edgeColorCompr=[]
         self.edgeColorFit=[]
         self.edgeColorCmplx=[]
-        self.ColorMode='Compr'
+        self.ColorMode='Fit'
         self.transparentEdges=False
         self.edgeBoldfull=[]
         self.adj_cmplx_max = np.amax(self.adj_cmplx)
@@ -120,6 +120,13 @@ class RFGraph_Model:
         self.global_Edge_Color = []
         self.mode_changeEq=False
         self.colors = ColorMaps.colorm()
+        self.radius=0.001
+        self.lastHover=''
+        self.fitCmplxPos={}
+        self.fitCmplxfPos = {}
+        self.fitCmplxlPos = {}
+        self.rmByRmEq = []
+        self.rmByRmEdge = []
         #Necessaire de faire une deepcopy ?
         #self.lpos= copy.deepcopy(self.pos)
         #for p in self.lpos:  # raise text positions
@@ -727,12 +734,26 @@ class RFGraph_Model:
         for (h, l) in self.edgelist_inOrder:
             err_coef= res[2][l]/err_max
 #            print(res[2][l])
-            if(err_coef==1):
-                pass
+
+
             cr = np.maximum(np.minimum(err_coef * 2, 1),0)
             cg = np.maximum(np.minimum((1 - err_coef) * 2, 1),0)
             cb = 0
             self.global_Edge_Color.append((cr,cg,cb))
         pass
 
+        maxcmplx=max(list(res[3].values()))
+        for v in self.dataset.varnames:
+            if(v in self.varsIn):
+                self.fitCmplxPos[v] = (0,0)
+            else:
+                self.fitCmplxPos[v] = (res[2][v], res[3][v]/maxcmplx)
+
+
+        self.fitCmplxlPos= dict(list(map(lambda x: (x[0], (x[1][0] + 0.04, x[1][1] + 0.04)), list(self.fitCmplxPos.items()))))
+        self.fitCmplxfPos = dict(list(map(lambda x: (x[0], (x[1][0] - 0.04, x[1][1] - 0.04)), list(self.fitCmplxPos.items()))))
+        #self.fitCmplxlPos = 0
+        #self.pos=self.fitCmplxPos
+        #self.fpos=self.fitCmplxfPos
+        #self.lpos=self.fitCmplxlPos
 

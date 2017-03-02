@@ -119,7 +119,7 @@ class Individual:
         for i in bkeys:
          if i in self.complexity and not i in self.modApp.varsIn:
              cpx += self.complexity[i]
-        return errTot, cpx ,errVarSum
+        return errTot, cpx ,errVarSum, self.complexity
 
 def get_multithread_fitness(var,exps,initv):
     tasks = [Individual(initv,var,exp) for exp in exps]
