@@ -165,6 +165,5 @@ class Network:
         self.axes.hold(True)
         #self.draw_nodes_labels()
         #nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, edgelist=self.edgelist_inOrder,edge_color=self.modApp.edgeColor, ax=self.axes)
-
         #self.fig.tight_layout()
         self.fig.subplots_adjust(left=0.00001, bottom=0.00001, right=0.99999, top=0.99999)

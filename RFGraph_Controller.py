@@ -9,6 +9,7 @@ from OptimModGlobal import OptimModGlobal
 import threading
 import re
 from itertools import compress
+import random
 from OnOffCheckBox import *
 
 class RFGraph_Controller:
@@ -121,12 +122,13 @@ class RFGraph_Controller:
     def onMove(self,event):
 #        print(event)
 
-        if (event.button == None):
-            self.onHover(event)
-            return
+        #if (event.button == None):
+
+        #    return
 
         if(event.button==1 and self.modApp.lastNodeClicked != None):
             if (self.onMoveMutex.locked() or event.inaxes == None):
+                #print('return')
                 return
             self.onMoveMutex.acquire()
             old_pos = self.modApp.pos[self.modApp.lastNodeClicked]
@@ -140,17 +142,23 @@ class RFGraph_Controller:
                 self.modApp.fpos[self.modApp.lastNodeClicked][0] - old_pos[0] + event.xdata,
                 self.modApp.fpos[self.modApp.lastNodeClicked][1] - old_pos[1] + event.ydata)
 
-            if (self.modApp.globalModelView):
-                #self.vwApp.updateView()
-                self.vwApp.networkGUI.network.updateView()
-            else:
-                self.vwApp.networkGUI.network.axes.clear()
-                self.vwApp.networkGUI.network.updateNodes()
-                self.vwApp.networkGUI.network.updateLabels()
-                self.vwApp.networkGUI.network.drawEdges()
-                self.vwApp.networkGUI.fig.canvas.draw()
+            # if (self.modApp.globalModelView):
+            #     #self.vwApp.updateView()
+            #     self.vwApp.networkGUI.network.updateView()
+            # else:
+            #     self.vwApp.networkGUI.network.axes.clear()
+            #     self.vwApp.networkGUI.network.updateNodes()
+            #     self.vwApp.networkGUI.network.updateLabels()
+            #     self.vwApp.networkGUI.network.drawEdges()
+            #     self.vwApp.networkGUI.fig.canvas.draw()
+            self.onHover(event)
+            #print('process' + str(random.random()))
             QCoreApplication.processEvents()
             self.onMoveMutex.release()
+        else:
+            self.onHover(event)
+            #print('process'+str(random.random()))
+            QCoreApplication.processEvents()
 
 
 
@@ -166,6 +174,7 @@ class RFGraph_Controller:
         (x, y) = (event.xdata, event.ydata)
         if  x == None or y == None :
             return
+
 
         dst = [(pow(x - self.modApp.pos[node][0], 2) + pow(y - self.modApp.pos[node][1], 2), node) for node in #compute the distance to each node
                self.modApp.pos]
@@ -224,7 +233,9 @@ class RFGraph_Controller:
         if (not self.modApp.globalModelView):
             self.modApp.computeEdgeBold()
             self.modApp.computeNxGraph()
-        self.vwApp.networkGUI.network.updateView()
+
+        self.onHover(event)
+        #self.vwApp.networkGUI.network.updateView()
         self.vwApp.networkGUI.fig.canvas.draw()
 
 
@@ -277,7 +288,7 @@ class RFGraph_Controller:
                     self.modApp.selectContrTxt = ""
                     self.modApp.mode_cntrt = False
                     self.modApp.NodeConstraints = []
-                    self.vwApp.selectContrTxtLab.setText("Error, please retry")
+                    self.vwApp.selectContrTxtLab.setText('This link does not exist, please retry')
         else:
             self.modApp.selectContrTxt = ""
             self.modApp.mode_cntrt = False
@@ -298,9 +309,9 @@ class RFGraph_Controller:
         self.modApp.data= self.modApp.equacolO[np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked], [0, 1, 3, 4])]
 
         self.vwApp.eqTableGUI.updateView()
-        self.vwApp.scrolledListBox.clear()
-        for item in self.modApp.scrolledList:
-            self.vwApp.scrolledListBox.addItem(item)
+        #self.vwApp.scrolledListBox.clear()
+        #for item in self.modApp.scrolledList:
+        #    self.vwApp.scrolledListBox.addItem(item)
         self.modApp.computeEdgeBold()
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.updateView()

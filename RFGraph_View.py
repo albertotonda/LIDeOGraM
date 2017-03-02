@@ -104,8 +104,8 @@ class RFGraph_View(QtGui.QMainWindow):
         #self.gridLayout.addWidget(self.buttonReinstateLink, 0, 12, 1, 8)
 #        self.gridLayout.addWidget(self.buttonHelp, 0, 120, 1, 12)
 
-        self.scrolledListBox = QtGui.QComboBox(self)
-        self.gridLayout.addWidget(self.scrolledListBox, 0, 1, 1, 1)
+        #self.scrolledListBox = QtGui.QComboBox(self)
+        #self.gridLayout.addWidget(self.scrolledListBox, 0, 1, 1, 1)
 
 
         #self.font = QtGui.QFont('Liberation Sans Narrow')
@@ -239,9 +239,9 @@ class RFGraph_View(QtGui.QMainWindow):
         if(self.modApp.lastNodeClicked != None):
             self.clickedNodeLab.setText('Selected node: ' + self.modApp.lastNodeClicked)
         #
-        self.scrolledListBox.clear()
+        #self.scrolledListBox.clear()
         self.clickedNodeLab.setText(self.modApp.lastNodeClicked)
-        for item in self.modApp.scrolledList:
-            self.scrolledListBox.addItem(item)
+        #for item in self.modApp.scrolledList:
+        #    self.scrolledListBox.addItem(item)
         self.incMatGUI.updateView()
 
