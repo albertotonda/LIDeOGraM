@@ -309,10 +309,10 @@ class RFGraph_Controller:
     def SliderMoved(self, value):
         if( self.modApp.adjThresholdVal!=self.vwApp.adjThreshold_slider.value() / 100.0):
             self.modApp.adjThresholdVal=self.vwApp.adjThreshold_slider.value() / 100.0
-        if(self.modApp.comprFitCmplxVal != self.vwApp.comprFitCmplx_slider.value() / 100.0 ):
-            self.modApp.comprFitCmplxVal=self.vwApp.comprFitCmplx_slider.value() / 100.0
-            self.modApp.computeComprEdgeColor()
-            self.modApp.computeEdgeBold()
+        #if(self.modApp.comprFitCmplxVal != self.vwApp.comprFitCmplx_slider.value() / 100.0 ):
+        #    self.modApp.comprFitCmplxVal=self.vwApp.comprFitCmplx_slider.value() / 100.0
+        #    self.modApp.computeComprEdgeColor()
+        #    self.modApp.computeEdgeBold()
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.updateView()
 

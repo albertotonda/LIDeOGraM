@@ -40,7 +40,10 @@ class FitCanvas(FigureCanvas):
             self.fig.canvas.draw()
             return
 
-        eq = self.modApp.data[self.modApp.clicked_line][2]
+        try:
+            eq = self.modApp.data[self.modApp.clicked_line][2]
+        except:
+            pass
 
 
         datafrom=self.modApp.curr_tabl[self.modApp.clicked_line][3]
