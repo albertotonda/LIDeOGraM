@@ -45,9 +45,10 @@ class FitCanvas(FigureCanvas):
         except:
             pass
 
-
-        datafrom=self.modApp.curr_tabl[self.modApp.clicked_line][3]
-
+        try:
+            datafrom=self.modApp.curr_tabl[self.modApp.clicked_line][3]
+        except:
+            pass
         x = []
         y = []
 

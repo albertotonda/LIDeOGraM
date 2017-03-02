@@ -178,6 +178,8 @@ class RFGraph_View(QtGui.QMainWindow):
         helpMenu.addAction(helpAction)
 
         self.mapper = QtCore.QSignalMapper(self)
+        self.mapper.mapped['QString'].connect(self.removeConstrain)
+
 
 
     def viewGlobalModel(self):
@@ -193,7 +195,6 @@ class RFGraph_View(QtGui.QMainWindow):
         constrainAction.setStatusTip('Remove this constrain')
         self.mapper.setMapping(constrainAction,name)
         constrainAction.triggered.connect(self.mapper.map)
-        self.mapper.mapped['QString'].connect(self.removeConstrain)
         self.constrainMenu.addAction(constrainAction)
         self.modApp.scrolledList.append(name)
         self.modApp.computeEdgeBold()
@@ -209,17 +210,21 @@ class RFGraph_View(QtGui.QMainWindow):
         print("Inside")
         self.constrainMenu.removeAction(self.mapper.mapping(name))
         try:
-            self.modApp.scrolledList.remove(name)
+            self.cntrApp.clickReinstateLink(name)
         except:
-            print("No such link.")
-            return
-        self.modApp.computeEdgeBold()
-        self.modApp.computeNxGraph()
-        self.networkGUI.network.axes.clear()
-        self.networkGUI.network.updateNodes()
-        self.networkGUI.network.updateLabels()
-        self.networkGUI.network.drawEdges()
-        self.updateView()
+            pass
+        #try:
+        #    self.modApp.scrolledList.remove(name)
+        #except:
+        #    print("No such link.")
+        #    return
+        #self.modApp.computeEdgeBold()
+        #self.modApp.computeNxGraph()
+        #self.networkGUI.network.axes.clear()
+        #self.networkGUI.network.updateNodes()
+        #self.networkGUI.network.updateLabels()
+        #self.networkGUI.network.drawEdges()
+        #self.updateView()
         #remove de la liste aussi peu être histoire que ça soit pas trop inutile.
 
 

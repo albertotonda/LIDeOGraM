@@ -175,6 +175,7 @@ class RFGraph_Controller:
             self.modApp.lastNodeClicked=None
             self.modApp.computeEdgeBold()
             self.modApp.data=[]
+            self.modApp.clicked_line = -1
             self.vwApp.eqTableGUI.updateView() #Clean the equation table
             self.vwApp.fitGUI.updateView()      # and the measured/predicted plot
             self.vwApp.clickedNodeLab.setText('Selected node: ' + self.p(self.modApp.lastNodeClicked))
@@ -214,6 +215,7 @@ class RFGraph_Controller:
                 #print("clickedEq:"+str(eqCellToClick))
                 self.eqTableClicked(eqCellToClickWid)
             else:
+                self.modApp.clicked_line = -1
                 self.vwApp.fitGUI.updateView()
             self.vwApp.clickedNodeLab.setText('Selected node: ' + self.p(self.modApp.lastNodeClicked))
 
@@ -282,28 +284,29 @@ class RFGraph_Controller:
             self.modApp.NodeConstraints = []
 
     # TODO Réintègre le lien sélectionné
-    def clickReinstateLink (self):
-        if self.vwApp.scrolledListBox.currentText() == "Select link to reinstate":
-            return
-        else:
-            self.modApp.scrolledList.pop(self.vwApp.scrolledListBox.currentIndex())
-            linesToReinstate=self.modApp.rmByRmEdge.pop(self.vwApp.scrolledListBox.currentIndex() - 1)
-            flist = [item for sublist in self.modApp.rmByRmEdge for item in sublist]
-            linesToReinstate=[av for av in linesToReinstate if not av in flist]
-            linesToReinstate = [av for av in linesToReinstate if not av in self.modApp.rmByRmEq]
-            self.modApp.equacolO[linesToReinstate, 4] = True
-            self.modApp.data= self.modApp.equacolO[np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked], [0, 1, 3, 4])]
+    def clickReinstateLink (self,name):
+        #if self.vwApp.scrolledListBox.currentText() == "Select link to reinstate":
+        #    return
+        #else:
+        idx=self.modApp.scrolledList.index(name)
+        self.modApp.scrolledList.pop(idx)
+        linesToReinstate=self.modApp.rmByRmEdge.pop(idx - 1)
+        flist = [item for sublist in self.modApp.rmByRmEdge for item in sublist]
+        linesToReinstate=[av for av in linesToReinstate if not av in flist]
+        linesToReinstate = [av for av in linesToReinstate if not av in self.modApp.rmByRmEq]
+        self.modApp.equacolO[linesToReinstate, 4] = True
+        self.modApp.data= self.modApp.equacolO[np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked], [0, 1, 3, 4])]
 
-            self.vwApp.eqTableGUI.updateView()
-            self.vwApp.scrolledListBox.clear()
-            for item in self.modApp.scrolledList:
-                self.vwApp.scrolledListBox.addItem(item)
-            self.modApp.computeEdgeBold()
-            self.modApp.computeNxGraph()
-            self.vwApp.networkGUI.network.updateView()
-            self.vwApp.networkGUI.fig.canvas.draw()
+        self.vwApp.eqTableGUI.updateView()
+        self.vwApp.scrolledListBox.clear()
+        for item in self.modApp.scrolledList:
+            self.vwApp.scrolledListBox.addItem(item)
+        self.modApp.computeEdgeBold()
+        self.modApp.computeNxGraph()
+        self.vwApp.networkGUI.network.updateView()
+        self.vwApp.networkGUI.fig.canvas.draw()
 
-            QCoreApplication.processEvents()
+        QCoreApplication.processEvents()
 
     # TODO Change la couleur et la densité des "edges" en fonction du déplacement des sliders
     def SliderMoved(self, value):
