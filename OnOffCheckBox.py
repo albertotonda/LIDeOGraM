@@ -73,7 +73,7 @@ class OnOffCheckBox(QtGui.QCheckBox):
             #change the look for on/off
             if self.isChecked():
                 #blue fill
-                brush = QtGui.QBrush(QtGui.QColor(50,50,255),style=QtCore.Qt.SolidPattern)
+                brush = QtGui.QBrush(QtGui.QColor(120,120,120),style=QtCore.Qt.SolidPattern)
                 painter.setBrush(brush)
 
                 #rounded rectangle as a whole
