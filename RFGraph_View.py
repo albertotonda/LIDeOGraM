@@ -180,6 +180,10 @@ class RFGraph_View(QtGui.QMainWindow):
         fileMenu = menubar.addMenu("&File")
         fileMenu.addAction(exitAction)
 
+        self.editmenu = menubar.addMenu("&Edit")
+
+
+
         viewMenu = menubar.addMenu("&View")
         viewMenu.addAction(comproAction)
         viewMenu.addAction(fitnesAction)
@@ -206,7 +210,6 @@ class RFGraph_View(QtGui.QMainWindow):
         self.mapper.mapped['QString'].connect(self.removeConstrain)
 
 
-
     def viewGlobalModel(self):
         if self.showAction.isChecked():
             print("ok")
@@ -220,6 +223,7 @@ class RFGraph_View(QtGui.QMainWindow):
         constrainAction.setStatusTip('Remove this constrain')
         self.mapper.setMapping(constrainAction,name)
         constrainAction.triggered.connect(self.mapper.map)
+
         self.constrainMenu.addAction(constrainAction)
         self.modApp.scrolledList.append(name)
         #self.modApp.computeEdgeBold()
