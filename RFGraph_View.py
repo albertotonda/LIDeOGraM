@@ -8,6 +8,8 @@ from FitCanvas import FitCanvas
 from OnOffCheckBox import *
 
 
+
+
 # TODO Crée tout les boutons (or graphes + équations)
 class RFGraph_View(QtGui.QMainWindow):
 
@@ -21,6 +23,7 @@ class RFGraph_View(QtGui.QMainWindow):
 
         QtGui.QMainWindow.__init__(self)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+        #self.setWindowTitle(QtGui.QLabel("Test"))
         self.setWindowTitle("LIDeoGraM")
         self.icon = QtGui.QIcon("Icone.png")
         self.setWindowIcon(self.icon)

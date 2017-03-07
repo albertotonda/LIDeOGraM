@@ -96,41 +96,59 @@ class RFGraph_Controller:
     def onPick(self,event):
         pass
 
-    def onHover(self,event):
-        (x, y) = (event.xdata, event.ydata)
-        if not x or not y :
-            if(self.modApp.lastHover != ''):
-                self.vwApp.networkGUI.network.updateView()
-                self.modApp.lastHover=''
-            return
-        dst = [(pow(x - self.modApp.pos[node][0], 2) + pow(y - self.modApp.pos[node][1], 2), node) for node in
-               self.modApp.pos]
-        dst=list(filter(lambda x: x[0] < self.modApp.radius, dst))
-        if(len(dst)==0):
+    def onHover(self,dstMin):
+
+        if(dstMin==''):
             if (self.modApp.lastHover != ''):
                 self.vwApp.networkGUI.network.updateView()
                 self.modApp.lastHover = ''
             return
 
-        dstMin = min(dst, key=(lambda x: x[0]))
 
-        self.vwApp.networkGUI.network.updateView(dstMin[1])
-        self.modApp.lastHover=dstMin[1]
+
+        self.vwApp.networkGUI.network.updateView(dstMin)
+        self.modApp.lastHover=dstMin
         #print('hover: '+dstMin[1])
 
 
     def onMove(self,event):
-#        print(event)
+        print(event)
 
         #if (event.button == None):
 
         #    return
 
+        (x, y) = (event.xdata, event.ydata)
+        if not x or not y:
+            if (self.modApp.lastHover != ''):
+                self.vwApp.networkGUI.network.updateView()
+                self.modApp.lastHover = ''
+            return
+        dst = [(pow(x - self.modApp.pos[node][0], 2) + pow(y - self.modApp.pos[node][1], 2), node) for node in
+               self.modApp.pos]
+        dst = list(filter(lambda x: x[0] < self.modApp.radius, dst))
+        if(len(dst) != 0):
+            dstMin = min(dst, key=(lambda x: x[0]))
+
+        else:
+            dstMin = ('','')
+        try:
+            print("lastHover: "+ str(self.modApp.lastHover) + " dstMin: " + str(dstMin[1]))
+        except:
+            pass
+
+        if(event.button==None and self.modApp.lastHover == dstMin[1] ):
+            print('return1')
+            return
+
+        if (self.onMoveMutex.locked() or event.inaxes == None ):
+            print('return2')
+            return
+
+        self.onMoveMutex.acquire()
         if(event.button==1 and self.modApp.lastNodeClicked != None):
-            if (self.onMoveMutex.locked() or event.inaxes == None):
-                #print('return')
-                return
-            self.onMoveMutex.acquire()
+
+
             old_pos = self.modApp.pos[self.modApp.lastNodeClicked]
             self.modApp.pos[self.modApp.lastNodeClicked] = (event.xdata, event.ydata)
 
@@ -151,15 +169,16 @@ class RFGraph_Controller:
             #     self.vwApp.networkGUI.network.updateLabels()
             #     self.vwApp.networkGUI.network.drawEdges()
             #     self.vwApp.networkGUI.fig.canvas.draw()
-            self.onHover(event)
+            self.onHover(self.modApp.lastNodeClicked)
             #print('process' + str(random.random()))
             QCoreApplication.processEvents()
-            self.onMoveMutex.release()
+
         else:
-            self.onHover(event)
+            self.onHover(dstMin[1])
             #print('process'+str(random.random()))
             QCoreApplication.processEvents()
 
+        self.onMoveMutex.release()
 
 
     def p(self,s):
@@ -234,7 +253,7 @@ class RFGraph_Controller:
             self.modApp.computeEdgeBold()
             self.modApp.computeNxGraph()
 
-        self.onHover(event)
+        self.onHover(self.modApp.lastNodeClicked)
         #self.vwApp.networkGUI.network.updateView()
         self.vwApp.networkGUI.fig.canvas.draw()
 

@@ -21,34 +21,52 @@ class Network:
         hEdge=self.modApp.edgelist_inOrder.copy()
         hBold=self.modApp.edgeBold.copy()
         hNodeColor=self.modApp.nodeColor.copy()
-        parOffNodes=[]
+        greyLab={}
+        greyLabPos={}
+        blackLab={}
+        blackLabPos={}
+        #sizeNode=[1] * len(self.modApp.dataset.varnames)
+        #parOffNodes=[]
         if (hover != None):
             for i in range(len(self.modApp.edgelist_inOrder)):
                 if(self.modApp.edgelist_inOrder[i][0] != hover and self.modApp.edgelist_inOrder[i][1] !=hover):
-                    hEdgeColor[i]=(1,1,1)
-                    hEdge[i]=(None,None)
-                    hBold[i]=-1
-            hEdgeColor=list(filter(lambda x: x != (1,1,1), hEdgeColor))
-            hEdge=list(filter(lambda x: x != (None,None), hEdge))
-            hBold = list(filter(lambda x: x != -1, hBold))
+                    hEdgeColor[i]=(0.8,0.8,0.8)
+                    #hEdge[i]=(None,None)
+                    #hBold[i]=-1
+            #hEdgeColor=list(filter(lambda x: x != (1,1,1), hEdgeColor))
+            #hEdge=list(filter(lambda x: x != (None,None), hEdge))
+            #hBold = list(filter(lambda x: x != -1, hBold))
 
-            for (x, y) in hEdge:
-                if (x != hover and not x in parOffNodes):
-                    parOffNodes.append(x)
-                    hNodeColor[self.modApp.dataset.varnames.tolist().index(x)] = (0, 0, 1)
-                if (y != hover and not y in parOffNodes):
-                    parOffNodes.append(y)
-                    hNodeColor[self.modApp.dataset.varnames.tolist().index(y)] = (0, 1, 0)
+            for v in self.modApp.dataset.varnames.tolist():
+                if(not (hover,v) in self.modApp.edgelist_inOrder and not (v,hover) in self.modApp.edgelist_inOrder and hover != v):
+                    hNodeColor[self.modApp.dataset.varnames.tolist().index(v)] = (0.8, 0.8, 0.8)
+                    greyLab[v]=v
+                    greyLabPos[v]=self.modApp.lpos[v]
+                else:
+                    blackLab[v]=v
+                    blackLabPos[v]=self.modApp.lpos[v]
 
+            #for (x, y) in hEdge:
+            #    if (y == hover):
+            #        #parOffNodes.append(x)
+            #        hNodeColor[self.modApp.dataset.varnames.tolist().index(x)] = (0, 0, 1)
+            #    if (x==hover):
+            #        #parOffNodes.append(y)
+            #        hNodeColor[self.modApp.dataset.varnames.tolist().index(y)] = (0, 1, 0)
 
-        nxa.draw_networkx_labels_angle(self.modApp.G, self.modApp.lpos, self.modApp.labels, ax=self.axes, rotate=45)
-        #nx.draw_networkx_labels(self.modApp.G, self.modApp.lpos, self.modApp.labels, ax=self.axes)
+         #nx.draw_networkx_labels(self.modApp.G, self.modApp.lpos, self.modApp.labels, ax=self.axes)
 
         nx.draw_networkx_nodes(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(), node_color=hNodeColor,
                                with_labels=False,edgelist=hEdge,edge_color=hEdgeColor, ax=self.axes)
         nxa.draw_networkx_edges(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
                            node_color=self.modApp.nodeColor, with_labels=False, edgelist=hEdge,
                           edge_color=hEdgeColor,edge_bold=hBold, ax=self.axes)
+        if (hover != None):
+            nxa.draw_networkx_labels_angle(self.modApp.G, greyLabPos, greyLab, ax=self.axes, font_color=(0.8, 0.8, 0.8),
+                                           rotate=45)
+            nxa.draw_networkx_labels_angle(self.modApp.G, blackLabPos, blackLab, ax=self.axes, rotate=45)
+        else:
+            nxa.draw_networkx_labels_angle(self.modApp.G, self.modApp.lpos, self.modApp.labels, ax=self.axes, rotate=45)
 
         self.vwApp.networkGUI.fig.canvas.draw()
 

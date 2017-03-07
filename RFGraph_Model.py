@@ -360,8 +360,9 @@ class RFGraph_Model:
         self.computeInitialPos()
         self.computeFitandCmplxEdgeColor()
         self.computeComprEdgeColor()
-        self.computeEdgeBold()
+
         self.computeNxGraph()
+
 
 
 
@@ -513,6 +514,7 @@ class RFGraph_Model:
                                                adjcontr=self.adj_contr[i, j])
                         self.edgelist_inOrder.append((self.dataset.varnames[j], self.dataset.varnames[i]))
 
+        self.computeEdgeBold()
         self.removeInvisibleEdges()
         self.removeForbiddenEdges()
 
@@ -520,22 +522,26 @@ class RFGraph_Model:
     def colorDictToConstraintedcolorList(self,colorDict,edgesToShow):
         colorList=[]
         for edge in edgesToShow:
-            colorList.append(colorDict[edge])
+            try:
+                colorList.append(colorDict[edge])
+            except:
+                pass
         return colorList
 
     def computeEdgeBold(self):
 
         self.edgeBoldfull = {}
 
-        for i in range(len(self.pareto)):  # i is child
-            for j in range(len(self.pareto[i])):  # j is parent
-                lIdxColPareto = self.pareto[i][j]
-                if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
+        #for i in range(len(self.pareto)):  # i is child
+        #    for j in range(len(self.pareto[i])):  # j is parent
+        #        lIdxColPareto = self.pareto[i][j]
+        #        if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
                     #if self.nbeq[i] == np.float64(0.0): continue
-                    if (self.lastNodeClicked == self.dataset.varnames[i]):
-                        self.edgeBoldfull[(self.dataset.varnames[j], self.dataset.varnames[i])]=True
-                    else:
-                        self.edgeBoldfull[(self.dataset.varnames[j], self.dataset.varnames[i])]=False
+        for (x, y) in self.edgelist_inOrder:
+            if (self.lastNodeClicked == x or self.lastNodeClicked == y):
+                self.edgeBoldfull[(x,y)]=True
+            else:
+                self.edgeBoldfull[(x, y)]=False
 
     def computeComprEdgeColor(self):
 
@@ -693,7 +699,7 @@ class RFGraph_Model:
                                         self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
                                         adjcontr=self.adj_contr[i, j])
                         self.edgelist_inOrder.append((self.dataset.varnames[j], self.dataset.varnames[i]))
-
+        self.computeEdgeBold()
         self.removeInvisibleEdges()
         self.removeForbiddenEdges()
 
