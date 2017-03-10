@@ -203,9 +203,10 @@ class RFGraph_View(QtGui.QMainWindow):
         self.modApp.computeEdgeBold()
         self.modApp.computeNxGraph()
         self.networkGUI.network.axes.clear()
-        self.networkGUI.network.updateNodes()
-        self.networkGUI.network.updateLabels()
-        self.networkGUI.network.drawEdges()
+        self.networkGUI.network.updateView()
+        #self.networkGUI.network.updateNodes()
+        #self.networkGUI.network.updateLabels()
+        #self.networkGUI.network.drawEdges()
         self.updateView()
 
 

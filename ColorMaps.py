@@ -4,11 +4,11 @@ from matplotlib.colors import LinearSegmentedColormap
 class colorm:
     def __init__(self):
         aggr1=0.2
-        aggr2 = 0.2
+        aggr2 = 0.5
         #fitnessCmap=LinearSegmentedColormap.from_list('fitness_map',[(aggr1,1,aggr1),(1,1,aggr1),(1,aggr1,aggr1)])
         fitnessCmap = LinearSegmentedColormap.from_list('fitness_map',[(0, 1-aggr1, 0), (1-aggr1, 1-aggr1, 0), (1-aggr1, 0, 0)])
         #complexityCmap = LinearSegmentedColormap.from_list('complexity_map', [(1,1,1),(aggr2, 1, 1), (aggr2,aggr2,1),(aggr2, aggr2, aggr2)])
-        complexityCmap = LinearSegmentedColormap.from_list('complexity_map',[(0.6, 0.6, 0.9),(0, 0, 0.3)])
+        complexityCmap = LinearSegmentedColormap.from_list('complexity_map',[(0.8, 0.8, 0.95),(0.2, 0.2, 0.95),(0,0,0)])
 
         self.complexity = complexityCmap#plt.get_cmap("cool")
         self.globalm = fitnessCmap

@@ -17,7 +17,7 @@ class QtConnector:
 #        self.vwApp.buttonHelp.clicked.connect(self.cntrApp.clickHelp)
         #self.vwApp.buttonChangerEq.clicked.connect(self.cntrApp.clickChangeEq)
         self.vwApp.networkGUI.fig.canvas.mpl_connect('button_press_event', self.cntrApp.onClick)
-        self.vwApp.networkGUI.fig.canvas.mpl_connect('motion_notify_event',self.cntrApp.onMove)
+        self.vwApp.networkGUI.fig.canvas.mpl_connect('motion_notify_event',self.cntrApp.onMove3)
         self.vwApp.incMatGUI.itemClicked.connect(self.cntrApp.incMatClicked)
         #self.vwApp.networkGUI.fig.canvas.mpl_connect('pick_event', self.cntrApp.onPick)
         self.vwApp.closeEvent = self.cntrApp.closeEvent

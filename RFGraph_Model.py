@@ -20,6 +20,8 @@ import pickle
 from PyQt4.QtGui import *
 import ColorMaps
 from collections import OrderedDict
+from sklearn import linear_model
+from fitness import fitness
 
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model:
@@ -28,10 +30,14 @@ class RFGraph_Model:
 
 
         self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected.csv")
+        self.adj_contrGraph = self.createConstraintsGraph()
         #self.dataset = Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr.csv")
         #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr.txt')
         #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_noMol.txt')
-        self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_expertcorrected.txt')
+
+        #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_expertcorrected.txt')
+        self.equacolO = self.findLassoEqs()
+
         #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_expertcorrected_noMol.txt')
         self.nbequa = len(self.equacolO)  # Number of Equation for all variables taken together
 
@@ -42,7 +48,8 @@ class RFGraph_Model:
 
         self.equacolPO=[]
         for l in range(self.nbequa):
-            for h in range(self.dataset.nbVar):       #Possible parents for the equations
+            for h in range(self.dataset.nbVar):
+                #Possible parents for the equations
                 cont_h=len(re.findall(r'\b%s\b' % re.escape(self.dataset.varnames[h]),self.equacolO[l,3]))  #How many times the variable self.varname[h] is found in the equation self.equacolO[l,3]
                 if(cont_h>0): #If present, add infos in adjacence matrix
                     ind_parent=h
@@ -60,7 +67,7 @@ class RFGraph_Model:
         self.adj_fit = np.power(self.adj_fit, 1 / self.adj_simple)
         self.adj_fit[self.adj_simple == 0] = 0
 
-        self.adj_contrGraph=self.createConstraintsGraph()
+
         self.adj_contr=self.createConstraints()
 
         #self.pos=self.pos_graph()
@@ -82,7 +89,6 @@ class RFGraph_Model:
         #self.varsIn = ['Temperature','Age','AMACBIOSYNTHsousexpr','BIOSYNTH_CARRIERSsousexpr','CELLENVELOPEsousexpr','CELLPROCESSESsousexpr','CENTRINTMETABOsousexpr','ENMETABOsousexpr','FATTYACIDMETABOsousexpr','Hypoprotsousexpr','OTHERCATsousexpr','PURINESsousexpr','REGULFUNsousexpr','REPLICATIONsousexpr','TRANSCRIPTIONsousexpr','TRANSLATIONsousexpr','TRANSPORTPROTEINSsousexpr','AMACBIOSYNTHsurexpr','BIOSYNTH_CARRIERSsurexpr','CELLENVELOPEsurexpr','CELLPROCESSESsurexpr','CENTRINTMETABOsurexpr','ENMETABOsurexpr','FATTYACIDMETABOsurexpr','Hypoprotsurexpr','OTHERCATsurexpr','PURINESsurexpr','REGULFUNsurexpr','REPLICATIONsurexpr','TRANSCRIPTIONsurexpr','TRANSLATIONsurexpr','TRANSPORTPROTEINSsurexpr']
         self.varsIn = ['Temperature', 'Age']
         self.NodeConstraints = []
-        self.showGlobalModel = False
         self.lastNodeClicked = None
         self.last_clicked = None
         self.mode_cntrt = False
@@ -100,8 +106,9 @@ class RFGraph_Model:
         self.nodeColor = []
         self.edgeColor = []
         self.nodeWeight = []
-        self.cmplxMin = np.amin(self.equacolPO[:, 0])
-        self.cmplxMax = np.amax(self.equacolPO[:, 0])
+        self.cmplxMin = np.amin(self.equacolO[:, 0])
+        self.cmplxMax = np.amax(self.equacolO[:, 0])
+        self.dataMaxFitness = np.amax(self.equacolO[:, 1])
         self.pareto = []
         self.scrolledList=[]
         self.scrolledList.append("Select link to reinstate")
@@ -120,7 +127,7 @@ class RFGraph_Model:
         self.global_Edge_Color = []
         self.mode_changeEq=False
         self.colors = ColorMaps.colorm()
-        self.radius=0.001
+        self.radius=0.002
         self.lastHover=''
         self.fitCmplxPos={}
         self.fitCmplxfPos = {}
@@ -138,12 +145,12 @@ class RFGraph_Model:
 
 
         self.data = []
-        self.dataMaxFitness = 0
-        self.dataMaxComplexity = 0
-        for i in range(len(self.equacolPO)):
-            self.data.append(self.equacolPO[i, np.ix_([0, 1, 4, 5])][0])
-            self.dataMaxComplexity = max(self.dataMaxComplexity, self.equacolPO[i,np.ix_([0])][0][0])
-            self.dataMaxFitness = max(self.dataMaxFitness, self.equacolPO[i,np.ix_([1])][0][0])
+
+        #self.dataMaxComplexity = self.cmplxMax
+        for i in range(len(self.equacolO)):
+            self.data.append(self.equacolO[i, np.ix_([0, 1, 3, 4])][0])
+            #self.dataMaxComplexity = max(self.dataMaxComplexity, self.equacolPO[i,np.ix_([0])][0][0])
+            #self.dataMaxFitness = max(self.dataMaxFitness, self.equacolPO[i,np.ix_([1])][0][0])
 
 
 
@@ -175,6 +182,78 @@ class RFGraph_Model:
 
 
         self.initGraph()
+
+
+    def findLassoEqs(self):
+        equacolOtmp=[]
+        for i in range(len(self.dataset.varnames)):
+            print('computing : ' + self.dataset.varnames[i])
+            iClass = self.dataset.variablesClass[self.dataset.varnames[i]]
+            if(iClass!='condition'):
+                parIClass=[]
+                for (e1,e2) in self.adj_contrGraph.edges():
+                    if(e2 ==iClass and not e1 in parIClass):
+                        parIClass.append(e1)
+                #parIClass=list(self.adj_contrGraph.edge[iClass].keys())
+                par=[]
+                for v in self.dataset.varnames:
+                    if(self.dataset.variablesClass[v] in parIClass):
+                        par.append(v)
+                Y = list(self.dataset.data[:, i])
+                X=[]
+
+                idx=[list(self.dataset.varnames).index(v) for v in par]
+                X=self.dataset.data[:,idx]
+
+                for a in [500,200,100,50,20,10,5,2,1,0.5,0.2,0.1]:
+                    clf = linear_model.Lasso(alpha=a)
+                    clf.fit(X, Y)
+                    pred=clf.predict(X)
+
+                    equacolOtmp.extend(self.regrToEquaColO(clf,par,self.dataset.varnames[i],Y,pred))
+
+        equacolOtmp = np.array(equacolOtmp, dtype=object)
+        equacolOtmp = equacolOtmp.reshape(len(equacolOtmp)/5,5)
+
+
+        return equacolOtmp
+
+    def regrToEquaColO(self,clf,parNode,childNode,Y,pred):
+        line=[]
+        s=''
+        cmplx = 0;
+        hasCoef=False
+
+
+        for i in range(len(parNode)):
+            if(clf.coef_[i] > 0  ):
+                hasCoef=True
+                s += ' + ' + str(clf.coef_[i]) + ' * ' + parNode[i] + ' '
+                cmplx += 3
+            elif(clf.coef_[i] < 0 ):
+                hasCoef=True
+                s +=  str(clf.coef_[i]) + ' * ' + parNode[i] + ' '
+                cmplx += 3
+
+        if (clf.intercept_ != 0 and hasCoef):
+            s = str(clf.intercept_) + ' ' + s
+            cmplx += 2;
+
+        if (clf.intercept_ != 0 and not hasCoef):
+            s += str(clf.intercept_)
+            cmplx += 1;
+
+        fit=fitness(Y,pred)
+
+        line.append(cmplx)
+        line.append(fit)
+        line.append(childNode)
+        line.append(s)
+        line.append(True)
+
+
+
+        return line
 
     def computeEquaPerNode(self):
         self.equaPerNode = {}
@@ -376,7 +455,7 @@ class RFGraph_Model:
         graph.add_edge('condition','Cell')
         graph.add_edge('Molss','Cell')
         graph.add_edge('Molsur', 'Cell')
-        graph.add_edge('Molsur','Molss')
+        #graph.add_edge('Molsur','Molss')
         graph.add_edge('Cell', 'CellAniso')
         graph.add_edge('Cell','PopCentri')
         graph.add_edge('Cell','PopCong')

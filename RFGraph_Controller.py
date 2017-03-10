@@ -17,6 +17,12 @@ class RFGraph_Controller:
         self.modApp=modApp
         self.vwApp=vwApp
         self.onMoveMutex = threading.Lock()
+        self.moveListMutex= threading.Lock()
+        self.protectMutex = threading.Lock()
+        self.returnMutex=threading.Lock()
+        self.moveEventList=[]
+        self.nbOnMoveWaiting=0
+        self.lastEvent=None
 
     def clickHelp(self):
         self.modApp.help_params = Help.get_params()
@@ -26,7 +32,7 @@ class RFGraph_Controller:
         print("clic fitness")
         self.modApp.ColorMode='Fit'
         self.modApp.computeNxGraph()
-        self.vwApp.networkGUI.network.drawEdges()
+        self.vwApp.networkGUI.network.updateView()
         #self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
         #self.vwApp.buttonFitness.setStyleSheet("background-color: grey")
         #self.vwApp.buttonComplexite.setStyleSheet("background-color: None")
@@ -110,13 +116,72 @@ class RFGraph_Controller:
         self.modApp.lastHover=dstMin
         #print('hover: '+dstMin[1])
 
+    def onMove3(self,event):
+        if(not self.onMoveMutex.acquire(False)):
+            print('already computing,return : ' + str(event))
+            self.lastEvent=event
+            return
+        print('computing' + str(event))
+        self.onMove(event)
+        print('computing finished :' + str(event))
+        if(self.lastEvent != None):
+            print('computing last : ' + str(self.lastEvent))
+            self.onMove(self.lastEvent)
+            self.lastEvent=None
+        self.onMoveMutex.release()
+
+
+    def onMove2(self,event):
+        print('new event : ' + str(event))
+        self.moveListMutex.acquire(True)
+        self.moveEventList.append(event)
+        self.moveListMutex.release()
+        self.protectMutex.acquire(True)
+        if(not self.returnMutex.acquire(False)):
+            print('already in computation : ' + str(event))
+            self.nbOnMoveWaiting+=1
+            self.returnMutex.release()
+            self.returnMutex.acquire(True)
+            while(self.nbOnMoveWaiting>1):
+                print('cleaning : nbOnMoveWaiting = ' + self.nbOnMoveWaiting + '  event : ' + str(event)  )
+                self.returnMutex.release()
+                self.returnMutex.acquire(True)
+            self.protectMutex.release()
+            print('waiting : ' + str(event))
+            self.returnMutex.acquire(True)
+            print('released : ' + event)
+            if(self.nbOnMoveWaiting>1):
+                print('another is already in the list, return : ' + str(event))
+                self.nbOnMoveWaiting-=1
+                return
+        self.protectMutex.release()
+        if(not self.onMoveMutex.acquire(False)):
+            print('already computing : ' + str(event))
+            return
+        self.moveListMutex.acquire(True)
+        lastevent=self.moveEventList[-1]
+        self.moveEventList=[]
+        self.moveListMutex.release()
+        print('computing' + str(lastevent))
+        self.onMove(lastevent)
+        print('computing finished :' + str(lastevent))
+        self.onMoveMutex.release()
+        self.returnMutex.release()
+
+
+
 
     def onMove(self,event):
-        print(event)
+        #print(event)
 
         #if (event.button == None):
 
         #    return
+
+
+
+
+
 
         (x, y) = (event.xdata, event.ydata)
         if not x or not y:
@@ -132,22 +197,20 @@ class RFGraph_Controller:
 
         else:
             dstMin = ('','')
-        try:
-            print("lastHover: "+ str(self.modApp.lastHover) + " dstMin: " + str(dstMin[1]))
-        except:
-            pass
+
 
         if(event.button==None and self.modApp.lastHover == dstMin[1] ):
-            print('return1')
+            #print('return1')
             return
 
-        if (self.onMoveMutex.locked() or event.inaxes == None ):
-            print('return2')
+        #if (self.onMoveMutex.locked() or event.inaxes == None ):
+        if (event.inaxes == None):
+           # print('return2')
             return
 
-        self.onMoveMutex.acquire()
+        #self.onMoveMutex.acquire()
         if(event.button==1 and self.modApp.lastNodeClicked != None):
-
+            print(event)
 
             old_pos = self.modApp.pos[self.modApp.lastNodeClicked]
             self.modApp.pos[self.modApp.lastNodeClicked] = (event.xdata, event.ydata)
@@ -178,7 +241,7 @@ class RFGraph_Controller:
             #print('process'+str(random.random()))
             QCoreApplication.processEvents()
 
-        self.onMoveMutex.release()
+        #self.onMoveMutex.release()
 
 
     def p(self,s):
@@ -403,7 +466,7 @@ class RFGraph_Controller:
             self.modApp.old_color = self.modApp.nodeColor[(self.modApp.dataset.varnames.tolist()).index(new_node)]
             self.modApp.nodeColor[(self.modApp.dataset.varnames.tolist()).index(new_node)] = (1.0, 0, 0)
 
-        self.vwApp.networkGUI.network.updateNodes()
+        #self.vwApp.networkGUI.network.updateNodes()
 
     def fileQuit(self):
         self.vwApp.close()

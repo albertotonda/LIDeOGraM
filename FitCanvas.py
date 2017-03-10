@@ -77,7 +77,7 @@ class FitCanvas(FigureCanvas):
         #num_exp=range(len(currdataset[2:,currdataset[0,:]==self.modApp.lastNodeClicked].astype('float64').flatten()))
         num_exp = range(self.modApp.dataset.nbExp)
 
-        if self.modApp.showGlobalModel:
+        if self.modApp.globalModelView:
             ft = fitness.Individual(self.modApp)
             x = num_exp
             z = [ft.process(i,self.modApp.selectedEq)[self.modApp.lastNodeClicked] for i in x]
@@ -89,7 +89,7 @@ class FitCanvas(FigureCanvas):
         self.fig.clear()
         currax=self.fig.add_subplot(111)
         y = np.asarray(y)
-        if not self.modApp.showGlobalModel:
+        if not self.modApp.globalModelView:
             mx = np.maximum(val_node_exp.max(), np.float64(y.max()))
             mn = np.minimum(val_node_exp.min(), np.float64(y.min()))
             inter = (val_node_exp.max()- val_node_exp.min())*0.1
