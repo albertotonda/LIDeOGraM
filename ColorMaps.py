@@ -14,6 +14,8 @@ class colorm:
         self.globalm = fitnessCmap
         self.localm = fitnessCmap#plt.get_cmap("RdYlGn")
 
+        #self.selectionColor=(0.5,0.5,0.9)
+
 
     def multiply(self,cmap):
         f = list(map(lambda x : int(x*255), cmap))

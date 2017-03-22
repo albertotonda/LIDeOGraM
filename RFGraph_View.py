@@ -6,6 +6,7 @@ from EqTableCanvas import EqTableCanvas
 from IncMatrixCanvas import IncMatrixCanvas
 from FitCanvas import FitCanvas
 from OnOffCheckBox import *
+from PyQt4.Qt import QPoint
 
 
 
@@ -119,6 +120,27 @@ class RFGraph_View(QtGui.QMainWindow):
         self.show()
         self.updateView()
 
+    def updateRightClickMenu(self,cntrApp,event,nodeclicked):
+        rightclickMenu=QtGui.QMenu(self)
+        if(nodeclicked in self.modApp.forbiddenNodes):
+            restoreAction= QtGui.QAction("Restore " + nodeclicked,self)
+            restoreAction.triggered.connect(lambda: cntrApp.restoreNode(nodeclicked))
+            rightclickMenu.addAction(restoreAction)
+        else:
+            removeAction = QtGui.QAction("Remove " + nodeclicked,self)
+            removeAction.triggered.connect(lambda :cntrApp.removeNode(nodeclicked))
+            rightclickMenu.addAction(removeAction)
+        recomputeAction=QtGui.QAction("Recompute " + nodeclicked,self)
+        recomputeAction.triggered.connect(lambda: cntrApp.recomputeNode(nodeclicked))
+        rightclickMenu.addAction(recomputeAction)
+        rightclickMenu.addAction("Cancel")
+        #rightclickMenu.addAction("Restart "+ nodeclicked)
+
+        yPxlSizeFig=int((self.networkGUI.fig.get_size_inches()*self.networkGUI.fig.dpi)[1])
+        rightclickMenu.move(self.networkGUI.mapToGlobal(QPoint(event.x, yPxlSizeFig-event.y)))
+        rightclickMenu.show()
+        #self.gridLayout.addWidget(rightclickMenu,3,4,1,1)
+
     def updateMenuBar(self, cntrApp):
         exitAction = QtGui.QAction('&Exit', self)
         exitAction.setStatusTip('Exit application')
@@ -200,23 +222,32 @@ class RFGraph_View(QtGui.QMainWindow):
         constrainAction.triggered.connect(self.mapper.map)
         self.constrainMenu.addAction(constrainAction)
         self.modApp.scrolledList.append(name)
-        self.modApp.computeEdgeBold()
-        self.modApp.computeNxGraph()
-        self.networkGUI.network.axes.clear()
-        self.networkGUI.network.updateView()
+        #self.modApp.computeEdgeBold()
+        #self.modApp.computeNxGraph()
+        #self.networkGUI.network.axes.clear()
+        #self.networkGUI.network.updateView()
         #self.networkGUI.network.updateNodes()
         #self.networkGUI.network.updateLabels()
         #self.networkGUI.network.drawEdges()
-        self.updateView()
+        #self.updateView()
 
 
-    def removeConstrain(self,name):
-        print("Inside")
+    def removeConstrain(self,name,isRestoreByNode=False):
+        #print("Inside")
+        self.modApp.debugCmp+=1
+        print("Cmp:" + str(self.modApp.debugCmp))
+        print("removing : " + name)
+        b=len(self.constrainMenu.actions())
+        print("sizeActionB="+str(len(self.constrainMenu.actions())))
         self.constrainMenu.removeAction(self.mapper.mapping(name))
-        try:
-            self.cntrApp.clickReinstateLink(name)
-        except:
-            pass
+        self.mapper.removeMappings(self.mapper.mapping(name))
+        a=len(self.constrainMenu.actions())
+        print("sizeActionA=" + str(len(self.constrainMenu.actions())))
+        if(b==a):
+            a=''
+            print(a)
+        self.cntrApp.clickReinstateLink(name,isRestoreByNode)
+
         #try:
         #    self.modApp.scrolledList.remove(name)
         #except:

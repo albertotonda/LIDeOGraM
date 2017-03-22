@@ -291,6 +291,7 @@ def draw_networkx_nodes(G, pos,
                         vmax=None,
                         ax=None,
                         linewidths=None,
+                        linewidthsColors=None,
                         label=None,
                         **kwds):
     """Draw the nodes of the graph G.
@@ -397,6 +398,7 @@ def draw_networkx_nodes(G, pos,
                                  vmax=vmax,
                                  alpha=alpha,
                                  linewidths=linewidths,
+                                 edgecolors=linewidthsColors,
                                  label=label)
 
     node_collection.set_zorder(2)
@@ -497,6 +499,7 @@ def draw_networkx_edges(G, pos,
         import matplotlib.cbook as cb
         from matplotlib.colors import colorConverter, Colormap
         from matplotlib.collections import LineCollection
+        from MyLinecollections import LineCollection
         import numpy
     except ImportError:
         raise ImportError("Matplotlib required for draw()")
@@ -558,8 +561,15 @@ def draw_networkx_edges(G, pos,
     except:
         pass
     npEdge_colors = numpy.array(edge_colors)
-    edge_colors_norm=list(npEdge_colors[index_false])
-    edge_colors_bold=list(npEdge_colors[index_true])
+
+    edge_colors_norm=[]
+    for i in index_false:
+        edge_colors_norm.append(edge_color[i])
+    edge_colors_bold=[]
+    for i in index_true:
+        edge_colors_bold.append(edge_color[i])
+    #edge_colors_norm=list(npEdge_colors[index_false])
+    #edge_colors_bold=list(npEdge_colors[index_true])
     edge_collection = LineCollection(edge_pos_norm,
                                      colors=edge_colors_norm,
                                      linewidths=lw,

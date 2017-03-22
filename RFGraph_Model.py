@@ -134,6 +134,11 @@ class RFGraph_Model:
         self.fitCmplxlPos = {}
         self.rmByRmEq = []
         self.rmByRmEdge = []
+        self.rmByRmNode = []
+        self.invisibleTup = []
+        self.forbiddenNodes = []
+        self.degubCmp=0
+
         #Necessaire de faire une deepcopy ?
         #self.lpos= copy.deepcopy(self.pos)
         #for p in self.lpos:  # raise text positions
@@ -421,21 +426,21 @@ class RFGraph_Model:
             #if(self.dataset.varnames[i])
             #self.
             if(self.dataset.variablesClass[self.dataset.varnames[i]]== 'Molss' or self.dataset.variablesClass[self.dataset.varnames[i]]== 'Molsur'):
-                self.nodeColor.append((0.5, 0, 0.5))
+                self.nodeColor.append((0.5, 0.5, 0.9))
             if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'condition'):
-                self.nodeColor.append((0.5, 0.5, 0))
+                self.nodeColor.append((0.9, 0.55, 0.55))
             if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'Cell'):#CellAniso
-                self.nodeColor.append((0, 0.5, 0.5))
+                self.nodeColor.append((0.3, 0.9, 0.9))
             if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'CellAniso'):
-                self.nodeColor.append((0.5, 0.7, 0.2))
+                self.nodeColor.append((0.7, 0.7, 0.5))
             if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopCentri'):
-                self.nodeColor.append((1, 1, 0))
+                self.nodeColor.append((0.8, 0.8, 0.2))
             if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopLyo'):
-                self.nodeColor.append((1, 1, 0))
+                self.nodeColor.append((0.8, 0.8, 0.2))
             if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopCong'):
-                self.nodeColor.append((1, 1, 0))
+                self.nodeColor.append((0.8, 0.8, 0.2))
             if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopSto3'):
-                self.nodeColor.append((1, 1, 0))
+                self.nodeColor.append((0.8, 0.8, 0.2))
         self.computeInitialPos()
         self.computeFitandCmplxEdgeColor()
         self.computeComprEdgeColor()
@@ -524,6 +529,7 @@ class RFGraph_Model:
 
 
     def removeForbiddenEdges(self):
+        self.forbiddenEdges = []
         for i in range(len(self.pareto)):  # i is child
             for j in range(len(self.pareto[i])):  # j is parent
                 lIdxColPareto = self.pareto[i][j]
@@ -537,12 +543,15 @@ class RFGraph_Model:
                             index = self.edgelist_inOrder.index((self.dataset.varnames[i], self.dataset.varnames[j]))
                         except:
                             index = self.edgelist_inOrder.index((self.dataset.varnames[j], self.dataset.varnames[i]))
-                        self.edgelist_inOrder.pop(index)
-                        self.edgeBold.pop(index)
-                        self.edgeColor.pop(index)
+                        if(not self.edgelist_inOrder[index] in self.forbidden_edge):
+                            self.forbidden_edge.append(self.edgelist_inOrder[index])
+                        #self.edgelist_inOrder.pop(index)
+                        #self.edgeBold.pop(index)
+                        #self.edgeColor.pop(index)
 
 
     def removeInvisibleEdges(self):
+        self.invisibleTup = []
 
         self.edgeBoldDict=copy.deepcopy(self.edgeBoldfull)
         if (self.ColorMode == 'Compr'):
@@ -559,14 +568,15 @@ class RFGraph_Model:
                     r = self.adj_simple[i, j] / self.nbeq[i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
                     if (r <= self.adjThresholdVal):
                         tup = (self.dataset.varnames[j], self.dataset.varnames[i])
-                        try:
-                            del (self.edgeBoldDict[tup])
-                        except:
-                            pass
-                        try:
-                            del (self.edgeColorfull[tup])
-                        except:
-                            pass
+                        self.invisibleTup.append(tup)
+                        #try:
+                        #    del (self.edgeBoldDict[tup])
+                        #except:
+                        #    pass
+                        #try:
+                        #    del (self.edgeColorfull[tup])
+                        #except:
+                        #    pass
 
         self.edgeColor = self.colorDictToConstraintedcolorList(self.edgeColorfull,self.edgelist_inOrder)
         self.edgeBold = self.colorDictToConstraintedcolorList(self.edgeBoldDict,self.edgelist_inOrder)
@@ -586,12 +596,12 @@ class RFGraph_Model:
 
                     #if self.nbeq[i] == np.float64(0.0): continue
                     r = self.adj_simple[i, j] / self.nbeq[i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
-                    if (r > self.adjThresholdVal):
-                        self.G.add_edge(self.dataset.varnames[j], self.dataset.varnames[i],
-                                               adjsimple=self.adj_simple[i, j], adjfit=
-                                               self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
-                                               adjcontr=self.adj_contr[i, j])
-                        self.edgelist_inOrder.append((self.dataset.varnames[j], self.dataset.varnames[i]))
+                    #if (r > self.adjThresholdVal):
+                    self.G.add_edge(self.dataset.varnames[j], self.dataset.varnames[i],
+                                           adjsimple=self.adj_simple[i, j], adjfit=
+                                           self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
+                                           adjcontr=self.adj_contr[i, j])
+                    self.edgelist_inOrder.append((self.dataset.varnames[j], self.dataset.varnames[i]))
 
         self.computeEdgeBold()
         self.removeInvisibleEdges()
@@ -671,9 +681,9 @@ class RFGraph_Model:
                         #cb = 0
 
                     if (self.transparentEdges):
-                        self.edgeColorCompr[(self.dataset.varnames[j], self.dataset.varnames[i])]=(cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r))
+                        self.edgeColorCompr[(self.dataset.varnames[j], self.dataset.varnames[i])]=[cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r)]
                     else:
-                        self.edgeColorCompr[(self.dataset.varnames[j], self.dataset.varnames[i])]=(cr, cg, cb)
+                        self.edgeColorCompr[(self.dataset.varnames[j], self.dataset.varnames[i])]=[cr, cg, cb]
 
     def computeFitandCmplxEdgeColor(self):
         self.edgeColorFit = {}
@@ -694,20 +704,24 @@ class RFGraph_Model:
                     cg = np.minimum((1 - self.adj_fit[i, j]) * 2, 1)
                     cb = 0
                     if (self.transparentEdges):
-                        self.edgeColorFit[(self.dataset.varnames[j], self.dataset.varnames[i])]=(cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r))
+                        self.edgeColorFit[(self.dataset.varnames[j], self.dataset.varnames[i])]=[cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r),1]
                     else:
                         cmap = self.colors.get("local",self.adj_fit[i, j])
                         #color = QColor.fromRgb(*cmap)
-                        self.edgeColorFit[(self.dataset.varnames[j], self.dataset.varnames[i])]= tuple(np.array(cmap)/255)  #(cr, cg, cb)
+                        lcmap=list(np.array(cmap)/255)
+                        lcmap.extend([1.0])
+                        self.edgeColorFit[(self.dataset.varnames[j], self.dataset.varnames[i])]= lcmap  #(cr, cg, cb)
                     cr = np.minimum((self.adj_cmplx[i, j] / self.adj_cmplx_max) * 2, 1)
                     cg = np.minimum((1 - (self.adj_cmplx[i, j] / self.adj_cmplx_max)) * 2, 1)
                     cb = 0
                     if (self.transparentEdges):
-                        self.edgeColorCmplx[(self.dataset.varnames[j], self.dataset.varnames[i])]=(cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r))
+                        self.edgeColorCmplx[(self.dataset.varnames[j], self.dataset.varnames[i])]=[cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r),1]
                     else:
                         cmap = self.colors.get("complexity", self.adj_cmplx[i, j]/self.cmplxMax)
                         #color = QColor.fromRgb(*cmap)
-                        self.edgeColorCmplx[(self.dataset.varnames[j], self.dataset.varnames[i])]=tuple(np.array(cmap)/255)
+                        lcmap = list(np.array(cmap) / 255)
+                        lcmap.extend([1.0])
+                        self.edgeColorCmplx[(self.dataset.varnames[j], self.dataset.varnames[i])]=lcmap
 
     def computeInitialPos(self):
         G=nx.DiGraph()
@@ -824,7 +838,7 @@ class RFGraph_Model:
             cr = np.maximum(np.minimum(err_coef * 2, 1),0)
             cg = np.maximum(np.minimum((1 - err_coef) * 2, 1),0)
             cb = 0
-            self.global_Edge_Color.append((cr,cg,cb))
+            self.global_Edge_Color.append([cr,cg,cb,1.0])
         pass
 
         maxcmplx=max(list(res[3].values()))

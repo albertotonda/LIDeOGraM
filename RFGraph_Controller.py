@@ -102,7 +102,7 @@ class RFGraph_Controller:
     def onPick(self,event):
         pass
 
-    def onHover(self,dstMin):
+    def onHover(self,dstMin,movingOrClikingNode):
 
         if(dstMin==''):
             if (self.modApp.lastHover != ''):
@@ -111,21 +111,22 @@ class RFGraph_Controller:
             return
 
 
+        if(not self.modApp.lastHover==dstMin or movingOrClikingNode):
 
-        self.vwApp.networkGUI.network.updateView(dstMin)
-        self.modApp.lastHover=dstMin
+            self.vwApp.networkGUI.network.updateView(dstMin)
+            self.modApp.lastHover=dstMin
         #print('hover: '+dstMin[1])
 
     def onMove3(self,event):
         if(not self.onMoveMutex.acquire(False)):
-            print('already computing,return : ' + str(event))
+             #print('already computing,return : ' + str(event))
             self.lastEvent=event
             return
-        print('computing' + str(event))
+        #print('computing' + str(event))
         self.onMove(event)
-        print('computing finished :' + str(event))
+        #print('computing finished :' + str(event))
         if(self.lastEvent != None):
-            print('computing last : ' + str(self.lastEvent))
+            #print('computing last : ' + str(self.lastEvent))
             self.onMove(self.lastEvent)
             self.lastEvent=None
         self.onMoveMutex.release()
@@ -173,15 +174,6 @@ class RFGraph_Controller:
 
     def onMove(self,event):
         #print(event)
-
-        #if (event.button == None):
-
-        #    return
-
-
-
-
-
 
         (x, y) = (event.xdata, event.ydata)
         if not x or not y:
@@ -232,12 +224,12 @@ class RFGraph_Controller:
             #     self.vwApp.networkGUI.network.updateLabels()
             #     self.vwApp.networkGUI.network.drawEdges()
             #     self.vwApp.networkGUI.fig.canvas.draw()
-            self.onHover(self.modApp.lastNodeClicked)
+            self.onHover(self.modApp.lastNodeClicked,True)
             #print('process' + str(random.random()))
             QCoreApplication.processEvents()
 
         else:
-            self.onHover(dstMin[1])
+            self.onHover(dstMin[1],False)
             #print('process'+str(random.random()))
             QCoreApplication.processEvents()
 
@@ -257,26 +249,30 @@ class RFGraph_Controller:
         if  x == None or y == None :
             return
 
+        updateFitGUI=False
+        updateEqTable=False
 
         dst = [(pow(x - self.modApp.pos[node][0], 2) + pow(y - self.modApp.pos[node][1], 2), node) for node in #compute the distance to each node
                self.modApp.pos]
 
-        if len(list(filter(lambda x: x[0] < self.modApp.radius, dst))) == 0: #If no node is close enougth, select no node update view and exit
-            self.higlight(None, self.p(self.modApp.lastNodeClicked))
+        if(len(list(filter(lambda x: x[0] < self.modApp.radius, dst))) == 0 and event.button==1): #If no node is close enougth, select no node update view and exit
+            #self.higlight(None, self.p(self.modApp.lastNodeClicked))
             self.modApp.lastNodeClicked=None
             self.modApp.computeEdgeBold()
             self.modApp.data=[]
             self.modApp.clicked_line = -1
-            self.vwApp.eqTableGUI.updateView() #Clean the equation table
-            self.vwApp.fitGUI.updateView()      # and the measured/predicted plot
+            updateFitGUI=True#Clean the equation table and the measured/predicted plot
+            updateEqTable=True
+            #self.vwApp.eqTableGUI.updateView()
+            #self.vwApp.fitGUI.updateView()
             self.vwApp.clickedNodeLab.setText('Selected node: ' + self.p(self.modApp.lastNodeClicked))
 
         else:
             nodeclicked = min(dst, key=(lambda x: x[0]))[1] #Closest node
             self.vwApp.incMatGUI.mutipleHighlight(nodeclicked)
             self.vwApp.incMatGUI.highlight(-1)
-
-            self.higlight(nodeclicked, self.p(self.modApp.lastNodeClicked))
+            print("highlighting "+nodeclicked)
+            #self.higlight(nodeclicked, self.p(self.modApp.lastNodeClicked))
             self.modApp.lastNodeClicked = nodeclicked
 
             if (self.modApp.mode_cntrt == True):                    #Click action when we are deleting a link
@@ -292,7 +288,8 @@ class RFGraph_Controller:
                 for i in range(len(data_tmp)):
                     data.append(data_tmp[i])
                 self.modApp.data = data
-                self.vwApp.eqTableGUI.updateView()
+                updateEqTable=True
+                #self.vwApp.eqTableGUI.updateView()
 
             if (self.modApp.globalModelView):       #Simulate a click on the equation selected for a node when viewing a global model
                 class MyWidgetItem:
@@ -307,8 +304,12 @@ class RFGraph_Controller:
                 self.eqTableClicked(eqCellToClickWid)
             else:
                 self.modApp.clicked_line = -1
-                self.vwApp.fitGUI.updateView()
+                updateFitGUI=True
+                #self.vwApp.fitGUI.updateView()
             self.vwApp.clickedNodeLab.setText('Selected node: ' + self.p(self.modApp.lastNodeClicked))
+            if(event.button==3):
+                print("right click")
+                self.vwApp.updateRightClickMenu(self,event,nodeclicked)
 
         self.modApp.clicked_line = -1
 
@@ -316,14 +317,17 @@ class RFGraph_Controller:
             self.modApp.computeEdgeBold()
             self.modApp.computeNxGraph()
 
-        self.onHover(self.modApp.lastNodeClicked)
+        self.onHover(self.modApp.lastNodeClicked,True)
         #self.vwApp.networkGUI.network.updateView()
-        self.vwApp.networkGUI.fig.canvas.draw()
-
+        #self.vwApp.networkGUI.fig.canvas.draw()
 
         QCoreApplication.processEvents()
+        if(updateEqTable):
+            self.vwApp.eqTableGUI.updateView()
+        if(updateFitGUI):
+            self.vwApp.fitGUI.updateView()
 
-    def deleteLink(self,nodeclicked):
+    def deleteLink(self,nodeclicked,isRmNode=False):
         self.modApp.NodeConstraints.append(nodeclicked)
         self.atLeastOnce = []
         self.notEvenOnce = []
@@ -360,6 +364,8 @@ class RFGraph_Controller:
 
                     linesToRemove=list(compress(ix1[0].tolist(), rcontain.tolist()[0]))
                     self.modApp.rmByRmEdge.append(linesToRemove)
+                    if(isRmNode):
+                        self.modApp.rmByRmNode.append(linesToRemove)
                     self.modApp.equacolO[linesToRemove, 4] = False
 
 
@@ -377,29 +383,36 @@ class RFGraph_Controller:
             self.modApp.NodeConstraints = []
 
     # TODO Réintègre le lien sélectionné
-    def clickReinstateLink (self,name):
+    def clickReinstateLink(self,name,isRestoreByNode=False):
         #if self.vwApp.scrolledListBox.currentText() == "Select link to reinstate":
         #    return
         #else:
         idx=self.modApp.scrolledList.index(name)
+        v=name.split(' ')
+
+        self.modApp.forbidden_edge.remove((v[0],v[2]))
         self.modApp.scrolledList.pop(idx)
+
         linesToReinstate=self.modApp.rmByRmEdge.pop(idx - 1)
+        if(isRestoreByNode):
+            self.modApp.rmByRmNode.remove(linesToReinstate)
         flist = [item for sublist in self.modApp.rmByRmEdge for item in sublist]
         linesToReinstate=[av for av in linesToReinstate if not av in flist]
         linesToReinstate = [av for av in linesToReinstate if not av in self.modApp.rmByRmEq]
         self.modApp.equacolO[linesToReinstate, 4] = True
         self.modApp.data= self.modApp.equacolO[np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked], [0, 1, 3, 4])]
 
-        self.vwApp.eqTableGUI.updateView()
-        #self.vwApp.scrolledListBox.clear()
-        #for item in self.modApp.scrolledList:
-        #    self.vwApp.scrolledListBox.addItem(item)
-        self.modApp.computeEdgeBold()
-        self.modApp.computeNxGraph()
-        self.vwApp.networkGUI.network.updateView()
-        self.vwApp.networkGUI.fig.canvas.draw()
+        if(not isRestoreByNode):
+            self.vwApp.eqTableGUI.updateView()
+            #self.vwApp.scrolledListBox.clear()
+            #for item in self.modApp.scrolledList:
+            #    self.vwApp.scrolledListBox.addItem(item)
+            self.modApp.computeEdgeBold()
+            self.modApp.computeNxGraph()
+            self.vwApp.networkGUI.network.updateView()
+            self.vwApp.networkGUI.fig.canvas.draw()
 
-        QCoreApplication.processEvents()
+            QCoreApplication.processEvents()
 
     # TODO Change la couleur et la densité des "edges" en fonction du déplacement des sliders
     def SliderMoved(self, value):
@@ -488,3 +501,43 @@ class RFGraph_Controller:
 
         self.vwApp.eqTableGUI.updateView()
 
+    def removeNode(self,nodeToRemove):
+        for i, o in self.modApp.edgelist_inOrder:
+            if( (i == nodeToRemove or o == nodeToRemove) and not (i,o) in self.modApp.forbidden_edge ):
+                self.deleteLink(i,True)
+                self.deleteLink(o,True)
+        self.modApp.forbiddenNodes.append(nodeToRemove)
+        ix = np.ix_(self.modApp.equacolO[:, 2] == nodeToRemove)
+        linesToRemove = [ixe for ixe in ix[0] if not ixe in [le for l in self.modApp.rmByRmEdge for le in l]] #Remove the constant equations
+        self.modApp.rmByRmNode.append(linesToRemove)
+        self.modApp.equacolO[linesToRemove, 4] = False
+
+        self.vwApp.eqTableGUI.updateView()
+        self.modApp.computeNxGraph()
+        self.vwApp.networkGUI.network.updateView()
+        self.vwApp.networkGUI.fig.canvas.draw()
+
+    def restoreNode(self,nodeToRestore):
+        self.modApp.debugCmp=0
+        ix = np.ix_(self.modApp.equacolO[:, 2] == nodeToRestore)
+        linesToRestore=[ixe for ixe in ix[0] if not ixe in [le for l in self.modApp.rmByRmEdge for le in l]]
+        self.modApp.rmByRmNode.remove(linesToRestore)
+        self.modApp.equacolO[linesToRestore, 4] = True
+
+        for i, o in self.modApp.edgelist_inOrder:
+            if (i == nodeToRestore  and (i,o) in self.modApp.forbidden_edge and not o in self.modApp.forbiddenNodes):
+                name = i + ' - ' + o
+                self.vwApp.removeConstrain(name,True)
+            elif( o == nodeToRestore and (i,o) in self.modApp.forbidden_edge and not i in self.modApp.forbiddenNodes):
+                name = i + ' - ' + o
+                self.vwApp.removeConstrain(name, True)
+
+        self.modApp.forbiddenNodes.remove(nodeToRestore)
+        self.vwApp.eqTableGUI.updateView()
+        self.modApp.computeNxGraph()
+        self.vwApp.networkGUI.network.updateView()
+        self.vwApp.networkGUI.fig.canvas.draw()
+
+        QCoreApplication.processEvents()
+    def recomputeNode(self,nodeToCompute):
+        print("ToDo : recomputing " + nodeToCompute)
