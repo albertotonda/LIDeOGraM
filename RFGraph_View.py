@@ -262,7 +262,13 @@ class RFGraph_View(QtGui.QMainWindow):
         #self.updateView()
         #remove de la liste aussi peu être histoire que ça soit pas trop inutile.
 
-
+    def noEquationError(self):
+        msg=QtGui.QMessageBox()
+        s="Impossible to start the optimisation while the following node have no candidate equations.\nRemove the nodes from the model or restart a local optimisation on them :\n"
+        for v in self.modApp.nodesWithNoEquations:
+            s+="\t" + v + "\n"
+        msg.setText(s)
+        msg.exec()
     def updateView(self):
         if(self.modApp.globalModelView==True):
             pass

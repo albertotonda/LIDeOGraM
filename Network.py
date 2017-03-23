@@ -27,10 +27,25 @@ class Network:
         blackLabPos={}
         greyColor=[0.85,0.85,0.85,1.0]
         greyNode=(0.8, 0.8, 0.8)
+        redNode=(0.9,0,0)
+        redLab = {}
+        redLabPos = {}
         lineWidthsNode=[]
         linewidthsColors=[]
         #sizeNode=[1] * len(self.modApp.dataset.varnames)
         #parOffNodes=[]
+
+        for v in self.modApp.dataset.varnames.tolist():
+                if (v == self.modApp.lastNodeClicked):
+                    lineWidthsNode.append(5.0)
+                    linewidthsColors.append((0,0,0))
+                else:
+                    lineWidthsNode.append(0.0)
+                    linewidthsColors.append((0,0,0))
+
+                if (v in self.modApp.nodesWithNoEquations):
+                    hNodeColor[self.modApp.dataset.varnames.tolist().index(v)] = redNode
+
         if (hover != None):
             hBold = [True] * len(hEdge)
             for i in range(len(self.modApp.edgelist_inOrder)):
@@ -45,17 +60,27 @@ class Network:
             #hBold = list(filter(lambda x: x != -1, hBold))
 
             for v in self.modApp.dataset.varnames.tolist():
-                if(not (hover,v) in self.modApp.edgelist_inOrder and not (v,hover) in self.modApp.edgelist_inOrder and hover != v and v != self.modApp.lastNodeClicked):
+
+                if(not (hover,v) in self.modApp.edgelist_inOrder and not (v,hover) in self.modApp.edgelist_inOrder and hover != v and v != self.modApp.lastNodeClicked and not v in self.modApp.nodesWithNoEquations):
                     hNodeColor[self.modApp.dataset.varnames.tolist().index(v)] = greyNode
                     greyLab[v]=v
                     greyLabPos[v]=self.modApp.lpos[v]
-                else:
+                elif(not v in self.modApp.nodesWithNoEquations):
                     blackLab[v]=v
                     blackLabPos[v]=self.modApp.lpos[v]
+                else:
+                    redLab[v] = v
+                    redLabPos[v] = self.modApp.lpos[v]
+
 
         else:
             blackLab=self.modApp.labels.copy()
             blackLabPos=self.modApp.lpos.copy()
+            for v in self.modApp.nodesWithNoEquations:
+                del blackLab[v]
+                del blackLabPos[v]
+                redLab[v] = v
+                redLabPos[v] = self.modApp.lpos[v]
 
         for i in range(len(self.modApp.edgelist_inOrder)):
             if(self.modApp.edgelist_inOrder[i] in self.modApp.invisibleTup or self.modApp.edgelist_inOrder[i] in self.modApp.forbidden_edge):
@@ -73,13 +98,7 @@ class Network:
             except:
                 pass  #Not a test ! Do not remove the try except pass !
 
-        for v in self.modApp.dataset.varnames.tolist():
-                if (v == self.modApp.lastNodeClicked):
-                    lineWidthsNode.append(5.0)
-                    linewidthsColors.append((0,0,0))
-                else:
-                    lineWidthsNode.append(0.0)
-                    linewidthsColors.append((0,0,0))
+
 
 
             #for (x, y) in hEdge:
@@ -102,6 +121,8 @@ class Network:
         #if (hover != None):
         nxa.draw_networkx_labels_angle(self.modApp.G, greyLabPos, greyLab, ax=self.axes, font_color=greyNode,
                                            rotate=45)
+        nxa.draw_networkx_labels_angle(self.modApp.G, redLabPos, redLab, ax=self.axes, font_color=redNode,
+                                       rotate=45)
         nxa.draw_networkx_labels_angle(self.modApp.G, blackLabPos, blackLab, ax=self.axes, rotate=45)
         #else:
         #    nxa.draw_networkx_labels_angle(self.modApp.G, self.modApp.lpos, self.modApp.labels, ax=self.axes, rotate=45)

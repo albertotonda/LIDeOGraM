@@ -9,6 +9,7 @@ from OptimModGlobal import OptimModGlobal
 import threading
 import re
 from itertools import compress
+
 import random
 from OnOffCheckBox import *
 
@@ -64,15 +65,18 @@ class RFGraph_Controller:
     # TODO
     def clickOptmuGP(self):
         #self.modApp.opt_params = OptimisationCanvas.get_params()
-        optModGlob = OptimModGlobal(self.modApp)
-        self.modApp.best_indv=optModGlob.startOptim()
-        self.modApp.globalModelView=True
-        self.modApp.bestindvToSelectedEq()
-        self.modApp.computeGlobalView()
-        self.vwApp.incMatGUI.highlight(-1)
-        self.vwApp.incMatGUI.mutipleHighlight(-1)
-        self.vwApp.updateView()
-        self.vwApp.showAction.setChecked(True)
+        if(len(self.modApp.nodesWithNoEquations)>0):
+            self.vwApp.noEquationError()
+        else:
+            optModGlob = OptimModGlobal(self.modApp)
+            self.modApp.best_indv=optModGlob.startOptim()
+            self.modApp.globalModelView=True
+            self.modApp.bestindvToSelectedEq()
+            self.modApp.computeGlobalView()
+            self.vwApp.incMatGUI.highlight(-1)
+            self.vwApp.incMatGUI.mutipleHighlight(-1)
+            self.vwApp.updateView()
+            self.vwApp.showAction.setChecked(True)
 
     # TODO
     def clickHideModGlobal(self):
@@ -449,6 +453,7 @@ class RFGraph_Controller:
             def __init__(self,xdata,ydata):
                 self.xdata=xdata
                 self.ydata=ydata
+                self.button=None
         ev=MyEvent(*posNode)
         self.onClick(ev)
         eqCellToClick = -1

@@ -137,7 +137,7 @@ class RFGraph_Model:
         self.rmByRmNode = []
         self.invisibleTup = []
         self.forbiddenNodes = []
-        self.degubCmp=0
+        self.nodesWithNoEquations=[]
 
         #Necessaire de faire une deepcopy ?
         #self.lpos= copy.deepcopy(self.pos)
@@ -587,6 +587,8 @@ class RFGraph_Model:
         for v in self.dataset.varnames:
             self.G.add_node(v)
 
+        self.nodesWithNoEquations=[]
+
         self.edgelist_inOrder = []
 
         for i in range(len(self.pareto)):#i is child
@@ -602,6 +604,12 @@ class RFGraph_Model:
                                            self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
                                            adjcontr=self.adj_contr[i, j])
                     self.edgelist_inOrder.append((self.dataset.varnames[j], self.dataset.varnames[i]))
+
+        for v in self.dataset.varnames.tolist():
+            if not v in self.varsIn:
+                ix = np.ix_(self.equacolO[:, 2] == v)
+                if(not True in self.equacolO[ix[0], 4] and not v in self.forbiddenNodes):
+                    self.nodesWithNoEquations.append(v)
 
         self.computeEdgeBold()
         self.removeInvisibleEdges()
