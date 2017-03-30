@@ -6,6 +6,7 @@ from PyQt4 import QtGui
 import networkx as nx
 import nx_pylab_angle as nxa
 from PyQt4.QtCore import QCoreApplication
+import threading
 
 
 class CanvGraph(QCanvas):
@@ -23,7 +24,21 @@ class CanvGraph(QCanvas):
             self.notifyAll()
 
         elif event.button != 3:
+            if self.nodeSelected is not None:
+                self.nodeSelected.lineWidth = 1
             self.notifyAll(min(dst, key=(lambda x: x[0]))[1])#Send to observers the node clicked
+
+    def prepareDrag(self, event):
+        self.lastEvent = event
+        if not self.onMoveMutex.acquire(False):
+            return
+        self.drag(event)
+
+        while self.lastEvent != event:
+            event = self.lastEvent
+            # print('computing last : ' + str(self.lastEvent))
+            self.drag(event)
+        self.onMoveMutex.release()
 
     def drag(self, event):
         (x, y) = (event.xdata, event.ydata)
@@ -39,6 +54,7 @@ class CanvGraph(QCanvas):
             QCoreApplication.processEvents()
 
     def __init__(self, graph: nx.DiGraph):
+        self.onMoveMutex = threading.Lock()
         self.observers = []
         fig, axes = plt.subplots()
 
@@ -63,7 +79,7 @@ class CanvGraph(QCanvas):
 
         pos = 0
         for node in graph.nodes():
-            node.pos = (random.random(), pos/len(graph.nodes()))
+            node.pos = (random.random(), pos)#/len(graph.nodes()))
             pos += 1
 
         self.mpl_connect('button_press_event', self.clicked)
@@ -75,7 +91,7 @@ class CanvGraph(QCanvas):
         self.nodeSelected = nodeSelected
         graph = self.graph
         axes = self.axes
-        axes.clear()
+
         label = {}
         eBold = []
         eColor = []
@@ -83,16 +99,14 @@ class CanvGraph(QCanvas):
         lineWidths = []
         nodesPos = dict()
         self.nodesPos=nodesPos
-        for node in graph.nodes():
-            labels[node] = "  " + str(node);
 
         for edge in graph.edges():
             eBold.append(False)
             eColor.append((0, 0, 0))
         for node in self.graph.nodes():
-            label[node] = node
-            lineWidths.append(1 if node != nodeSelected else 5)
-            nodesPos[node]=node.pos
+            labels[node] = "  " + str(node);
+            lineWidths.append(node.lineWidth)
+            nodesPos[node] = node.pos
 
 
         nxa.draw_networkx_nodes(graph, nodesPos,
