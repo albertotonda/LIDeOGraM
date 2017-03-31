@@ -26,6 +26,9 @@ class Window(QtGui.QMainWindow):
         self.canv.addObserver(self)
         self.frame = FramAction(dictNode)
 
+        self.frame.button1.addObserver(self)
+        self.frame.button2.addObserver(self)
+
         self.gridLayout.setSpacing(5)
         self.canv.setMinimumSize(200, 200)
 
@@ -34,7 +37,11 @@ class Window(QtGui.QMainWindow):
 
         QtGui.QMainWindow.show(self)
 
-    def notify(self, selectedNode=None):
+    def notify(self, selectedNode=None, keepSelected = False):
+        if keepSelected:
+            selectedNode = self.selectedNode
+        else:
+            self.selectedNode = selectedNode
         self.canv.paint(selectedNode)
         self.frame.setListsValues(self.dictNode, selectedNode)
         QCoreApplication.processEvents()

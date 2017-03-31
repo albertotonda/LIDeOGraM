@@ -7,6 +7,7 @@ import networkx as nx
 import nx_pylab_angle as nxa
 from PyQt4.QtCore import QCoreApplication
 import threading
+import classes.ClassNode as ClassNode
 
 
 class CanvGraph(QCanvas):
@@ -20,12 +21,12 @@ class CanvGraph(QCanvas):
                # compute the distance to each node
                self.nodesPos.items()]
 
+        if self.nodeSelected is not None:
+            self.nodeSelected.lineWidth = 1
+
         if len(list(filter(lambda x: x[0] < 0.002, dst))) == 0 and event.button == 1:
             self.notifyAll()
-
         elif event.button != 3:
-            if self.nodeSelected is not None:
-                self.nodeSelected.lineWidth = 1
             self.notifyAll(min(dst, key=(lambda x: x[0]))[1])#Send to observers the node clicked
 
     def prepareDrag(self, event):
@@ -83,23 +84,23 @@ class CanvGraph(QCanvas):
             pos += 1
 
         self.mpl_connect('button_press_event', self.clicked)
-        self.mpl_connect('motion_notify_event', self.drag)
+        self.mpl_connect('motion_notify_event', self.prepareDrag)
 
         self.paint()
 
-    def paint(self, nodeSelected = None):
+    def paint(self, nodeSelected: ClassNode.ClassNode = None):
         self.nodeSelected = nodeSelected
+        if nodeSelected:
+            nodeSelected.lineWidth = 5
         graph = self.graph
         axes = self.axes
 
-        label = {}
         eBold = []
         eColor = []
         labels = {}
         lineWidths = []
         nodesPos = dict()
         self.nodesPos=nodesPos
-
         for edge in graph.edges():
             eBold.append(False)
             eColor.append((0, 0, 0))
