@@ -34,7 +34,7 @@ class Window(QtGui.QMainWindow):
 
         self.gridLayout.addWidget(self.canv, 0, 0, 1, 1)
         self.gridLayout.addWidget(self.frame, 0, 1, 1, 1)
-
+        self.event
         QtGui.QMainWindow.show(self)
 
     def notify(self, selectedNode=None, keepSelected = False):

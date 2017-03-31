@@ -1,5 +1,19 @@
+import random
+
+
 class ClassNode:
-    def __init__(self, name, nodeList: list, pos=(0, 0), color=(1, 1, 1), lineWidth=1):
+
+    @staticmethod
+    def nextColor():
+        if len(ClassNode.color) > 0:
+            return ClassNode.color.pop(0)
+        else:
+            r = random.random()
+            g = random.random()
+            b = random.random()
+            return tuple(r, g, b)
+
+    def __init__(self, name, nodeList: list, pos=(0, 0), color=ClassNode.nextColor(), lineWidth=1):
         self.color = color
         self.name = name
         self.nodeList = nodeList
@@ -8,3 +22,5 @@ class ClassNode:
 
     def __str__(self):
         return str(self.name)
+
+    color = [(0.8, 0.8, 0.2),(0.7, 0.7, 0.2),(0.6, 0.6, 0.2)]
