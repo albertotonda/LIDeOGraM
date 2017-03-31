@@ -42,6 +42,7 @@ class CanvGraph(QCanvas):
         self.onMoveMutex.release()
 
     def drag(self, event):
+        print(vars(event))
         (x, y) = (event.xdata, event.ydata)
         if not x or not y:
             return
@@ -66,8 +67,6 @@ class CanvGraph(QCanvas):
         axes.hold(False)
         fig.patch.set_visible(False)
 
-        plt.margins(0.01, 0.005, tight=True)
-
         QCanvas.__init__(self, fig)
 
         QCanvas.setSizePolicy(self, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
@@ -80,7 +79,7 @@ class CanvGraph(QCanvas):
 
         pos = 0
         for node in graph.nodes():
-            node.pos = (random.random(), pos)#/len(graph.nodes()))
+            node.pos = (random.random(), pos/len(graph.nodes()))
             pos += 1
 
         self.mpl_connect('button_press_event', self.clicked)
@@ -100,6 +99,7 @@ class CanvGraph(QCanvas):
         labels = {}
         lineWidths = []
         nodesPos = dict()
+        nodesColor = []
         self.nodesPos=nodesPos
         for edge in graph.edges():
             eBold.append(False)
@@ -108,10 +108,11 @@ class CanvGraph(QCanvas):
             labels[node] = "  " + str(node);
             lineWidths.append(node.lineWidth)
             nodesPos[node] = node.pos
+            nodesColor.append(node.color)
 
 
         nxa.draw_networkx_nodes(graph, nodesPos,
-                                node_color="White",
+                                node_color=nodesColor,
                                 linewidths=lineWidths,
                                 linewidthsColors=(0, 0, 0),
                                 ax=axes
@@ -129,6 +130,7 @@ class CanvGraph(QCanvas):
                                        ax=axes,
                                        rotate=45
                                        )
+
         self.draw()
 
     def addObserver(self, observer):

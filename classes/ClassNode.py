@@ -1,5 +1,5 @@
 class ClassNode:
-    def __init__(self, name, nodeList: list=[], pos=(0, 0), color="white", lineWidth=1):
+    def __init__(self, name, nodeList: list, pos=(0, 0), color=(1, 1, 1), lineWidth=1):
         self.color = color
         self.name = name
         self.nodeList = nodeList

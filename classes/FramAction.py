@@ -36,6 +36,8 @@ class FramAction(QtGui.QFrame):
                 item = QtGui.QListWidgetItem(node)
                 item.node = node
                 listBound.addItem(item)
+            print(selectedNode.nodeList)
+
             self.button1.setLists(listBound, listUnbound, selectedNode.nodeList, notSet)
             self.button2.setLists(listUnbound, listBound, notSet, selectedNode.nodeList)
         else:
