@@ -42,16 +42,18 @@ class CanvGraph(QCanvas):
         self.onMoveMutex.release()
 
     def drag(self, event):
-        print(vars(event))
+        #print(vars(event))
         (x, y) = (event.xdata, event.ydata)
         if not x or not y:
             return
         if (event.inaxes == None):
             return
+        #x = (0 if x < 0 else 1 if x > 1 else x)
+        #y = (0 if y < 0 else 1 if y > 1 else y)
 
         if (event.button == 1 and self.nodeSelected is not None):
 
-            self.nodeSelected.pos = (event.xdata, event.ydata)
+            self.nodeSelected.pos = (x, y)
             self.paint(self.nodeSelected)
             QCoreApplication.processEvents()
 
@@ -59,7 +61,7 @@ class CanvGraph(QCanvas):
         self.onMoveMutex = threading.Lock()
         self.observers = []
         fig, axes = plt.subplots()
-
+        self.fig=fig
         fig.frameon=False
         fig.tight_layout()
         fig.subplots_adjust(left=0.00001, bottom=0.00001, right=0.99999, top=0.99999)
@@ -77,10 +79,8 @@ class CanvGraph(QCanvas):
         self.graph = graph
         self.axes = axes
 
-        pos = 0
         for node in graph.nodes():
-            node.pos = (random.random(), pos/len(graph.nodes()))
-            pos += 1
+            node.pos = (random.random(), random.random())
 
         self.mpl_connect('button_press_event', self.clicked)
         self.mpl_connect('motion_notify_event', self.prepareDrag)
@@ -88,6 +88,7 @@ class CanvGraph(QCanvas):
         self.paint()
 
     def paint(self, nodeSelected: ClassNode.ClassNode = None):
+        self.fig.subplots_adjust(left=0.00001, bottom=0.00001, right=0.99999, top=0.99999)
         self.nodeSelected = nodeSelected
         if nodeSelected:
             nodeSelected.lineWidth = 5

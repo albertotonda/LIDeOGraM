@@ -11,7 +11,7 @@ from PyQt4 import QtGui
 
 modApp=ClassesModel()
 qApp = QtGui.QApplication(sys.argv)
-vwApp = Window(modApp.G, ["x", "y", "z"])
+vwApp = Window(modApp.graph, [])
 cntrApp=RFGraph_Controller(modApp,vwApp)
 vwApp.cntrApp=cntrApp
 #vwApp.eqTableGUI.cntrApp=cntrApp

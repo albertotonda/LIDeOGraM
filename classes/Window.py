@@ -3,6 +3,8 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import QCoreApplication
 from classes.CanvGraph import CanvGraph
 from classes.FramAction import FramAction
+from classes.MenuBar import MenuBar
+
 import matplotlib.pyplot as plt
 import copy
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as QCanvas
@@ -34,7 +36,11 @@ class Window(QtGui.QMainWindow):
 
         self.gridLayout.addWidget(self.canv, 0, 0, 1, 1)
         self.gridLayout.addWidget(self.frame, 0, 1, 1, 1)
-        self.event
+
+        menu = MenuBar(self)
+
+
+
         QtGui.QMainWindow.show(self)
 
     def notify(self, selectedNode=None, keepSelected = False):
@@ -45,3 +51,4 @@ class Window(QtGui.QMainWindow):
         self.canv.paint(selectedNode)
         self.frame.setListsValues(self.dictNode, selectedNode)
         QCoreApplication.processEvents()
+
