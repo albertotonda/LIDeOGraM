@@ -9,9 +9,9 @@ from OptimModGlobal import OptimModGlobal
 import threading
 import re
 from itertools import compress
-
 import random
 from OnOffCheckBox import *
+import logging
 
 class RFGraph_Controller:
     def __init__(self,modApp,vwApp):
@@ -27,44 +27,43 @@ class RFGraph_Controller:
 
     def clickHelp(self):
         self.modApp.help_params = Help.get_params()
+        logging.info('clicked help')
 
     # TODO
     def clickFitness(self):
-        print("clic fitness")
         self.modApp.ColorMode='Fit'
         self.modApp.computeNxGraph()
+        self.vwApp.networkGUI.network.drawEdges()
         self.vwApp.networkGUI.network.updateView()
         #self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
         #self.vwApp.buttonFitness.setStyleSheet("background-color: grey")
         #self.vwApp.buttonComplexite.setStyleSheet("background-color: None")
         self.vwApp.networkGUI.fig.canvas.draw()
         QCoreApplication.processEvents()
+        logging.info('clicked fitness')
+
     # TODO
     def clickCompromis(self):
-        print("clic Compr")
         self.modApp.ColorMode='Compr'
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.updateView()
-        #self.vwApp.buttonCompromis.setStyleSheet("background-color: grey")
-        #self.vwApp.buttonFitness.setStyleSheet("background-color: None")
-        #self.vwApp.buttonComplexite.setStyleSheet("background-color: None")
         self.vwApp.networkGUI.fig.canvas.draw()
         QCoreApplication.processEvents()
+        logging.info('clicked compromis')
+
 
     # TODO
     def clickCmplx(self):
-        print("clic Complx")
         self.modApp.ColorMode='Cmplx'
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.updateView()
-        #self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
-        #self.vwApp.buttonFitness.setStyleSheet("background-color: None")
-        #self.vwApp.buttonComplexite.setStyleSheet("background-color: grey")
         self.vwApp.networkGUI.fig.canvas.draw()
         QCoreApplication.processEvents()
+        logging.info('clicked complexity')
+
     # TODO
     def clickOptmuGP(self):
-        #self.modApp.opt_params = OptimisationCanvas.get_params()
+        logging.info('Global optimisation started')
         if(len(self.modApp.nodesWithNoEquations)>0):
             self.vwApp.noEquationError()
         else:
@@ -77,9 +76,11 @@ class RFGraph_Controller:
             self.vwApp.incMatGUI.mutipleHighlight(-1)
             self.vwApp.updateView()
             self.vwApp.showAction.setChecked(True)
+        logging.info('Global optimisation ended')
 
     # TODO
     def clickHideModGlobal(self):
+        logging.info('Hide global model')
         self.modApp.showGlobalModel = False
         self.vwApp.cmAction.setEnabled(True)
         self.modApp.computeNxGraph()
@@ -89,6 +90,7 @@ class RFGraph_Controller:
 
     # TODO Affiche le modèle d'équation global
     def clickShowModGlobal(self):
+        logging.info('Show global model')
         self.modApp.globalModelView = True
         self.vwApp.cmAction.setDisabled(True)
         self.modApp.computeGlobalView()
@@ -100,7 +102,7 @@ class RFGraph_Controller:
         self.vwApp.selectContrTxtLab.setText("Select the starting node")
 
     def clickChangeEq(self):
-        print("clickChangeEq")
+        logging.info('Tried to change equation')
         self.modApp.mode_changeEq=True
 
     def onPick(self,event):
@@ -193,6 +195,7 @@ class RFGraph_Controller:
 
         else:
             dstMin = ('','')
+        logging.info('Hovered {}'.format(dstMin[1]))
 
 
         if(event.button==None and self.modApp.lastHover == dstMin[1] ):
@@ -237,7 +240,6 @@ class RFGraph_Controller:
             #print('process'+str(random.random()))
             QCoreApplication.processEvents()
 
-        #self.onMoveMutex.release()
 
 
     def p(self,s):
@@ -248,7 +250,6 @@ class RFGraph_Controller:
 
     def onClick(self, event):
         # TODO  affichage du nom du noeud selectionné + changer couleur
-        #print("clicked")
         (x, y) = (event.xdata, event.ydata)
         if  x == None or y == None :
             return
@@ -275,8 +276,7 @@ class RFGraph_Controller:
             nodeclicked = min(dst, key=(lambda x: x[0]))[1] #Closest node
             self.vwApp.incMatGUI.mutipleHighlight(nodeclicked)
             self.vwApp.incMatGUI.highlight(-1)
-            print("highlighting "+nodeclicked)
-            #self.higlight(nodeclicked, self.p(self.modApp.lastNodeClicked))
+            logging.info('Moving a node')            #self.higlight(nodeclicked, self.p(self.modApp.lastNodeClicked))
             self.modApp.lastNodeClicked = nodeclicked
 
             if (self.modApp.mode_cntrt == True):                    #Click action when we are deleting a link
@@ -313,6 +313,7 @@ class RFGraph_Controller:
             self.vwApp.clickedNodeLab.setText('Selected node: ' + self.p(self.modApp.lastNodeClicked))
             if(event.button==3):
                 print("right click")
+                logging.info("Right click", nodeclicked)
                 self.vwApp.updateRightClickMenu(self,event,nodeclicked)
 
         self.modApp.clicked_line = -1
@@ -347,19 +348,12 @@ class RFGraph_Controller:
                 if self.modApp.NodeConstraints[1] in self.notEvenOnce \
                         and (self.modApp.NodeConstraints[0],self.modApp.NodeConstraints[1]) in self.modApp.edgelist_inOrder: #verify if the second element clicked corespond to at least the end of an arrow
                     self.constraint = " - ".join(self.modApp.NodeConstraints)
-                    #self.modApp.scrolledList.append(self.constraint)
-                    #self.vwApp.scrolledListBox.clear()
-                    #for item in self.modApp.scrolledList:
-                    #    self.vwApp.scrolledListBox.addItem(item)
-
+                    logging.info("Remove link {}".format(self.constraint))
 
                     self.modApp.selectContrTxt = ""
                     self.modApp.mode_cntrt = False
 
                     self.vwApp.selectContrTxtLab.setText("")
-                    #linesInEquaPO=np.logical_and(self.modApp.equacolPO[:, 3] == self.modApp.NodeConstraints[0],
-                    #               self.modApp.equacolPO[:, 2] == self.modApp.NodeConstraints[1])
-                    #a = self.modApp.equacolPO[linesInEquaPO]
 
                     r = re.compile(r'\b%s\b' % re.escape(self.modApp.NodeConstraints[0]))
                     rsearch = np.vectorize(lambda x: bool(r.search(x)))
@@ -388,9 +382,7 @@ class RFGraph_Controller:
 
     # TODO Réintègre le lien sélectionné
     def clickReinstateLink(self,name,isRestoreByNode=False):
-        #if self.vwApp.scrolledListBox.currentText() == "Select link to reinstate":
-        #    return
-        #else:
+
         idx=self.modApp.scrolledList.index(name)
         v=name.split(' ')
 
@@ -405,8 +397,9 @@ class RFGraph_Controller:
         linesToReinstate = [av for av in linesToReinstate if not av in self.modApp.rmByRmEq]
         self.modApp.equacolO[linesToReinstate, 4] = True
         self.modApp.data= self.modApp.equacolO[np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked], [0, 1, 3, 4])]
-
+        logging.info("Restored link {}".format(name))
         if(not isRestoreByNode):
+
             self.vwApp.eqTableGUI.updateView()
             #self.vwApp.scrolledListBox.clear()
             #for item in self.modApp.scrolledList:
@@ -422,17 +415,13 @@ class RFGraph_Controller:
     def SliderMoved(self, value):
         if( self.modApp.adjThresholdVal!=self.vwApp.adjThreshold_slider.value() / 100.0):
             self.modApp.adjThresholdVal=self.vwApp.adjThreshold_slider.value() / 100.0
-        #if(self.modApp.comprFitCmplxVal != self.vwApp.comprFitCmplx_slider.value() / 100.0 ):
-        #    self.modApp.comprFitCmplxVal=self.vwApp.comprFitCmplx_slider.value() / 100.0
-        #    self.modApp.computeComprEdgeColor()
-        #    self.modApp.computeEdgeBold()
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.updateView()
+        logging.info("Slide moved")
 
     # TODO Affiche la courbe de l'équation sélectionnée
     def eqTableClicked(self, cellClicked):
         self.modApp.clicked_line = cellClicked.row()
-        #print("self.modApp.mode_changeEq:" + str(self.modApp.mode_changeEq))
         if (self.modApp.mode_changeEq):
             self.modApp.selectedEq[self.modApp.lastNodeClicked] = cellClicked.row()
             self.modApp.computeGlobalView()
@@ -441,7 +430,7 @@ class RFGraph_Controller:
         else:
             self.vwApp.eqTableGUI.updateView()
             self.vwApp.fitGUI.updateView()
-        #self.vwApp.networkGUI.updateView()
+        logging.info("Clicked (eqTable) {}".format(self.vwApp.eqTableGUI.get(self.modApp.clicked_line,2).text))
 
     def incMatClicked(self,cellClicked):
         print(cellClicked.row())
@@ -473,10 +462,10 @@ class RFGraph_Controller:
         eqCellToClickWid=MyWidgetItem(eqCellToClick)
 
         self.eqTableClicked(eqCellToClickWid)
-
+        logging.info("Clicked (Matrix) {}".format(eqCellToClick.text))
 
     # TODO Crée le surlignage des noeuds
-    def higlight(self, new_node: str, old_node: str = None):
+    def highlight(self, new_node: str, old_node: str = None):
         self.modApp.G.clear()
         if old_node:
             self.modApp.nodeColor[(self.modApp.dataset.varnames.tolist()).index(old_node)] = self.modApp.old_color
@@ -494,6 +483,7 @@ class RFGraph_Controller:
         self.fileQuit()
 
     def onOffClicked(self,objClicked):
+        logging.info("Changed On/Off : {}".format(objClicked.text))
         lineToModify=np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][objClicked.id]
         self.modApp.equacolO[lineToModify][4]=objClicked.isChecked()
         self.modApp.data[objClicked.id][3]=objClicked.isChecked()

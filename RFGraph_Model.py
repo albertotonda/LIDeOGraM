@@ -427,7 +427,6 @@ class RFGraph_Model:
 
 
 
-
     def createConstraintsGraph(self):
         graph = nx.DiGraph()
         for i in np.unique(list(self.dataset.variablesClass.values())):

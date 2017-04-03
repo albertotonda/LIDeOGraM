@@ -82,7 +82,7 @@ class IncMatrixCanvas(QTableWidget):
             for j in range(self.modApp.shapeIncMat[1]+3):
                 if j == 0:
                     self.setColumnWidth(j, 15)
-                    cmap = self.modApp.colors.get("complexity",self.modApp.data[i][0]/self.modApp.cmplxMax)
+                    cmap = self.modApp.colors.get("complexity",self.modApp.equacolO[i,0]/self.modApp.cmplxMax)
                     color = QColor.fromRgb(*cmap)
                     cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
                     cell.setBackgroundColor(color)
