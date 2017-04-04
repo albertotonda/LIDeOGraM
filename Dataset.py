@@ -31,7 +31,11 @@ class Dataset:
         for line in datafileReader:
             linedata=[]
             for i in line.split(','):
-                linedata.append(float(i.strip()))
+                try:
+                    linedata.append(float(i.strip()))
+                except ValueError as ve:
+                    print("{}".format(ve))
+                    print(linedata)
             self.data.append(linedata)
         self.nbExp = len(self.data)
         self.data=np.array(self.data)
