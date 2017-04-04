@@ -72,21 +72,6 @@ class RFGraph_Model:
 
         #self.pos=self.pos_graph()
         self.pos = []
-        #self.adj_simple = genfromtxt('data/adj_simple_withMol.csv', delimiter=',')
-        #self.adj_cmplx = genfromtxt('data/adj_cmplx_withMol.csv', delimiter=',')
-        #self.adj_fit = genfromtxt('data/adj_fit_withMol.csv', delimiter=',')
-        #self.adj_contr = genfromtxt('data/adj_contraintes_withMol.csv', delimiter=',')
-        #self.dataset.varnames = genfromtxt('data/varnames_withMol.csv', dtype='str', delimiter=',')
-        #self.nbeq = genfromtxt('data/nbeq_withMol.csv', delimiter=',')
-        #self.equacolPOf = genfromtxt('data/equa_with_col_ParentOffspring_withMol.csv', 'float', delimiter=',')
-        #self.equacolPOs = genfromtxt('data/equa_with_col_ParentOffspring_withMol.csv', 'str', delimiter=',')
-        #self.equacolOf = genfromtxt('data/equa_with_col_Parent_withMol.csv', 'float', delimiter=',')
-        #self.equacolOs = genfromtxt('data/equa_with_col_Parent_withMol.csv', 'str', delimiter=',')
-        #self.datasetset_cell_popS = genfromtxt('data/dataset_cell_pop.csv', 'str', delimiter=',')
-        #self.datasetset_mol_cellS = genfromtxt('data/dataset_mol_cell.csv', 'str', delimiter=',')
-        #self.datasetset_cell_popF = genfromtxt('data/dataset_cell_pop.csv', 'float', delimiter=',')
-        #self.datasetset_mol_cellF = genfromtxt('data/dataset_mol_cell.csv', 'float', delimiter=',')
-        #self.varsIn = ['Temperature','Age','AMACBIOSYNTHsousexpr','BIOSYNTH_CARRIERSsousexpr','CELLENVELOPEsousexpr','CELLPROCESSESsousexpr','CENTRINTMETABOsousexpr','ENMETABOsousexpr','FATTYACIDMETABOsousexpr','Hypoprotsousexpr','OTHERCATsousexpr','PURINESsousexpr','REGULFUNsousexpr','REPLICATIONsousexpr','TRANSCRIPTIONsousexpr','TRANSLATIONsousexpr','TRANSPORTPROTEINSsousexpr','AMACBIOSYNTHsurexpr','BIOSYNTH_CARRIERSsurexpr','CELLENVELOPEsurexpr','CELLPROCESSESsurexpr','CENTRINTMETABOsurexpr','ENMETABOsurexpr','FATTYACIDMETABOsurexpr','Hypoprotsurexpr','OTHERCATsurexpr','PURINESsurexpr','REGULFUNsurexpr','REPLICATIONsurexpr','TRANSCRIPTIONsurexpr','TRANSLATIONsurexpr','TRANSPORTPROTEINSsurexpr']
         self.varsIn = ["GECA24s00615g","GECA20s01396g","GECA09s03013g","KLLA0A10307g","HAAL_v1_70428","GECA12s03519g","GECA05s06643g","DEHA2F00792g","GECA12s00527g","GECA18s01209g","LALA_v1_830008","DEHA2G21032g","GECA15s00593g","KLLA0C12243g","GECA01s06874g","GECA02s02694g","KLLA0E19889g","GECA01s10493g","GECA09s00098g","KLLA0F00440g","GECA01s06104g","GECA20s00208g","GECA18s01803g","GECA01s04487g","KLLA0A02673g","KLLA0F22022g","KLLA0B12584g","GECA02s07072g","GECA11s00197g","GECA15s00373g","KLLA0C04774g","GECA32s02474g","GECA07s02430g","GECA10s00109g","KLLA0F12364g","KLLA0D10593g","GECA07s02870g","GECA19s01275g","DEHA2F09570g","GECA03s03733g","KLLA0C07777g","HAAL_v1_800100","KLLA0F15202g","CAJL_v1_250038","KLLA0F07073g","DEHA2G03740g","KLLA0B00451g","KLLA0D09999g","KLLA0A10791g","GECA08s02584g","GECA11s03343g","GECA19s01407g","CAFW_v1_410017","KLLA0C19382g","KLLA0F21010g","KLLA0E23057g"]
         self.NodeConstraints = []
         self.lastNodeClicked = None
@@ -218,7 +203,7 @@ class RFGraph_Model:
                     equacolOtmp.extend(self.regrToEquaColO(clf,par,self.dataset.varnames[i],Y,pred))
 
         equacolOtmp = np.array(equacolOtmp, dtype=object)
-        equacolOtmp = equacolOtmp.reshape(len(equacolOtmp)/5,5)
+        equacolOtmp = equacolOtmp.reshape(len(equacolOtmp)/5,5) #TODO int()
 
 
         return equacolOtmp
@@ -343,9 +328,6 @@ class RFGraph_Model:
         pos['TRANSCRIPTION'] = np.array([random.random() * 0.1 + 0.45,12.0/15.0])
         pos['TRANSLATION'] = np.array([random.random() * 0.1 + 0.65,12.0/15.0])
         pos['TRANSPORTPROTEINS'] = np.array([random.random() * 0.1 + 0.85,12.0/15.0])
-        #pos['UFA'] = np.array([1 / 4.0, 11.0 / 15.0])
-        #pos['SFA'] = np.array([2 / 4.0, 11.0 / 15.0])
-        #pos['CFA'] = np.array([3 / 4.0, 11.0 / 15.0])
         pos['C140'] = np.array([random.random() * 0.15 + 0.05,9.0/15.0])
         pos['C150'] = np.array([random.random() * 0.15 + 0.30,9.0/15.0])
         pos['C160'] = np.array([random.random() * 0.15 + 0.55,9.0/15.0])
@@ -425,22 +407,18 @@ class RFGraph_Model:
             #self.nodeColor.append((0.5, 0.5 + 0.5 * self.nodeWeight[i] / np.amax(self.nodeWeight), 0.5))
             #if(self.dataset.varnames[i])
             #self.
-            if(self.dataset.variablesClass[self.dataset.varnames[i]]== 'Molss' or self.dataset.variablesClass[self.dataset.varnames[i]]== 'Molsur'):
+            #TODO generalize
+            if(self.dataset.variablesClass[self.dataset.varnames[i]]== 'gene'):
                 self.nodeColor.append((0.5, 0.5, 0.9))
-            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'condition'):
+            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'ester'):
                 self.nodeColor.append((0.9, 0.55, 0.55))
-            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'Cell'):#CellAniso
+            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'alcohol'):#CellAniso
                 self.nodeColor.append((0.3, 0.9, 0.9))
-            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'CellAniso'):
+            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'aldehyde'):
                 self.nodeColor.append((0.7, 0.7, 0.5))
-            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopCentri'):
+            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'other'):
                 self.nodeColor.append((0.8, 0.8, 0.2))
-            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopLyo'):
-                self.nodeColor.append((0.8, 0.8, 0.2))
-            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopCong'):
-                self.nodeColor.append((0.8, 0.8, 0.2))
-            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopSto3'):
-                self.nodeColor.append((0.8, 0.8, 0.2))
+
         self.computeInitialPos()
         self.computeFitandCmplxEdgeColor()
         self.computeComprEdgeColor()
@@ -455,31 +433,12 @@ class RFGraph_Model:
         for i in np.unique(list(self.dataset.variablesClass.values())):
 #            print(i)
             graph.add_node(i)
-        graph.add_edge('condition','Molss')
-        graph.add_edge('condition', 'Molsur')
-        graph.add_edge('condition','Cell')
-        graph.add_edge('Molss','Cell')
-        graph.add_edge('Molsur', 'Cell')
-        #graph.add_edge('Molsur','Molss')
-        graph.add_edge('Cell', 'CellAniso')
-        graph.add_edge('Cell','PopCentri')
-        graph.add_edge('Cell','PopCong')
-        graph.add_edge('Cell','PopLyo')
-        graph.add_edge('Cell','PopSto3')
-        graph.add_edge('CellAniso', 'PopCentri')
-        graph.add_edge('CellAniso', 'PopCong')
-        graph.add_edge('CellAniso', 'PopLyo')
-        graph.add_edge('CellAniso', 'PopSto3')
-        graph.add_edge('condition','PopCentri')
-        graph.add_edge('condition','PopCong')
-        graph.add_edge('condition','PopLyo')
-        graph.add_edge('condition','PopSto3')
-        graph.add_edge('PopCentri','PopCong')
-        graph.add_edge('PopCentri','PopLyo')
-        graph.add_edge('PopCentri','PopSto3')
-        graph.add_edge('PopCong','PopLyo')
-        graph.add_edge('PopCong', 'PopSto3')
-        graph.add_edge('PopLyo','PopSto3')
+        graph.add_edge("gene",'alcohol')
+        graph.add_edge('gene', 'aldehyde') #TODO Generalize
+        graph.add_edge('gene','other')
+        graph.add_edge('gene','ester')
+        graph.add_edge('aldehyde', 'alcohol')
+
 
         #nx.draw(graph,with_labels=True)
 
@@ -749,9 +708,11 @@ class RFGraph_Model:
                                         self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
                                         adjcontr=self.adj_contr[i, j])
 
-        with open('initpos.dat', 'rb') as f:
-            self.pos=pickle.load(f)
-        #self.pos = nx.nx_pydot.graphviz_layout(G, prog='dot')
+        #with open('initpos.dat', 'rb') as f:
+            #self.pos=pickle.load(f)
+        self.pos = nx.nx_pydot.graphviz_layout(G, prog='dot')
+        #self.pos = nx.spring_layout(G)
+
         minx = np.inf
         maxx = -np.inf
         miny = np.inf
