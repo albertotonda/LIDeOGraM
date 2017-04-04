@@ -499,7 +499,7 @@ def draw_networkx_edges(G, pos,
         import matplotlib.cbook as cb
         from matplotlib.colors import colorConverter, Colormap
         from matplotlib.collections import LineCollection
-        from MyLinecollections import LineCollection
+        #from MyLinecollections import LineCollection
         import numpy
     except ImportError:
         raise ImportError("Matplotlib required for draw()")

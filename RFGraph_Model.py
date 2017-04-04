@@ -29,7 +29,7 @@ class RFGraph_Model:
     def __init__(self):
 
 
-        self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected.csv")
+        self.dataset=Dataset("data/baa.ldg")
         self.adj_contrGraph = self.createConstraintsGraph()
         #self.dataset = Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr.csv")
         #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr.txt')
@@ -87,7 +87,7 @@ class RFGraph_Model:
         #self.datasetset_cell_popF = genfromtxt('data/dataset_cell_pop.csv', 'float', delimiter=',')
         #self.datasetset_mol_cellF = genfromtxt('data/dataset_mol_cell.csv', 'float', delimiter=',')
         #self.varsIn = ['Temperature','Age','AMACBIOSYNTHsousexpr','BIOSYNTH_CARRIERSsousexpr','CELLENVELOPEsousexpr','CELLPROCESSESsousexpr','CENTRINTMETABOsousexpr','ENMETABOsousexpr','FATTYACIDMETABOsousexpr','Hypoprotsousexpr','OTHERCATsousexpr','PURINESsousexpr','REGULFUNsousexpr','REPLICATIONsousexpr','TRANSCRIPTIONsousexpr','TRANSLATIONsousexpr','TRANSPORTPROTEINSsousexpr','AMACBIOSYNTHsurexpr','BIOSYNTH_CARRIERSsurexpr','CELLENVELOPEsurexpr','CELLPROCESSESsurexpr','CENTRINTMETABOsurexpr','ENMETABOsurexpr','FATTYACIDMETABOsurexpr','Hypoprotsurexpr','OTHERCATsurexpr','PURINESsurexpr','REGULFUNsurexpr','REPLICATIONsurexpr','TRANSCRIPTIONsurexpr','TRANSLATIONsurexpr','TRANSPORTPROTEINSsurexpr']
-        self.varsIn = ['Temperature', 'Age']
+        self.varsIn = ["GECA24s00615g","GECA20s01396g","GECA09s03013g","KLLA0A10307g","HAAL_v1_70428","GECA12s03519g","GECA05s06643g","DEHA2F00792g","GECA12s00527g","GECA18s01209g","LALA_v1_830008","DEHA2G21032g","GECA15s00593g","KLLA0C12243g","GECA01s06874g","GECA02s02694g","KLLA0E19889g","GECA01s10493g","GECA09s00098g","KLLA0F00440g","GECA01s06104g","GECA20s00208g","GECA18s01803g","GECA01s04487g","KLLA0A02673g","KLLA0F22022g","KLLA0B12584g","GECA02s07072g","GECA11s00197g","GECA15s00373g","KLLA0C04774g","GECA32s02474g","GECA07s02430g","GECA10s00109g","KLLA0F12364g","KLLA0D10593g","GECA07s02870g","GECA19s01275g","DEHA2F09570g","GECA03s03733g","KLLA0C07777g","HAAL_v1_800100","KLLA0F15202g","CAJL_v1_250038","KLLA0F07073g","DEHA2G03740g","KLLA0B00451g","KLLA0D09999g","KLLA0A10791g","GECA08s02584g","GECA11s03343g","GECA19s01407g","CAFW_v1_410017","KLLA0C19382g","KLLA0F21010g","KLLA0E23057g"]
         self.NodeConstraints = []
         self.lastNodeClicked = None
         self.last_clicked = None
@@ -194,7 +194,7 @@ class RFGraph_Model:
         for i in range(len(self.dataset.varnames)):
             print('computing : ' + self.dataset.varnames[i])
             iClass = self.dataset.variablesClass[self.dataset.varnames[i]]
-            if(iClass!='condition'):
+            if(iClass!='gene'): #TODO generalize
                 parIClass=[]
                 for (e1,e2) in self.adj_contrGraph.edges():
                     if(e2 ==iClass and not e1 in parIClass):
