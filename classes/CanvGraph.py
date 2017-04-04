@@ -78,7 +78,7 @@ class CanvGraph(QCanvas):
 
         self.graph = graph
         self.axes = axes
-
+        axes.autoscale(False)
         for node in graph.nodes():
             node.pos = (random.random(), random.random())
 
@@ -88,12 +88,16 @@ class CanvGraph(QCanvas):
         self.paint()
 
     def paint(self, nodeSelected: ClassNode.ClassNode = None):
-        self.fig.subplots_adjust(left=0.00001, bottom=0.00001, right=0.99999, top=0.99999)
         self.nodeSelected = nodeSelected
         if nodeSelected:
             nodeSelected.lineWidth = 5
         graph = self.graph
         axes = self.axes
+        axes.set_xlim(-0.2, 1.2)
+        axes.set_ylim(-0.2, 1.2)
+
+
+
 
         eBold = []
         eColor = []
@@ -118,6 +122,10 @@ class CanvGraph(QCanvas):
                                 linewidthsColors=(0, 0, 0),
                                 ax=axes
                                 )
+
+        axes.set_xlim(-0.2, 1.2)
+        axes.set_ylim(-0.2, 1.2)
+
         nxa.draw_networkx_edges(graph,
                                 nodesPos,
                                 edgelist=graph.edges(),
@@ -131,8 +139,12 @@ class CanvGraph(QCanvas):
                                        ax=axes,
                                        rotate=45
                                        )
-
+        if (random.random() < 0.02):
+            a = 5
         self.draw()
+        if nodeSelected:
+            print(nodeSelected.pos)
+
 
     def addObserver(self, observer):
         self.observers.append(observer)

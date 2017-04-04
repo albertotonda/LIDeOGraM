@@ -3,7 +3,9 @@ from PyQt4 import QtGui, QtCore
 class AssignButton(QtGui.QPushButton):
 
     def clickAction(self):
-        self.nodeOut.append(self.listIn.selectedItems()[0].node)
+        item = self.listIn.selectedItems()[0]
+        self.nodeOut.append(item.node)
+        self.nodeOut.sort()
         self.nodeIn.remove(self.listIn.selectedItems()[0].node)
         self.notifyAll()
 
