@@ -8,7 +8,7 @@ import nx_pylab_angle as nxa
 from PyQt4.QtCore import QCoreApplication
 import threading
 import classes.ClassNode as ClassNode
-import copy
+import classes.ClassMode as ClassMode
 
 
 class CanvGraph(QCanvas):
@@ -21,7 +21,6 @@ class CanvGraph(QCanvas):
         dst = [(pow(x - pos[0], 2) + pow(y - pos[1], 2), node) for node, pos in
                # compute the distance to each node
                self.nodesPos.items()]
-        self.nodeNewEdge = None
         if self.nodeSelected is not None:
             self.nodeSelected.lineWidth = 1
 
@@ -29,10 +28,13 @@ class CanvGraph(QCanvas):
             self.notifyAll()
         elif event.button != 3:
             nodeClicked = min(dst, key=(lambda x: x[0]))[1]
-            self.nodeNewEdge = ClassNode.ClassNode("", [], pos=(x, y), color=(1, 1, 1), size=0)
-            self.graph.add_node(self.nodeNewEdge)
-            self.graph.add_edge(nodeClicked, self.nodeNewEdge)
-            self.nodeSelected = self.nodeNewEdge
+            if self.mode != ClassMode.ClassMode.moveMode:
+                self.constructionNode = ClassNode.ClassNode("", [], pos=(x, y), color=(1, 1, 1), size=0)
+                self.graph.add_node(self.constructionNode)
+                self.graph.add_edge(nodeClicked, self.constructionNode)
+                self.nodeSelected = self.constructionNode
+            else:
+                self.nodeSelected = nodeClicked
             self.notifyAll(self.nodeSelected)#Send to observers the node clicked
 
     def prepareDrag(self, event):
@@ -67,40 +69,66 @@ class CanvGraph(QCanvas):
             QCoreApplication.processEvents()
 
     def release(self, event):
-        if self.nodeNewEdge is not None:
+        if self.constructionNode is not None:
             (x, y) = (event.xdata, event.ydata)
-            print(0)
             if x is not None and y is not None:
-                print(1)
-                self.nodesPos.pop(self.nodeNewEdge)
+                self.nodesPos.pop(self.constructionNode)
                 dst = [(pow(x - pos[0], 2) + pow(y - pos[1], 2), node) for node, pos in self.nodesPos.items()]
-
                 if len(list(filter(lambda x: x[0] < 0.002, dst))) > 0:
-                    self.createEdge(self.graph.in_edges(self.nodeNewEdge)[0][0], min(dst, key=(lambda x: x[0]))[1])
-            self.graph.remove_node(self.nodeNewEdge)
-            self.paint(self.nodeSelected)
+                    nIn = self.graph.in_edges(self.constructionNode)[0][0]
+                    nOut = min(dst, key=(lambda x: x[0]))[1]
+                    if nIn == nOut:
+                        self.nodeSelected = nIn
+                    elif self.mode == ClassMode.ClassMode.addEdgeMode:
+                        self.createEdge(nIn, nOut)
+                    elif self.mode == ClassMode.ClassMode.delEdgeMode:
+                        self.delEdge(nIn, nOut)
+                    self.nodeSelected = nOut
+                else:
+                    self.nodeSelected = None
+            else :
+                self.nodeSelected = None
+            self.graph.remove_node(self.constructionNode)
+            self.constructionNode = None
+            self.notifyAll(self.nodeSelected)
 
     def createEdge(self, nodeIn: ClassNode.ClassNode, nodeOut: ClassNode.ClassNode):
-        print(nodeIn, nodeOut)
         if self.graph.has_edge(nodeIn, nodeOut):
-            print("existe déjà")
+            msg = QtGui.QMessageBox()
+            s = "Invalid action : Edge already exist"
+            msg.setText(s)
+            msg.setWindowTitle("Edge error")
+            msg.exec()
         else:
             self.graph.add_edge(nodeIn, nodeOut)
             if len(list(nx.simple_cycles(self.graph))) > 0:
                 self.graph.remove_edge(nodeIn, nodeOut)
-                msg=QtGui.QMessageBox()
-                s="Impossible to start the optimisation while the following node have no candidate equations.\nRemove the nodes from the model or restart a local optimisation on them :\n"
+                msg = QtGui.QMessageBox()
+                s = "Invalid action : The graph become cyclic"
                 msg.setText(s)
+                msg.setWindowTitle("Edge error")
                 msg.exec()
-                print("Graphe cyclique")
 
+    def delEdge(self, nodeIn: ClassNode.ClassNode, nodeOut: ClassNode.ClassNode):
+        if self.graph.has_edge(nodeIn, nodeOut):
+            self.graph.remove_edge(nodeIn, nodeOut)
+        elif self.graph.has_edge(nodeOut, nodeIn):
+            self.graph.remove_edge(nodeOut, nodeIn)
+        else:
+            msg = QtGui.QMessageBox()
+            s = "Invalid action : No edge to remove"
+            msg.setText(s)
+            msg.setWindowTitle("Edge error")
+            msg.exec()
 
     def __init__(self, graph: nx.DiGraph):
-        self.nodeNewEdge = None
+        self.constructionNode = None
         self.onMoveMutex = threading.Lock()
         self.observers = []
         fig, axes = plt.subplots()
         self.fig=fig
+        self.mode = ""
+        self.nodeSelected = None
         fig.frameon=False
         fig.tight_layout()
         fig.subplots_adjust(left=0.00001, bottom=0.00001, right=0.99999, top=0.99999)
@@ -136,9 +164,6 @@ class CanvGraph(QCanvas):
         axes.set_xlim(-0.2, 1.2)
         axes.set_ylim(-0.2, 1.2)
 
-
-
-
         eBold = []
         eColor = []
         labels = {}
@@ -149,8 +174,11 @@ class CanvGraph(QCanvas):
         self.nodesPos = nodesPos
         for edge in graph.edges():
             eBold.append(False)
-            if edge[1] == self.nodeNewEdge:
-                eColor.append((0, 0.80, 0))
+            if edge[1] == self.constructionNode:
+                if self.mode == ClassMode.ClassMode.addEdgeMode:
+                    eColor.append((0, 0.8, 0))
+                elif self.mode == ClassMode.ClassMode.delEdgeMode:
+                    eColor.append((0.8, 0, 0))
             else:
                 eColor.append((0, 0, 0))
         for node in self.graph.nodes():

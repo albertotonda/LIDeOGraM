@@ -15,6 +15,7 @@ class Window(QtGui.QMainWindow):
     def __init__(self, graph, dictNode):
         QtGui.QMainWindow.__init__(self)
         mainWid = QtGui.QWidget(self)
+        self.setWindowTitle("Class management")
         self.gridLayout = QtGui.QGridLayout(mainWid)
         mainWid.setFocus()
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
@@ -36,8 +37,8 @@ class Window(QtGui.QMainWindow):
 
         self.gridLayout.addWidget(self.canv, 0, 0, 1, 1)
         self.gridLayout.addWidget(self.frame, 0, 1, 1, 1)
-
-        menu = MenuBar(self)
+        self.selectedNode = None
+        MenuBar(self)
 
 
 

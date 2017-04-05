@@ -19,18 +19,20 @@ class SavingGraph():
         dg = nx.DiGraph()
         file = open("test", "r")
         dicoG = json.loads(file.read())
-        listNode = dict()
+        listeNode = dict()
         listeEdge = []
         for node in dicoG["node"]:
-            listNode[node["name"]] = ClassNode.ClassNode(node["name"], node["nodeList"], pos=node["pos"], color=node["color"], lineWidth=node["lineWidth"])
+            listeNode[node["name"]] = ClassNode.ClassNode(node["name"], node["nodeList"], pos=node["pos"], color=node["color"], lineWidth=node["lineWidth"])
         for edge in dicoG["edge"]:
             listeEdge.append((
-                listNode[edge[0]]
-                , listNode[edge[1]]
+                listeNode[edge[0]]
+                , listeNode[edge[1]]
                 ))
-
-        dg.add_nodes_from(listNode.values())
+        print("values :  ", listeEdge)
+        dg.add_nodes_from(listeNode.values())
+        print("graph nodes :  ", dg.nodes())
         dg.add_edges_from(listeEdge)
 
         file.close()
+        print(dg)
         return dg

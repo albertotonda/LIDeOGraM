@@ -20,7 +20,25 @@ class MenuBar:
         fileMenu = menubar.addMenu("&File")
         fileMenu.addAction(exitAction)
 
-        actionMenu = menubar.addMenu("&Action")
-        actionMenu.addAction(addNodeAction)
+        editMode = QtGui.QActionGroup(window, exclusive=True)
 
+        moveModeAction = QtGui.QAction("&Move node", window, checkable=True)
+        moveModeAction.triggered.connect(MenuAction.setMoveMode)
+        moveModeAction.activate(QtGui.QAction.Trigger)
+        moveMode = editMode.addAction(moveModeAction)
+
+        newEdgeModeAction = QtGui.QAction("&New Edge", window, checkable=True)
+        newEdgeModeAction.triggered.connect(MenuAction.setAddEdgeMode)
+        newEdgeMode = editMode.addAction(newEdgeModeAction)
+
+        cpAction = QtGui.QAction("&Del Edge", window, checkable=True)
+        cpAction.triggered.connect(MenuAction.setDelEdgeMode)
+        delEdgeMode = editMode.addAction(cpAction)
+
+        editMenu = menubar.addMenu("&Edit")
+        editMenu.addAction(addNodeAction)
+        editMenu.addSeparator()
+        editMenu.addAction(moveMode)
+        editMenu.addAction(newEdgeMode)
+        editMenu.addAction(delEdgeMode)
 

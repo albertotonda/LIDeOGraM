@@ -6,7 +6,7 @@ import classes.SavingGraph as save
 class ClassesModel:
 
     def __init__(self):
-        self.G = None
+        self.graph = None
         self.initGraph()
 
 
@@ -37,6 +37,8 @@ class ClassesModel:
         G.add_edge(n1, n3)
         G.add_edge(n3, n4)
         G.add_edge(n3, n0)
+        """
+
         """
         condition = ClassNode.ClassNode('Condition', ['Temperature', 'Age'])
         molss = ClassNode.ClassNode('GenomicSousExpr', ['AMACBIOSYNTHsousexpr', 'BIOSYNTH_CARRIERSsousexpr', 'CELLENVELOPEsousexpr', 'CELLPROCESSESsousexpr', 'CENTRINTMETABOsousexpr', 'ENMETABOsousexpr', 'FATTYACIDMETABOsousexpr', 'Hypoprotsousexpr', 'OTHERCATsousexpr', 'PURINESsousexpr', 'REGULFUNsousexpr', 'REPLICATIONsousexpr', 'TRANSCRIPTIONsousexpr', 'TRANSLATIONsousexpr', 'TRANSPORTPROTEINSsousexpr'])
@@ -84,4 +86,6 @@ class ClassesModel:
         graph.add_edge(popLyo, popSto3)
         test = save.SavingGraph(graph.nodes(), graph.edges())
         test.toJSON()
-        self.G = save.SavingGraph.readJson()
+        """
+
+        self.graph = save.SavingGraph.readJson()
