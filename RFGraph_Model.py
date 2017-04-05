@@ -210,7 +210,8 @@ class RFGraph_Model:
                 idx=[list(self.dataset.varnames).index(v) for v in par]
                 X=self.dataset.data[:,idx]
 
-                for a in [500,200,100,50,20,10,5,2,1,0.5,0.2,0.1]:
+                #for a in [500,200,100,50,20,10,5,2,1,0.5,0.2,0.1]:
+                for a in [50, 10, 5, 1, 0.5, 0.1,0.01]:
                     clf = linear_model.Lasso(alpha=a)
                     clf.fit(X, Y)
                     pred=clf.predict(X)

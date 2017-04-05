@@ -20,7 +20,7 @@ class NetworkCanvas(FigureCanvas):
 
         self.fig.frameon=False
         self.fig.tight_layout()
-        self.fig.subplots_adjust(left=0.05, bottom=0.05, right=0.98, top=0.98)
+        self.fig.subplots_adjust(left=0.5, bottom=0.05, right=0.98, top=0.98)
         #self.axes.get_xaxis().set_visible(False)
         #self.axes.get_yaxis().set_visible(False)
         #self.fig.subplots_adjust(left=0,right=1,bottom=0,top=1)
