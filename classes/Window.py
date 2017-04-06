@@ -5,15 +5,13 @@ from classes.CanvGraph import CanvGraph
 from classes.FramAction import FramAction
 from classes.ClassGraph import ClassGraph
 from classes.MenuBar import MenuBar
-
-import matplotlib.pyplot as plt
 import copy
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as QCanvas
 
 
 class Window(QtGui.QMainWindow):
 
     def __init__(self, graph: ClassGraph):
+        self.graphReady = False
         QtGui.QMainWindow.__init__(self)
         mainWid = QtGui.QWidget(self)
         self.setWindowTitle("Class management")
@@ -23,7 +21,8 @@ class Window(QtGui.QMainWindow):
         self.setWindowState(QtCore.Qt.WindowMaximized)
         self.setCentralWidget(mainWid)
 
-        self.graph = graph
+        self.graph = copy.copy(graph)
+        self.initialGraph = graph
 
         self.canv = CanvGraph(graph)
         self.canv.addObserver(self)
@@ -35,8 +34,17 @@ class Window(QtGui.QMainWindow):
         self.gridLayout.setSpacing(5)
         self.canv.setMinimumSize(200, 200)
 
-        self.gridLayout.addWidget(self.canv, 0, 0, 1, 1)
-        self.gridLayout.addWidget(self.frame, 0, 1, 1, 1)
+        self.saveButton = QtGui.QPushButton("Validate")
+        self.saveButton.clicked.connect(lambda: self.setReady(self.graph))
+
+        self.cancelButton = QtGui.QPushButton("Cancel")
+        self.cancelButton.clicked.connect(lambda: self.setReady(self.initialGraph))
+        self.gridLayout.addWidget(self.canv, 0, 0, 2, 1)
+        self.gridLayout.addWidget(self.frame, 0, 1, 1, 2)
+        self.gridLayout.addWidget(self.cancelButton, 1, 1, 1, 1)
+        self.gridLayout.addWidget(self.saveButton, 1, 2, 1, 1)
+
+
         self.selectedNode = None
         MenuBar(self)
 
@@ -53,3 +61,7 @@ class Window(QtGui.QMainWindow):
         self.frame.setListsValues(self.graph.unboundNode, selectedNode)
         QCoreApplication.processEvents()
 
+    def setReady(self, graph):
+        self.graph = graph
+        self.graphReady = True
+        print("pret !")

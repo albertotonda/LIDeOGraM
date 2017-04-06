@@ -1,6 +1,6 @@
 import networkx as nx
 import json
-import classes.ClassNode as Node
+from classes.ClassNode import ClassNode
 
 class ClassGraph(nx.DiGraph):
     def __init__(self, unboundNode = None):
@@ -30,7 +30,7 @@ class ClassGraph(nx.DiGraph):
         file.close()
         return cg
 
-    def remove_node(self, node: Node.ClassNode):
+    def remove_node(self, node: ClassNode):
         self.unboundNode.extend(node.nodeList)
         self.unboundNode.sort()
         super(ClassGraph, self).remove_node(node)
