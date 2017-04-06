@@ -8,12 +8,11 @@ from classes.MenuBar import MenuBar
 import copy
 
 
-class Window(QtGui.QMainWindow,QtGui.QDialog):
+class Window(QtGui.QMainWindow):
 
-    def __init__(self, graph: ClassGraph):
-
+    def __init__(self, graph: ClassGraph,fctToCall):
+        self.fctToCall=fctToCall
         self.graphReady = False
-        QtGui.QDialog.__init__(self)
         QtGui.QMainWindow.__init__(self)
         mainWid = QtGui.QWidget(self)
         self.setWindowTitle("Class management")
@@ -69,6 +68,6 @@ class Window(QtGui.QMainWindow,QtGui.QDialog):
         self.graph = graph
         self.graphReady = True
         print("pret !")
-        self.accept()
+        self.fctToCall(self.graph)
         #self.close()
 

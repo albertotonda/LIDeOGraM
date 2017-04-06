@@ -34,12 +34,14 @@ class RFGraph_Model:
 
 
         self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected.csv")
-        self.adj_contrGraph = self.createConstraintsGraph()
+        self.createConstraintsGraph()
         #self.dataset = Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr.csv")
         #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr.txt')
         #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_noMol.txt')
 
         #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_expertcorrected.txt')
+    def init2(self,contrgraph):
+        self.adj_contrGraph = contrgraph
         self.equacolO = self.findLassoEqs()
 
         #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_expertcorrected_noMol.txt')
@@ -532,8 +534,8 @@ class RFGraph_Model:
             i_var = [v for (v, e) in self.dataset.variablesClass.items() if e ==i ]
             graph.add_node(ClassNode(i, i_var))
         #testMutex = threading.Lock()
-        classApp=Window(graph)
-        graph=classApp.exec()
+        classApp=Window(graph,self.init2)
+        #graph=classApp.exec()
         #testMutex.acquire(True)
 
 
