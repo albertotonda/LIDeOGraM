@@ -648,7 +648,10 @@ def draw_networkx_edges(G, pos,
             xr=(x1-x0r)/(d)
             yr=(y1-y0r)/(d)
             dr=numpy.sqrt(float(xr**2 + yr**2))
-            edgeAngle=(numpy.sin(yr)/numpy.abs(numpy.sin(yr)))*numpy.arccos(xr)
+            try:
+                edgeAngle=(numpy.sin(yr)/numpy.abs(numpy.sin(yr)))*numpy.arccos(xr)
+            except:
+                pass
             edgeAngle1=edgeAngle+0.15
             edgeAngle2=edgeAngle-0.15
             xa1=numpy.cos(edgeAngle1)*0.05+x0r
