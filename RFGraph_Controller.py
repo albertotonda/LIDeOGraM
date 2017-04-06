@@ -545,4 +545,7 @@ class RFGraph_Controller:
 
         QCoreApplication.processEvents()
     def recomputeNode(self,nodeToCompute):
-        print("ToDo : recomputing " + nodeToCompute)
+        print("Recomputing " + nodeToCompute)
+        tmp_equacolO = self.modApp.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_expertcorrected.txt')
+        tmp_equacolO = tmp_equacolO[tmp_equacolO[:, 2] == nodeToCompute, :]
+        self.modApp.recomputeNode(nodeToCompute,tmp_equacolO)

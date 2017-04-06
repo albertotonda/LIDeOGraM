@@ -188,6 +188,10 @@ class RFGraph_Model:
 
         self.initGraph()
 
+    def recomputeNode(self,node,neweqs):
+        self.equacolO[self.equacolO[:, 2] == node, :]
+        linesToRemove = np.ix_(self.equacolO[:, 2] == node)
+
 
     def findLassoEqs(self):
         equacolOtmp=[]
@@ -210,13 +214,75 @@ class RFGraph_Model:
                 idx=[list(self.dataset.varnames).index(v) for v in par]
                 X=self.dataset.data[:,idx]
 
-                #for a in [500,200,100,50,20,10,5,2,1,0.5,0.2,0.1]:
-                for a in [50, 10, 5, 1, 0.5, 0.1,0.01]:
-                    clf = linear_model.Lasso(alpha=a)
+                nbEqToFind=10
+                curEqFound=0
+                alpha=1
+                cmplxOneFound=False
+                lastFoundCmplx=1
+                maxIter=10
+                currIter=0
+                maxIter2=20
+                currIter2=0
+                while(curEqFound != nbEqToFind and currIter2!=maxIter2):
+                    currIter2+=1
+                    while(not cmplxOneFound): #Find equation of complexity one
+                        clf = linear_model.Lasso(alpha=alpha)
+                        clf.fit(X, Y)
+                        pred = clf.predict(X)
+                        equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames[i], Y, pred)
+                        #print("Find first : equacolOLine[0]" + str(equacolOLine[0]) + " alpha= "+str(alpha) + " curEqFound: " + str(curEqFound))
+                        if(equacolOLine[0]==1):
+                            cmplxOneFound = True
+                            curEqFound+=1
+                            #print("Add : " + str(equacolOLine[3]))
+                            equacolOtmp.extend(equacolOLine)
+                        else:
+                            alpha *= 2
+
+                    alpha/=2
+                    clf = linear_model.Lasso(alpha=alpha)
                     clf.fit(X, Y)
                     pred=clf.predict(X)
-
-                    equacolOtmp.extend(self.regrToEquaColO(clf,par,self.dataset.varnames[i],Y,pred))
+                    equacolOLine=self.regrToEquaColO(clf,par,self.dataset.varnames[i],Y,pred)
+                    #print("cmplx : " + str(equacolOLine[0]) + " alpha= " + str(alpha)  + " curEqFound: " + str(curEqFound)+ " lastFoundCmplx : " + str(lastFoundCmplx))
+                    if (equacolOLine[0] > lastFoundCmplx + 4):
+                        minAlpha=alpha
+                        maxAlpha=alpha*2
+                        currIter=0
+                        while(equacolOLine[0]!=lastFoundCmplx + 4 and currIter!=maxIter):
+                            currIter+=1
+                            alpha=(minAlpha+maxAlpha)/2
+                            clf = linear_model.Lasso(alpha=alpha)
+                            clf.fit(X, Y)
+                            pred = clf.predict(X)
+                            equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames[i], Y, pred)
+                            #print("cmplx : " + str(equacolOLine[0]) + " alpha= " + str(alpha) + " curEqFound: " + str(curEqFound) + " lastFoundCmplx : " + str(lastFoundCmplx))
+                            #print("     minAlpha = " + str(minAlpha) + " maxAlpha = " + str(maxAlpha) + " lastFoundCmplx:"+str(lastFoundCmplx))
+                            if(equacolOLine[0] > lastFoundCmplx + 4):
+                                minAlpha=alpha
+                            elif(equacolOLine[0] < lastFoundCmplx + 4):
+                                maxAlpha=alpha
+                            else:
+                                lastFoundCmplx = equacolOLine[0]
+                                #print("Add : " + str(equacolOLine[3]))
+                                equacolOtmp.extend(equacolOLine)
+                                currIter2=0
+                                curEqFound += 1
+                                break
+                        if(currIter==maxIter):
+                            lastFoundCmplx=equacolOLine[0]
+                            #print("Add : " + str(equacolOLine[3]))
+                            equacolOtmp.extend(equacolOLine)
+                            currIter2=0
+                            curEqFound += 1
+                    elif(equacolOLine[0] < lastFoundCmplx + 4):
+                        alpha /= 2
+                    else:
+                        lastFoundCmplx = equacolOLine[0]
+                        #print("Add : " + str(equacolOLine[3]))
+                        equacolOtmp.extend(equacolOLine)
+                        currIter2=0
+                        curEqFound += 1
 
         equacolOtmp = np.array(equacolOtmp, dtype=object)
         equacolOtmp = equacolOtmp.reshape(len(equacolOtmp)/5,5)
@@ -235,19 +301,22 @@ class RFGraph_Model:
             if(clf.coef_[i] > 0  ):
                 hasCoef=True
                 s += ' + ' + str(clf.coef_[i]) + ' * ' + parNode[i] + ' '
-                cmplx += 3
+                cmplx += 4
             elif(clf.coef_[i] < 0 ):
                 hasCoef=True
                 s +=  str(clf.coef_[i]) + ' * ' + parNode[i] + ' '
-                cmplx += 3
+                cmplx += 4
 
         if (clf.intercept_ != 0 and hasCoef):
             s = str(clf.intercept_) + ' ' + s
-            cmplx += 2;
+            cmplx += 1;
 
         if (clf.intercept_ != 0 and not hasCoef):
             s += str(clf.intercept_)
             cmplx += 1;
+
+        if(clf.intercept_ == 0):
+            cmplx -= 1;
 
         fit=fitness(Y,pred)
 
