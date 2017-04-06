@@ -25,7 +25,8 @@ from fitness import fitness
 from classes.ClassGraph import ClassGraph
 from classes.ClassNode import ClassNode
 from classes.Window import Window
-
+from time import sleep
+import threading
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model:
 
@@ -530,7 +531,14 @@ class RFGraph_Model:
             #print(i)
             i_var = [v for (v, e) in self.dataset.variablesClass.items() if e ==i ]
             graph.add_node(ClassNode(i, i_var))
-        Window(graph)
+        #testMutex = threading.Lock()
+        classApp=Window(graph)
+        graph=classApp.exec()
+        #testMutex.acquire(True)
+
+
+
+        #graph=classApp.graph
         # graph.add_edge('condition','Molss')
         # graph.add_edge('condition', 'Molsur')
         # graph.add_edge('condition','Cell')

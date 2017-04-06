@@ -8,10 +8,12 @@ from classes.MenuBar import MenuBar
 import copy
 
 
-class Window(QtGui.QMainWindow):
+class Window(QtGui.QMainWindow,QtGui.QDialog):
 
     def __init__(self, graph: ClassGraph):
+
         self.graphReady = False
+        QtGui.QDialog.__init__(self)
         QtGui.QMainWindow.__init__(self)
         mainWid = QtGui.QWidget(self)
         self.setWindowTitle("Class management")
@@ -37,6 +39,7 @@ class Window(QtGui.QMainWindow):
         self.saveButton = QtGui.QPushButton("Validate")
         self.saveButton.clicked.connect(lambda: self.setReady(self.graph))
 
+
         self.cancelButton = QtGui.QPushButton("Cancel")
         self.cancelButton.clicked.connect(lambda: self.setReady(self.initialGraph))
         self.gridLayout.addWidget(self.canv, 0, 0, 2, 1)
@@ -50,7 +53,8 @@ class Window(QtGui.QMainWindow):
 
 
 
-        QtGui.QMainWindow.show(self)
+        #QtGui.QMainWindow.show(self)
+        #self.exec()
 
     def notify(self, selectedNode=None, keepSelected = False):
         if keepSelected:
@@ -65,3 +69,6 @@ class Window(QtGui.QMainWindow):
         self.graph = graph
         self.graphReady = True
         print("pret !")
+        self.accept()
+        #self.close()
+
