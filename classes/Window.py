@@ -3,6 +3,7 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import QCoreApplication
 from classes.CanvGraph import CanvGraph
 from classes.FramAction import FramAction
+from classes.ClassGraph import ClassGraph
 from classes.MenuBar import MenuBar
 
 import matplotlib.pyplot as plt
@@ -12,7 +13,7 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as QCanvas
 
 class Window(QtGui.QMainWindow):
 
-    def __init__(self, graph, dictNode):
+    def __init__(self, graph: ClassGraph):
         QtGui.QMainWindow.__init__(self)
         mainWid = QtGui.QWidget(self)
         self.setWindowTitle("Class management")
@@ -23,11 +24,10 @@ class Window(QtGui.QMainWindow):
         self.setCentralWidget(mainWid)
 
         self.graph = graph
-        self.dictNode = dictNode
 
         self.canv = CanvGraph(graph)
         self.canv.addObserver(self)
-        self.frame = FramAction(dictNode)
+        self.frame = FramAction(graph.unboundNode)
 
         self.frame.button1.addObserver(self)
         self.frame.button2.addObserver(self)
@@ -50,6 +50,6 @@ class Window(QtGui.QMainWindow):
         else:
             self.selectedNode = selectedNode
         self.canv.paint(selectedNode)
-        self.frame.setListsValues(self.dictNode, selectedNode)
+        self.frame.setListsValues(self.graph.unboundNode, selectedNode)
         QCoreApplication.processEvents()
 

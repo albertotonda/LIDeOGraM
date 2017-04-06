@@ -15,9 +15,19 @@ class MenuBar:
         addNodeAction.setStatusTip('Add Node')
         addNodeAction.triggered.connect(MenuAction.addNode)
 
+        saveAction = QtGui.QAction('&Save', window)
+        saveAction.setStatusTip('Save')
+        saveAction.triggered.connect(MenuAction.save)
+
+        loadAction = QtGui.QAction('&Load', window)
+        loadAction.setStatusTip('Load')
+        loadAction.triggered.connect(MenuAction.load)
+
         menubar = window.menuBar()
 
         fileMenu = menubar.addMenu("&File")
+        fileMenu.addAction(saveAction)
+        fileMenu.addAction(loadAction)
         fileMenu.addAction(exitAction)
 
         editMode = QtGui.QActionGroup(window, exclusive=True)

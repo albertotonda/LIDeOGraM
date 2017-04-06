@@ -1,5 +1,5 @@
-import classes.ClassNode as ClassNode
-import classes.ClassMode as ClassMode
+from classes import ClassNode
+from classes.ClassMode import ClassMode
 from PyQt4 import QtGui
 
 class MenuAction:
@@ -9,9 +9,10 @@ class MenuAction:
 
     @staticmethod
     def addNode():
+        from classes.ClassNode import ClassNode
         rep = QtGui.QInputDialog.getText(MenuAction.window, "New class", "Class name :")
         if rep[1]:
-            node =ClassNode.ClassNode(rep[0], [])
+            node = ClassNode(rep[0], [])
             MenuAction.window.graph.add_node(node)
             if MenuAction.window.selectedNode:
                 MenuAction.window.selectedNode.lineWidth = 1
@@ -19,12 +20,20 @@ class MenuAction:
 
     @staticmethod
     def setMoveMode():
-        MenuAction.window.canv.mode = ClassMode.ClassMode.moveMode
+        MenuAction.window.canv.mode = ClassMode.moveMode
 
     @staticmethod
     def setAddEdgeMode():
-        MenuAction.window.canv.mode = ClassMode.ClassMode.addEdgeMode
+        MenuAction.window.canv.mode = ClassMode.addEdgeMode
 
     @staticmethod
     def setDelEdgeMode():
-        MenuAction.window.canv.mode = ClassMode.ClassMode.delEdgeMode
+        MenuAction.window.canv.mode = ClassMode.delEdgeMode
+
+    @staticmethod
+    def save():
+        MenuAction.window.graph.toJSON()
+
+    @staticmethod
+    def load():
+        MenuAction.window.canv.mode = ClassMode.delEdgeMode

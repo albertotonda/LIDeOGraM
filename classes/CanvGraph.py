@@ -2,13 +2,16 @@
 import matplotlib.pyplot as plt
 import random
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as QCanvas
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 import networkx as nx
+from matplotlib.mlab import prctile
+
 import nx_pylab_angle as nxa
 from PyQt4.QtCore import QCoreApplication
 import threading
-import classes.ClassNode as ClassNode
+from classes.ClassNode import ClassNode
 import classes.ClassMode as ClassMode
+import classes.ClassGraph as cg
 
 
 class CanvGraph(QCanvas):
@@ -17,25 +20,30 @@ class CanvGraph(QCanvas):
         (x, y) = (event.xdata, event.ydata)
         if x is None or y is None:
             return
-
+        self.lastPos = (x, y)
         dst = [(pow(x - pos[0], 2) + pow(y - pos[1], 2), node) for node, pos in
                # compute the distance to each node
                self.nodesPos.items()]
         if self.nodeSelected is not None:
-            self.nodeSelected.lineWidth = 1
+            print("!")
+            self.nodeSelected.lineWidth = 0
+        nbNodeFind = len(list(filter(lambda x: x[0] < 0.002, dst)))
 
-        if len(list(filter(lambda x: x[0] < 0.002, dst))) == 0 and event.button == 1:
+        if nbNodeFind == 0:
             self.notifyAll()
         elif event.button != 3:
             nodeClicked = min(dst, key=(lambda x: x[0]))[1]
             if self.mode != ClassMode.ClassMode.moveMode:
-                self.constructionNode = ClassNode.ClassNode("", [], pos=(x, y), color=(1, 1, 1), size=0)
+                self.constructionNode = ClassNode("", [], pos=(x, y), color=(1, 1, 1), size=0)
                 self.graph.add_node(self.constructionNode)
                 self.graph.add_edge(nodeClicked, self.constructionNode)
                 self.nodeSelected = self.constructionNode
             else:
                 self.nodeSelected = nodeClicked
             self.notifyAll(self.nodeSelected)#Send to observers the node clicked
+        else:
+            nodeClicked = min(dst, key=(lambda x: x[0]))[1]
+            self.updateRightClickMenu(event, nodeClicked)
 
     def prepareDrag(self, event):
         self.lastEvent = event
@@ -53,18 +61,32 @@ class CanvGraph(QCanvas):
         self.onMoveMutex.release()
 
     def drag(self, event):
-        #print(vars(event))
         (x, y) = (event.xdata, event.ydata)
         if not x or not y:
             return
         if (event.inaxes == None):
             return
-        #x = (0 if x < 0 else 1 if x > 1 else x)
-        #y = (0 if y < 0 else 1 if y > 1 else y)
 
-        if (event.button == 1 and self.nodeSelected is not None):
+        if event.button == 1:
+            if self.nodeSelected:
+                self.nodeSelected.pos = (x, y)
+                self.nodesPos[self.nodeSelected] = self.nodeSelected.pos
+            else:
+                deltaPos = (x - self.lastPos[0], y - self.lastPos[1])
+                self.lastPos = (x-deltaPos[0], y-deltaPos[1])
+                self.setCenter(self.center[0]-deltaPos[0], self.center[1]-deltaPos[1])
 
-            self.nodeSelected.pos = (x, y)
+        dst = [(pow(x - pos[0], 2) + pow(y - pos[1], 2), node) for node, pos in self.nodesPos.items()]
+        if not self.constructionNode:
+            if len(list(filter(lambda x: x[0] < 0.002, dst))) > 0:
+                lastHover = self.hover
+                self.hover = min(dst, key=(lambda x: x[0]))[1]
+            else:
+                lastHover = self.hover
+                self.hover = None
+        else:
+            lastHover = -1
+        if lastHover != self.hover or (self.nodeSelected and event.button==1):
             self.paint(self.nodeSelected)
             QCoreApplication.processEvents()
 
@@ -83,16 +105,12 @@ class CanvGraph(QCanvas):
                         self.createEdge(nIn, nOut)
                     elif self.mode == ClassMode.ClassMode.delEdgeMode:
                         self.delEdge(nIn, nOut)
-                    self.nodeSelected = nOut
-                else:
-                    self.nodeSelected = None
-            else :
-                self.nodeSelected = None
+            self.nodeSelected = None
             self.graph.remove_node(self.constructionNode)
             self.constructionNode = None
             self.notifyAll(self.nodeSelected)
 
-    def createEdge(self, nodeIn: ClassNode.ClassNode, nodeOut: ClassNode.ClassNode):
+    def createEdge(self, nodeIn: ClassNode, nodeOut: ClassNode):
         if self.graph.has_edge(nodeIn, nodeOut):
             msg = QtGui.QMessageBox()
             s = "Invalid action : Edge already exist"
@@ -109,7 +127,7 @@ class CanvGraph(QCanvas):
                 msg.setWindowTitle("Edge error")
                 msg.exec()
 
-    def delEdge(self, nodeIn: ClassNode.ClassNode, nodeOut: ClassNode.ClassNode):
+    def delEdge(self, nodeIn: ClassNode, nodeOut: ClassNode):
         if self.graph.has_edge(nodeIn, nodeOut):
             self.graph.remove_edge(nodeIn, nodeOut)
         elif self.graph.has_edge(nodeOut, nodeIn):
@@ -121,14 +139,61 @@ class CanvGraph(QCanvas):
             msg.setWindowTitle("Edge error")
             msg.exec()
 
-    def __init__(self, graph: nx.DiGraph):
+    def updateRightClickMenu(self, event, nodeClicked):
+        rightclickMenu=QtGui.QMenu(self)
+
+        deleateAction = QtGui.QAction("Deleate " + nodeClicked.name, self)
+        deleateAction.triggered.connect(lambda: [self.graph.remove_node(nodeClicked), self.notifyAll()])
+        rightclickMenu.addAction(deleateAction)
+
+        renameAction=QtGui.QAction("Rename " + nodeClicked.name, self)
+        renameAction.triggered.connect(lambda: [nodeClicked.rename(), self.notifyAll()])
+        rightclickMenu.addAction(renameAction)
+
+        renameAction=QtGui.QAction("Change the color of " + nodeClicked.name, self)
+        renameAction.triggered.connect(lambda: [nodeClicked.changeColor(), self.notifyAll()])
+        rightclickMenu.addAction(renameAction)
+
+        yPxlSizeFig=int((self.fig.get_size_inches()*self.fig.dpi)[1])
+        rightclickMenu.move(self.mapToGlobal(QtCore.QPoint(event.x, yPxlSizeFig-event.y)))
+        rightclickMenu.show()
+        #self.gridLayout.addWidget(rightclickMenu,3,4,1,1)
+
+    def scroll(self, event):
+        print(event)
+        (x, y) = (event.xdata, event.ydata)
+        if event.button == "down":
+            self.sizeView = min(self.sizeView * 1.1, 0.7)
+        else:
+            self.sizeView = self.sizeView / 1.2
+
+        self.setCenter(x, y)
+        self.paint()
+
+    def setCenter(self, x, y):
+        posX =max(x, -0.2 + self.sizeView)
+        posX =min(posX, 1.2 - self.sizeView)
+        posY =max(y, -0.2 + self.sizeView)
+        posY =min(posY, 1.2 - self.sizeView)
+        self.center = (posX, posY)
+
+    def __init__(self, graph: cg.ClassGraph):
+        self.hover = None
+        self.lastPos = (0.5, 0.5)
+        self.center = (0.5, 0.5)
+        self.sizeView = 0.7
+
         self.constructionNode = None
         self.onMoveMutex = threading.Lock()
         self.observers = []
         fig, axes = plt.subplots()
-        self.fig=fig
+        self.fig = fig
         self.mode = ""
         self.nodeSelected = None
+        for node in graph.nodes():
+            if node.lineWidth == 5:
+                self.nodeSelected = node
+                print(self.nodeSelected)
         fig.frameon=False
         fig.tight_layout()
         fig.subplots_adjust(left=0.00001, bottom=0.00001, right=0.99999, top=0.99999)
@@ -152,17 +217,16 @@ class CanvGraph(QCanvas):
         self.mpl_connect('button_press_event', self.clicked)
         self.mpl_connect('motion_notify_event', self.prepareDrag)
         self.mpl_connect('button_release_event', self.release)
+        self.mpl_connect('scroll_event', self.scroll)
 
-        self.paint()
+        self.paint(self.nodeSelected)
 
-    def paint(self, nodeSelected: ClassNode.ClassNode = None):
+    def paint(self, nodeSelected: ClassNode = None):
         self.nodeSelected = nodeSelected
         if nodeSelected:
             nodeSelected.lineWidth = 5
         graph = self.graph
         axes = self.axes
-        axes.set_xlim(-0.2, 1.2)
-        axes.set_ylim(-0.2, 1.2)
 
         eBold = []
         eColor = []
@@ -173,21 +237,26 @@ class CanvGraph(QCanvas):
         nodesSize = []
         self.nodesPos = nodesPos
         for edge in graph.edges():
-            eBold.append(False)
+
+            bold = self.hover and (edge[0] == self.hover or edge[1] == self.hover)
+            eBold.append(bold)
             if edge[1] == self.constructionNode:
                 if self.mode == ClassMode.ClassMode.addEdgeMode:
                     eColor.append((0, 0.8, 0))
                 elif self.mode == ClassMode.ClassMode.delEdgeMode:
                     eColor.append((0.8, 0, 0))
             else:
-                eColor.append((0, 0, 0))
+                if not self.hover or bold:
+                    eColor.append((0, 0, 0))
+                else:
+                    eColor.append((0.85, 0.85, 0.85))
         for node in self.graph.nodes():
             labels[node] = "  " + str(node);
             lineWidths.append(node.lineWidth)
             nodesPos[node] = node.pos
-            nodesColor.append(node.color)
-            nodesSize.append(node.size)
 
+            nodesColor.append(node.color if (not self.hover) or node == self.hover or node in list(map(lambda n: n[0][0] if n[1] else None, zip(self.graph.edges(), eBold))) + list(map(lambda n: n[0][1] if n[1] else None, zip(self.graph.edges(), eBold))) else (0.8, 0.8, 0.8)  )
+            nodesSize.append(node.size)
 
         nxa.draw_networkx_nodes(graph, nodesPos,
                                 node_color=nodesColor,
@@ -197,8 +266,8 @@ class CanvGraph(QCanvas):
                                 node_size=nodesSize
                                 )
 
-        axes.set_xlim(-0.2, 1.2)
-        axes.set_ylim(-0.2, 1.2)
+        axes.set_xlim(self.center[0] - self.sizeView, self.center[0] + self.sizeView)
+        axes.set_ylim(self.center[1] - self.sizeView, self.center[1] + self.sizeView)
 
         nxa.draw_networkx_edges(graph,
                                 nodesPos,
@@ -213,10 +282,7 @@ class CanvGraph(QCanvas):
                                        ax=axes,
                                        rotate=45
                                        )
-        if (random.random() < 0.02):
-            a = 5
         self.draw()
-
 
     def addObserver(self, observer):
         self.observers.append(observer)

@@ -26,8 +26,8 @@ class FramAction(QtGui.QFrame):
 
 
     def setListsValues(self,notSet: list, selectedNode: ClassNode = None):
-        listBound  = QtGui.QListWidget()
-        listUnbound = QtGui.QListWidget()
+        listBoundWidget  = QtGui.QListWidget()
+        listUnboundWidget = QtGui.QListWidget()
 
 
         if selectedNode is not None:
@@ -35,15 +35,15 @@ class FramAction(QtGui.QFrame):
             for node in selectedNode.nodeList:
                 item = QtGui.QListWidgetItem(node)
                 item.node = node
-                listBound.addItem(item)
+                listBoundWidget.addItem(item)
 
-            self.button1.setLists(listBound, listUnbound, selectedNode.nodeList, notSet)
-            self.button2.setLists(listUnbound, listBound, notSet, selectedNode.nodeList)
+            self.button1.setLists(listBoundWidget, listUnboundWidget, selectedNode.nodeList, notSet)
+            self.button2.setLists(listUnboundWidget, listBoundWidget, notSet, selectedNode.nodeList)
         else:
             self.labelAssigned.setText("Select a node")
         for node in notSet:
             item = QtGui.QListWidgetItem(node)
             item.node = node
-            listUnbound.addItem(item)
-        self.grid.addWidget(listBound, 1, 0, 3, 1)
-        self.grid.addWidget(listUnbound, 1, 2, 3, 1)
+            listUnboundWidget.addItem(item)
+        self.grid.addWidget(listBoundWidget, 1, 0, 3, 1)
+        self.grid.addWidget(listUnboundWidget, 1, 2, 3, 1)

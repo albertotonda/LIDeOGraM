@@ -1,5 +1,5 @@
 import networkx as nx
-import classes.ClassNode as ClassNode
+import classes.ClassGraph as ClassGraph
 import classes.SavingGraph as save
 
 
@@ -11,7 +11,7 @@ class ClassesModel:
 
 
     def initGraph(self):
-        self.graph = nx.DiGraph()
+        self.graph = ClassGraph.ClassGraph()
         graph = self.graph
         """
         n0 = ClassNode.ClassNode(0, nodeList=["a", "b", "c"], color=(0.5, 0.5, 0.9))
