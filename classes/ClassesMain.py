@@ -2,10 +2,13 @@
 
 from classes.Window import Window
 from classes.ClassGraph import ClassGraph
+from classes.ClassesModel import ClassesModel
 import sys
 from PyQt4 import QtGui
 
-
+cm = ClassesModel()
+cm.initGraph()
 qApp = QtGui.QApplication(sys.argv)
-vwApp = Window(ClassGraph.readJson("test2"))
+#vwApp = Window(ClassGraph.readJson("test2"))
+vwApp = Window(cm.graph)
 sys.exit(qApp.exec_())

@@ -1,7 +1,7 @@
 import networkx as nx
+from classes.ClassGraph import ClassGraph
 import classes.ClassGraph as ClassGraph
-import classes.SavingGraph as save
-
+import classes.ClassNode as ClassNode
 
 class ClassesModel:
 
@@ -39,7 +39,7 @@ class ClassesModel:
         G.add_edge(n3, n0)
         """
 
-        """
+
         condition = ClassNode.ClassNode('Condition', ['Temperature', 'Age'])
         molss = ClassNode.ClassNode('GenomicSousExpr', ['AMACBIOSYNTHsousexpr', 'BIOSYNTH_CARRIERSsousexpr', 'CELLENVELOPEsousexpr', 'CELLPROCESSESsousexpr', 'CENTRINTMETABOsousexpr', 'ENMETABOsousexpr', 'FATTYACIDMETABOsousexpr', 'Hypoprotsousexpr', 'OTHERCATsousexpr', 'PURINESsousexpr', 'REGULFUNsousexpr', 'REPLICATIONsousexpr', 'TRANSCRIPTIONsousexpr', 'TRANSLATIONsousexpr', 'TRANSPORTPROTEINSsousexpr'])
         molsur = ClassNode.ClassNode('GenomicSurExpr', ['AMACBIOSYNTHsurexpr', 'BIOSYNTH_CARRIERSsurexpr', 'CELLENVELOPEsurexpr', 'CELLPROCESSESsurexpr', 'CENTRINTMETABOsurexpr', 'ENMETABOsurexpr', 'FATTYACIDMETABOsurexpr', 'Hypoprotsurexpr', 'OTHERCATsurexpr', 'PURINESsurexpr', 'REGULFUNsurexpr', 'REPLICATIONsurexpr', 'TRANSCRIPTIONsurexpr', 'TRANSLATIONsurexpr', 'TRANSPORTPROTEINSsurexpr'])
@@ -84,8 +84,8 @@ class ClassesModel:
         graph.add_edge(popCong, popLyo)
         graph.add_edge(popCong, popSto3)
         graph.add_edge(popLyo, popSto3)
-        test = save.SavingGraph(graph.nodes(), graph.edges())
-        test.toJSON()
-        """
+        #test = ClassGraph.SavingGraph(graph.nodes(), graph.edges())
+        #test.toJSON()
 
-        self.graph = save.SavingGraph.readJson()
+
+        #self.graph = save.SavingGraph.readJson()

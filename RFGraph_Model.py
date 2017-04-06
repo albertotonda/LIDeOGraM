@@ -22,6 +22,9 @@ import ColorMaps
 from collections import OrderedDict
 from sklearn import linear_model
 from fitness import fitness
+from classes.ClassGraph import ClassGraph
+from classes.ClassNode import ClassNode
+from classes.Window import Window
 
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model:
@@ -521,35 +524,38 @@ class RFGraph_Model:
 
 
     def createConstraintsGraph(self):
-        graph = nx.DiGraph()
+        #graph = nx.DiGraph()
+        graph = ClassGraph()
         for i in np.unique(list(self.dataset.variablesClass.values())):
-#            print(i)
-            graph.add_node(i)
-        graph.add_edge('condition','Molss')
-        graph.add_edge('condition', 'Molsur')
-        graph.add_edge('condition','Cell')
-        graph.add_edge('Molss','Cell')
-        graph.add_edge('Molsur', 'Cell')
-        #graph.add_edge('Molsur','Molss')
-        graph.add_edge('Cell', 'CellAniso')
-        graph.add_edge('Cell','PopCentri')
-        graph.add_edge('Cell','PopCong')
-        graph.add_edge('Cell','PopLyo')
-        graph.add_edge('Cell','PopSto3')
-        graph.add_edge('CellAniso', 'PopCentri')
-        graph.add_edge('CellAniso', 'PopCong')
-        graph.add_edge('CellAniso', 'PopLyo')
-        graph.add_edge('CellAniso', 'PopSto3')
-        graph.add_edge('condition','PopCentri')
-        graph.add_edge('condition','PopCong')
-        graph.add_edge('condition','PopLyo')
-        graph.add_edge('condition','PopSto3')
-        graph.add_edge('PopCentri','PopCong')
-        graph.add_edge('PopCentri','PopLyo')
-        graph.add_edge('PopCentri','PopSto3')
-        graph.add_edge('PopCong','PopLyo')
-        graph.add_edge('PopCong', 'PopSto3')
-        graph.add_edge('PopLyo','PopSto3')
+            #print(i)
+            i_var = [v for (v, e) in self.dataset.variablesClass.items() if e ==i ]
+            graph.add_node(ClassNode(i, i_var))
+        Window(graph)
+        # graph.add_edge('condition','Molss')
+        # graph.add_edge('condition', 'Molsur')
+        # graph.add_edge('condition','Cell')
+        # graph.add_edge('Molss','Cell')
+        # graph.add_edge('Molsur', 'Cell')
+        # #graph.add_edge('Molsur','Molss')
+        # graph.add_edge('Cell', 'CellAniso')
+        # graph.add_edge('Cell','PopCentri')
+        # graph.add_edge('Cell','PopCong')
+        # graph.add_edge('Cell','PopLyo')
+        # graph.add_edge('Cell','PopSto3')
+        # graph.add_edge('CellAniso', 'PopCentri')
+        # graph.add_edge('CellAniso', 'PopCong')
+        # graph.add_edge('CellAniso', 'PopLyo')
+        # graph.add_edge('CellAniso', 'PopSto3')
+        # graph.add_edge('condition','PopCentri')
+        # graph.add_edge('condition','PopCong')
+        # graph.add_edge('condition','PopLyo')
+        # graph.add_edge('condition','PopSto3')
+        # graph.add_edge('PopCentri','PopCong')
+        # graph.add_edge('PopCentri','PopLyo')
+        # graph.add_edge('PopCentri','PopSto3')
+        # graph.add_edge('PopCong','PopLyo')
+        # graph.add_edge('PopCong', 'PopSto3')
+        # graph.add_edge('PopLyo','PopSto3')
 
         #nx.draw(graph,with_labels=True)
 

@@ -6,8 +6,8 @@ from QtConnector import QtConnector
 import sys
 from PyQt4 import QtGui
 
-modApp=RFGraph_Model()
 qApp = QtGui.QApplication(sys.argv)
+modApp=RFGraph_Model()
 vwApp = RFGraph_View(modApp)
 cntrApp=RFGraph_Controller(modApp,vwApp)
 vwApp.cntrApp=cntrApp
