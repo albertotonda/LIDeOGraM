@@ -1,5 +1,5 @@
 import numpy as np
-
+import pandas as pd
 
 class Dataset:
 
@@ -31,6 +31,10 @@ class Dataset:
             self.data.append(linedata)
         self.nbExp = len(self.data)
         self.data=np.array(self.data)
+
+        self.nodeDescription = pd.read_csv("data/full_new2_metatranscriptome_Marc_Kegg_COG_ds_21nov16.csv", index_col=0, header=0, sep=";")
+        self.nodeDescription = self.nodeDescription[["EC number", 'Product']]
+        print("3")
 
 
 

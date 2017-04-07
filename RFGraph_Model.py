@@ -22,23 +22,18 @@ import ColorMaps
 from collections import OrderedDict
 from sklearn import linear_model
 from fitness import fitness
+import logging
 
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model:
 
     def __init__(self):
 
-
-        self.dataset=Dataset("data/baa.ldg")
+        lfile = 'data/branchednormalizied.ldg'
+        self.dataset=Dataset(lfile)
+        logging.info("Loaded {}".format(lfile))
         self.adj_contrGraph = self.createConstraintsGraph()
-        #self.dataset = Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr.csv")
-        #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr.txt')
-        #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_noMol.txt')
-
-        #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_expertcorrected.txt')
         self.equacolO = self.findLassoEqs()
-
-        #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_expertcorrected_noMol.txt')
         self.nbequa = len(self.equacolO)  # Number of Equation for all variables taken together
 
         self.adj_simple=np.zeros((self.dataset.nbVar,self.dataset.nbVar))
@@ -124,25 +119,10 @@ class RFGraph_Model:
         self.forbiddenNodes = []
         self.nodesWithNoEquations=[]
 
-        #Necessaire de faire une deepcopy ?
-        #self.lpos= copy.deepcopy(self.pos)
-        #for p in self.lpos:  # raise text positions
-        # self.modApp.lpos[p] = (self.modApp.lpos[p][0],self.modApp.lpos[p][1]+0.04)
-        #    self.lpos[p][1] +=0.04
-
-        # Charge la base de données d'équations à afficher après chargement
-        # TODO: Base de données d'équations à changer
-
-
         self.data = []
 
-        #self.dataMaxComplexity = self.cmplxMax
         for i in range(len(self.equacolO)):
             self.data.append(self.equacolO[i, np.ix_([0, 1, 3, 4])][0])
-            #self.dataMaxComplexity = max(self.dataMaxComplexity, self.equacolPO[i,np.ix_([0])][0][0])
-            #self.dataMaxFitness = max(self.dataMaxFitness, self.equacolPO[i,np.ix_([1])][0][0])
-
-
 
         self.labels = {}
         self.edges = None
@@ -155,7 +135,6 @@ class RFGraph_Model:
         #self.datumIncMat = pd.read_csv("data/equa_with_col_Parent_withMol.csv", header=None)
         #self.datumIncMat = self.datumIncMat.sort(2)
         self.datumIncMat=pd.DataFrame(self.equacolO)
-        variables = self.varsIn + sorted(self.datumIncMat[2].unique().tolist())
 
         self.df_IncMat = pd.DataFrame(index=self.datumIncMat[2], columns=self.varsIn + self.datumIncMat[2].unique().tolist())
         for row in range(self.df_IncMat.shape[0]):
@@ -195,8 +174,9 @@ class RFGraph_Model:
                 idx=[list(self.dataset.varnames).index(v) for v in par]
                 X=self.dataset.data[:,idx]
 
-                for a in [500,200,100,50,20,10,5,2,1,0.5,0.2,0.1]:
-                    clf = linear_model.Lasso(alpha=a)
+                params = [(0.5, True),(0.05, False),(0.01, False), (0.005,False),(0.001,False)]
+                for a,f in params:#[0.5,0.05,0.01, 0.005,0.001]:
+                    clf = linear_model.Lasso(alpha=a, fit_intercept = f)
                     clf.fit(X, Y)
                     pred=clf.predict(X)
 
@@ -211,7 +191,7 @@ class RFGraph_Model:
     def regrToEquaColO(self,clf,parNode,childNode,Y,pred):
         line=[]
         s=''
-        cmplx = 0;
+        cmplx = 0
         hasCoef=False
 
 
@@ -709,8 +689,8 @@ class RFGraph_Model:
 
         #with open('initpos.dat', 'rb') as f:
             #self.pos=pickle.load(f)
-        self.pos = nx.nx_pydot.graphviz_layout(G, prog='dot')
-        #self.pos = nx.spring_layout(G)
+        self.pos = nx.nx_pydot.graphviz_layout(G, prog='sfdp')
+        #self.pos = nx.spectral_layout(G)
 
         minx = np.inf
         maxx = -np.inf

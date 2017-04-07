@@ -130,8 +130,8 @@ class IncMatrixCanvas(QTableWidget):
         tableOrder = self.modApp.dataIncMat.columns
         eqs = []
         for place, col in enumerate(tableOrder):
-            if col == "Temperature": continue
-            if col == "Age" : continue
+            if col in self.modApp.varsIn : continue
+
             eqs.append(self.modApp.dataIncMat.index.tolist().index(col)+int(best_ind[col]))
         l = len(self.modApp.dataIncMat.index.tolist())
         gmodelSize = len(eqs)
@@ -213,12 +213,6 @@ class IncMatrixCanvas(QTableWidget):
                 self.setItem(i, j, cell)
 
         self.show()
-
-    def selected(self,value : str):
-        if value == None:
-            #resetSelection
-            pass
-        pass
 
     def highlight(self, value : int):
         if self.lastSelected :

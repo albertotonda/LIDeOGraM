@@ -99,6 +99,20 @@ class RFGraph_View(QtGui.QMainWindow):
         rightclickMenu.show()
         #self.gridLayout.addWidget(rightclickMenu,3,4,1,1)
 
+
+    def tooltips(self, cntrApp, event, nodeclicked):
+        if nodeclicked in self.modApp.dataset.nodeDescription.index:
+            infos = self.modApp.dataset.nodeDescription.ix[nodeclicked].to_string()
+            print(infos)
+        #ttips = QtGui.QTooltip()
+        #yPxlSizeFig = int((self.networkGUI.fig.get_size_inches() * self.networkGUI.fig.dpi)[1])
+        #ttips.showText((QPoint(event.x, yPxlSizeFig - event.y)), infos)
+
+            #yPxlSizeFig = int((self.networkGUI.fig.get_size_inches() * self.networkGUI.fig.dpi)[1])
+            #rightclickMenu.move(self.networkGUI.mapToGlobal(QPoint(event.x, yPxlSizeFig - event.y)))
+            #rightclickMenu.show()
+            # self.gridLayout.addWidget(rightclickMenu,3,4,1,1)
+
     def updateMenuBar(self, cntrApp):
         exitAction = QtGui.QAction('&Exit', self)
         exitAction.setStatusTip('Exit application')

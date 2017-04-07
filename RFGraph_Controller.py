@@ -33,7 +33,7 @@ class RFGraph_Controller:
     def clickFitness(self):
         self.modApp.ColorMode='Fit'
         self.modApp.computeNxGraph()
-        self.vwApp.networkGUI.network.drawEdges()
+       # self.vwApp.networkGUI.network.drawEdges()
         self.vwApp.networkGUI.network.updateView()
         #self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
         #self.vwApp.buttonFitness.setStyleSheet("background-color: grey")
@@ -72,7 +72,7 @@ class RFGraph_Controller:
             self.modApp.globalModelView=True
             self.modApp.bestindvToSelectedEq()
             self.modApp.computeGlobalView()
-            self.vwApp.incMatGUI.highlight(-1)
+            #self.vwApp.incMatGUI.highlight(-1)
             self.vwApp.incMatGUI.mutipleHighlight(-1)
             self.vwApp.updateView()
             self.vwApp.showAction.setChecked(True)
@@ -116,6 +116,7 @@ class RFGraph_Controller:
                 self.modApp.lastHover = ''
             return
 
+        self.vwApp.tooltips(self, self.modApp.pos[dstMin], dstMin)
 
         if(not self.modApp.lastHover==dstMin or movingOrClikingNode):
 
@@ -195,7 +196,7 @@ class RFGraph_Controller:
 
         else:
             dstMin = ('','')
-        logging.info('Hovered {}'.format(dstMin[1]))
+        #logging.info('Hovered {}'.format(dstMin[1]))
 
 
         if(event.button==None and self.modApp.lastHover == dstMin[1] ):
@@ -275,7 +276,7 @@ class RFGraph_Controller:
         else:
             nodeclicked = min(dst, key=(lambda x: x[0]))[1] #Closest node
             self.vwApp.incMatGUI.mutipleHighlight(nodeclicked)
-            self.vwApp.incMatGUI.highlight(-1)
+            #self.vwApp.incMatGUI.highlight(-1)
             logging.info('Moving a node')            #self.higlight(nodeclicked, self.p(self.modApp.lastNodeClicked))
             self.modApp.lastNodeClicked = nodeclicked
 
@@ -430,11 +431,11 @@ class RFGraph_Controller:
         else:
             self.vwApp.eqTableGUI.updateView()
             self.vwApp.fitGUI.updateView()
-        logging.info("Clicked (eqTable) {}".format(self.vwApp.eqTableGUI.get(self.modApp.clicked_line,2).text))
+        logging.info("Clicked (eqTable) {}".format(self.vwApp.eqTableGUI.item(self.modApp.clicked_line,2).text()))
 
     def incMatClicked(self,cellClicked):
         print(cellClicked.row())
-        self.vwApp.incMatGUI.highlight(cellClicked.row())
+        #self.vwApp.incMatGUI.highlight(cellClicked.row())
         nodeToClick=self.vwApp.incMatGUI.order[cellClicked.row()]
         print(nodeToClick)
         posNode=self.modApp.pos[nodeToClick]
@@ -462,7 +463,7 @@ class RFGraph_Controller:
         eqCellToClickWid=MyWidgetItem(eqCellToClick)
 
         self.eqTableClicked(eqCellToClickWid)
-        logging.info("Clicked (Matrix) {}".format(eqCellToClick.text))
+        logging.info("Clicked (Matrix) {}".format(nodeToClick))
 
     # TODO Crée le surlignage des noeuds
     def highlight(self, new_node: str, old_node: str = None):
