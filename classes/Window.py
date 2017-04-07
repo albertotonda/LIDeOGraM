@@ -52,7 +52,7 @@ class Window(QtGui.QMainWindow):
 
 
 
-        #QtGui.QMainWindow.show(self)
+        QtGui.QMainWindow.show(self)
         #self.exec()
 
     def notify(self, selectedNode=None, keepSelected = False):
@@ -69,5 +69,5 @@ class Window(QtGui.QMainWindow):
         self.graphReady = True
         print("pret !")
         self.fctToCall(self.graph)
-        #self.close()
+        self.close()
 

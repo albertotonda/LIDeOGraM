@@ -27,6 +27,9 @@ from classes.ClassNode import ClassNode
 from classes.Window import Window
 from time import sleep
 import threading
+from RFGraph_View import RFGraph_View
+from RFGraph_Controller import RFGraph_Controller
+from QtConnector import QtConnector
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model:
 
@@ -35,12 +38,14 @@ class RFGraph_Model:
 
         self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected.csv")
         self.createConstraintsGraph()
+        self.firstInit=True
         #self.dataset = Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr.csv")
         #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr.txt')
         #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_noMol.txt')
 
         #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_expertcorrected.txt')
     def init2(self,contrgraph):
+
         self.adj_contrGraph = contrgraph
         self.equacolO = self.findLassoEqs()
 
@@ -193,6 +198,14 @@ class RFGraph_Model:
 
 
         self.initGraph()
+        if self.firstInit:
+            vwApp = RFGraph_View(self)
+            cntrApp = RFGraph_Controller(self, vwApp)
+            vwApp.cntrApp = cntrApp
+            vwApp.eqTableGUI.cntrApp = cntrApp
+            vwApp.updateMenuBar(cntrApp)
+            qtconnector = QtConnector(vwApp, cntrApp)
+        self.firstInit=False
 
     def recomputeNode(self,node,neweqs):
         self.equacolO[self.equacolO[:, 2] == node, :]
@@ -207,8 +220,8 @@ class RFGraph_Model:
             if(iClass!='condition'):
                 parIClass=[]
                 for (e1,e2) in self.adj_contrGraph.edges():
-                    if(e2 ==iClass and not e1 in parIClass):
-                        parIClass.append(e1)
+                    if(e2.name ==iClass and not e1.name in parIClass):
+                        parIClass.append(e1.name)
                 #parIClass=list(self.adj_contrGraph.edge[iClass].keys())
                 par=[]
                 for v in self.dataset.varnames:
@@ -234,6 +247,7 @@ class RFGraph_Model:
                     while(not cmplxOneFound): #Find equation of complexity one
                         clf = linear_model.Lasso(alpha=alpha)
                         clf.fit(X, Y)
+
                         pred = clf.predict(X)
                         equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames[i], Y, pred)
                         #print("Find first : equacolOLine[0]" + str(equacolOLine[0]) + " alpha= "+str(alpha) + " curEqFound: " + str(curEqFound))
@@ -534,7 +548,9 @@ class RFGraph_Model:
             i_var = [v for (v, e) in self.dataset.variablesClass.items() if e ==i ]
             graph.add_node(ClassNode(i, i_var))
         #testMutex = threading.Lock()
+        print("creating classes window")
         classApp=Window(graph,self.init2)
+        print("after classes window")
         #graph=classApp.exec()
         #testMutex.acquire(True)
 
