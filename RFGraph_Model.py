@@ -17,7 +17,7 @@ from Dataset import Dataset
 from sympy.parsing.sympy_parser import parse_expr
 from sympy import sympify
 import pickle
-from PyQt4.QtGui import *
+from PyQt5.QtGui import *
 import ColorMaps
 from collections import OrderedDict
 from sklearn import linear_model
@@ -183,7 +183,7 @@ class RFGraph_Model:
                     equacolOtmp.extend(self.regrToEquaColO(clf,par,self.dataset.varnames[i],Y,pred))
 
         equacolOtmp = np.array(equacolOtmp, dtype=object)
-        equacolOtmp = equacolOtmp.reshape(len(equacolOtmp)/5,5) #TODO int()
+        equacolOtmp = equacolOtmp.reshape(int(len(equacolOtmp)/5),5) #TODO int()
 
 
         return equacolOtmp

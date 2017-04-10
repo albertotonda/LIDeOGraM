@@ -1,7 +1,8 @@
 #-*- coding: utf-8
 
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtGui import *
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 # TODO Crée la fenêtre d'aide
 class Help(QDialog):

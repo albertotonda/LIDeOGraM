@@ -1,18 +1,18 @@
 #-*- coding: utf-8
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore, QtWidgets
 
 from NetworkCanvas import NetworkCanvas
 from EqTableCanvas import EqTableCanvas
 from IncMatrixCanvas import IncMatrixCanvas
 from FitCanvas import FitCanvas
 from OnOffCheckBox import *
-from PyQt4.Qt import QPoint
+from PyQt5.Qt import QPoint
 
 
 
 
 # TODO Crée tout les boutons (or graphes + équations)
-class RFGraph_View(QtGui.QMainWindow):
+class RFGraph_View(QtWidgets.QMainWindow):
 
     def __init__(self,modApp):
 
@@ -22,45 +22,45 @@ class RFGraph_View(QtGui.QMainWindow):
 
 
 
-        QtGui.QMainWindow.__init__(self)
+        QtWidgets.QMainWindow.__init__(self)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        #self.setWindowTitle(QtGui.QLabel("Test"))
+        #self.setWindowTitle(QtWidgets.QLabel("Test"))
         self.setWindowTitle("LIDeoGraM")
         self.icon = QtGui.QIcon("Icone.png")
         self.setWindowIcon(self.icon)
 
         self.setWindowState(QtCore.Qt.WindowMaximized)
 
-        self.main_widget = QtGui.QWidget(self)
+        self.main_widget = QtWidgets.QWidget(self)
 
-        self.gridLayout = QtGui.QGridLayout(self.main_widget)
+        self.gridLayout = QtWidgets.QGridLayout(self.main_widget)
         self.gridLayout.setSpacing(5)
         self.networkGUI = NetworkCanvas(self.modApp, self)
         #self.gridLayout.addWidget(self.networkGUI, 1, 0, 7, 60)
         self.gridLayout.addWidget(self.networkGUI, 1, 0, 2, 2)
         self.incMatGUI = IncMatrixCanvas(self.modApp,self)
         self.gridLayout.addWidget(self.incMatGUI,1,2,3,1)
-        self.adjThreshold_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
+        self.adjThreshold_slider = QtWidgets.QSlider(QtCore.Qt.Horizontal, self.main_widget)
         self.adjThreshold_slider.setValue(self.modApp.adjThresholdVal * 100)
 
-        self.adjThreshold_lab = QtGui.QLabel('Edges importance : ')
+        self.adjThreshold_lab = QtWidgets.QLabel('Edges importance : ')
         self.gridLayout.addWidget(self.adjThreshold_lab, 3, 0, 1, 1)
         self.gridLayout.addWidget(self.adjThreshold_slider, 3, 1, 1, 1)
 
 
-        self.comprFitCmplx_lab_fit = QtGui.QLabel('Fitness')
-        self.selectContrTxtLab = QtGui.QLabel('')
+        self.comprFitCmplx_lab_fit = QtWidgets.QLabel('Fitness')
+        self.selectContrTxtLab = QtWidgets.QLabel('')
         self.gridLayout.addWidget(self.selectContrTxtLab, 0, 1, 1, 1)
         selectContrFont = QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold)
         self.selectContrTxtLab.setFont(selectContrFont)
 
 
-        self.clickedNodeLab = QtGui.QLabel('Selected node:')
+        self.clickedNodeLab = QtWidgets.QLabel('Selected node:')
         selNodeFont=QtGui.QFont("AnyStyle",14,QtGui.QFont.DemiBold)
         self.clickedNodeLab.setFont(selNodeFont)
         self.eqTableGUI = EqTableCanvas(self.modApp)
         self.gridLayout.addWidget(self.eqTableGUI, 1, 3, 1, 1)
-        #selNodeLab=QtGui.QLabel('Selected node:')
+        #selNodeLab=QtWidgets.QLabel('Selected node:')
         #selNodeLab.setFont(selNodeFont)
         #self.gridLayout.addWidget(selNodeLab,0,140,1,30)
         #self.gridLayout.addWidget(self.clickedNodeLab, 0, 153, 1, 30)
@@ -79,16 +79,16 @@ class RFGraph_View(QtGui.QMainWindow):
         self.updateView()
 
     def updateRightClickMenu(self,cntrApp,event,nodeclicked):
-        rightclickMenu=QtGui.QMenu(self)
+        rightclickMenu=QtWidgets.QMenu(self)
         if(nodeclicked in self.modApp.forbiddenNodes):
-            restoreAction= QtGui.QAction("Restore " + nodeclicked,self)
+            restoreAction= QtWidgets.QAction("Restore " + nodeclicked,self)
             restoreAction.triggered.connect(lambda: cntrApp.restoreNode(nodeclicked))
             rightclickMenu.addAction(restoreAction)
         else:
-            removeAction = QtGui.QAction("Remove " + nodeclicked,self)
+            removeAction = QtWidgets.QAction("Remove " + nodeclicked,self)
             removeAction.triggered.connect(lambda :cntrApp.removeNode(nodeclicked))
             rightclickMenu.addAction(removeAction)
-        recomputeAction=QtGui.QAction("Recompute " + nodeclicked,self)
+        recomputeAction=QtWidgets.QAction("Recompute " + nodeclicked,self)
         recomputeAction.triggered.connect(lambda: cntrApp.recomputeNode(nodeclicked))
         rightclickMenu.addAction(recomputeAction)
         rightclickMenu.addAction("Cancel")
@@ -114,38 +114,38 @@ class RFGraph_View(QtGui.QMainWindow):
             # self.gridLayout.addWidget(rightclickMenu,3,4,1,1)
 
     def updateMenuBar(self, cntrApp):
-        exitAction = QtGui.QAction('&Exit', self)
+        exitAction = QtWidgets.QAction('&Exit', self)
         exitAction.setStatusTip('Exit application')
-        exitAction.triggered.connect(QtGui.qApp.quit)
+        exitAction.triggered.connect(QtWidgets.qApp.quit)
 
-        helpAction = QtGui.QAction("&Show help", self)
+        helpAction = QtWidgets.QAction("&Show help", self)
         helpAction.setStatusTip("Display Help")
         helpAction.triggered.connect(cntrApp.clickHelp)
 
-        optmAction = QtGui.QAction("&Optimize model",self)
+        optmAction = QtWidgets.QAction("&Optimize model",self)
         optmAction.setStatusTip("Start global optimisation process")
         optmAction.triggered.connect(cntrApp.clickOptmuGP)
 
-        viewGroupAction = QtGui.QActionGroup(self, exclusive=True)
+        viewGroupAction = QtWidgets.QActionGroup(self, exclusive=True)
 
-        self.cmAction = QtGui.QAction("&Compromise", self, checkable=True)
+        self.cmAction = QtWidgets.QAction("&Compromise", self, checkable=True)
         self.cmAction.triggered.connect(cntrApp.clickCompromis)
         comproAction = viewGroupAction.addAction(self.cmAction)
-        ftAction = QtGui.QAction("&Fitness", self, checkable=True)
+        ftAction = QtWidgets.QAction("&Fitness", self, checkable=True)
         ftAction.triggered.connect(cntrApp.clickFitness)
-        ftAction.activate(QtGui.QAction.Trigger)
+        ftAction.activate(QtWidgets.QAction.Trigger)
         fitnesAction = viewGroupAction.addAction(ftAction)
-        cpAction = QtGui.QAction("&Complexity", self, checkable=True)
+        cpAction = QtWidgets.QAction("&Complexity", self, checkable=True)
         cpAction.triggered.connect(cntrApp.clickCmplx)
         compleAction = viewGroupAction.addAction(cpAction)
 
-        self.showAction = QtGui.QAction("&Show Global model", self, checkable=True)
+        self.showAction = QtWidgets.QAction("&Show Global model", self, checkable=True)
         self.showAction.triggered.connect(self.viewGlobalModel)
         self.showActionS = cntrApp.clickShowModGlobal
         self.showActionH = cntrApp.clickHideModGlobal
         #TODO ShowAction connectors
 
-        chEqAction = QtGui.QAction("&Edit equation", self)
+        chEqAction = QtWidgets.QAction("&Edit equation", self)
         chEqAction.triggered.connect(cntrApp.clickChangeEq)
 
 #        self.constrainAction =
@@ -171,7 +171,7 @@ class RFGraph_View(QtGui.QMainWindow):
         opmMenu.addAction(optmAction)
         opmMenu.addAction(chEqAction)
 
-        constrainAction = QtGui.QAction("&Add constrain", self)
+        constrainAction = QtWidgets.QAction("&Add constrain", self)
         constrainAction.triggered.connect(cntrApp.clickRemoveLink)
 
 
@@ -195,7 +195,7 @@ class RFGraph_View(QtGui.QMainWindow):
             self.showActionH()
 
     def addConstrain(self, name):
-        constrainAction = QtGui.QAction(name, self)
+        constrainAction = QtWidgets.QAction(name, self)
         constrainAction.setStatusTip('Remove this constrain')
         self.mapper.setMapping(constrainAction,name)
         constrainAction.triggered.connect(self.mapper.map)

@@ -3,17 +3,14 @@ import sys
 from collections import Counter
 
 import pandas as pd
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+#from PyQt4.QtCore import Qt
 
 import pandas as pd
 
 import re
-
-
-from PyQt4.QtGui import *
-from PyQt4.QtCore import Qt
-
 
 class MyHeaderView(QHeaderView):
 
@@ -85,7 +82,7 @@ class IncMatrixCanvas(QTableWidget):
                     cmap = self.modApp.colors.get("complexity",self.modApp.equacolO[i,0]/self.modApp.cmplxMax)
                     color = QColor.fromRgb(*cmap)
                     cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
-                    cell.setBackgroundColor(color)
+                    cell.setBackground(color)
                     cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
                     self.setItem(i, j, cell)
                     continue
@@ -93,14 +90,14 @@ class IncMatrixCanvas(QTableWidget):
                     self.setColumnWidth(j, 15)
                     color = QColor.fromRgb(0, 255, 0)
                     cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
-                    cell.setBackgroundColor(color)
+                    cell.setBackground(color)
                     cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
                     self.setItem(i, j, cell)
                     continue
 
                 if j == 2:
                     cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
-                    cell.setBackgroundColor(QColor.fromRgb(255,255,255,255))
+                    cell.setBackground(QColor.fromRgb(255,255,255,255))
                     self.setItem(i, j, cell)
                     continue
                 self.setColumnWidth(j, 15)
@@ -116,7 +113,7 @@ class IncMatrixCanvas(QTableWidget):
                     color = QColor.fromRgb(*[int(i * 255) for i in c])
                 else:
                     color = QColor.fromRgb(255, 255, 255)
-                cell.setBackgroundColor(color)
+                cell.setBackground(color)
                 cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
                 self.setItem(i, j, cell)
 
@@ -157,7 +154,7 @@ class IncMatrixCanvas(QTableWidget):
                     cmap = self.modApp.colors.get("complexity",self.modApp.equacolO[eqs[i],0] / self.modApp.cmplxMax)
                     color = QColor.fromRgb(*cmap)
                     cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
-                    cell.setBackgroundColor(color)
+                    cell.setBackground(color)
                     cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
                     self.setItem(i, j, cell)
                     continue
@@ -171,7 +168,7 @@ class IncMatrixCanvas(QTableWidget):
                         cmap=[255,255,255]
                     color = QColor.fromRgb(*cmap)
                     cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
-                    cell.setBackgroundColor(color)
+                    cell.setBackground(color)
                     cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
                     self.setItem(i, j, cell)
                     continue
@@ -182,7 +179,7 @@ class IncMatrixCanvas(QTableWidget):
                     else:
                         t = [125, 125, 125]
                     cell = QTableWidgetItem(nameOrder[i])
-                    cell.setBackgroundColor(QColor.fromRgb(255,255,255,255))
+                    cell.setBackground(QColor.fromRgb(255,255,255,255))
                     cell.setTextColor(QColor.fromRgb(*t))
                     self.setItem(i, j, cell)
                     continue
@@ -208,7 +205,7 @@ class IncMatrixCanvas(QTableWidget):
                     color = QColor.fromRgb(*b)
                 else:
                     color = QColor.fromRgb(255, 255, 255)
-                cell.setBackgroundColor(color)
+                cell.setBackground(color)
                 cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
                 self.setItem(i, j, cell)
 
@@ -221,10 +218,10 @@ class IncMatrixCanvas(QTableWidget):
                 color = cell.background().color().getRgb()
                 if color == (190, 190, 190, 255):
                     color = [255, 255, 255, 255]
-                    cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
+                    cell.setBackground(QColor.fromRgb(*color[:-1]))
                 else:
                     color = [int((255 / 190) * i) for i in color]
-                    cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
+                    cell.setBackground(QColor.fromRgb(*color[:-1]))
         if value == -1:
             self.lastSelected = False
             return
@@ -234,10 +231,10 @@ class IncMatrixCanvas(QTableWidget):
             color = cell.background().color().getRgb()
             if color == (255,255,255,255):
                 color = [190,190,190,125]
-                cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
+                cell.setBackground(QColor.fromRgb(*color[:-1]))
             else:
                 color = [int((190/255)*i) for i in color]
-                cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
+                cell.setBackground(QColor.fromRgb(*color[:-1]))
 
     def mutipleHighlight(self, label: str):
         if self.lastSelectedRows:
@@ -247,10 +244,10 @@ class IncMatrixCanvas(QTableWidget):
                     color = cell.background().color().getRgb()
                     if color == (190, 190, 190, 255):
                         color = [255, 255, 255, 255]
-                        cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
+                        cell.setBackground(QColor.fromRgb(*color[:-1]))
                     else:
                         color = [int((255 / 190) * i) for i in color]
-                        cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
+                        cell.setBackground(QColor.fromRgb(*color[:-1]))
         if label == -1:
             self.lastSelectedRows = ""
             return
@@ -268,10 +265,10 @@ class IncMatrixCanvas(QTableWidget):
                 color = cell.background().color().getRgb()
                 if color == (255, 255, 255, 255):
                     color = [190, 190, 190, 125]
-                    cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
+                    cell.setBackground(QColor.fromRgb(*color[:-1]))
                 else:
                     color = [int((190 / 255) * i) for i in color]
-                    cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
+                    cell.setBackground(QColor.fromRgb(*color[:-1]))
 
     def StructureChange(self):
         pass

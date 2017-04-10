@@ -1,6 +1,6 @@
 #-*- coding: utf-8
 from Help import Help
-from PyQt4.QtCore import QCoreApplication
+from PyQt5.QtCore import QCoreApplication
 from OptimisationCanvas import OptimisationCanvas
 from ErrorConstraint import ErrorConstraint
 from Network import Network

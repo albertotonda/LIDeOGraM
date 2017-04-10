@@ -1,10 +1,10 @@
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore, QtWidgets
 import sys
 #===============================================================================
 # MyCheckBox
 #===============================================================================
 #className
-class OnOffCheckBox(QtGui.QCheckBox):
+class OnOffCheckBox(QtWidgets.QCheckBox):
 #|-----------------------------------------------------------------------------|
 # class Variables
 #|-----------------------------------------------------------------------------|
@@ -14,7 +14,7 @@ class OnOffCheckBox(QtGui.QCheckBox):
 # Constructor
 #|-----------------------------------------------------------------------------|
     def __init__(self, cntrApp, id,   *args, **kwargs):
-            QtGui.QCheckBox.__init__(self, *args, **kwargs)
+            QtWidgets.QCheckBox.__init__(self, *args, **kwargs)
             self.setStyleSheet("background-color: rgb(0, 0, 0);\n" +
                       "color: rgb(255, 255, 255);\n")
             #set default check as True
@@ -38,7 +38,7 @@ class OnOffCheckBox(QtGui.QCheckBox):
             else:
                 self.setChecked(True)
             self.cntrApp.onOffClicked(self)
-            return QtGui.QCheckBox.mousePressEvent(self, *args, **kwargs)
+            return QtWidgets.QCheckBox.mousePressEvent(self, *args, **kwargs)
 #|--------------------------End of mousePressEvent-----------------------------|
 
 #|-----------------------------------------------------------------------------|

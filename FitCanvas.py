@@ -1,10 +1,11 @@
 #-*- coding: utf-8
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import fitness
 from sympy.parsing.sympy_parser import parse_expr
 import matplotlib.pyplot as plt
 import numpy as np
-from PyQt4 import QtGui
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 
 
 # TODO Crée la courbe correpondant à l'équation sélectionnée
@@ -19,7 +20,7 @@ class FitCanvas(FigureCanvas):
 
 
         FigureCanvas.__init__(self, self.fig)
-        FigureCanvas.setSizePolicy(self, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        FigureCanvas.setSizePolicy(self, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         FigureCanvas.updateGeometry(self)
 
 

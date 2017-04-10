@@ -1,13 +1,17 @@
 #-*- coding: utf-8
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtGui import *
+#from PyQt5 import QtGui, QtCore
+#from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QDialog
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import Qt
+
 
 #TODO Crée la fenêtre d'erreur lors de la mauvaise sélection d'un noeud à contraindre
 class ErrorConstraint(QDialog):
    def __init__(self, parent=None):
        super(ErrorConstraint, self).__init__(parent)
        self.setWindowTitle('Selection error')
-       self.icon = QtGui.QIcon("iconeLSN")
+       self.icon = QIcon("iconeLSN")
        self.setWindowIcon(self.icon)
        mainBox = QVBoxLayout(self)
        boxlayout = QHBoxLayout()
@@ -19,7 +23,7 @@ class ErrorConstraint(QDialog):
        font.setPointSize(12)
        self.setFont(font)
 
-       buttons = QDialogButtonBox(QDialogButtonBox.Ok, QtCore.Qt.Horizontal, self)
+       buttons = QDialogButtonBox(QDialogButtonBox.Ok, Qt.Horizontal, self)
        buttons.accepted.connect(self.accept)
        buttons.rejected.connect(self.reject)
 
