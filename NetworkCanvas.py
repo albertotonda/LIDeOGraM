@@ -12,8 +12,9 @@ from PyQt4 import QtGui
 from Network import Network
 
 # TODO Change la couleur des "edges" lorsque l'on déplace le slider
-class NetworkCanvas(FigureCanvas):
+class NetworkCanvas(FigureCanvas, QtGui.QWidget):
     def __init__(self, modApp, vwApp):
+        QtGui.QWidget.__init__(self)
         self.modApp=modApp
         self.vwApp=vwApp
         self.fig, self.axes =  plt.subplots()
