@@ -4,7 +4,7 @@ from classes.MenuAction import MenuAction
 
 class MenuBar:
 
-    def __init__(self, window):
+    def __init__(self, window, toolButtons):
         MenuAction.setWindow(window)
 
         exitAction = QtGui.QAction('&Exit', window)
@@ -32,18 +32,22 @@ class MenuBar:
 
         editMode = QtGui.QActionGroup(window, exclusive=True)
 
+
         moveModeAction = QtGui.QAction("&Move node", window, checkable=True)
-        moveModeAction.triggered.connect(MenuAction.setMoveMode)
+        toolButtons[0].setMenuAction(moveModeAction)
+        moveModeAction.triggered.connect(toolButtons[0].changeMode)
         moveModeAction.activate(QtGui.QAction.Trigger)
         moveMode = editMode.addAction(moveModeAction)
 
         newEdgeModeAction = QtGui.QAction("&New Edge", window, checkable=True)
-        newEdgeModeAction.triggered.connect(MenuAction.setAddEdgeMode)
+        toolButtons[1].setMenuAction(newEdgeModeAction)
+        newEdgeModeAction.triggered.connect(toolButtons[1].changeMode)
         newEdgeMode = editMode.addAction(newEdgeModeAction)
 
-        cpAction = QtGui.QAction("&Del Edge", window, checkable=True)
-        cpAction.triggered.connect(MenuAction.setDelEdgeMode)
-        delEdgeMode = editMode.addAction(cpAction)
+        delEdgeAction = QtGui.QAction("&Del Edge", window, checkable=True)
+        toolButtons[2].setMenuAction(delEdgeAction)
+        delEdgeAction.triggered.connect(toolButtons[2].changeMode)
+        delEdgeMode = editMode.addAction(delEdgeAction)
 
         editMenu = menubar.addMenu("&Edit")
         editMenu.addAction(addNodeAction)

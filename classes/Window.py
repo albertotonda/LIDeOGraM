@@ -6,6 +6,7 @@ from classes.FramAction import FramAction
 from classes.ClassGraph import ClassGraph
 from classes.MenuBar import MenuBar
 import copy
+from classes.ToolMenu import ToolMenu
 
 
 class Window(QtGui.QMainWindow):
@@ -38,17 +39,19 @@ class Window(QtGui.QMainWindow):
         self.saveButton = QtGui.QPushButton("Validate")
         self.saveButton.clicked.connect(lambda: self.setReady(self.graph))
 
+        tools = ToolMenu(self.canv)
 
         self.cancelButton = QtGui.QPushButton("Cancel")
         self.cancelButton.clicked.connect(lambda: self.setReady(self.initialGraph))
-        self.gridLayout.addWidget(self.canv, 0, 0, 2, 1)
-        self.gridLayout.addWidget(self.frame, 0, 1, 1, 2)
-        self.gridLayout.addWidget(self.cancelButton, 1, 1, 1, 1)
-        self.gridLayout.addWidget(self.saveButton, 1, 2, 1, 1)
+        self.gridLayout.addWidget(tools, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.canv, 1, 0, 2, 1)
+        self.gridLayout.addWidget(self.frame, 0, 1, 2, 2)
+        self.gridLayout.addWidget(self.cancelButton, 2, 1, 1, 1)
+        self.gridLayout.addWidget(self.saveButton, 2, 2, 1, 1)
 
 
         self.selectedNode = None
-        MenuBar(self)
+        MenuBar(self, tools.buttons)
 
 
 

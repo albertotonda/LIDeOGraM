@@ -4,7 +4,7 @@ import random
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as QCanvas
 from PyQt4 import QtGui, QtCore
 import networkx as nx
-from matplotlib.mlab import prctile
+import numpy as np
 
 import nx_pylab_angle as nxa
 from PyQt4.QtCore import QCoreApplication
@@ -12,6 +12,7 @@ import threading
 from classes.ClassNode import ClassNode
 import classes.ClassMode as ClassMode
 import classes.ClassGraph as cg
+from functools import reduce
 
 
 class CanvGraph(QCanvas):
@@ -25,8 +26,8 @@ class CanvGraph(QCanvas):
                # compute the distance to each node
                self.nodesPos.items()]
         if self.nodeSelected is not None:
-            print("!")
             self.nodeSelected.lineWidth = 0
+
         nbNodeFind = len(list(filter(lambda x: x[0] < 0.002, dst)))
 
         if nbNodeFind == 0:
@@ -119,7 +120,7 @@ class CanvGraph(QCanvas):
             msg.exec()
         else:
             self.graph.add_edge(nodeIn, nodeOut)
-            if len(list(nx.simple_cycles(self.graph))) > 0:
+            if len(list(nx.simple_cycles(nx.DiGraph(self.graph)))) > 0:
                 self.graph.remove_edge(nodeIn, nodeOut)
                 msg = QtGui.QMessageBox()
                 s = "Invalid action : The graph become cyclic"
@@ -211,8 +212,27 @@ class CanvGraph(QCanvas):
         self.graph = graph
         self.axes = axes
         axes.autoscale(False)
-        for node in graph.nodes():
-            node.pos = (random.random(), random.random())
+
+        pos = nx.nx_pydot.graphviz_layout(graph, prog='dot')
+        minx = np.inf
+        maxx = -np.inf
+        miny = np.inf
+        maxy = -np.inf
+        for k, p in list(pos.items()):
+            if (minx > p[0]):
+                minx = p[0]
+            if (maxx < p[0]):
+                maxx = p[0]
+            if (miny > p[1]):
+                miny = p[1]
+            if (maxy < p[1]):
+                maxy = p[1]
+        for node, k in pos.items():
+            node.pos = (
+                (pos[node][0] - minx) / (maxx - minx)if (maxx - minx) > 0 else random.random(),
+                (pos[node][1] - miny) / (maxy - miny)if (maxy - miny) > 0 else random.random()
+            )
+
 
         self.mpl_connect('button_press_event', self.clicked)
         self.mpl_connect('motion_notify_event', self.prepareDrag)
@@ -255,9 +275,8 @@ class CanvGraph(QCanvas):
             lineWidths.append(node.lineWidth)
             nodesPos[node] = node.pos
 
-            nodesColor.append(node.color if (not self.hover) or node == self.hover or node in list(map(lambda n: n[0][0] if n[1] else None, zip(self.graph.edges(), eBold))) + list(map(lambda n: n[0][1] if n[1] else None, zip(self.graph.edges(), eBold))) else (0.8, 0.8, 0.8)  )
+            nodesColor.append(node.color if (not self.hover) or node == self.hover or node in [n[0][i] for n in zip(self.graph.edges(), eBold) for i in [0,1] if n[1]]else (0.8, 0.8, 0.8) )
             nodesSize.append(node.size)
-
         nxa.draw_networkx_nodes(graph, nodesPos,
                                 node_color=nodesColor,
                                 linewidths=lineWidths,
