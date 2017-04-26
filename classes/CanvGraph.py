@@ -180,7 +180,7 @@ class CanvGraph(QCanvas):
 
     def scroll(self, event):
         center = (event.xdata, event.ydata)
-        self.zoom(center, 1.2 if event.button == "down" else 1/1.1)
+        self.zoom(center, self.strenghtWheelZoom+0.1 if event.button == "down" else 1/self.strenghtWheelZoom)
 
     def zoom(self, centerPointed:tuple, strength):
         print(centerPointed)
@@ -227,6 +227,8 @@ class CanvGraph(QCanvas):
     def __init__(self, graph: cg.ClassGraph):
 
         self.onTouchMutex = threading.Lock()
+        self.reducZoomStrengthTouch = 100 #inversely proportional to the zoom strenght
+        self.strenghtWheelZoom = 1.15
 
         self.oldEvent = self.event
         self.event = self.prepareTouchZoom
@@ -349,6 +351,8 @@ class CanvGraph(QCanvas):
     def prepareTouchZoom(self, event):
         if type(event) == QtGui.QTouchEvent :
             self.lastTouchEvent = event
+            if event.type() == QtCore.QEvent.TouchEnd:
+                self.connectMpl()
             if not self.onTouchMutex.acquire(False):
                 return True
             #self.drag(event)
@@ -373,10 +377,9 @@ class CanvGraph(QCanvas):
             lastDist =self.touchPointsDist
             self.touchPointsDist = self.calculDistTotal(center, touchPoints)
             if lastDist * self.touchPointsDist> 0: # Si les deux sont différents de 0 (ils sont toujours positifs)
-                print("before : ", center, "points : ", len(touchPoints))
                 #center = self.mapFromGlobal(QtCore.QPoint(center[0], center[1]))
                 center = self.convertQtPosToMpl(center)
-                self.zoom(center,(lastDist + 100) / (self.touchPointsDist + 100))
+                self.zoom(center,(lastDist + self.reducZoomStrengthTouch) / (self.touchPointsDist + self.reducZoomStrengthTouch))
             if len(touchPoints) < 2:
                 self.connectMpl()
             else:
@@ -405,14 +408,11 @@ class CanvGraph(QCanvas):
 
     def convertQtPosToMpl(self, position):
         pos = copy.copy(position)
-        print (self.size(), self.size().height(), self.size().width())
         pos[1] = (self.size().height() - pos[1])/self.size().height() #Mat axes = reversed ordinate axes
         pos[0] /= self.size().width()
-        print(pos)
 
         pos[0]= pos[0]*2 * self.sizeView + self.center[0] - self.sizeView
         pos[1]= pos[1]*2 * self.sizeView + self.center[1] - self.sizeView
-        print(pos)
         return pos
 
     def connectMpl(self):
