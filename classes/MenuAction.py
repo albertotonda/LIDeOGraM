@@ -41,7 +41,9 @@ class MenuAction:
         from classes.ClassGraph import ClassGraph
         rep = QtGui.QFileDialog.getOpenFileName(MenuAction.window, filter="Class Graph (*.clgraph)")
         if rep:
+            print(rep)
             MenuAction.window.graph = ClassGraph.readJson(rep)
+            MenuAction.window.canv.graph = ClassGraph.readJson(rep)
             MenuAction.window.notify()
 
 

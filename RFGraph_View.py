@@ -180,6 +180,18 @@ class RFGraph_View(QtGui.QMainWindow):
         fileMenu = menubar.addMenu("&File")
         fileMenu.addAction(exitAction)
 
+
+        constrainAction = QtGui.QAction("&Add constrain", self)
+        constrainAction.triggered.connect(cntrApp.clickRemoveLink)
+
+        newVariable = QtGui.QAction("&New variable", self)
+        newVariable.triggered.connect(cntrApp.clickRemoveLink)
+
+        self.editMenu = menubar.addMenu("&Edit")
+        self.editMenu.addAction(newVariable)
+        self.editMenu.addAction(constrainAction)
+        self.editMenu.addSeparator()
+
         viewMenu = menubar.addMenu("&View")
         viewMenu.addAction(comproAction)
         viewMenu.addAction(fitnesAction)
@@ -190,14 +202,6 @@ class RFGraph_View(QtGui.QMainWindow):
 
         opmMenu = menubar.addMenu("&Optimisation")
         opmMenu.addAction(optmAction)
-
-        constrainAction = QtGui.QAction("&Add constrain", self)
-        constrainAction.triggered.connect(cntrApp.clickRemoveLink)
-
-
-        self.constrainMenu = menubar.addMenu("&Constrains")
-        self.constrainMenu.addAction(constrainAction)
-        self.constrainMenu.addSeparator()
 
         helpMenu = menubar.addMenu("&Help")
         helpMenu.addAction(helpAction)
@@ -220,7 +224,7 @@ class RFGraph_View(QtGui.QMainWindow):
         constrainAction.setStatusTip('Remove this constrain')
         self.mapper.setMapping(constrainAction,name)
         constrainAction.triggered.connect(self.mapper.map)
-        self.constrainMenu.addAction(constrainAction)
+        self.editMenu.addAction(constrainAction)
         self.modApp.scrolledList.append(name)
         #self.modApp.computeEdgeBold()
         #self.modApp.computeNxGraph()
@@ -237,12 +241,12 @@ class RFGraph_View(QtGui.QMainWindow):
         self.modApp.debugCmp+=1
         print("Cmp:" + str(self.modApp.debugCmp))
         print("removing : " + name)
-        b=len(self.constrainMenu.actions())
-        print("sizeActionB="+str(len(self.constrainMenu.actions())))
-        self.constrainMenu.removeAction(self.mapper.mapping(name))
+        b=len(self.editMenu.actions())
+        print("sizeActionB=" + str(len(self.editMenu.actions())))
+        self.editMenu.removeAction(self.mapper.mapping(name))
         self.mapper.removeMappings(self.mapper.mapping(name))
-        a=len(self.constrainMenu.actions())
-        print("sizeActionA=" + str(len(self.constrainMenu.actions())))
+        a=len(self.editMenu.actions())
+        print("sizeActionA=" + str(len(self.editMenu.actions())))
         if(b==a):
             a=''
             print(a)

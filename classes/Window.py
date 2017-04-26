@@ -37,7 +37,7 @@ class Window(QtGui.QMainWindow):
         self.canv.setMinimumSize(200, 200)
 
         self.saveButton = QtGui.QPushButton("Validate")
-        self.saveButton.clicked.connect(lambda: self.setReady(self.graph))
+        self.saveButton.clicked.connect(lambda: self.setReady(self.canv.graph))
 
         tools = ToolMenu(self.canv)
 
@@ -52,8 +52,6 @@ class Window(QtGui.QMainWindow):
 
         self.selectedNode = None
         MenuBar(self, tools.buttons)
-
-
 
         QtGui.QMainWindow.show(self)
         #self.exec()
@@ -73,4 +71,3 @@ class Window(QtGui.QMainWindow):
         print("pret !")
         self.fctToCall(self.graph)
         self.close()
-

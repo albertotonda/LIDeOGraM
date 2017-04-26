@@ -143,13 +143,13 @@ class CanvGraph(QCanvas):
     def updateRightClickMenu(self, event, nodeClicked):
         rightclickMenu=QtGui.QMenu(self)
 
-        deleateAction = QtGui.QAction("Deleate " + nodeClicked.name, self)
-        deleateAction.triggered.connect(lambda: [self.graph.remove_node(nodeClicked), self.notifyAll()])
-        rightclickMenu.addAction(deleateAction)
-
         renameAction=QtGui.QAction("Rename " + nodeClicked.name, self)
         renameAction.triggered.connect(lambda: [nodeClicked.rename(), self.notifyAll()])
         rightclickMenu.addAction(renameAction)
+
+        deleateAction = QtGui.QAction("Deleate " + nodeClicked.name, self)
+        deleateAction.triggered.connect(lambda: [self.graph.remove_node(nodeClicked), self.notifyAll()])
+        rightclickMenu.addAction(deleateAction)
 
         renameAction=QtGui.QAction("Change the color of " + nodeClicked.name, self)
         renameAction.triggered.connect(lambda: [nodeClicked.changeColor(), self.notifyAll()])
