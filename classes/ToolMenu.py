@@ -5,9 +5,9 @@ class ToolMenu(QtGui.QFrame):
     def __init__(self, canv):
         QtGui.QFrame.__init__(self)
         layout = QtGui.QHBoxLayout()
-        self.buttons = [ToolButton(canv, ClassMode.moveMode, "C:/Windows/Cursors/aero_arrow.cur"),
-                        ToolButton(canv, ClassMode.addEdgeMode, "C:/Users/Admin/Pictures/Saved Pictures/NewEdge"),
-                        ToolButton(canv, ClassMode.delEdgeMode, "C:/Users/Admin/Pictures/Saved Pictures/DelEdge")]
+        self.buttons = [ToolButton(canv, ClassMode.moveMode, "ressources/images/move"),
+                        ToolButton(canv, ClassMode.addEdgeMode, "ressources/images/NewEdge"),
+                        ToolButton(canv, ClassMode.delEdgeMode, "ressources/images/DelEdge")]
         layout.addWidget(self.buttons[0])
         layout.addWidget(self.buttons[1])
         layout.addWidget(self.buttons[2])

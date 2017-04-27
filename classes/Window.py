@@ -40,23 +40,24 @@ class Window(QtGui.QMainWindow):
         self.canv.setMinimumSize(200, 200)
 
         self.saveButton = QtGui.QPushButton("Validate")
-
         self.saveButton.clicked.connect(lambda: self.setReady(self.canv.graph))
 
+        tools = ToolMenu(self.canv)
 
         self.cancelButton = QtGui.QPushButton("Cancel")
         self.cancelButton.clicked.connect(lambda: self.setReady(self.initialGraph))
 
-        self.gridLayout.addWidget(self.canv, 0, 0, 2, 1)
-        self.gridLayout.addWidget(self.frame, 0, 1, 1, 2)
-        self.gridLayout.addWidget(self.cancelButton, 1, 1, 1, 1)
-        self.gridLayout.addWidget(self.saveButton, 1, 2, 1, 1)
+        self.gridLayout.addWidget(tools, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.canv, 1, 0, 2, 1)
+        self.gridLayout.addWidget(self.frame, 0, 1, 2, 2)
+        self.gridLayout.addWidget(self.cancelButton, 2, 1, 1, 1)
+        self.gridLayout.addWidget(self.saveButton, 2, 2, 1, 1)
 
 
         self.selectedNode = None
-        MenuBar(self)
+        MenuBar(self, tools.buttons)
 
-        self.show()
+        QtGui.QMainWindow.show(self)
         #self.exec()
 
     def notify(self, selectedNode=None, keepSelected = False):

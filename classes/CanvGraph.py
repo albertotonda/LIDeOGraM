@@ -192,29 +192,16 @@ class CanvGraph(QCanvas):
         centerRatio2=self.sizeView / oldSizeView
         diffzoom= oldSizeView - self.sizeView
 
-        minx=oldCenter[0]-oldSizeView
-        miny=oldCenter[1]-oldSizeView
-        rx=(centerPointed[0]-minx)/(oldSizeView)
-        ry=(centerPointed[1]-miny)/(oldSizeView)
-        #sx1=(rx*2*self.sizeView)**2+self.sizeView+centerPointed[0]
+        minx = oldCenter[0]-oldSizeView
+        miny = oldCenter[1]-oldSizeView
+        rx = (centerPointed[0]-minx)/oldSizeView
+        ry = (centerPointed[1]-miny)/oldSizeView
+
         sx1 = - self.sizeView*rx+self.sizeView+centerPointed[0]
-        #sx2=-(rx*2*self.sizeView)**2+self.sizeView+centerPointed[0]
-        #sy1 = (ry * 2 * self.sizeView) ** 2 + self.sizeView + centerPointed[1]
         sy1 = - self.sizeView*ry+self.sizeView+centerPointed[1]
-        #sy2 = -(ry * 2 * self.sizeView) ** 2 + self.sizeView + centerPointed[1]
-        #print("ry:"+str(ry))
-        #print("sx1:" + str(sx1) + " sy1:"+str(sy1))
-        rxs1=abs(sx1-self.sizeView-centerPointed[0]) / (2 * self.sizeView )
-        #rxs2 = abs(sx2 - self.sizeView - centerPointed[0]) / (2 * self.sizeView)
-        rys1 = abs(sy1 - self.sizeView - centerPointed[1]) / (2 * self.sizeView)
-        #rys2 = abs(sy2 - self.sizeView - centerPointed[1]) / (2 * self.sizeView)
-        #print("rxs1:"+str(rxs1) +  " rys1:"+str(rys1))
-
-
-        center =((1-centerRatio)* centerPointed[0] + centerRatio* oldCenter[0] , (1-centerRatio) * centerPointed[1] + centerRatio* oldCenter[1] )
-        center = (diffzoom * (oldCenter[0] + oldSizeView)/centerPointed[0],diffzoom * (oldCenter[1] + oldSizeView)/centerPointed[1])
-        center=(sx1,sy1)
+        center = (sx1, sy1)
         self.setCenter(center[0], center[1])
+        self.notifyAll(self.nodeSelected)
 
     def setCenter(self, x, y):
         posX =max(x, -0.2 + self.sizeView)
@@ -237,18 +224,20 @@ class CanvGraph(QCanvas):
         self.center = (0.5, 0.5)
         self.sizeView = 0.7
 
-        QCanvas.__init__(self, fig)
 
         self.constructionNode = None
         self.onMoveMutex = threading.Lock()
         self.observers = []
         fig, axes = plt.subplots()
+
+        QCanvas.__init__(self, fig)
         #self.center=(x,y)
-        self.notifyAll(self.nodeSelected)
 
         self.fig = fig
         self.mode = ""
         self.nodeSelected = None
+
+        self.notifyAll(self.nodeSelected)
         for node in graph.nodes():
             if node.lineWidth == 5:
                 self.nodeSelected = node
