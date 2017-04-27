@@ -7,21 +7,24 @@ from classes.ClassGraph import ClassGraph
 from classes.MenuBar import MenuBar
 import copy
 from classes.ToolMenu import ToolMenu
-
+from functools import reduce
 
 class Window(QtGui.QMainWindow):
 
     def __init__(self, graph: ClassGraph,fctToCall):
         self.fctToCall=fctToCall
         self.graphReady = False
+
         QtGui.QMainWindow.__init__(self)
-        mainWid = QtGui.QWidget(self)
+        self.mainWid = QtGui.QWidget(self)
         self.setWindowTitle("Class management")
-        self.gridLayout = QtGui.QGridLayout(mainWid)
-        mainWid.setFocus()
+        self.gridLayout = QtGui.QGridLayout(self.mainWid)
+        self.mainWid.setFocus()
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self.setWindowState(QtCore.Qt.WindowMaximized)
-        self.setCentralWidget(mainWid)
+
+        # self.setWindowState(QtCore.Qt.WindowMaximized)
+
+        self.setCentralWidget(self.mainWid)
 
         self.graph = copy.copy(graph)
         self.initialGraph = graph
@@ -37,23 +40,23 @@ class Window(QtGui.QMainWindow):
         self.canv.setMinimumSize(200, 200)
 
         self.saveButton = QtGui.QPushButton("Validate")
+
         self.saveButton.clicked.connect(lambda: self.setReady(self.canv.graph))
 
-        tools = ToolMenu(self.canv)
 
         self.cancelButton = QtGui.QPushButton("Cancel")
         self.cancelButton.clicked.connect(lambda: self.setReady(self.initialGraph))
-        self.gridLayout.addWidget(tools, 0, 0, 1, 1)
-        self.gridLayout.addWidget(self.canv, 1, 0, 2, 1)
-        self.gridLayout.addWidget(self.frame, 0, 1, 2, 2)
-        self.gridLayout.addWidget(self.cancelButton, 2, 1, 1, 1)
-        self.gridLayout.addWidget(self.saveButton, 2, 2, 1, 1)
+
+        self.gridLayout.addWidget(self.canv, 0, 0, 2, 1)
+        self.gridLayout.addWidget(self.frame, 0, 1, 1, 2)
+        self.gridLayout.addWidget(self.cancelButton, 1, 1, 1, 1)
+        self.gridLayout.addWidget(self.saveButton, 1, 2, 1, 1)
 
 
         self.selectedNode = None
-        MenuBar(self, tools.buttons)
+        MenuBar(self)
 
-        QtGui.QMainWindow.show(self)
+        self.show()
         #self.exec()
 
     def notify(self, selectedNode=None, keepSelected = False):

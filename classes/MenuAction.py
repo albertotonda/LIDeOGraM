@@ -44,6 +44,7 @@ class MenuAction:
             print(rep)
             MenuAction.window.graph = ClassGraph.readJson(rep)
             MenuAction.window.canv.graph = ClassGraph.readJson(rep)
+
             MenuAction.window.notify()
 
 

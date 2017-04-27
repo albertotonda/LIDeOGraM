@@ -6,12 +6,12 @@ from QtConnector import QtConnector
 import sys
 from PyQt4 import QtGui
 
-qApp = QtGui.QApplication(sys.argv)
 modApp=RFGraph_Model()
-# vwApp = RFGraph_View(modApp)
-# cntrApp=RFGraph_Controller(modApp,vwApp)
-# vwApp.cntrApp=cntrApp
-# vwApp.eqTableGUI.cntrApp=cntrApp
-# vwApp.updateMenuBar(cntrApp)
-# qtconnector=QtConnector(vwApp,cntrApp)
+qApp = QtGui.QApplication(sys.argv)
+vwApp = RFGraph_View(modApp)
+cntrApp=RFGraph_Controller(modApp,vwApp)
+vwApp.cntrApp=cntrApp
+#vwApp.eqTableGUI.cntrApp=cntrApp
+#vwApp.updateMenuBar(cntrApp)
+qtconnector=QtConnector(vwApp,cntrApp)
 sys.exit(qApp.exec_())

@@ -28,6 +28,14 @@ class RFGraph_Controller:
     def clickHelp(self):
         self.modApp.help_params = Help.get_params()
 
+    def testmultitouch(self,event):
+        print('event :'+str(event))
+        return True
+
+    def testmultitouch2(self,event):
+        print('event2 :'+str(event))
+        return True
+
     # TODO
     def clickFitness(self):
         print("clic fitness")
@@ -177,7 +185,7 @@ class RFGraph_Controller:
 
 
     def onMove(self,event):
-        #print(event)
+        print(event)
 
         (x, y) = (event.xdata, event.ydata)
         if not x or not y:
@@ -248,7 +256,8 @@ class RFGraph_Controller:
 
     def onClick(self, event):
         # TODO  affichage du nom du noeud selectionné + changer couleur
-        #print("clicked")
+        print("clicked")
+        print(event)
         (x, y) = (event.xdata, event.ydata)
         if  x == None or y == None :
             return

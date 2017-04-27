@@ -1,10 +1,18 @@
 # TODO Connecte les "clics" et les fonctions correspondantes
+import sys
+import math
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
+from PyQt4.uic import *
+from types import *
+
 class QtConnector:
     def __init__(self,vwApp,cntrApp):
         self.vwApp=vwApp
         self.cntrApp=cntrApp
         self.vwApp.eqTableGUI.itemClicked.connect(self.cntrApp.eqTableClicked)
         self.vwApp.adjThreshold_slider.valueChanged.connect(self.cntrApp.SliderMoved)
+
         #self.vwApp.comprFitCmplx_slider.valueChanged.connect(self.cntrApp.SliderMoved)
         #self.vwApp.buttonFitness.clicked.connect(self.cntrApp.clickFitness)
         #self.vwApp.buttonComplexite.clicked.connect(self.cntrApp.clickCmplx)
@@ -22,3 +30,11 @@ class QtConnector:
 
         #self.vwApp.networkGUI.fig.canvas.mpl_connect('pick_event', self.cntrApp.onPick)
         self.vwApp.closeEvent = self.cntrApp.closeEvent
+        self.vwApp.setAttribute(Qt.WA_AcceptTouchEvents)
+        self.vwApp.main_widget.setAttribute(Qt.WA_AcceptTouchEvents)
+        self.vwApp.main_widget.event = self.cntrApp.testmultitouch
+        self.vwApp.networkGUI.setAttribute(Qt.WA_AcceptTouchEvents)
+        self.vwApp.networkGUI.event = self.cntrApp.testmultitouch2
+        #self.vwApp.eqTableGUI.setAttribute(Qt.WA_AcceptTouchEvents)
+        #self.vwApp.eqTableGUI.event = self.cntrApp.testmultitouch2
+        self.vwApp.show()

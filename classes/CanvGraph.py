@@ -5,6 +5,7 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as QCanvas
 from PyQt4 import QtGui, QtCore
 import networkx as nx
 import numpy as np
+from matplotlib.mlab import prctile
 
 import nx_pylab_angle as nxa
 from PyQt4.QtCore import QCoreApplication
@@ -13,6 +14,7 @@ from classes.ClassNode import ClassNode
 import classes.ClassMode as ClassMode
 import classes.ClassGraph as cg
 from functools import reduce
+import copy
 
 
 class CanvGraph(QCanvas):
@@ -61,6 +63,21 @@ class CanvGraph(QCanvas):
 
         self.onMoveMutex.release()
 
+    def prepareDrag(self, event):
+        self.lastEvent = event
+        if not self.onMoveMutex.acquire(False):
+            return
+        #self.drag(event)
+        self.drag(event)
+
+        while self.lastEvent != event:
+            event = self.lastEvent
+            # print('computing last : ' + str(self.lastEvent))
+            #self.drag(event)
+            self.drag(event)
+
+        self.onMoveMutex.release()
+
     def drag(self, event):
         (x, y) = (event.xdata, event.ydata)
         if not x or not y:
@@ -78,6 +95,7 @@ class CanvGraph(QCanvas):
                 self.setCenter(self.center[0]-deltaPos[0], self.center[1]-deltaPos[1])
 
         dst = [(pow(x - pos[0], 2) + pow(y - pos[1], 2), node) for node, pos in self.nodesPos.items()]
+
         if not self.constructionNode:
             if len(list(filter(lambda x: x[0] < 0.002, dst))) > 0:
                 lastHover = self.hover
@@ -143,6 +161,7 @@ class CanvGraph(QCanvas):
     def updateRightClickMenu(self, event, nodeClicked):
         rightclickMenu=QtGui.QMenu(self)
 
+
         renameAction=QtGui.QAction("Rename " + nodeClicked.name, self)
         renameAction.triggered.connect(lambda: [nodeClicked.rename(), self.notifyAll()])
         rightclickMenu.addAction(renameAction)
@@ -161,15 +180,41 @@ class CanvGraph(QCanvas):
         #self.gridLayout.addWidget(rightclickMenu,3,4,1,1)
 
     def scroll(self, event):
-        print(event)
-        (x, y) = (event.xdata, event.ydata)
-        if event.button == "down":
-            self.sizeView = min(self.sizeView * 1.1, 0.7)
-        else:
-            self.sizeView = self.sizeView / 1.2
+        center = (event.xdata, event.ydata)
+        self.zoom(center, self.strenghtWheelZoom+0.1 if event.button == "down" else 1/self.strenghtWheelZoom)
 
-        self.setCenter(x, y)
-        self.paint()
+    def zoom(self, centerPointed:tuple, strength):
+        print(centerPointed)
+        oldSizeView = self.sizeView
+        self.sizeView = min(self.sizeView * strength, 0.7)
+        oldCenter = self.center
+        centerRatio = (oldSizeView - self.sizeView)/oldSizeView
+        centerRatio2=self.sizeView / oldSizeView
+        diffzoom= oldSizeView - self.sizeView
+
+        minx=oldCenter[0]-oldSizeView
+        miny=oldCenter[1]-oldSizeView
+        rx=(centerPointed[0]-minx)/(oldSizeView)
+        ry=(centerPointed[1]-miny)/(oldSizeView)
+        #sx1=(rx*2*self.sizeView)**2+self.sizeView+centerPointed[0]
+        sx1 = - self.sizeView*rx+self.sizeView+centerPointed[0]
+        #sx2=-(rx*2*self.sizeView)**2+self.sizeView+centerPointed[0]
+        #sy1 = (ry * 2 * self.sizeView) ** 2 + self.sizeView + centerPointed[1]
+        sy1 = - self.sizeView*ry+self.sizeView+centerPointed[1]
+        #sy2 = -(ry * 2 * self.sizeView) ** 2 + self.sizeView + centerPointed[1]
+        #print("ry:"+str(ry))
+        #print("sx1:" + str(sx1) + " sy1:"+str(sy1))
+        rxs1=abs(sx1-self.sizeView-centerPointed[0]) / (2 * self.sizeView )
+        #rxs2 = abs(sx2 - self.sizeView - centerPointed[0]) / (2 * self.sizeView)
+        rys1 = abs(sy1 - self.sizeView - centerPointed[1]) / (2 * self.sizeView)
+        #rys2 = abs(sy2 - self.sizeView - centerPointed[1]) / (2 * self.sizeView)
+        #print("rxs1:"+str(rxs1) +  " rys1:"+str(rys1))
+
+
+        center =((1-centerRatio)* centerPointed[0] + centerRatio* oldCenter[0] , (1-centerRatio) * centerPointed[1] + centerRatio* oldCenter[1] )
+        center = (diffzoom * (oldCenter[0] + oldSizeView)/centerPointed[0],diffzoom * (oldCenter[1] + oldSizeView)/centerPointed[1])
+        center=(sx1,sy1)
+        self.setCenter(center[0], center[1])
 
     def setCenter(self, x, y):
         posX =max(x, -0.2 + self.sizeView)
@@ -179,15 +224,28 @@ class CanvGraph(QCanvas):
         self.center = (posX, posY)
 
     def __init__(self, graph: cg.ClassGraph):
+
+        self.onTouchMutex = threading.Lock()
+        self.reducZoomStrengthTouch = 100 #inversely proportional to the zoom strenght
+        self.strenghtWheelZoom = 1.15
+
+        self.oldEvent = self.event
+        self.event = self.prepareTouchZoom
+
         self.hover = None
         self.lastPos = (0.5, 0.5)
         self.center = (0.5, 0.5)
         self.sizeView = 0.7
 
+        QCanvas.__init__(self, fig)
+
         self.constructionNode = None
         self.onMoveMutex = threading.Lock()
         self.observers = []
         fig, axes = plt.subplots()
+        #self.center=(x,y)
+        self.notifyAll(self.nodeSelected)
+
         self.fig = fig
         self.mode = ""
         self.nodeSelected = None
@@ -202,7 +260,7 @@ class CanvGraph(QCanvas):
         axes.hold(False)
         fig.patch.set_visible(False)
 
-        QCanvas.__init__(self, fig)
+        self.setAttribute(QtCore.Qt.WA_AcceptTouchEvents)
 
         QCanvas.setSizePolicy(self, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         QCanvas.updateGeometry(self)
@@ -234,10 +292,9 @@ class CanvGraph(QCanvas):
             )
 
 
-        self.mpl_connect('button_press_event', self.clicked)
-        self.mpl_connect('motion_notify_event', self.prepareDrag)
-        self.mpl_connect('button_release_event', self.release)
-        self.mpl_connect('scroll_event', self.scroll)
+
+        self.mplConnections = None
+        self.connectMpl()
 
         self.paint(self.nodeSelected)
 
@@ -310,3 +367,86 @@ class CanvGraph(QCanvas):
         for obs in self.observers:
             obs.notify(nodeSelected)
 
+    def prepareTouchZoom(self, event):
+        if type(event) == QtGui.QTouchEvent :
+            self.lastTouchEvent = event
+            if event.type() == QtCore.QEvent.TouchEnd:
+                self.connectMpl()
+            if not self.onTouchMutex.acquire(False):
+                return True
+            #self.drag(event)
+            self.touchZoom(event)
+
+            while self.lastTouchEvent != event:
+                event = self.lastTouchEvent
+                # print('computing last : ' + str(self.lastTouchEvent))
+                #self.drag(event)
+                self.touchZoom(event)
+
+            self.onTouchMutex.release()
+        else:
+            self.oldEvent(event)
+        return True
+
+
+    def touchZoom(self,event):
+        if event.type() == QtCore.QEvent.TouchUpdate:
+            touchPoints = event.touchPoints()
+            center = self.calculCenter(touchPoints)
+            lastDist =self.touchPointsDist
+            self.touchPointsDist = self.calculDistTotal(center, touchPoints)
+            if lastDist * self.touchPointsDist> 0: # Si les deux sont différents de 0 (ils sont toujours positifs)
+                #center = self.mapFromGlobal(QtCore.QPoint(center[0], center[1]))
+                center = self.convertQtPosToMpl(center)
+                self.zoom(center,(lastDist + self.reducZoomStrengthTouch) / (self.touchPointsDist + self.reducZoomStrengthTouch))
+            if len(touchPoints) < 2:
+                self.connectMpl()
+            else:
+                self.disconnectMpl()
+        elif event.type() == QtCore.QEvent.TouchEnd:
+                self.connectMpl()
+        return True
+
+    def calculCenter(self, touchPoints):
+        center = [0, 0]
+        normTouchPoints = [[p.normalizedPos().x(), p.normalizedPos().y()] for p in touchPoints]
+        touchPoints = [[p.pos().x(), p.pos().y()] for p in touchPoints]
+        func = lambda iter, pos: [iter[0] + pos[0], iter[1] + pos[1]]
+        center = reduce(func, touchPoints)
+        center[0]/= len(touchPoints)
+        center[1]/= len(touchPoints)
+        return center
+
+    def calculDistTotal(self, center, touchPoints):
+
+        touchPoints = [[p.pos().x(), p.pos().y()] for p in touchPoints]
+        distTotal = 0
+        for tp in touchPoints:
+            distTotal += abs(tp[0]-center[0]) + abs(tp[1]-center[1])
+        return distTotal
+
+    def convertQtPosToMpl(self, position):
+        pos = copy.copy(position)
+        pos[1] = (self.size().height() - pos[1])/self.size().height() #Mat axes = reversed ordinate axes
+        pos[0] /= self.size().width()
+
+        pos[0]= pos[0]*2 * self.sizeView + self.center[0] - self.sizeView
+        pos[1]= pos[1]*2 * self.sizeView + self.center[1] - self.sizeView
+        return pos
+
+    def connectMpl(self):
+        if self.mplConnections is None:
+            connect = []
+            self.mplConnections = connect
+            connect.append(self.mpl_connect('button_press_event', self.clicked))
+            connect.append(self.mpl_connect('motion_notify_event', self.prepareDrag))
+            connect.append(self.mpl_connect('button_release_event', self.release))
+            connect.append(self.mpl_connect('scroll_event', self.scroll))
+            print("Connected !")
+
+    def disconnectMpl(self):
+        if self.mplConnections:
+            for connection in self.mplConnections:
+                self.mpl_disconnect(connection)
+            self.mplConnections = None;
+            print("Disconnected !")

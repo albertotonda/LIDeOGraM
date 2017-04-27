@@ -8,23 +8,28 @@ from FitCanvas import FitCanvas
 from OnOffCheckBox import *
 from PyQt4.Qt import QPoint
 
-
+import sys
+import math
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
+from PyQt4.uic import *
+from types import *
 
 
 # TODO Crée tout les boutons (or graphes + équations)
-class RFGraph_View(QtGui.QMainWindow):
+class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
+
+    def sceneEventFilter(self, event):
+        print(event)
 
     def __init__(self,modApp):
 
-
-        self.modApp=modApp
-
-
-
+        self.modApp = modApp
 
         QtGui.QMainWindow.__init__(self)
+        QtGui.QGraphicsItem.__init__(self)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        #self.setWindowTitle(QtGui.QLabel("Test"))
+        # self.setWindowTitle(QtGui.QLabel("Test"))
         self.setWindowTitle("LIDeoGraM")
         self.icon = QtGui.QIcon("Icone.png")
         self.setWindowIcon(self.icon)
@@ -36,89 +41,195 @@ class RFGraph_View(QtGui.QMainWindow):
         self.gridLayout = QtGui.QGridLayout(self.main_widget)
         self.gridLayout.setSpacing(5)
         self.networkGUI = NetworkCanvas(self.modApp, self)
-        #self.gridLayout.addWidget(self.networkGUI, 1, 0, 7, 60)
+        # self.gridLayout.addWidget(self.networkGUI, 1, 0, 7, 60)
         self.gridLayout.addWidget(self.networkGUI, 1, 0, 2, 2)
-        self.incMatGUI = IncMatrixCanvas(self.modApp,self)
-        #self.gridLayout.addWidget(self.incMatGUI,1,61,12,60)
-        self.gridLayout.addWidget(self.incMatGUI,1,2,3,1)
+        self.incMatGUI = IncMatrixCanvas(self.modApp, self)
+        # self.gridLayout.addWidget(self.incMatGUI,1,61,12,60)
+        self.gridLayout.addWidget(self.incMatGUI, 1, 2, 3, 1)
         self.adjThreshold_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
         self.adjThreshold_slider.setValue(self.modApp.adjThresholdVal * 100)
 
         self.adjThreshold_lab = QtGui.QLabel('Edges importance : ')
-        #self.gridLayout.addWidget(self.adjThreshold_lab, 8, 0, 1, 2)
+        # self.gridLayout.addWidget(self.adjThreshold_lab, 8, 0, 1, 2)
         self.gridLayout.addWidget(self.adjThreshold_lab, 3, 0, 1, 1)
-        #self.gridLayout.addWidget(self.adjThreshold_slider, 8, 2, 1, 57)
+        # self.gridLayout.addWidget(self.adjThreshold_slider, 8, 2, 1, 57)
         self.gridLayout.addWidget(self.adjThreshold_slider, 3, 1, 1, 1)
 
-        #self.comprFitCmplx_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
-        #self.comprFitCmplx_slider.setValue(self.modApp.comprFitCmplxVal * 100)
-        #self.comprFitCmplx_lab = QtGui.QLabel('Compromise : ')
-        #self.gridLayout.addWidget(self.comprFitCmplx_lab, 9, 0)
-        #self.comprFitCmplx_lab_cmplx = QtGui.QLabel('Complexity')
-        #self.gridLayout.addWidget(self.comprFitCmplx_lab_cmplx, 9, 1)
-        #self.gridLayout.addWidget(self.comprFitCmplx_slider, 9, 2, 1, 57)
+        # self.comprFitCmplx_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
+        # self.comprFitCmplx_slider.setValue(self.modApp.comprFitCmplxVal * 100)
+        # self.comprFitCmplx_lab = QtGui.QLabel('Compromise : ')
+        # self.gridLayout.addWidget(self.comprFitCmplx_lab, 9, 0)
+        # self.comprFitCmplx_lab_cmplx = QtGui.QLabel('Complexity')
+        # self.gridLayout.addWidget(self.comprFitCmplx_lab_cmplx, 9, 1)
+        # self.gridLayout.addWidget(self.comprFitCmplx_slider, 9, 2, 1, 57)
         self.comprFitCmplx_lab_fit = QtGui.QLabel('Fitness')
-        #self.gridLayout.addWidget(self.comprFitCmplx_lab_fit, 9, 59, 1, 1)
+        # self.gridLayout.addWidget(self.comprFitCmplx_lab_fit, 9, 59, 1, 1)
         self.selectContrTxtLab = QtGui.QLabel('')
         self.gridLayout.addWidget(self.selectContrTxtLab, 0, 1, 1, 1)
         selectContrFont = QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold)
         self.selectContrTxtLab.setFont(selectContrFont)
 
-
         self.clickedNodeLab = QtGui.QLabel('Selected node:')
-        selNodeFont=QtGui.QFont("AnyStyle",14,QtGui.QFont.DemiBold)
+        selNodeFont = QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold)
         self.clickedNodeLab.setFont(selNodeFont)
         self.eqTableGUI = EqTableCanvas(self.modApp)
-        #self.gridLayout.addWidget(self.eqTableGUI, 1, 130, 6, 60)
+        # self.gridLayout.addWidget(self.eqTableGUI, 1, 130, 6, 60)
         self.gridLayout.addWidget(self.eqTableGUI, 1, 3, 1, 1)
-        #selNodeLab=QtGui.QLabel('Selected node:')
-        #selNodeLab.setFont(selNodeFont)
-        #self.gridLayout.addWidget(selNodeLab,0,140,1,30)
-        #self.gridLayout.addWidget(self.clickedNodeLab, 0, 153, 1, 30)
-        #self.gridLayout.addWidget(selNodeLab,0,3,1,1)
+        # selNodeLab=QtGui.QLabel('Selected node:')
+        # selNodeLab.setFont(selNodeFont)
+        # self.gridLayout.addWidget(selNodeLab,0,140,1,30)
+        # self.gridLayout.addWidget(self.clickedNodeLab, 0, 153, 1, 30)
+        # self.gridLayout.addWidget(selNodeLab,0,3,1,1)
         self.gridLayout.addWidget(self.clickedNodeLab, 0, 3, 1, 1)
 
-
-
-
         self.fitGUI = FitCanvas(self.modApp)
-        #self.gridLayout.addWidget(self.fitGUI, 7, 130, 6, 60)
+        # self.gridLayout.addWidget(self.fitGUI, 7, 130, 6, 60)
         self.gridLayout.addWidget(self.fitGUI, 2, 3, 2, 1)
 
-        #self.buttonCompromis = QtGui.QPushButton('Compromise', self)
-        #self.buttonFitness = QtGui.QPushButton('Fitness', self)
-        #self.buttonComplexite = QtGui.QPushButton('Complexity', self)
-        #self.buttonOptUgp3 = QtGui.QPushButton('Global Optimisation', self)
-        #self.buttonShowModGlobal = QtGui.QPushButton('Show Global Model', self)
-        #self.buttonHideModGlobal = QtGui.QPushButton('Hide Global Model', self)
-        #self.buttonChangerEq = QtGui.QPushButton('Change equation', self)
-        #self.buttonRemoveLink = QtGui.QPushButton('Remove Link', self)
-        #self.buttonReinstateLink = QtGui.QPushButton('Reinstate', self)
-        #self.buttonHelp = QtGui.QPushButton('Help', self)
-        #self.buttonCompromis.setStyleSheet("background-color: grey")
+        # self.buttonCompromis = QtGui.QPushButton('Compromise', self)
+        # self.buttonFitness = QtGui.QPushButton('Fitness', self)
+        # self.buttonComplexite = QtGui.QPushButton('Complexity', self)
+        # self.buttonOptUgp3 = QtGui.QPushButton('Global Optimisation', self)
+        # self.buttonShowModGlobal = QtGui.QPushButton('Show Global Model', self)
+        # self.buttonHideModGlobal = QtGui.QPushButton('Hide Global Model', self)
+        # self.buttonChangerEq = QtGui.QPushButton('Change equation', self)
+        # self.buttonRemoveLink = QtGui.QPushButton('Remove Link', self)
+        # self.buttonReinstateLink = QtGui.QPushButton('Reinstate', self)
+        # self.buttonHelp = QtGui.QPushButton('Help', self)
+        # self.buttonCompromis.setStyleSheet("background-color: grey")
 
-        #self.gridLayout.addWidget(self.buttonCompromis, 10, 0, 1, 15)
-        #self.gridLayout.addWidget(self.buttonFitness, 10, 15, 1, 15)
-        #self.gridLayout.addWidget(self.buttonComplexite, 10, 30, 1, 15)
-        #self.gridLayout.addWidget(self.buttonOptUgp3, 10, 45, 1, 15)
-        #self.gridLayout.addWidget(self.buttonShowModGlobal, 11, 0, 1, 30)
-        #self.gridLayout.addWidget(self.buttonHideModGlobal, 11, 30, 1, 30)
-        #self.gridLayout.addWidget(self.buttonChangerEq, 12, 30, 1, 30)
-        #self.gridLayout.addWidget(self.buttonRemoveLink, 12, 0, 1, 30)
-        #self.gridLayout.addWidget(self.buttonReinstateLink, 0, 12, 1, 8)
-#        self.gridLayout.addWidget(self.buttonHelp, 0, 120, 1, 12)
+        # self.gridLayout.addWidget(self.buttonCompromis, 10, 0, 1, 15)
+        # self.gridLayout.addWidget(self.buttonFitness, 10, 15, 1, 15)
+        # self.gridLayout.addWidget(self.buttonComplexite, 10, 30, 1, 15)
+        # self.gridLayout.addWidget(self.buttonOptUgp3, 10, 45, 1, 15)
+        # self.gridLayout.addWidget(self.buttonShowModGlobal, 11, 0, 1, 30)
+        # self.gridLayout.addWidget(self.buttonHideModGlobal, 11, 30, 1, 30)
+        # self.gridLayout.addWidget(self.buttonChangerEq, 12, 30, 1, 30)
+        # self.gridLayout.addWidget(self.buttonRemoveLink, 12, 0, 1, 30)
+        # self.gridLayout.addWidget(self.buttonReinstateLink, 0, 12, 1, 8)
+        #        self.gridLayout.addWidget(self.buttonHelp, 0, 120, 1, 12)
 
-        #self.scrolledListBox = QtGui.QComboBox(self)
-        #self.gridLayout.addWidget(self.scrolledListBox, 0, 1, 1, 1)
+        # self.scrolledListBox = QtGui.QComboBox(self)
+        # self.gridLayout.addWidget(self.scrolledListBox, 0, 1, 1, 1)
 
 
-        #self.font = QtGui.QFont('Liberation Sans Narrow')
-        #self.font.setPointSize(12)
-        #self.setFont(self.font)
-        self.main_widget.setFocus()
+        # self.font = QtGui.QFont('Liberation Sans Narrow')
+        # self.font.setPointSize(12)
+        # self.setFont(self.font)
+
+        self.eqTableGUI.setAttribute(Qt.WA_AcceptTouchEvents)
+
+        #self.main_widget.setFocus()
         self.setCentralWidget(self.main_widget)
-        self.show()
+        # self.show()
         self.updateView()
+
+
+
+
+        ##self.main_widget.setFocus()
+        #self.setCentralWidget(self.main_widget)
+
+        def old__init(self, modApp):
+            self.modApp = modApp
+
+            QtGui.QMainWindow.__init__(self)
+            QtGui.QGraphicsItem.__init__(self)
+            self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+            # self.setWindowTitle(QtGui.QLabel("Test"))
+            self.setWindowTitle("LIDeoGraM")
+            self.icon = QtGui.QIcon("Icone.png")
+            self.setWindowIcon(self.icon)
+
+            self.setWindowState(QtCore.Qt.WindowMaximized)
+
+            self.main_widget = QtGui.QWidget(self)
+
+            self.gridLayout = QtGui.QGridLayout(self.main_widget)
+            self.gridLayout.setSpacing(5)
+            self.networkGUI = NetworkCanvas(self.modApp, self)
+            # self.gridLayout.addWidget(self.networkGUI, 1, 0, 7, 60)
+            self.gridLayout.addWidget(self.networkGUI, 1, 0, 2, 2)
+            self.incMatGUI = IncMatrixCanvas(self.modApp, self)
+            # self.gridLayout.addWidget(self.incMatGUI,1,61,12,60)
+            self.gridLayout.addWidget(self.incMatGUI, 1, 2, 3, 1)
+            self.adjThreshold_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
+            self.adjThreshold_slider.setValue(self.modApp.adjThresholdVal * 100)
+
+            self.adjThreshold_lab = QtGui.QLabel('Edges importance : ')
+            # self.gridLayout.addWidget(self.adjThreshold_lab, 8, 0, 1, 2)
+            self.gridLayout.addWidget(self.adjThreshold_lab, 3, 0, 1, 1)
+            # self.gridLayout.addWidget(self.adjThreshold_slider, 8, 2, 1, 57)
+            self.gridLayout.addWidget(self.adjThreshold_slider, 3, 1, 1, 1)
+
+            # self.comprFitCmplx_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
+            # self.comprFitCmplx_slider.setValue(self.modApp.comprFitCmplxVal * 100)
+            # self.comprFitCmplx_lab = QtGui.QLabel('Compromise : ')
+            # self.gridLayout.addWidget(self.comprFitCmplx_lab, 9, 0)
+            # self.comprFitCmplx_lab_cmplx = QtGui.QLabel('Complexity')
+            # self.gridLayout.addWidget(self.comprFitCmplx_lab_cmplx, 9, 1)
+            # self.gridLayout.addWidget(self.comprFitCmplx_slider, 9, 2, 1, 57)
+            self.comprFitCmplx_lab_fit = QtGui.QLabel('Fitness')
+            # self.gridLayout.addWidget(self.comprFitCmplx_lab_fit, 9, 59, 1, 1)
+            self.selectContrTxtLab = QtGui.QLabel('')
+            self.gridLayout.addWidget(self.selectContrTxtLab, 0, 1, 1, 1)
+            selectContrFont = QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold)
+            self.selectContrTxtLab.setFont(selectContrFont)
+
+            self.clickedNodeLab = QtGui.QLabel('Selected node:')
+            selNodeFont = QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold)
+            self.clickedNodeLab.setFont(selNodeFont)
+            self.eqTableGUI = EqTableCanvas(self.modApp)
+            # self.gridLayout.addWidget(self.eqTableGUI, 1, 130, 6, 60)
+            self.gridLayout.addWidget(self.eqTableGUI, 1, 3, 1, 1)
+            # selNodeLab=QtGui.QLabel('Selected node:')
+            # selNodeLab.setFont(selNodeFont)
+            # self.gridLayout.addWidget(selNodeLab,0,140,1,30)
+            # self.gridLayout.addWidget(self.clickedNodeLab, 0, 153, 1, 30)
+            # self.gridLayout.addWidget(selNodeLab,0,3,1,1)
+            self.gridLayout.addWidget(self.clickedNodeLab, 0, 3, 1, 1)
+
+            self.fitGUI = FitCanvas(self.modApp)
+            # self.gridLayout.addWidget(self.fitGUI, 7, 130, 6, 60)
+            self.gridLayout.addWidget(self.fitGUI, 2, 3, 2, 1)
+
+            # self.buttonCompromis = QtGui.QPushButton('Compromise', self)
+            # self.buttonFitness = QtGui.QPushButton('Fitness', self)
+            # self.buttonComplexite = QtGui.QPushButton('Complexity', self)
+            # self.buttonOptUgp3 = QtGui.QPushButton('Global Optimisation', self)
+            # self.buttonShowModGlobal = QtGui.QPushButton('Show Global Model', self)
+            # self.buttonHideModGlobal = QtGui.QPushButton('Hide Global Model', self)
+            # self.buttonChangerEq = QtGui.QPushButton('Change equation', self)
+            # self.buttonRemoveLink = QtGui.QPushButton('Remove Link', self)
+            # self.buttonReinstateLink = QtGui.QPushButton('Reinstate', self)
+            # self.buttonHelp = QtGui.QPushButton('Help', self)
+            # self.buttonCompromis.setStyleSheet("background-color: grey")
+
+            # self.gridLayout.addWidget(self.buttonCompromis, 10, 0, 1, 15)
+            # self.gridLayout.addWidget(self.buttonFitness, 10, 15, 1, 15)
+            # self.gridLayout.addWidget(self.buttonComplexite, 10, 30, 1, 15)
+            # self.gridLayout.addWidget(self.buttonOptUgp3, 10, 45, 1, 15)
+            # self.gridLayout.addWidget(self.buttonShowModGlobal, 11, 0, 1, 30)
+            # self.gridLayout.addWidget(self.buttonHideModGlobal, 11, 30, 1, 30)
+            # self.gridLayout.addWidget(self.buttonChangerEq, 12, 30, 1, 30)
+            # self.gridLayout.addWidget(self.buttonRemoveLink, 12, 0, 1, 30)
+            # self.gridLayout.addWidget(self.buttonReinstateLink, 0, 12, 1, 8)
+            #        self.gridLayout.addWidget(self.buttonHelp, 0, 120, 1, 12)
+
+            # self.scrolledListBox = QtGui.QComboBox(self)
+            # self.gridLayout.addWidget(self.scrolledListBox, 0, 1, 1, 1)
+
+
+            # self.font = QtGui.QFont('Liberation Sans Narrow')
+            # self.font.setPointSize(12)
+            # self.setFont(self.font)
+
+            self.eqTableGUI.setAttribute(Qt.WA_AcceptTouchEvents)
+
+            self.main_widget.setFocus()
+            self.setCentralWidget(self.main_widget)
+            # self.show()
+            self.updateView()
 
     def updateRightClickMenu(self,cntrApp,event,nodeclicked):
         rightclickMenu=QtGui.QMenu(self)
