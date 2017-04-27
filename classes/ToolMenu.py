@@ -1,4 +1,4 @@
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 from classes.ClassMode import ClassMode
 
 class ToolMenu(QtGui.QFrame):
@@ -8,6 +8,7 @@ class ToolMenu(QtGui.QFrame):
         self.buttons = [ToolButton(canv, ClassMode.moveMode, "ressources/images/move"),
                         ToolButton(canv, ClassMode.addEdgeMode, "ressources/images/NewEdge"),
                         ToolButton(canv, ClassMode.delEdgeMode, "ressources/images/DelEdge")]
+        self.buttons[0]
         layout.addWidget(self.buttons[0])
         layout.addWidget(self.buttons[1])
         layout.addWidget(self.buttons[2])
@@ -16,8 +17,8 @@ class ToolMenu(QtGui.QFrame):
         group.addButton(self.buttons[1])
         group.addButton(self.buttons[2])
         self.setLayout(layout)
-        self.setMaximumHeight(50)
-        self.setMaximumWidth(200)
+        self.setMaximumHeight(120)
+        self.setMaximumWidth(340)
 
 class ToolButton(QtGui.QPushButton):
     def __init__(self, canv, modeToSet, iconName):
@@ -25,9 +26,11 @@ class ToolButton(QtGui.QPushButton):
         self.modeToSet = modeToSet
         QtGui.QPushButton.__init__(self)
         self.clicked.connect(lambda e: self.changeMode())
-        self.setIcon(QtGui.QIcon(QtGui.QPixmap(iconName)))
+        icon = QtGui.QIcon(QtGui.QPixmap(iconName))
+        self.setIcon(icon)
         self.setCheckable(True)
         self.setAutoExclusive(True)
+        self.setIconSize(QtCore.QSize(100, 100))
 
     def setMenuAction(self, menuAction):
         self.menuAction = menuAction
