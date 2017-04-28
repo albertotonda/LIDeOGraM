@@ -13,7 +13,7 @@ class ClassNode:
             b = random.random()
             return tuple((r, g, b))
 
-    def __init__(self, name, nodeList: list, pos=(0, 0), color=None, lineWidth=0, size=300):
+    def __init__(self, name, nodeList: list, pos=None, color=None, lineWidth=0, size=700):
         if color == None:
             color = ClassNode.nextColor()
         self.color = color

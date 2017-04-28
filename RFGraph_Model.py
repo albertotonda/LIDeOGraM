@@ -550,7 +550,7 @@ class RFGraph_Model:
         #testMutex = threading.Lock()
         print("creating classes window")
         #classApp=Window(graph,self.init2)
-        classApp=Window(ClassGraph.readJson("classes/Corrected.clgraph"),self.init2)
+        classApp=Window(ClassGraph.readJson("classes/screen.clgraph"),self.init2)
         print("after classes window")
         #graph=classApp.exec()
         #testMutex.acquire(True)

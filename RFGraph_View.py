@@ -295,8 +295,8 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         constrainAction = QtGui.QAction("&Add constrain", self)
         constrainAction.triggered.connect(cntrApp.clickRemoveLink)
 
-        newVariable = QtGui.QAction("&New variable", self)
-        newVariable.triggered.connect(cntrApp.clickRemoveLink)
+        newVariable = QtGui.QAction("&New hierarchical variable", self)
+        newVariable.triggered.connect(lambda : print("Wololo"))
 
         self.editMenu = menubar.addMenu("&Edit")
         self.editMenu.addAction(newVariable)

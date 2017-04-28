@@ -41,11 +41,13 @@ class Window(QtGui.QMainWindow):
 
         self.saveButton = QtGui.QPushButton("Validate")
         self.saveButton.clicked.connect(lambda: self.setReady(self.canv.graph))
+        self.saveButton.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.Normal))
 
         tools = ToolMenu(self.canv)
 
         self.cancelButton = QtGui.QPushButton("Cancel")
         self.cancelButton.clicked.connect(lambda: self.setReady(self.initialGraph))
+        self.cancelButton.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.Normal))
 
         self.gridLayout.addWidget(tools, 0, 0, 1, 1)
         self.gridLayout.addWidget(self.canv, 1, 0, 2, 1)

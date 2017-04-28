@@ -1,4 +1,3 @@
-from classes import ClassNode
 from classes.ClassMode import ClassMode
 from PyQt4 import QtGui
 
@@ -34,7 +33,7 @@ class MenuAction:
     def save():
         rep = QtGui.QFileDialog.getSaveFileName(MenuAction.window, caption="Save the class graph", filter="Class Graph (*.clgraph)")
         if rep:
-            MenuAction.window.graph.toJSON(rep)
+            MenuAction.window.canv.graph.toJSON(rep)
 
     @staticmethod
     def load():

@@ -275,10 +275,11 @@ class CanvGraph(QCanvas):
             if (maxy < p[1]):
                 maxy = p[1]
         for node, k in pos.items():
-            node.pos = (
-                (pos[node][0] - minx) / (maxx - minx)if (maxx - minx) > 0 else random.random(),
-                (pos[node][1] - miny) / (maxy - miny)if (maxy - miny) > 0 else random.random()
-            )
+            if node.pos is None:
+                node.pos = (
+                    (pos[node][0] - minx) / (maxx - minx)if (maxx - minx) > 0 else random.random(),
+                    (pos[node][1] - miny) / (maxy - miny)if (maxy - miny) > 0 else random.random()
+                )
 
 
 
@@ -313,22 +314,24 @@ class CanvGraph(QCanvas):
                     eColor.append((0.8, 0, 0))
             else:
                 if not self.hover or bold:
-                    eColor.append((0, 0, 0))
+                    eColor.append(edge[0].color)
                 else:
                     eColor.append((0.85, 0.85, 0.85))
         for node in self.graph.nodes():
-            labels[node] = "  " + str(node);
+            labels[node] = "   " + str(node);
             lineWidths.append(node.lineWidth)
             nodesPos[node] = node.pos
 
             nodesColor.append(node.color if (not self.hover) or node == self.hover or node in [n[0][i] for n in zip(self.graph.edges(), eBold) for i in [0,1] if n[1]]else (0.8, 0.8, 0.8) )
             nodesSize.append(node.size)
+
+
         nxa.draw_networkx_nodes(graph, nodesPos,
                                 node_color=nodesColor,
                                 linewidths=lineWidths,
                                 linewidthsColors=(0, 0, 0),
                                 ax=axes,
-                                node_size=nodesSize
+                                node_size=nodesSize,
                                 )
 
         axes.set_xlim(self.center[0] - self.sizeView, self.center[0] + self.sizeView)
@@ -339,13 +342,15 @@ class CanvGraph(QCanvas):
                                 edgelist=graph.edges(),
                                 edge_color=eColor,
                                 edge_bold=eBold,
-                                ax=axes
+                                ax=axes,
+                                width=3
                                 )
         nxa.draw_networkx_labels_angle(graph,
                                        nodesPos,
                                        labels,
                                        ax=axes,
-                                       rotate=45
+                                       rotate=45,
+                                       font_size=16
                                        )
         self.draw()
 

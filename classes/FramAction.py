@@ -12,9 +12,14 @@ class FramAction(QtGui.QFrame):
         self.setLayout(grid)
 
         self.labelAssigned = QtGui.QLabel("Select a node")
+        self.labelAssigned.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.Normal))
+        self.labelAssigned.setMaximumHeight(60)
         grid.addWidget(self.labelAssigned, 0, 0, 1, 1)
 
-        grid.addWidget(QtGui.QLabel("Not assigned : "), 0, 2, 1, 1)
+        labelNotAssigned = QtGui.QLabel("Not assigned : ")
+        labelNotAssigned.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.Normal))
+        labelNotAssigned.setMaximumHeight(60)
+        grid.addWidget(labelNotAssigned, 0, 2, 1, 1)
         self.button1 = AssignButton.AssignButton(">")
         self.button2 = AssignButton.AssignButton("<")
 

@@ -11,6 +11,7 @@ class AssignButton(QtGui.QPushButton):
 
     def __init__(self, text,):
         QtGui.QPushButton.__init__(self, text)
+        self.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.Normal))
         self.clicked.connect(self.clickAction)
         self.observers = []
 
