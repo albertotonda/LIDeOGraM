@@ -7,6 +7,7 @@ from scipy.stats.stats import pearsonr
 from scipy import stats
 from sympy.parsing.sympy_parser import parse_expr
 from sympy import *
+from sklearn.metrics import r2_score
 
 class Equation:
     """Struct to hold node information."""
@@ -149,6 +150,10 @@ def fitness(xr,yr):
         else:
             fit = 1 + p * directionErr
     return fit
+
+def fitnessr2(xr,yr):
+    return 1 - r2_score(xr,yr)
+
 
 def get_multithread_fitness(var,exps,initv):
     tasks = [Individual(initv,var,exp) for exp in exps]
