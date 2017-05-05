@@ -7,13 +7,11 @@ class MenuBar:
     def __init__(self, window, toolButtons):
         MenuAction.setWindow(window)
 
+        #----- File -----#
+
         exitAction = QtGui.QAction('&Exit', window)
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(QtGui.qApp.quit)
-
-        addNodeAction = QtGui.QAction('&Add Node', window)
-        addNodeAction.setStatusTip('Add Node')
-        addNodeAction.triggered.connect(MenuAction.addNode)
 
         saveAction = QtGui.QAction('&Save', window)
         saveAction.setStatusTip('Save')
@@ -30,8 +28,27 @@ class MenuBar:
         fileMenu.addAction(loadAction)
         fileMenu.addAction(exitAction)
 
+        # ----- File -----#
+
         editMode = QtGui.QActionGroup(window, exclusive=True)
 
+        undoAction = QtGui.QAction('&Undo', window)
+        undoAction.setStatusTip('Undo')
+        undoAction.triggered.connect(window.undoGraphState)
+        undoAction.setDisabled(True)
+        window.undoRedo.addActionEmptyUndo(lambda: undoAction.setDisabled(True))
+        window.undoRedo.addActionNonEmptyUndo(lambda: undoAction.setDisabled(False))
+
+        redoAction = QtGui.QAction('&Redo', window)
+        redoAction.setStatusTip('Redo')
+        redoAction.triggered.connect(window.redoGraphState)
+        redoAction.setDisabled(True)
+        window.undoRedo.addActionEmptyRedo(lambda: redoAction.setDisabled(True))
+        window.undoRedo.addActionNonEmptyRedo(lambda: redoAction.setDisabled(False))
+
+        addNodeAction = QtGui.QAction('&Add Node', window)
+        addNodeAction.setStatusTip('Add Node')
+        addNodeAction.triggered.connect(MenuAction.addNode)
 
         moveModeAction = QtGui.QAction("&Move node", window, checkable=True)
         toolButtons[0].setMenuAction(moveModeAction)
@@ -50,6 +67,9 @@ class MenuBar:
         delEdgeMode = editMode.addAction(delEdgeAction)
 
         editMenu = menubar.addMenu("&Edit")
+        editMenu.addAction(undoAction)
+        editMenu.addAction(redoAction)
+        editMenu.addSeparator()
         editMenu.addAction(addNodeAction)
         editMenu.addSeparator()
         editMenu.addAction(moveMode)

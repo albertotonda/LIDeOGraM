@@ -16,6 +16,8 @@ class ClassNode:
     def __init__(self, name, nodeList: list, pos=None, color=None, lineWidth=0, size=700):
         if color == None:
             color = ClassNode.nextColor()
+
+        print(name," : ", color)
         self.color = color
         self.name = name
         self.nodeList = nodeList
@@ -37,8 +39,10 @@ class ClassNode:
         print(self.color)
         rep = QtGui.QColorDialog.getColor(QtGui.QColor(self.color[0]*255, self.color[1]*255, self.color[2]*255) ,MenuAction.window, "Class' color")
         if rep.isValid():
-            self.color = (rep.red() / 255, rep.green() / 255, rep.blue() / 255,)
+            self.color = (rep.red()/255, rep.green()/255, rep.blue()/255)
 
 
-
-    color = [(0.8, 0.8, 0.2), (0.7, 0.7, 0.2), (0.6, 0.6, 0.2)]
+    color = [(31,120,180), (178,223,138), (227,26,28), (253,191,111), (106,61,154), (166,206,227), (51,160,44), (251,154,153), (255,127,0), (202,178,214), (177,89,40)]
+    for n in range(len(color)):
+        color[n] = (color[n][0]/255, color[n][1]/255, color[n][2]/255)
+    print(color)

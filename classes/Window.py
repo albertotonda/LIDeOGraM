@@ -7,6 +7,7 @@ from classes.ClassGraph import ClassGraph
 from classes.MenuBar import MenuBar
 import copy
 from classes.ToolMenu import ToolMenu
+from classes.SaveStatesStacks import SaveStatesStacks
 from functools import reduce
 
 class Window(QtGui.QMainWindow):
@@ -26,11 +27,14 @@ class Window(QtGui.QMainWindow):
 
         self.setCentralWidget(self.mainWid)
 
+        self.undoRedo = SaveStatesStacks()
+
         self.graph = copy.copy(graph)
         self.initialGraph = graph
 
-        self.canv = CanvGraph(graph)
+        self.canv = CanvGraph(self.graph)
         self.canv.addObserver(self)
+
         self.frame = FramAction(graph.unboundNode)
 
         self.frame.button1.addObserver(self)
@@ -43,7 +47,7 @@ class Window(QtGui.QMainWindow):
         self.saveButton.clicked.connect(lambda: self.setReady(self.canv.graph))
         self.saveButton.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.Normal))
 
-        tools = ToolMenu(self.canv)
+        tools = ToolMenu(self)
 
         self.cancelButton = QtGui.QPushButton("Cancel")
         self.cancelButton.clicked.connect(lambda: self.setReady(self.initialGraph))
@@ -62,13 +66,14 @@ class Window(QtGui.QMainWindow):
         QtGui.QMainWindow.show(self)
         #self.exec()
 
+
     def notify(self, selectedNode=None, keepSelected = False):
         if keepSelected:
             selectedNode = self.selectedNode
         else:
             self.selectedNode = selectedNode
         self.canv.paint(selectedNode)
-        self.frame.setListsValues(self.graph.unboundNode, selectedNode)
+        self.frame.setListsValues(self.canv.graph.unboundNode, selectedNode)
         QCoreApplication.processEvents()
 
     def setReady(self, graph):
@@ -77,3 +82,15 @@ class Window(QtGui.QMainWindow):
         print("pret !")
         self.fctToCall(self.graph)
         self.close()
+
+    def saveGraphState(self):
+        print("State Saved")
+        self.undoRedo.saveState(self.canv.graph)
+
+    def undoGraphState(self):
+        self.canv.graph = self.undoRedo.undo(self.canv.graph)
+        self.notify()
+
+    def redoGraphState(self):
+        self.canv.graph = self.undoRedo.redo(self.canv.graph)
+        self.notify()

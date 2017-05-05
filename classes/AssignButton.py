@@ -3,13 +3,14 @@ from PyQt4 import QtGui, QtCore
 class AssignButton(QtGui.QPushButton):
 
     def clickAction(self):
+        self.saveState()
         item = self.listIn.selectedItems()[0]
         self.nodeOut.append(item.node)
         self.nodeOut.sort()
         self.nodeIn.remove(self.listIn.selectedItems()[0].node)
         self.notifyAll()
 
-    def __init__(self, text,):
+    def __init__(self, text):
         QtGui.QPushButton.__init__(self, text)
         self.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.Normal))
         self.clicked.connect(self.clickAction)
@@ -28,3 +29,7 @@ class AssignButton(QtGui.QPushButton):
     def notifyAll(self):
         for obs in self.observers:
             obs.notify(keepSelected=True)
+
+    def saveState(self):
+        for obs in self.observers:
+            obs.saveGraphState()

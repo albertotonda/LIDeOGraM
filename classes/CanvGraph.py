@@ -11,7 +11,8 @@ import nx_pylab_angle as nxa
 from PyQt4.QtCore import QCoreApplication
 import threading
 from classes.ClassNode import ClassNode
-import classes.ClassMode as ClassMode
+from classes.ClassMode import ClassMode
+from classes.SaveStatesStacks import SaveStatesStacks
 import classes.ClassGraph as cg
 from functools import reduce
 import copy
@@ -36,7 +37,7 @@ class CanvGraph(QCanvas):
             self.notifyAll()
         elif event.button != 3:
             nodeClicked = min(dst, key=(lambda x: x[0]))[1]
-            if self.mode != ClassMode.ClassMode.moveMode:
+            if self.mode != ClassMode.moveMode:
                 self.constructionNode = ClassNode("", [], pos=(x, y), color=(1, 1, 1), size=0)
                 self.graph.add_node(self.constructionNode)
                 self.graph.add_edge(nodeClicked, self.constructionNode)
@@ -47,21 +48,6 @@ class CanvGraph(QCanvas):
         else:
             nodeClicked = min(dst, key=(lambda x: x[0]))[1]
             self.updateRightClickMenu(event, nodeClicked)
-
-    def prepareDrag(self, event):
-        self.lastEvent = event
-        if not self.onMoveMutex.acquire(False):
-            return
-        #self.drag(event)
-        self.drag(event)
-
-        while self.lastEvent != event:
-            event = self.lastEvent
-            # print('computing last : ' + str(self.lastEvent))
-            #self.drag(event)
-            self.drag(event)
-
-        self.onMoveMutex.release()
 
     def prepareDrag(self, event):
         self.lastEvent = event
@@ -118,14 +104,16 @@ class CanvGraph(QCanvas):
                 if len(list(filter(lambda x: x[0] < 0.002, dst))) > 0:
                     nIn = self.graph.in_edges(self.constructionNode)[0][0]
                     nOut = min(dst, key=(lambda x: x[0]))[1]
-                    if nIn == nOut:
-                        self.nodeSelected = nIn
-                    elif self.mode == ClassMode.ClassMode.addEdgeMode:
-                        self.createEdge(nIn, nOut)
-                    elif self.mode == ClassMode.ClassMode.delEdgeMode:
-                        self.delEdge(nIn, nOut)
+                    self.graph.remove_node(self.constructionNode)
+                    if nIn != nOut:
+                        self.saveState()
+                        if self.mode == ClassMode.addEdgeMode:
+                            self.createEdge(nIn, nOut)
+                        elif self.mode == ClassMode.delEdgeMode:
+                            self.delEdge(nIn, nOut)
             self.nodeSelected = None
-            self.graph.remove_node(self.constructionNode)
+            if self.graph.__contains__(self.constructionNode):
+                self.graph.remove_node(self.constructionNode)
             self.constructionNode = None
             self.notifyAll(self.nodeSelected)
 
@@ -224,7 +212,6 @@ class CanvGraph(QCanvas):
         self.center = (0.5, 0.5)
         self.sizeView = 0.7
 
-
         self.constructionNode = None
         self.onMoveMutex = threading.Lock()
         self.observers = []
@@ -308,9 +295,9 @@ class CanvGraph(QCanvas):
             bold = self.hover and (edge[0] == self.hover or edge[1] == self.hover)
             eBold.append(bold)
             if edge[1] == self.constructionNode:
-                if self.mode == ClassMode.ClassMode.addEdgeMode:
+                if self.mode == ClassMode.addEdgeMode:
                     eColor.append((0, 0.8, 0))
-                elif self.mode == ClassMode.ClassMode.delEdgeMode:
+                elif self.mode == ClassMode.delEdgeMode:
                     eColor.append((0.8, 0, 0))
             else:
                 if not self.hover or bold:
@@ -382,7 +369,6 @@ class CanvGraph(QCanvas):
             self.oldEvent(event)
         return True
 
-
     def touchZoom(self,event):
         if event.type() == QtCore.QEvent.TouchUpdate:
             touchPoints = event.touchPoints()
@@ -444,3 +430,7 @@ class CanvGraph(QCanvas):
                 self.mpl_disconnect(connection)
             self.mplConnections = None;
             print("Disconnected !")
+
+    def saveState(self):
+        for obs in self.observers:
+            obs.saveGraphState()
