@@ -89,3 +89,6 @@ class ClassesModel:
 
 
         #self.graph = save.SavingGraph.readJson()
+
+    def getGraph(self):
+        return self.graph

@@ -20,8 +20,9 @@ class FramAction(QtGui.QFrame):
         labelNotAssigned.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.Normal))
         labelNotAssigned.setMaximumHeight(60)
         grid.addWidget(labelNotAssigned, 0, 2, 1, 1)
-        self.button1 = AssignButton.AssignButton(">")
-        self.button2 = AssignButton.AssignButton("<")
+        self.button1 = AssignButton.AssignButton(">",)
+        self.button2 = AssignButton.AssignButton("<",)
+
 
         self.setListsValues(notSet)
 
@@ -30,7 +31,7 @@ class FramAction(QtGui.QFrame):
         self.grid.addWidget(self.button2, 2, 1, 2, 1)
 
 
-    def setListsValues(self,notSet: list, selectedNode: ClassNode = None):
+    def setListsValues(self, notSet: list, selectedNode: ClassNode = None):
         listBoundWidget  = QtGui.QListWidget()
         listUnboundWidget = QtGui.QListWidget()
 

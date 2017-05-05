@@ -7,8 +7,8 @@ import sys
 from PyQt4 import QtGui
 
 cm = ClassesModel()
-cm.initGraph()
 qApp = QtGui.QApplication(sys.argv)
+vwApp = Window(cm.getGraph(), lambda x: print("Fin"))
 #vwApp = Window(ClassGraph.readJson("test2"))
-vwApp = Window(cm.graph, lambda x: print("Fin"))
+#vwApp = Window(cm.graph, lambda x: print("Fin"))
 sys.exit(qApp.exec_())

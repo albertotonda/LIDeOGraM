@@ -11,6 +11,7 @@ class MenuAction:
         from classes.ClassNode import ClassNode
         rep = QtGui.QInputDialog.getText(MenuAction.window, "New class", "Class name :")
         if rep[1]:
+            MenuAction.window.saveGraphState()
             node = ClassNode(rep[0], [])
             MenuAction.window.graph.add_node(node)
             if MenuAction.window.selectedNode:
@@ -43,9 +44,5 @@ class MenuAction:
             print(rep)
             MenuAction.window.graph = ClassGraph.readJson(rep)
             MenuAction.window.canv.graph = ClassGraph.readJson(rep)
-
+            MenuAction.window.undoRedo.clear()
             MenuAction.window.notify()
-
-
-
-
