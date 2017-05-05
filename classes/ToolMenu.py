@@ -62,11 +62,12 @@ class UndoRedoButton(QtGui.QPushButton):
         self.setIcon(icon)
         self.setIconSize(QtCore.QSize(iconSize, iconSize))
         self.setMaximumSize(QtCore.QSize(iconSize, iconSize))
+        self.setDisabled(True)
         if mode == UndoRedoButton.undo:
             self.clicked.connect(window.undoGraphState)
-            window.undoRedo.addActionEmptyRedo(lambda: self.setDisabled(True))
-            window.undoRedo.addActionNonEmptyRedo(lambda: self.setDisabled(False))
+            window.undoRedo.addActionEmptyUndo(lambda: self.setDisabled(True))
+            window.undoRedo.addActionNonEmptyUndo(lambda: self.setDisabled(False))
         else:
-            self.clicked.connect(window.undoGraphState)
+            self.clicked.connect(window.redoGraphState)
             window.undoRedo.addActionEmptyRedo(lambda: self.setDisabled(True))
             window.undoRedo.addActionNonEmptyRedo(lambda: self.setDisabled(False))

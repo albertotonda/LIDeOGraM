@@ -1,0 +1,292 @@
+{
+    "edge": [
+        [
+            "Cellular",
+            "PopulationForStorage"
+        ],
+        [
+            "Cellular",
+            "PopulationForCentrifigation"
+        ],
+        [
+            "Cellular",
+            "PopulationForCongelation"
+        ],
+        [
+            "Cellular",
+            "Anisotropy"
+        ],
+        [
+            "MolecularSubExpr",
+            "Cellular"
+        ],
+        [
+            "Anisotropy",
+            "PopulationForStorage"
+        ],
+        [
+            "Anisotropy",
+            "PopulationForCentrifigation"
+        ],
+        [
+            "Anisotropy",
+            "PopulationForCongelation"
+        ],
+        [
+            "Anisotropy",
+            "PopulationForLyophilisation"
+        ],
+        [
+            "condition",
+            "Cellular"
+        ],
+        [
+            "condition",
+            "MolecularSubExpr"
+        ],
+        [
+            "condition",
+            "PopulationForStorage"
+        ],
+        [
+            "condition",
+            "PopulationForCentrifigation"
+        ],
+        [
+            "condition",
+            "PopulationForCongelation"
+        ],
+        [
+            "condition",
+            "MolecularSurExpr"
+        ],
+        [
+            "condition",
+            "PopulationForLyophilisation"
+        ],
+        [
+            "PopulationForCentrifigation",
+            "PopulationForStorage"
+        ],
+        [
+            "PopulationForCentrifigation",
+            "PopulationForCongelation"
+        ],
+        [
+            "PopulationForCentrifigation",
+            "PopulationForLyophilisation"
+        ],
+        [
+            "PopulationForCongelation",
+            "PopulationForStorage"
+        ],
+        [
+            "PopulationForCongelation",
+            "PopulationForLyophilisation"
+        ],
+        [
+            "MolecularSurExpr",
+            "Cellular"
+        ],
+        [
+            "PopulationForLyophilisation",
+            "PopulationForStorage"
+        ]
+    ],
+    "node": [
+        {
+            "color": [
+                0.09019607843137255,
+                0.0,
+                1.0
+            ],
+            "lineWidth": 0,
+            "name": "Cellular",
+            "nodeList": [
+                "C180",
+                "C161cis",
+                "C19cyc",
+                "C140",
+                "C181cis",
+                "C170",
+                "C160",
+                "C220"
+            ],
+            "pos": [
+                -0.05563611272225441,
+                0.6662533250665014
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.7058823529411765,
+                0.00392156862745098,
+                0.5019607843137255
+            ],
+            "lineWidth": 0,
+            "name": "MolecularSubExpr",
+            "nodeList": [
+                "TRANSPORTPROTEINSsousexpr",
+                "BIOSYNTH_CARRIERSsousexpr",
+                "CELLENVELOPEsousexpr",
+                "PURINESsousexpr",
+                "ENMETABOsousexpr",
+                "FATTYACIDMETABOsousexpr",
+                "AMACBIOSYNTHsousexpr",
+                "TRANSCRIPTIONsousexpr",
+                "TRANSLATIONsousexpr",
+                "OTHERCATsousexpr",
+                "REPLICATIONsousexpr",
+                "REGULFUNsousexpr",
+                "CELLPROCESSESsousexpr",
+                "Hypoprotsousexpr",
+                "CENTRINTMETABOsousexpr"
+            ],
+            "pos": [
+                0.7392173827728523,
+                0.8645906251458362
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.4980392156862745,
+                0.7058823529411765,
+                0.19607843137254902
+            ],
+            "lineWidth": 0,
+            "name": "Anisotropy",
+            "nodeList": [
+                "Anisotropie"
+            ],
+            "pos": [
+                0.40374807496149917,
+                0.537917425015167
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.00392156862745098,
+                0.9333333333333333,
+                1.0
+            ],
+            "lineWidth": 0,
+            "name": "condition",
+            "nodeList": [
+                "Temperature",
+                "Age"
+            ],
+            "pos": [
+                0.4803121062421247,
+                0.9958432501983374
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.8823529411764706,
+                0.8823529411764706,
+                0.0
+            ],
+            "lineWidth": 5,
+            "name": "PopulationForStorage",
+            "nodeList": [
+                "tpH07sto3",
+                "UFCsto3"
+            ],
+            "pos": [
+                -0.04122488200562727,
+                -0.14751295025900507
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.8823529411764706,
+                0.8823529411764706,
+                0.0
+            ],
+            "lineWidth": 0,
+            "name": "PopulationForCentrifigation",
+            "nodeList": [
+                "tpH07centri",
+                "UFCcentri"
+            ],
+            "pos": [
+                0.7119518658785615,
+                0.3920811749568326
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.8823529411764706,
+                0.8823529411764706,
+                0.0
+            ],
+            "lineWidth": 0,
+            "name": "PopulationForCongelation",
+            "nodeList": [
+                "tpH07cong",
+                "UFCcong"
+            ],
+            "pos": [
+                0.7196791903317741,
+                -0.0016767002006705944
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.7058823529411765,
+                0.00392156862745098,
+                0.5019607843137255
+            ],
+            "lineWidth": 0,
+            "name": "MolecularSurExpr",
+            "nodeList": [
+                "AMACBIOSYNTHsurexpr",
+                "BIOSYNTH_CARRIERSsurexpr",
+                "Hypoprotsurexpr",
+                "ENMETABOsurexpr",
+                "TRANSLATIONsurexpr",
+                "TRANSCRIPTIONsurexpr",
+                "CELLENVELOPEsurexpr",
+                "FATTYACIDMETABOsurexpr",
+                "OTHERCATsurexpr",
+                "REGULFUNsurexpr",
+                "CENTRINTMETABOsurexpr",
+                "REPLICATIONsurexpr",
+                "PURINESsurexpr",
+                "CELLPROCESSESsurexpr",
+                "TRANSPORTPROTEINSsurexpr"
+            ],
+            "pos": [
+                0.7756305126102521,
+                0.7479216250991687
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.8823529411764706,
+                0.8823529411764706,
+                0.0
+            ],
+            "lineWidth": 0,
+            "name": "PopulationForLyophilisation",
+            "nodeList": [
+                "TpH07lyo",
+                "UFClyo"
+            ],
+            "pos": [
+                0.41407356788706967,
+                -0.13292932525317164
+            ],
+            "size": 700
+        }
+    ],
+    "unbound": []
+}
