@@ -8,7 +8,7 @@ from classes.MenuBar import MenuBar
 import copy
 from classes.ToolMenu import ToolMenu
 from classes.SaveStatesStacks import SaveStatesStacks
-from functools import reduce
+from classes.ListHistorical import ListHistorical
 
 class Window(QtGui.QMainWindow):
 
@@ -53,11 +53,15 @@ class Window(QtGui.QMainWindow):
         self.cancelButton.clicked.connect(lambda: self.setReady(self.initialGraph))
         self.cancelButton.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.Normal))
 
-        self.gridLayout.addWidget(tools, 0, 0, 1, 1)
-        self.gridLayout.addWidget(self.canv, 1, 0, 2, 1)
-        self.gridLayout.addWidget(self.frame, 0, 1, 2, 2)
-        self.gridLayout.addWidget(self.cancelButton, 2, 1, 1, 1)
-        self.gridLayout.addWidget(self.saveButton, 2, 2, 1, 1)
+        self.historical = ListHistorical(self.undoRedo)
+
+
+        self.gridLayout.addWidget(tools, 0, 0, 1, 2)
+        self.gridLayout.addWidget(self.historical, 1, 0, 2, 1)
+        self.gridLayout.addWidget(self.canv, 1, 1, 2, 1)
+        self.gridLayout.addWidget(self.frame, 0, 2, 2, 2)
+        self.gridLayout.addWidget(self.cancelButton, 2, 2, 1, 1)
+        self.gridLayout.addWidget(self.saveButton, 2, 3, 1, 1)
 
 
         self.selectedNode = None
@@ -74,6 +78,7 @@ class Window(QtGui.QMainWindow):
             self.selectedNode = selectedNode
         self.canv.paint(selectedNode)
         self.frame.setListsValues(self.canv.graph.unboundNode, selectedNode)
+        self.historical.paint()
         QCoreApplication.processEvents()
 
     def setReady(self, graph):
@@ -83,9 +88,9 @@ class Window(QtGui.QMainWindow):
         self.fctToCall(self.graph)
         self.close()
 
-    def saveGraphState(self):
+    def saveGraphState(self, action="Unknonw action"):
         print("State Saved")
-        self.undoRedo.saveState(self.canv.graph)
+        self.undoRedo.saveState(self.canv.graph, action)
 
     def undoGraphState(self):
         self.canv.graph = self.undoRedo.undo(self.canv.graph)

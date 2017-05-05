@@ -1,13 +1,13 @@
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui
 
 class AssignButton(QtGui.QPushButton):
 
     def clickAction(self):
-        self.saveState()
         item = self.listIn.selectedItems()[0]
+        self.saveState(item.node)
         self.nodeOut.append(item.node)
         self.nodeOut.sort()
-        self.nodeIn.remove(self.listIn.selectedItems()[0].node)
+        self.nodeIn.remove(item.node)
         self.notifyAll()
 
     def __init__(self, text):
@@ -30,6 +30,6 @@ class AssignButton(QtGui.QPushButton):
         for obs in self.observers:
             obs.notify(keepSelected=True)
 
-    def saveState(self):
+    def saveState(self, varName):
         for obs in self.observers:
-            obs.saveGraphState()
+            obs.saveGraphState(varName + "'s assignation")

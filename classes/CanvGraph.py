@@ -151,15 +151,15 @@ class CanvGraph(QCanvas):
 
 
         renameAction=QtGui.QAction("Rename " + nodeClicked.name, self)
-        renameAction.triggered.connect(lambda: [nodeClicked.rename(), self.notifyAll()])
+        renameAction.triggered.connect(lambda: [nodeClicked.rename(self.saveState), self.notifyAll()])
         rightclickMenu.addAction(renameAction)
 
         deleateAction = QtGui.QAction("Deleate " + nodeClicked.name, self)
-        deleateAction.triggered.connect(lambda: [self.graph.remove_node(nodeClicked), self.notifyAll()])
+        deleateAction.triggered.connect(lambda: [self.graph.remove_node(nodeClicked, self.saveState), self.notifyAll()])
         rightclickMenu.addAction(deleateAction)
 
         renameAction=QtGui.QAction("Change the color of " + nodeClicked.name, self)
-        renameAction.triggered.connect(lambda: [nodeClicked.changeColor(), self.notifyAll()])
+        renameAction.triggered.connect(lambda: [nodeClicked.changeColor(self.saveState), self.notifyAll()])
         rightclickMenu.addAction(renameAction)
 
         yPxlSizeFig=int((self.fig.get_size_inches()*self.fig.dpi)[1])
@@ -330,7 +330,7 @@ class CanvGraph(QCanvas):
                                 edge_color=eColor,
                                 edge_bold=eBold,
                                 ax=axes,
-                                width=3
+                                width=2
                                 )
         nxa.draw_networkx_labels_angle(graph,
                                        nodesPos,

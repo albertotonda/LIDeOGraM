@@ -12,8 +12,8 @@ class MenuAction:
         rep = QtGui.QInputDialog.getText(MenuAction.window, "New class", "Class name :")
         if rep[1]:
             MenuAction.window.saveGraphState()
-            node = ClassNode(rep[0], [])
-            MenuAction.window.graph.add_node(node)
+            node = ClassNode(rep[0], [], pos=MenuAction.window.canv.center)
+            MenuAction.window.canv.graph.add_node(node)
             if MenuAction.window.selectedNode:
                 MenuAction.window.selectedNode.lineWidth = 1
             MenuAction.window.notify(node)

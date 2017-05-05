@@ -11,7 +11,7 @@ class SaveStatesStacks:
         self.nonEmptyUndoFunc = []
         self.nonEmptyRedoFunc = []
 
-    def saveState(self, graph: ClassGraph):
+    def saveState(self, graph: ClassGraph, actionName: str):
         if self.redoStack: #If not empty
             self.callFunc(self.emptyRedoFunc)
             print("On vide redo")
@@ -19,14 +19,14 @@ class SaveStatesStacks:
 
         if not self.undoStack: #If empty
             self.callFunc(self.nonEmptyUndoFunc)
-        self.undoStack.append(copy.deepcopy(graph))
+        self.undoStack.append((copy.deepcopy(graph), actionName))
 
     def undo(self, currentGraph: ClassGraph):
         if not self.redoStack:
             self.callFunc(self.nonEmptyRedoFunc)
-        self.redoStack.append(currentGraph)
+        self.redoStack.append((currentGraph, "Undo"))
 
-        graph = self.undoStack.pop()
+        graph = self.undoStack.pop()[0]
         if not self.undoStack:
             self.callFunc(self.emptyUndoFunc)
         return graph
@@ -34,9 +34,9 @@ class SaveStatesStacks:
     def redo(self, currentGraph: ClassGraph):
         if not self.undoStack: #If empty
             self.callFunc(self.nonEmptyUndoFunc)
-        self.undoStack.append(currentGraph)
+        self.undoStack.append((currentGraph, "Redo"))
 
-        graph = self.redoStack.pop()
+        graph = self.redoStack.pop()[0]
         if not self.redoStack:
             self.callFunc(self.emptyRedoFunc)
 

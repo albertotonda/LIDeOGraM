@@ -16,7 +16,8 @@ class ClassNode:
     def __init__(self, name, nodeList: list, pos=None, color=None, lineWidth=0, size=700):
         if color == None:
             color = ClassNode.nextColor()
-
+        if pos == None:
+            pos = (0,0)
         print(name," : ", color)
         self.color = color
         self.name = name
@@ -28,17 +29,21 @@ class ClassNode:
     def __str__(self):
         return str(self.name)
 
-    def rename(self):
+    def rename(self, beforeChange=None):
         from classes.MenuAction import MenuAction
-        rep = QtGui.QInputDialog.getText(MenuAction.window, "Rename class", "Class' new name :")
+        rep = QtGui.QInputDialog.getText(MenuAction.window, "Rename class", "Class' new name :", text=self.name)
         if rep[1]:
+            if beforeChange:
+                beforeChange()
             self.name = rep[0]
 
-    def changeColor(self):
+    def changeColor(self, beforeChange=None):
         from classes.MenuAction import MenuAction
         print(self.color)
         rep = QtGui.QColorDialog.getColor(QtGui.QColor(self.color[0]*255, self.color[1]*255, self.color[2]*255) ,MenuAction.window, "Class' color")
-        if rep.isValid():
+        if rep.isValid() and [int(c * 255) for c in self.color] != [rep.red(), rep.green(), rep.blue()]:
+            if beforeChange:
+                beforeChange()
             self.color = (rep.red()/255, rep.green()/255, rep.blue()/255)
 
 
