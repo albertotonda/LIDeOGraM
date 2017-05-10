@@ -2,7 +2,7 @@ import copy
 from classes.ClassGraph import ClassGraph
 
 class SaveStatesStacks:
-    def __init__(self):
+    def __init__(self, window):
         self.undoStack = []
         self.redoStack = []
 
@@ -11,36 +11,44 @@ class SaveStatesStacks:
         self.nonEmptyUndoFunc = []
         self.nonEmptyRedoFunc = []
 
-    def saveState(self, graph: ClassGraph, actionName: str):
+        self.window = window
+
+    def saveState(self, graph: ClassGraph, actionName: str, color: tuple = (255, 255, 255)):
         if self.redoStack: #If not empty
             self.callFunc(self.emptyRedoFunc)
-            print("On vide redo")
         self.redoStack = []
 
         if not self.undoStack: #If empty
             self.callFunc(self.nonEmptyUndoFunc)
-        self.undoStack.append((copy.deepcopy(graph), actionName))
+        self.undoStack.append((copy.deepcopy(graph), actionName, color))
 
     def undo(self, currentGraph: ClassGraph):
+        if not self.undoStack:
+            print("Undo Stack empty")
+            return
         if not self.redoStack:
             self.callFunc(self.nonEmptyRedoFunc)
-        self.redoStack.append((currentGraph, "Undo"))
+        state = self.undoStack.pop()
+        self.redoStack.append((currentGraph, state[1], state[2]))
 
-        graph = self.undoStack.pop()[0]
         if not self.undoStack:
             self.callFunc(self.emptyUndoFunc)
-        return graph
+        return state[0]
 
     def redo(self, currentGraph: ClassGraph):
+        if not self.redoStack:
+            print("Redo Stack empty")
+            return
         if not self.undoStack: #If empty
             self.callFunc(self.nonEmptyUndoFunc)
-        self.undoStack.append((currentGraph, "Redo"))
 
-        graph = self.redoStack.pop()[0]
+        state = self.redoStack.pop()
+        self.undoStack.append((currentGraph, state[1], state[2]))
+
         if not self.redoStack:
             self.callFunc(self.emptyRedoFunc)
 
-        return graph
+        return state[0]
 
     def clear(self):
         self.undoStack = []
@@ -69,3 +77,15 @@ class SaveStatesStacks:
         for f in funcList:
             f()
 
+    def returnToState(self, item):
+        if item.state is None:
+            return
+        graph = self.window.canv.graph
+        if item.state in self.undoStack:
+            action = self.undo
+        elif item.state in self.redoStack:
+            action = self.redo
+        while graph != item.state[0]:
+            graph = action(graph)
+        self.window.canv.graph = graph
+        self.window.notify()

@@ -1,6 +1,6 @@
 #-*- coding: utf-8
 from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import QCoreApplication
+from PyQt4.QtCore import QCoreApplication, Qt
 from classes.CanvGraph import CanvGraph
 from classes.FramAction import FramAction
 from classes.ClassGraph import ClassGraph
@@ -27,7 +27,7 @@ class Window(QtGui.QMainWindow):
 
         self.setCentralWidget(self.mainWid)
 
-        self.undoRedo = SaveStatesStacks()
+        self.undoRedo = SaveStatesStacks(self)
 
         self.graph = copy.copy(graph)
         self.initialGraph = graph
@@ -69,6 +69,8 @@ class Window(QtGui.QMainWindow):
 
         QtGui.QMainWindow.show(self)
         #self.exec()
+        QtGui.QShortcut(QtGui.QKeySequence(Qt.CTRL + Qt.Key_Z), self, self.undoGraphState)
+        QtGui.QShortcut(QtGui.QKeySequence(Qt.CTRL + Qt.Key_Y), self, self.redoGraphState)
 
 
     def notify(self, selectedNode=None, keepSelected = False):
@@ -88,14 +90,20 @@ class Window(QtGui.QMainWindow):
         self.fctToCall(self.graph)
         self.close()
 
-    def saveGraphState(self, action="Unknonw action"):
-        print("State Saved")
-        self.undoRedo.saveState(self.canv.graph, action)
+    def saveGraphState(self, action="Unknonw action", color: tuple = (0, 0, 0)):
+        self.undoRedo.saveState(self.canv.graph, action, color)
 
     def undoGraphState(self):
-        self.canv.graph = self.undoRedo.undo(self.canv.graph)
-        self.notify()
+        g = self.undoRedo.undo(self.canv.graph)
+        if g:
+            self.canv.graph = g
+            self.notify()
 
     def redoGraphState(self):
-        self.canv.graph = self.undoRedo.redo(self.canv.graph)
-        self.notify()
+        g = self.undoRedo.redo(self.canv.graph)
+        if g:
+            self.canv.graph = g
+            self.notify()
+
+    def popState(self):
+        self.undoRedo.popLastState()

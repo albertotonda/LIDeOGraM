@@ -106,7 +106,6 @@ class CanvGraph(QCanvas):
                     nOut = min(dst, key=(lambda x: x[0]))[1]
                     self.graph.remove_node(self.constructionNode)
                     if nIn != nOut:
-                        self.saveState()
                         if self.mode == ClassMode.addEdgeMode:
                             self.createEdge(nIn, nOut)
                         elif self.mode == ClassMode.delEdgeMode:
@@ -125,9 +124,11 @@ class CanvGraph(QCanvas):
             msg.setWindowTitle("Edge error")
             msg.exec()
         else:
+            self.saveState("+ "+nodeIn.name + " -> "+ nodeOut.name, color=(200, 255, 200))
             self.graph.add_edge(nodeIn, nodeOut)
             if len(list(nx.simple_cycles(nx.DiGraph(self.graph)))) > 0:
                 self.graph.remove_edge(nodeIn, nodeOut)
+                self.popState()
                 msg = QtGui.QMessageBox()
                 s = "Invalid action : The graph become cyclic"
                 msg.setText(s)
@@ -136,8 +137,10 @@ class CanvGraph(QCanvas):
 
     def delEdge(self, nodeIn: ClassNode, nodeOut: ClassNode):
         if self.graph.has_edge(nodeIn, nodeOut):
+            self.saveState("- "+nodeIn.name + " -> "+ nodeOut.name, color=(255, 200, 200))
             self.graph.remove_edge(nodeIn, nodeOut)
         elif self.graph.has_edge(nodeOut, nodeIn):
+            self.saveState("- "+nodeOut.name + " -> "+ nodeIn.name, color=(255, 200, 200))
             self.graph.remove_edge(nodeOut, nodeIn)
         else:
             msg = QtGui.QMessageBox()
@@ -148,7 +151,6 @@ class CanvGraph(QCanvas):
 
     def updateRightClickMenu(self, event, nodeClicked):
         rightclickMenu=QtGui.QMenu(self)
-
 
         renameAction=QtGui.QAction("Rename " + nodeClicked.name, self)
         renameAction.triggered.connect(lambda: [nodeClicked.rename(self.saveState), self.notifyAll()])
@@ -431,6 +433,10 @@ class CanvGraph(QCanvas):
             self.mplConnections = None;
             print("Disconnected !")
 
-    def saveState(self):
+    def saveState(self, action ="Unknonw action", color: tuple = (255, 255, 255)):
         for obs in self.observers:
-            obs.saveGraphState()
+            obs.saveGraphState(action, color)
+
+    def popState(self):
+        for obs in self.observers:
+            obs.popState()

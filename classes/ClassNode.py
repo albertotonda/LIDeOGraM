@@ -14,11 +14,10 @@ class ClassNode:
             return tuple((r, g, b))
 
     def __init__(self, name, nodeList: list, pos=None, color=None, lineWidth=0, size=700):
-        if color == None:
+        if color is None:
             color = ClassNode.nextColor()
-        if pos == None:
-            pos = (0,0)
-        print(name," : ", color)
+        if pos is None:
+            pos = (0, 0)
         self.color = color
         self.name = name
         self.nodeList = nodeList
@@ -34,7 +33,7 @@ class ClassNode:
         rep = QtGui.QInputDialog.getText(MenuAction.window, "Rename class", "Class' new name :", text=self.name)
         if rep[1]:
             if beforeChange:
-                beforeChange()
+                beforeChange("Rename "+self.name + " into " + rep[0], color=(255, 255, 150))
             self.name = rep[0]
 
     def changeColor(self, beforeChange=None):
@@ -43,7 +42,7 @@ class ClassNode:
         rep = QtGui.QColorDialog.getColor(QtGui.QColor(self.color[0]*255, self.color[1]*255, self.color[2]*255) ,MenuAction.window, "Class' color")
         if rep.isValid() and [int(c * 255) for c in self.color] != [rep.red(), rep.green(), rep.blue()]:
             if beforeChange:
-                beforeChange()
+                beforeChange("Change the color of " + self.name, color=(255, 255, 150))
             self.color = (rep.red()/255, rep.green()/255, rep.blue()/255)
 
 

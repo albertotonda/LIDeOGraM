@@ -11,7 +11,7 @@ class MenuAction:
         from classes.ClassNode import ClassNode
         rep = QtGui.QInputDialog.getText(MenuAction.window, "New class", "Class name :")
         if rep[1]:
-            MenuAction.window.saveGraphState()
+            MenuAction.window.saveGraphState("+ New class : "+rep[0], color=(200, 255, 200))
             node = ClassNode(rep[0], [], pos=MenuAction.window.canv.center)
             MenuAction.window.canv.graph.add_node(node)
             if MenuAction.window.selectedNode:

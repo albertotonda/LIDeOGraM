@@ -34,7 +34,7 @@ class ClassGraph(nx.DiGraph):
 
     def remove_node(self, node: ClassNode,  beforeChange=None):
         if beforeChange:
-            beforeChange()
+            beforeChange("- Remove class : "+node.name, color=(255, 200, 200))
         self.unboundNode.extend(node.nodeList)
         self.unboundNode.sort()
         super(ClassGraph, self).remove_node(node)
