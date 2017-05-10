@@ -112,7 +112,10 @@ class IncMatrixCanvas(QTableWidget):
                 if value == 1:
                     color = QColor.fromRgb(180,180,180)
                 elif value == -1:
-                    c = self.colorClasses[self.order[i]]
+                    try:
+                        c = self.colorClasses[self.order[i]]
+                    except:
+                        pass
                     color = QColor.fromRgb(*[int(i * 255) for i in c])
                 else:
                     color = QColor.fromRgb(255, 255, 255)

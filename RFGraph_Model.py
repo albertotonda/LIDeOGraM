@@ -47,6 +47,8 @@ class RFGraph_Model:
     def init2(self,contrgraph):
 
         self.adj_contrGraph = contrgraph
+        self.correctDataset(self.dataset,self.adj_contrGraph)
+
         self.equacolO = self.findLassoEqs()
 
         #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_expertcorrected_noMol.txt')
@@ -206,6 +208,11 @@ class RFGraph_Model:
             vwApp.updateMenuBar(cntrApp)
             qtconnector = QtConnector(vwApp, cntrApp)
         self.firstInit=False
+
+    def correctDataset(self,dataset,constrGraph):
+        for vc in constrGraph.nodes():
+            for v in vc.nodeList:
+                dataset.variablesClass[v]=vc.name
 
     def recomputeNode(self,node,neweqs):
         self.equacolO[self.equacolO[:, 2] == node, :]
@@ -512,25 +519,32 @@ class RFGraph_Model:
             else:
                 self.nodeWeight.append(0)
         for i in range(len(self.dataset.varnames)):
+            v=self.dataset.varnames[i]
+            for vclasse in self.adj_contrGraph.nodes():
+                if(v in vclasse.nodeList):
+                    vcolor=tuple(vclasse.color)
+                    break
+            self.nodeColor.append(vcolor)
+
             #self.nodeColor.append((0.5, 0.5 + 0.5 * self.nodeWeight[i] / np.amax(self.nodeWeight), 0.5))
             #if(self.dataset.varnames[i])
             #self.
-            if(self.dataset.variablesClass[self.dataset.varnames[i]]== 'Molss' or self.dataset.variablesClass[self.dataset.varnames[i]]== 'Molsur'):
-                self.nodeColor.append((0.5, 0.5, 0.9))
-            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'condition'):
-                self.nodeColor.append((0.9, 0.55, 0.55))
-            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'Cell'):#CellAniso
-                self.nodeColor.append((0.3, 0.9, 0.9))
-            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'CellAniso'):
-                self.nodeColor.append((0.7, 0.7, 0.5))
-            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopCentri'):
-                self.nodeColor.append((0.8, 0.8, 0.2))
-            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopLyo'):
-                self.nodeColor.append((0.8, 0.8, 0.2))
-            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopCong'):
-                self.nodeColor.append((0.8, 0.8, 0.2))
-            if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopSto3'):
-                self.nodeColor.append((0.8, 0.8, 0.2))
+            # if(self.dataset.variablesClass[self.dataset.varnames[i]]== 'Molss' or self.dataset.variablesClass[self.dataset.varnames[i]]== 'Molsur'):
+            #     self.nodeColor.append((0.5, 0.5, 0.9))
+            # if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'condition'):
+            #     self.nodeColor.append((0.9, 0.55, 0.55))
+            # if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'Cell'):#CellAniso
+            #     self.nodeColor.append((0.3, 0.9, 0.9))
+            # if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'CellAniso'):
+            #     self.nodeColor.append((0.7, 0.7, 0.5))
+            # if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopCentri'):
+            #     self.nodeColor.append((0.8, 0.8, 0.2))
+            # if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopLyo'):
+            #     self.nodeColor.append((0.8, 0.8, 0.2))
+            # if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopCong'):
+            #     self.nodeColor.append((0.8, 0.8, 0.2))
+            # if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopSto3'):
+            #     self.nodeColor.append((0.8, 0.8, 0.2))
         self.computeInitialPos()
         self.computeFitandCmplxEdgeColor()
         self.computeComprEdgeColor()
