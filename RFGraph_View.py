@@ -53,7 +53,7 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         # self.gridLayout.addWidget(self.adjThreshold_lab, 8, 0, 1, 2)
         self.gridLayout.addWidget(self.adjThreshold_lab, 3, 0, 1, 1)
         # self.gridLayout.addWidget(self.adjThreshold_slider, 8, 2, 1, 57)
-        self.gridLayout.addWidget(self.adjThreshold_slider, 3, 1, 1, 1)
+        self.gridLayout.addWidget(self.adjThreshold_slider , 3, 1, 1, 1)
 
         # self.comprFitCmplx_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
         # self.comprFitCmplx_slider.setValue(self.modApp.comprFitCmplxVal * 100)
