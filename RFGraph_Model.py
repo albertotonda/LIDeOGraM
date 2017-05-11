@@ -210,9 +210,22 @@ class RFGraph_Model:
         self.firstInit=False
 
     def correctDataset(self,dataset,constrGraph):
+        dataset.varnames=dataset.true_varnames
+        dataset.nbVar = dataset.true_nbVar
+        dataset.variablesClass = dataset.true_variablesClass
+        dataset.data = dataset.true_data
         for vc in constrGraph.nodes():
             for v in vc.nodeList:
                 dataset.variablesClass[v]=vc.name
+
+        allidx=[]
+        for unv in constrGraph.unboundNode:
+            idx = np.where(dataset.varnames == unv)
+            dataset.varnames=np.delete(dataset.varnames,idx)
+            dataset.variablesClass.pop(unv)
+            allidx.append(idx)
+        dataset.nbVar=len(dataset.varnames)
+        dataset.data = np.delete(dataset.data,allidx,axis=1)
 
     def recomputeNode(self,node,neweqs):
         self.equacolO[self.equacolO[:, 2] == node, :]
@@ -563,8 +576,8 @@ class RFGraph_Model:
             graph.add_node(ClassNode(i, i_var))
         #testMutex = threading.Lock()
         print("creating classes window")
-        #classApp=Window(graph,self.init2)
-        classApp=Window(ClassGraph.readJson("classes/screen.clgraph"),self.init2)
+        classApp=Window(graph,self.init2)
+        #classApp=Window(ClassGraph.readJson("classes/screen.clgraph"),self.init2)
         print("after classes window")
         #graph=classApp.exec()
         #testMutex.acquire(True)

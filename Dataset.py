@@ -28,6 +28,13 @@ class Dataset:
         self.nbExp = len(self.data)
         self.data=np.array(self.data)
 
+        self.true_varnames=self.varnames
+        self.true_nbVar = self.nbVar
+        self.true_variablesClass=self.variablesClass
+        self.true_data=self.data
+        self.true_nbExp=self.nbExp
+
+
 
 
 
