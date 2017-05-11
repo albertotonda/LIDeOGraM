@@ -65,10 +65,12 @@ class CanvGraph(QCanvas):
         self.onMoveMutex.release()
 
     def dragTouch(self, pos):
-        point = type('', (), {})
-        point.xdata = pos[0]
-        point.ydata = pos[1]
-        self.drag(point)
+        event = type('event', (), {})
+        event.xdata = pos[0]
+        event.ydata = pos[1]
+        event.inaxes = True
+        event.button
+        self.drag(event)
 
     def drag(self, event):
         (x, y) = (event.xdata, event.ydata)
