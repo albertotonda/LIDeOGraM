@@ -47,7 +47,8 @@ class Window(QtGui.QMainWindow):
         self.saveButton.clicked.connect(lambda: self.setReady(self.canv.graph))
         self.saveButton.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.Normal))
 
-        tools = ToolMenu(self)
+        editTools = ToolMenu(self, "edit")
+        histTools = ToolMenu(self, "hist")
 
         self.cancelButton = QtGui.QPushButton("Cancel")
         self.cancelButton.clicked.connect(lambda: self.setReady(self.initialGraph))
@@ -55,8 +56,8 @@ class Window(QtGui.QMainWindow):
 
         self.historical = ListHistorical(self.undoRedo)
 
-
-        self.gridLayout.addWidget(tools, 0, 0, 1, 2)
+        self.gridLayout.addWidget(histTools, 0, 0, 1, 1)
+        self.gridLayout.addWidget(editTools, 0, 1, 1, 1)
         self.gridLayout.addWidget(self.historical, 1, 0, 2, 1)
         self.gridLayout.addWidget(self.canv, 1, 1, 2, 1)
         self.gridLayout.addWidget(self.frame, 0, 2, 2, 2)
@@ -65,7 +66,7 @@ class Window(QtGui.QMainWindow):
 
 
         self.selectedNode = None
-        MenuBar(self, tools.buttons)
+        MenuBar(self, editTools.buttons)
 
         QtGui.QMainWindow.show(self)
         #self.exec()

@@ -2,31 +2,28 @@ from PyQt4 import QtGui, QtCore
 from classes.ClassMode import ClassMode
 
 class ToolMenu(QtGui.QFrame):
-    def __init__(self, window):
+    def __init__(self, window, mode):
         iconSize = 50
         QtGui.QFrame.__init__(self)
         layout = QtGui.QHBoxLayout()
-        self.buttons = [
-                        ToolModeButton(window.canv, ClassMode.moveMode, "ressources/images/move", iconSize),
-                        ToolModeButton(window.canv, ClassMode.addEdgeMode, "ressources/images/NewEdge", iconSize),
-                        ToolModeButton(window.canv, ClassMode.delEdgeMode, "ressources/images/DelEdge", iconSize),
-                        UndoRedoButton(window, UndoRedoButton.undo, "ressources/images/Undo", iconSize),
-                        UndoRedoButton(window, UndoRedoButton.redo, "ressources/images/Redo", iconSize)]
-        layout.addWidget(self.buttons[3])
-        layout.addItem(QtGui.QSpacerItem(60, 0))
-        layout.addWidget(self.buttons[4])
-        layout.addItem(QtGui.QSpacerItem(60, 0))
-        layout.addWidget(self.buttons[0])
-        layout.addItem(QtGui.QSpacerItem(60, 0))
-        layout.addWidget(self.buttons[1])
-        layout.addItem(QtGui.QSpacerItem(60, 0))
-        layout.addWidget(self.buttons[2])
+        if mode == "edit":
+            self.buttons = [ToolModeButton(window.canv, ClassMode.moveMode, "ressources/images/move", iconSize),
+                            ToolModeButton(window.canv, ClassMode.addEdgeMode, "ressources/images/NewEdge", iconSize),
+                            ToolModeButton(window.canv, ClassMode.delEdgeMode, "ressources/images/DelEdge", iconSize)]
+            group = QtGui.QButtonGroup()
+            group.addButton(self.buttons[0])
+            group.addButton(self.buttons[1])
+            group.addButton(self.buttons[2])
+        else:
+            self.buttons = [UndoRedoButton(window, UndoRedoButton.undo, "ressources/images/Undo", iconSize),
+                            UndoRedoButton(window, UndoRedoButton.redo, "ressources/images/Redo", iconSize)]
+            layout.addItem(QtGui.QSpacerItem(30, 0))
+
+        for btn in self.buttons:
+            layout.addWidget(btn)
+            layout.addItem(QtGui.QSpacerItem(60, 0))
 
         #layout.setAlignment(QtCore.Qt.AlignHCenter)
-        group = QtGui.QButtonGroup()
-        group.addButton(self.buttons[0])
-        group.addButton(self.buttons[1])
-        group.addButton(self.buttons[2])
         self.setLayout(layout)
         self.setMaximumHeight(iconSize + 20)
 

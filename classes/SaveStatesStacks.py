@@ -78,6 +78,7 @@ class SaveStatesStacks:
             f()
 
     def returnToState(self, item):
+        print("click : "+ str(item))
         if item.state is None:
             return
         graph = self.window.canv.graph

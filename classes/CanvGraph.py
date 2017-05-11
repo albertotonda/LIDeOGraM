@@ -64,6 +64,12 @@ class CanvGraph(QCanvas):
 
         self.onMoveMutex.release()
 
+    def dragTouch(self, pos):
+        point = type('', (), {})
+        point.xdata = pos[0]
+        point.ydata = pos[1]
+        self.drag(point)
+
     def drag(self, event):
         (x, y) = (event.xdata, event.ydata)
         if not x or not y:
@@ -381,6 +387,7 @@ class CanvGraph(QCanvas):
                 #center = self.mapFromGlobal(QtCore.QPoint(center[0], center[1]))
                 center = self.convertQtPosToMpl(center)
                 self.zoom(center,(lastDist + self.reducZoomStrengthTouch) / (self.touchPointsDist + self.reducZoomStrengthTouch))
+                self.dragTouch(center)
             if len(touchPoints) < 2:
                 self.connectMpl()
             else:

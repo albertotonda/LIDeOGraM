@@ -14,7 +14,7 @@ class ListHistorical(QtGui.QListWidget):
         selected = False
         self.clear()
         self.setWordWrap(True)
-        self.setTextElideMode(Qt.ElideNone)
+        #self.setTextElideMode(Qt.ElideMiddle)
         for state in self.undoRedo.redoStack:
             item = QtGui.QListWidgetItem(state[1])
             item.state = state
@@ -52,6 +52,7 @@ class ListHistorical(QtGui.QListWidget):
             self.setItemSelected(initItem, True)
         initItem.state = lastState
 
+        self.wordWrap()
         #self.connect(self, QtCore.SIGNAL("itemClicked(QListWidgetItem)"), self, QtCore.SLOT("test(self, QListWidgetItem)"))
 
     def addSeparator(self):
@@ -59,6 +60,7 @@ class ListHistorical(QtGui.QListWidget):
         separator.setSizeHint(QtCore.QSize(-1, 5))
         separator.setFlags(Qt.NoItemFlags)
         separFrame = QtGui.QFrame()
+        separator.state = None
         separFrame.setFrameShape(QtGui.QFrame.HLine)
         self.addItem(separator)
         self.setItemWidget(separator, separFrame)
