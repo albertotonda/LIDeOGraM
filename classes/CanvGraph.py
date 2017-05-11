@@ -214,6 +214,7 @@ class CanvGraph(QCanvas):
         self.reducZoomStrengthTouch = 100 #inversely proportional to the zoom strenght
         self.strenghtWheelZoom = 1.15
         self.centerTouchZoom = None
+        self.touchPointsDist = 0
 
         self.oldEvent = self.event
         self.event = self.prepareTouchZoom
