@@ -213,6 +213,7 @@ class CanvGraph(QCanvas):
         self.onTouchMutex = threading.Lock()
         self.reducZoomStrengthTouch = 100 #inversely proportional to the zoom strenght
         self.strenghtWheelZoom = 1.15
+        self.centerTouchZoom = None
 
         self.oldEvent = self.event
         self.event = self.prepareTouchZoom
@@ -386,16 +387,19 @@ class CanvGraph(QCanvas):
             lastDist =self.touchPointsDist
             self.touchPointsDist = self.calculDistTotal(center, touchPoints)
             if lastDist * self.touchPointsDist> 0: # Si les deux sont différents de 0 (ils sont toujours positifs)
+                if not self.centerTouchZoom:
+                    self.centerTouchZoom = self.convertQtPosToMpl(center)
                 #center = self.mapFromGlobal(QtCore.QPoint(center[0], center[1]))
-                center = self.convertQtPosToMpl(center)
-                self.zoom(center,(lastDist + self.reducZoomStrengthTouch) / (self.touchPointsDist + self.reducZoomStrengthTouch))
+                self.zoom(self.centerTouchZoom, (lastDist + self.reducZoomStrengthTouch) / (self.touchPointsDist + self.reducZoomStrengthTouch))
                 self.dragTouch(center)
             if len(touchPoints) < 2:
                 self.connectMpl()
+                self.centerTouchZoom = None
             else:
                 self.disconnectMpl()
         elif event.type() == QtCore.QEvent.TouchEnd:
                 self.connectMpl()
+                self.centerTouchZoom = None
         return True
 
     def calculCenter(self, touchPoints):
