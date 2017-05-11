@@ -69,7 +69,7 @@ class CanvGraph(QCanvas):
         event.xdata = pos[0]
         event.ydata = pos[1]
         event.inaxes = True
-        event.button
+        event.button = 1
         self.drag(event)
 
     def drag(self, event):
