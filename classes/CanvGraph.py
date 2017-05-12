@@ -391,8 +391,8 @@ class CanvGraph(QCanvas):
                 if not self.centerTouchZoom:
                     self.centerTouchZoom = center
                 #center = self.mapFromGlobal(QtCore.QPoint(center[0], center[1]))
-                self.zoom(self.centerTouchZoom, (lastDist + self.reducZoomStrengthTouch) / (self.touchPointsDist + self.reducZoomStrengthTouch))
-                self.dragTouch(self.convertQtPosToMpl(center))
+                self.zoom(self.convertQtPosToMpl(self.centerTouchZoom), (lastDist + self.reducZoomStrengthTouch) / (self.touchPointsDist + self.reducZoomStrengthTouch))
+                #self.dragTouch(center)
             if len(touchPoints) < 2:
                 self.connectMpl()
                 self.centerTouchZoom = None
