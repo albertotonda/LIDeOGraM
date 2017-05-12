@@ -389,10 +389,10 @@ class CanvGraph(QCanvas):
             self.touchPointsDist = self.calculDistTotal(center, touchPoints)
             if lastDist * self.touchPointsDist> 0: # Si les deux sont différents de 0 (ils sont toujours positifs)
                 if not self.centerTouchZoom:
-                    self.centerTouchZoom = self.convertQtPosToMpl(center)
+                    self.centerTouchZoom = center
                 #center = self.mapFromGlobal(QtCore.QPoint(center[0], center[1]))
                 self.zoom(self.centerTouchZoom, (lastDist + self.reducZoomStrengthTouch) / (self.touchPointsDist + self.reducZoomStrengthTouch))
-                self.dragTouch(center)
+                self.dragTouch(self.convertQtPosToMpl(center))
             if len(touchPoints) < 2:
                 self.connectMpl()
                 self.centerTouchZoom = None
