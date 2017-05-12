@@ -64,14 +64,6 @@ class CanvGraph(QCanvas):
 
         self.onMoveMutex.release()
 
-    def dragTouch(self, pos):
-        event = type('event', (), {})
-        event.xdata = pos[0]
-        event.ydata = pos[1]
-        event.inaxes = True
-        event.button = 1
-        self.drag(event)
-
     def drag(self, event):
         (x, y) = (event.xdata, event.ydata)
         if not x or not y:
@@ -85,8 +77,8 @@ class CanvGraph(QCanvas):
                 self.nodesPos[self.nodeSelected] = self.nodeSelected.pos
             else:
                 deltaPos = (x - self.lastPos[0], y - self.lastPos[1])
-                self.lastPos = (x-deltaPos[0], y-deltaPos[1])
-                self.setCenter(self.center[0]-deltaPos[0], self.center[1]-deltaPos[1])
+                self.lastPos = (x - deltaPos[0], y - deltaPos[1])
+                self.setCenter(self.center[0] - deltaPos[0], self.center[1] - deltaPos[1])
 
         dst = [(pow(x - pos[0], 2) + pow(y - pos[1], 2), node) for node, pos in self.nodesPos.items()]
 
@@ -99,9 +91,10 @@ class CanvGraph(QCanvas):
                 self.hover = None
         else:
             lastHover = -1
-        if lastHover != self.hover or (self.nodeSelected and event.button==1):
+        if lastHover != self.hover or (self.nodeSelected and event.button == 1):
             self.paint(self.nodeSelected)
             QCoreApplication.processEvents()
+        self.notifyAll(self.nodeSelected)
 
     def release(self, event):
         if self.constructionNode is not None:
@@ -182,7 +175,6 @@ class CanvGraph(QCanvas):
         self.zoom(center, self.strenghtWheelZoom+0.1 if event.button == "down" else 1/self.strenghtWheelZoom)
 
     def zoom(self, centerPointed:tuple, strength):
-        print(centerPointed)
         oldSizeView = self.sizeView
         self.sizeView = min(self.sizeView * strength, 0.7)
         oldCenter = self.center
@@ -200,6 +192,7 @@ class CanvGraph(QCanvas):
         center = (sx1, sy1)
         self.setCenter(center[0], center[1])
         self.notifyAll(self.nodeSelected)
+
 
     def setCenter(self, x, y):
         posX =max(x, -0.2 + self.sizeView)
@@ -361,22 +354,27 @@ class CanvGraph(QCanvas):
             obs.notify(nodeSelected)
 
     def prepareTouchZoom(self, event):
-        if type(event) == QtGui.QTouchEvent :
-            self.lastTouchEvent = event
-            if event.type() == QtCore.QEvent.TouchEnd:
-                self.connectMpl()
-            if not self.onTouchMutex.acquire(False):
-                return True
-            #self.drag(event)
-            self.touchZoom(event)
-
-            while self.lastTouchEvent != event:
-                event = self.lastTouchEvent
-                # print('computing last : ' + str(self.lastTouchEvent))
+        if type(event) == QtGui.QTouchEvent:
+            if event.type() == QtCore.QEvent.TouchUpdate:
+                self.lastTouchEvent = event
+                if event.type() == QtCore.QEvent.TouchEnd:
+                    self.connectMpl()
+                if not self.onTouchMutex.acquire(False):
+                    return True
                 #self.drag(event)
                 self.touchZoom(event)
 
-            self.onTouchMutex.release()
+                while self.lastTouchEvent != event:
+                    event = self.lastTouchEvent
+                    # print('computing last : ' + str(self.lastTouchEvent))
+                    #self.drag(event)
+                    self.touchZoom(event)
+
+                self.onTouchMutex.release()
+
+            elif event.type() == QtCore.QEvent.TouchEnd:
+                self.connectMpl()
+                self.centerTouchZoom = None
         else:
             self.oldEvent(event)
         return True
@@ -389,18 +387,21 @@ class CanvGraph(QCanvas):
             self.touchPointsDist = self.calculDistTotal(center, touchPoints)
             if lastDist * self.touchPointsDist> 0: # Si les deux sont différents de 0 (ils sont toujours positifs)
                 if not self.centerTouchZoom:
-                    self.centerTouchZoom = center
+                    self.centerTouchZoom = self.convertQtPosToMpl(center)
+                    newCenter = self.centerTouchZoom
+                else:
+                    newCenter = self.convertQtPosToMpl(center)
+                    difCentrer = (self.centerTouchZoom[0] - newCenter[0], self.centerTouchZoom[1] - newCenter[1])
+                    self.setCenter(self.center[0] + difCentrer[0], self.center[1] + difCentrer[1])
                 #center = self.mapFromGlobal(QtCore.QPoint(center[0], center[1]))
-                self.zoom(self.convertQtPosToMpl(self.centerTouchZoom), (lastDist + self.reducZoomStrengthTouch) / (self.touchPointsDist + self.reducZoomStrengthTouch))
-                #self.dragTouch(center)
+                #self.dragTouch(self.centerTouchZoom)
+                self.zoom(newCenter, (lastDist + self.reducZoomStrengthTouch) / (self.touchPointsDist + self.reducZoomStrengthTouch))
+
             if len(touchPoints) < 2:
                 self.connectMpl()
                 self.centerTouchZoom = None
             else:
                 self.disconnectMpl()
-        elif event.type() == QtCore.QEvent.TouchEnd:
-                self.connectMpl()
-                self.centerTouchZoom = None
         return True
 
     def calculCenter(self, touchPoints):
