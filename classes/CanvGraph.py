@@ -77,8 +77,8 @@ class CanvGraph(QCanvas):
                 self.nodesPos[self.nodeSelected] = self.nodeSelected.pos
             else:
                 deltaPos = (x - self.lastPos[0], y - self.lastPos[1])
-                self.lastPos = (x-deltaPos[0], y-deltaPos[1])
-                self.setCenter(self.center[0]-deltaPos[0], self.center[1]-deltaPos[1])
+                self.lastPos = (x - deltaPos[0], y - deltaPos[1])
+                self.setCenter(self.center[0] - deltaPos[0], self.center[1] - deltaPos[1])
 
         dst = [(pow(x - pos[0], 2) + pow(y - pos[1], 2), node) for node, pos in self.nodesPos.items()]
 
@@ -91,9 +91,10 @@ class CanvGraph(QCanvas):
                 self.hover = None
         else:
             lastHover = -1
-        if lastHover != self.hover or (self.nodeSelected and event.button==1):
+        if lastHover != self.hover or (self.nodeSelected and event.button == 1):
             self.paint(self.nodeSelected)
             QCoreApplication.processEvents()
+        self.notifyAll(self.nodeSelected)
 
     def release(self, event):
         if self.constructionNode is not None:
@@ -106,7 +107,6 @@ class CanvGraph(QCanvas):
                     nOut = min(dst, key=(lambda x: x[0]))[1]
                     self.graph.remove_node(self.constructionNode)
                     if nIn != nOut:
-                        self.saveState()
                         if self.mode == ClassMode.addEdgeMode:
                             self.createEdge(nIn, nOut)
                         elif self.mode == ClassMode.delEdgeMode:
@@ -125,9 +125,11 @@ class CanvGraph(QCanvas):
             msg.setWindowTitle("Edge error")
             msg.exec()
         else:
+            self.saveState("+ "+nodeIn.name + " -> "+ nodeOut.name, color=(200, 255, 200))
             self.graph.add_edge(nodeIn, nodeOut)
             if len(list(nx.simple_cycles(nx.DiGraph(self.graph)))) > 0:
                 self.graph.remove_edge(nodeIn, nodeOut)
+                self.popState()
                 msg = QtGui.QMessageBox()
                 s = "Invalid action : The graph become cyclic"
                 msg.setText(s)
@@ -136,8 +138,10 @@ class CanvGraph(QCanvas):
 
     def delEdge(self, nodeIn: ClassNode, nodeOut: ClassNode):
         if self.graph.has_edge(nodeIn, nodeOut):
+            self.saveState("- "+nodeIn.name + " -> "+ nodeOut.name, color=(255, 200, 200))
             self.graph.remove_edge(nodeIn, nodeOut)
         elif self.graph.has_edge(nodeOut, nodeIn):
+            self.saveState("- "+nodeOut.name + " -> "+ nodeIn.name, color=(255, 200, 200))
             self.graph.remove_edge(nodeOut, nodeIn)
         else:
             msg = QtGui.QMessageBox()
@@ -149,17 +153,16 @@ class CanvGraph(QCanvas):
     def updateRightClickMenu(self, event, nodeClicked):
         rightclickMenu=QtGui.QMenu(self)
 
-
         renameAction=QtGui.QAction("Rename " + nodeClicked.name, self)
-        renameAction.triggered.connect(lambda: [nodeClicked.rename(), self.notifyAll()])
+        renameAction.triggered.connect(lambda: [nodeClicked.rename(self.saveState), self.notifyAll()])
         rightclickMenu.addAction(renameAction)
 
         deleateAction = QtGui.QAction("Deleate " + nodeClicked.name, self)
-        deleateAction.triggered.connect(lambda: [self.graph.remove_node(nodeClicked), self.notifyAll()])
+        deleateAction.triggered.connect(lambda: [self.graph.remove_node(nodeClicked, self.saveState), self.notifyAll()])
         rightclickMenu.addAction(deleateAction)
 
         renameAction=QtGui.QAction("Change the color of " + nodeClicked.name, self)
-        renameAction.triggered.connect(lambda: [nodeClicked.changeColor(), self.notifyAll()])
+        renameAction.triggered.connect(lambda: [nodeClicked.changeColor(self.saveState), self.notifyAll()])
         rightclickMenu.addAction(renameAction)
 
         yPxlSizeFig=int((self.fig.get_size_inches()*self.fig.dpi)[1])
@@ -172,7 +175,6 @@ class CanvGraph(QCanvas):
         self.zoom(center, self.strenghtWheelZoom+0.1 if event.button == "down" else 1/self.strenghtWheelZoom)
 
     def zoom(self, centerPointed:tuple, strength):
-        print(centerPointed)
         oldSizeView = self.sizeView
         self.sizeView = min(self.sizeView * strength, 0.7)
         oldCenter = self.center
@@ -191,6 +193,7 @@ class CanvGraph(QCanvas):
         self.setCenter(center[0], center[1])
         self.notifyAll(self.nodeSelected)
 
+
     def setCenter(self, x, y):
         posX =max(x, -0.2 + self.sizeView)
         posX =min(posX, 1.2 - self.sizeView)
@@ -203,6 +206,8 @@ class CanvGraph(QCanvas):
         self.onTouchMutex = threading.Lock()
         self.reducZoomStrengthTouch = 100 #inversely proportional to the zoom strenght
         self.strenghtWheelZoom = 1.15
+        self.centerTouchZoom = None
+        self.touchPointsDist = 0
 
         self.oldEvent = self.event
         self.event = self.prepareTouchZoom
@@ -330,7 +335,7 @@ class CanvGraph(QCanvas):
                                 edge_color=eColor,
                                 edge_bold=eBold,
                                 ax=axes,
-                                width=3
+                                width=2
                                 )
         nxa.draw_networkx_labels_angle(graph,
                                        nodesPos,
@@ -349,22 +354,27 @@ class CanvGraph(QCanvas):
             obs.notify(nodeSelected)
 
     def prepareTouchZoom(self, event):
-        if type(event) == QtGui.QTouchEvent :
-            self.lastTouchEvent = event
-            if event.type() == QtCore.QEvent.TouchEnd:
-                self.connectMpl()
-            if not self.onTouchMutex.acquire(False):
-                return True
-            #self.drag(event)
-            self.touchZoom(event)
-
-            while self.lastTouchEvent != event:
-                event = self.lastTouchEvent
-                # print('computing last : ' + str(self.lastTouchEvent))
+        if type(event) == QtGui.QTouchEvent:
+            if event.type() == QtCore.QEvent.TouchUpdate:
+                self.lastTouchEvent = event
+                if event.type() == QtCore.QEvent.TouchEnd:
+                    self.connectMpl()
+                if not self.onTouchMutex.acquire(False):
+                    return True
                 #self.drag(event)
                 self.touchZoom(event)
 
-            self.onTouchMutex.release()
+                while self.lastTouchEvent != event:
+                    event = self.lastTouchEvent
+                    # print('computing last : ' + str(self.lastTouchEvent))
+                    #self.drag(event)
+                    self.touchZoom(event)
+
+                self.onTouchMutex.release()
+
+            elif event.type() == QtCore.QEvent.TouchEnd:
+                self.connectMpl()
+                self.centerTouchZoom = None
         else:
             self.oldEvent(event)
         return True
@@ -376,15 +386,22 @@ class CanvGraph(QCanvas):
             lastDist =self.touchPointsDist
             self.touchPointsDist = self.calculDistTotal(center, touchPoints)
             if lastDist * self.touchPointsDist> 0: # Si les deux sont différents de 0 (ils sont toujours positifs)
+                if not self.centerTouchZoom:
+                    self.centerTouchZoom = self.convertQtPosToMpl(center)
+                    newCenter = self.centerTouchZoom
+                else:
+                    newCenter = self.convertQtPosToMpl(center)
+                    difCentrer = (self.centerTouchZoom[0] - newCenter[0], self.centerTouchZoom[1] - newCenter[1])
+                    self.setCenter(self.center[0] + difCentrer[0], self.center[1] + difCentrer[1])
                 #center = self.mapFromGlobal(QtCore.QPoint(center[0], center[1]))
-                center = self.convertQtPosToMpl(center)
-                self.zoom(center,(lastDist + self.reducZoomStrengthTouch) / (self.touchPointsDist + self.reducZoomStrengthTouch))
+                #self.dragTouch(self.centerTouchZoom)
+                self.zoom(newCenter, (lastDist + self.reducZoomStrengthTouch) / (self.touchPointsDist + self.reducZoomStrengthTouch))
+
             if len(touchPoints) < 2:
                 self.connectMpl()
+                self.centerTouchZoom = None
             else:
                 self.disconnectMpl()
-        elif event.type() == QtCore.QEvent.TouchEnd:
-                self.connectMpl()
         return True
 
     def calculCenter(self, touchPoints):
@@ -431,6 +448,10 @@ class CanvGraph(QCanvas):
             self.mplConnections = None;
             print("Disconnected !")
 
-    def saveState(self):
+    def saveState(self, action ="Unknonw action", color: tuple = (255, 255, 255)):
         for obs in self.observers:
-            obs.saveGraphState()
+            obs.saveGraphState(action, color)
+
+    def popState(self):
+        for obs in self.observers:
+            obs.popState()

@@ -1,6 +1,6 @@
 #-*- coding: utf-8
 from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import QCoreApplication
+from PyQt4.QtCore import QCoreApplication, Qt
 from classes.CanvGraph import CanvGraph
 from classes.FramAction import FramAction
 from classes.ClassGraph import ClassGraph
@@ -8,7 +8,7 @@ from classes.MenuBar import MenuBar
 import copy
 from classes.ToolMenu import ToolMenu
 from classes.SaveStatesStacks import SaveStatesStacks
-from functools import reduce
+from classes.ListHistorical import ListHistorical
 
 class Window(QtGui.QMainWindow):
 
@@ -27,7 +27,7 @@ class Window(QtGui.QMainWindow):
 
         self.setCentralWidget(self.mainWid)
 
-        self.undoRedo = SaveStatesStacks()
+        self.undoRedo = SaveStatesStacks(self)
 
         self.graph = copy.copy(graph)
         self.initialGraph = graph
@@ -47,24 +47,31 @@ class Window(QtGui.QMainWindow):
         self.saveButton.clicked.connect(lambda: self.setReady(self.canv.graph))
         self.saveButton.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.Normal))
 
-        tools = ToolMenu(self)
+        editTools = ToolMenu(self, "edit")
+        histTools = ToolMenu(self, "hist")
 
         self.cancelButton = QtGui.QPushButton("Cancel")
         self.cancelButton.clicked.connect(lambda: self.setReady(self.initialGraph))
         self.cancelButton.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.Normal))
 
-        self.gridLayout.addWidget(tools, 0, 0, 1, 1)
-        self.gridLayout.addWidget(self.canv, 1, 0, 2, 1)
-        self.gridLayout.addWidget(self.frame, 0, 1, 2, 2)
-        self.gridLayout.addWidget(self.cancelButton, 2, 1, 1, 1)
-        self.gridLayout.addWidget(self.saveButton, 2, 2, 1, 1)
+        self.historical = ListHistorical(self.undoRedo)
+
+        self.gridLayout.addWidget(histTools, 0, 0, 1, 1)
+        self.gridLayout.addWidget(editTools, 0, 1, 1, 1)
+        self.gridLayout.addWidget(self.historical, 1, 0, 2, 1)
+        self.gridLayout.addWidget(self.canv, 1, 1, 2, 1)
+        self.gridLayout.addWidget(self.frame, 0, 2, 2, 2)
+        self.gridLayout.addWidget(self.cancelButton, 2, 2, 1, 1)
+        self.gridLayout.addWidget(self.saveButton, 2, 3, 1, 1)
 
 
         self.selectedNode = None
-        MenuBar(self, tools.buttons)
+        MenuBar(self, editTools.buttons)
 
         QtGui.QMainWindow.show(self)
         #self.exec()
+        QtGui.QShortcut(QtGui.QKeySequence(Qt.CTRL + Qt.Key_Z), self, self.undoGraphState)
+        QtGui.QShortcut(QtGui.QKeySequence(Qt.CTRL + Qt.Key_Y), self, self.redoGraphState)
 
 
     def notify(self, selectedNode=None, keepSelected = False):
@@ -74,6 +81,7 @@ class Window(QtGui.QMainWindow):
             self.selectedNode = selectedNode
         self.canv.paint(selectedNode)
         self.frame.setListsValues(self.canv.graph.unboundNode, selectedNode)
+        self.historical.paint()
         QCoreApplication.processEvents()
 
     def setReady(self, graph):
@@ -83,14 +91,20 @@ class Window(QtGui.QMainWindow):
         self.fctToCall(self.graph)
         self.close()
 
-    def saveGraphState(self):
-        print("State Saved")
-        self.undoRedo.saveState(self.canv.graph)
+    def saveGraphState(self, action="Unknonw action", color: tuple = (0, 0, 0)):
+        self.undoRedo.saveState(self.canv.graph, action, color)
 
     def undoGraphState(self):
-        self.canv.graph = self.undoRedo.undo(self.canv.graph)
-        self.notify()
+        g = self.undoRedo.undo(self.canv.graph)
+        if g:
+            self.canv.graph = g
+            self.notify()
 
     def redoGraphState(self):
-        self.canv.graph = self.undoRedo.redo(self.canv.graph)
-        self.notify()
+        g = self.undoRedo.redo(self.canv.graph)
+        if g:
+            self.canv.graph = g
+            self.notify()
+
+    def popState(self):
+        self.undoRedo.popLastState()

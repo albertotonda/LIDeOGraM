@@ -585,7 +585,7 @@ def draw_networkx_edges(G, pos,
 
     edge_collection = LineCollection(edge_pos_bold,
                                       colors=edge_colors_bold,
-                                      linewidths=[5*ww for ww in lw],
+                                      linewidths=[ww+4 for ww in lw],
                                       antialiaseds=(1,),
                                       linestyle=style,
                                       transOffset=ax.transData,
@@ -648,10 +648,12 @@ def draw_networkx_edges(G, pos,
             xr=(x1-x0r)/(d)
             yr=(y1-y0r)/(d)
             dr=numpy.sqrt(float(xr**2 + yr**2))
-            try:
-                edgeAngle=(numpy.sin(yr)/numpy.abs(numpy.sin(yr)))*numpy.arccos(xr)
-            except:
-                pass
+
+            edgeAngle = (numpy.sin(yr) / numpy.abs(numpy.sin(yr))) * numpy.arccos(xr)
+            # try:
+            #     edgeAngle=(numpy.sin(yr)/numpy.abs(numpy.sin(yr)))*numpy.arccos(xr)
+            # except:
+            #     pass
             edgeAngle1=edgeAngle+0.15
             edgeAngle2=edgeAngle-0.15
             xa1=numpy.cos(edgeAngle1)*0.07+x0r
