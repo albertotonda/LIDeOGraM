@@ -32,4 +32,4 @@ class AssignButton(QtGui.QPushButton):
 
     def saveState(self, varName):
         for obs in self.observers:
-            obs.saveGraphState(varName + "'s assignation")
+            obs.saveGraphState(varName + "'s assignation", color=(255, 255, 150))
