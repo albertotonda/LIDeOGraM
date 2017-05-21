@@ -1,4 +1,5 @@
 #-*- coding: utf-8
+
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import QCoreApplication
 from classes.CanvGraph import CanvGraph
@@ -10,9 +11,10 @@ from classes.ToolMenu import ToolMenu
 from classes.SaveStatesStacks import SaveStatesStacks
 from functools import reduce
 
-class Window(QtGui.QMainWindow):
+class WindowClasses(QtGui.QMainWindow):
 
     def __init__(self, graph: ClassGraph,fctToCall):
+
         self.fctToCall=fctToCall
         self.graphReady = False
 
@@ -62,8 +64,8 @@ class Window(QtGui.QMainWindow):
 
         self.selectedNode = None
         MenuBar(self, tools.buttons)
-
         QtGui.QMainWindow.show(self)
+
         #self.exec()
 
 
@@ -94,3 +96,4 @@ class Window(QtGui.QMainWindow):
     def redoGraphState(self):
         self.canv.graph = self.undoRedo.redo(self.canv.graph)
         self.notify()
+

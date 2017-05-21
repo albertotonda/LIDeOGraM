@@ -10,6 +10,11 @@ from ArrayConverter import ArrayConverter
 import re
 import sys
 sys.path.append("fitness/")
+sys.path.append('SALib/SaLib-master')
+from SALib.analyze import sobol
+from SALib.sample import saltelli
+from SALib.test_functions import Ishigami
+from SALib.util import read_param_file
 #from fitness import fitness
 from fitness import Individual
 import pandas as pd
@@ -24,18 +29,19 @@ from sklearn import linear_model
 from fitness import fitness
 from classes.ClassGraph import ClassGraph
 from classes.ClassNode import ClassNode
-from classes.Window import Window
+from classes.WindowClasses import WindowClasses
 from time import sleep
 import threading
 from RFGraph_View import RFGraph_View
 from RFGraph_Controller import RFGraph_Controller
 from QtConnector import QtConnector
+from PyQt4 import QtGui
 # TODO  Définie la position des noeuds et les initialise
-class RFGraph_Model:
+class RFGraph_Model(QtGui.QMainWindow):
 
     def __init__(self):
 
-
+        QtGui.QMainWindow.__init__(self) #Only for the progress bar
         self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected.csv")
         self.createConstraintsGraph()
         self.firstInit=True
@@ -100,7 +106,7 @@ class RFGraph_Model:
         #self.datasetset_cell_popF = genfromtxt('data/dataset_cell_pop.csv', 'float', delimiter=',')
         #self.datasetset_mol_cellF = genfromtxt('data/dataset_mol_cell.csv', 'float', delimiter=',')
         #self.varsIn = ['Temperature','Age','AMACBIOSYNTHsousexpr','BIOSYNTH_CARRIERSsousexpr','CELLENVELOPEsousexpr','CELLPROCESSESsousexpr','CENTRINTMETABOsousexpr','ENMETABOsousexpr','FATTYACIDMETABOsousexpr','Hypoprotsousexpr','OTHERCATsousexpr','PURINESsousexpr','REGULFUNsousexpr','REPLICATIONsousexpr','TRANSCRIPTIONsousexpr','TRANSLATIONsousexpr','TRANSPORTPROTEINSsousexpr','AMACBIOSYNTHsurexpr','BIOSYNTH_CARRIERSsurexpr','CELLENVELOPEsurexpr','CELLPROCESSESsurexpr','CENTRINTMETABOsurexpr','ENMETABOsurexpr','FATTYACIDMETABOsurexpr','Hypoprotsurexpr','OTHERCATsurexpr','PURINESsurexpr','REGULFUNsurexpr','REPLICATIONsurexpr','TRANSCRIPTIONsurexpr','TRANSLATIONsurexpr','TRANSPORTPROTEINSsurexpr']
-        self.varsIn = ['Temperature', 'Age']
+        self.varsIn = self.dataset.varsIn
         self.NodeConstraints = []
         self.lastNodeClicked = None
         self.last_clicked = None
@@ -214,6 +220,7 @@ class RFGraph_Model:
         dataset.nbVar = dataset.true_nbVar
         dataset.variablesClass = dataset.true_variablesClass
         dataset.data = dataset.true_data
+
         for vc in constrGraph.nodes():
             for v in vc.nodeList:
                 dataset.variablesClass[v]=vc.name
@@ -227,17 +234,36 @@ class RFGraph_Model:
         dataset.nbVar=len(dataset.varnames)
         dataset.data = np.delete(dataset.data,allidx,axis=1)
 
+        dataset.classesIn=[]
+        dataset.varsIn=[]
+        for vc in constrGraph.nodes():
+            if((len([e for e in constrGraph.edges() if e[1] == vc])==0)):
+                dataset.classesIn.append(vc.name)
+                dataset.varsIn.extend(vc.nodeList)
+
+
     def recomputeNode(self,node,neweqs):
         self.equacolO[self.equacolO[:, 2] == node, :]
         linesToRemove = np.ix_(self.equacolO[:, 2] == node)
 
+    def createProgressBar(self):
+        self.setWindowTitle("Searching for models")
+        self.progress = QtGui.QProgressBar(self)
+        self.progress.setGeometry(0, 0, 250, 20)
+        self.setGeometry(50, 50, 295, 25)
+        self.progress.setValue(0)
+        self.show()
+
 
     def findLassoEqs(self):
         equacolOtmp=[]
+        self.createProgressBar()
         for i in range(len(self.dataset.varnames)):
             print('computing : ' + self.dataset.varnames[i])
+            self.progress.setValue(i*100/len(self.dataset.varnames))
             iClass = self.dataset.variablesClass[self.dataset.varnames[i]]
-            if(iClass!='condition'):
+            print(self.dataset.classesIn)
+            if(not iClass in self.dataset.classesIn):
                 parIClass=[]
                 for (e1,e2) in self.adj_contrGraph.edges():
                     if(e2.name ==iClass and not e1.name in parIClass):
@@ -275,6 +301,9 @@ class RFGraph_Model:
                             cmplxOneFound = True
                             curEqFound+=1
                             #print("Add : " + str(equacolOLine[3]))
+                            Si = self.SA_Eq(X, par, clf)
+                            equacolOLine.append(Si)
+                            print("was:" + str(len(equacolOLine)))
                             equacolOtmp.extend(equacolOLine)
                         else:
                             alpha *= 2
@@ -305,6 +334,9 @@ class RFGraph_Model:
                             else:
                                 lastFoundCmplx = equacolOLine[0]
                                 #print("Add : " + str(equacolOLine[3]))
+                                Si = self.SA_Eq(X,par,clf)
+                                equacolOLine.append(Si)
+                                print("was:" + str(len(equacolOLine)))
                                 equacolOtmp.extend(equacolOLine)
                                 currIter2=0
                                 curEqFound += 1
@@ -312,6 +344,9 @@ class RFGraph_Model:
                         if(currIter==maxIter):
                             lastFoundCmplx=equacolOLine[0]
                             #print("Add : " + str(equacolOLine[3]))
+                            Si = self.SA_Eq(X, par, clf)
+                            equacolOLine.append(Si)
+                            print("was:" + str(len(equacolOLine)))
                             equacolOtmp.extend(equacolOLine)
                             currIter2=0
                             curEqFound += 1
@@ -320,15 +355,46 @@ class RFGraph_Model:
                     else:
                         lastFoundCmplx = equacolOLine[0]
                         #print("Add : " + str(equacolOLine[3]))
+                        Si = self.SA_Eq(X, par, clf)
+                        equacolOLine.append(Si)
+                        print("was:" + str(len(equacolOLine)))
                         equacolOtmp.extend(equacolOLine)
                         currIter2=0
                         curEqFound += 1
 
+        self.hide()
         equacolOtmp = np.array(equacolOtmp, dtype=object)
-        equacolOtmp = equacolOtmp.reshape(len(equacolOtmp)/5,5)
+        equacolOtmp = equacolOtmp.reshape(len(equacolOtmp)/6,6)
 
 
         return equacolOtmp
+
+    def SA_Eq(self,X,par,clf):
+        xmin = np.amin(X, axis=0)
+        xmax = np.amax(X, axis=0)
+
+        xbounds = []
+        for i in range(len(xmin)):
+            xbounds.append([xmin[i], xmax[i]])
+
+        pb = {}
+        pb['bounds'] = xbounds
+        pb['dists'] = None
+        pb['groups'] = None
+        pb['names'] = par
+        pb['num_vars'] = len(par)
+        param_values = saltelli.sample(pb, 100, calc_second_order=False)
+        YSobol = clf.predict(param_values)
+
+
+        #
+        Si = sobol.analyze(pb, YSobol, calc_second_order=False, conf_level=0.95,
+                           print_to_console=False, parallel=False)
+        #Si = sobol.analyze(pb, YSobol, calc_second_order=False, conf_level=0.95,
+        #                   print_to_console=False, parallel=False)
+
+        return Si
+
 
     def regrToEquaColO(self,clf,parNode,childNode,Y,pred):
         line=[]
@@ -576,7 +642,7 @@ class RFGraph_Model:
             graph.add_node(ClassNode(i, i_var))
         #testMutex = threading.Lock()
         print("creating classes window")
-        classApp=Window(graph,self.init2)
+        classApp=WindowClasses(graph,self.init2)
         #classApp=Window(ClassGraph.readJson("classes/screen.clgraph"),self.init2)
         print("after classes window")
         #graph=classApp.exec()
