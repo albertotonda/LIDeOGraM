@@ -1,0 +1,177 @@
+{
+    "edge": [
+        [
+            "PopulationForLyophilisation",
+            "PopulationForStorage"
+        ],
+        [
+            "PopulationForCongelation",
+            "PopulationForLyophilisation"
+        ],
+        [
+            "PopulationForCongelation",
+            "PopulationForStorage"
+        ],
+        [
+            "Anisotropy",
+            "PopulationForLyophilisation"
+        ],
+        [
+            "Anisotropy",
+            "PopulationForCongelation"
+        ],
+        [
+            "Anisotropy",
+            "PopulationForCentrifigation"
+        ],
+        [
+            "Anisotropy",
+            "PopulationForStorage"
+        ],
+        [
+            "PopulationForCentrifigation",
+            "PopulationForLyophilisation"
+        ],
+        [
+            "PopulationForCentrifigation",
+            "PopulationForCongelation"
+        ],
+        [
+            "PopulationForCentrifigation",
+            "PopulationForStorage"
+        ]
+    ],
+    "node": [
+        {
+            "color": [
+                0.8823529411764706,
+                0.8823529411764706,
+                0.0
+            ],
+            "lineWidth": 0,
+            "name": "PopulationForLyophilisation",
+            "nodeList": [
+                "TpH07lyo",
+                "UFClyo"
+            ],
+            "pos": [
+                0.41407356788706967,
+                -0.13292932525317164
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.8823529411764706,
+                0.8823529411764706,
+                0.0
+            ],
+            "lineWidth": 0,
+            "name": "PopulationForCongelation",
+            "nodeList": [
+                "tpH07cong",
+                "UFCcong"
+            ],
+            "pos": [
+                0.7196791903317741,
+                -0.0016767002006705944
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.8823529411764706,
+                0.8823529411764706,
+                0.0
+            ],
+            "lineWidth": 0,
+            "name": "PopulationForStorage",
+            "nodeList": [
+                "tpH07sto3",
+                "UFCsto3"
+            ],
+            "pos": [
+                -0.04122488200562727,
+                -0.14751295025900507
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.4980392156862745,
+                0.7058823529411765,
+                0.19607843137254902
+            ],
+            "lineWidth": 0,
+            "name": "Anisotropy",
+            "nodeList": [
+                "Anisotropie"
+            ],
+            "pos": [
+                0.40374807496149917,
+                0.537917425015167
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.8823529411764706,
+                0.8823529411764706,
+                0.0
+            ],
+            "lineWidth": 0,
+            "name": "PopulationForCentrifigation",
+            "nodeList": [
+                "tpH07centri",
+                "UFCcentri"
+            ],
+            "pos": [
+                0.7119518658785615,
+                0.3920811749568326
+            ],
+            "size": 700
+        }
+    ],
+    "unbound": [
+        "AMACBIOSYNTHsousexpr",
+        "AMACBIOSYNTHsurexpr",
+        "Age",
+        "BIOSYNTH_CARRIERSsousexpr",
+        "BIOSYNTH_CARRIERSsurexpr",
+        "C140",
+        "C160",
+        "C161cis",
+        "C170",
+        "C180",
+        "C181cis",
+        "C19cyc",
+        "C220",
+        "CELLENVELOPEsousexpr",
+        "CELLENVELOPEsurexpr",
+        "CELLPROCESSESsousexpr",
+        "CELLPROCESSESsurexpr",
+        "CENTRINTMETABOsousexpr",
+        "CENTRINTMETABOsurexpr",
+        "ENMETABOsousexpr",
+        "ENMETABOsurexpr",
+        "FATTYACIDMETABOsousexpr",
+        "FATTYACIDMETABOsurexpr",
+        "Hypoprotsousexpr",
+        "Hypoprotsurexpr",
+        "OTHERCATsousexpr",
+        "OTHERCATsurexpr",
+        "PURINESsousexpr",
+        "PURINESsurexpr",
+        "REGULFUNsousexpr",
+        "REGULFUNsurexpr",
+        "REPLICATIONsousexpr",
+        "REPLICATIONsurexpr",
+        "TRANSCRIPTIONsousexpr",
+        "TRANSCRIPTIONsurexpr",
+        "TRANSLATIONsousexpr",
+        "TRANSLATIONsurexpr",
+        "TRANSPORTPROTEINSsousexpr",
+        "TRANSPORTPROTEINSsurexpr",
+        "Temperature"
+    ]
+}
