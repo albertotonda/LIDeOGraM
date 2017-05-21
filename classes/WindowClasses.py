@@ -13,7 +13,7 @@ from functools import reduce
 
 class WindowClasses(QtGui.QMainWindow):
 
-    def __init__(self, graph: ClassGraph,fctToCall):
+    def __init__(self, graph: ClassGraph,fctToCall ):
 
         self.fctToCall=fctToCall
         self.graphReady = False
