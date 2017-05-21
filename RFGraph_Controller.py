@@ -546,7 +546,7 @@ class RFGraph_Controller:
                 name = i + ' - ' + o
                 self.vwApp.removeConstrain(name, True)
 
-        self.modApp.forbiddenNodes.remove(nodeToRestore)
+        self.modApp.forbiddenNodes.remove(nodeToRestore )
         self.vwApp.eqTableGUI.updateView()
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.updateView()
