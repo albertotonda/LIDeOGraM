@@ -364,7 +364,7 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         self.hide()
         equacolOtmp = np.array(equacolOtmp, dtype=object)
-        equacolOtmp = equacolOtmp.reshape(len(equacolOtmp)/6,6)
+        equacolOtmp = equacolOtmp.reshape(len(equacolOtmp)/7,7)
 
 
         return equacolOtmp
@@ -392,7 +392,7 @@ class RFGraph_Model(QtGui.QMainWindow):
                            print_to_console=False, parallel=False)
         #Si = sobol.analyze(pb, YSobol, calc_second_order=False, conf_level=0.95,
         #                   print_to_console=False, parallel=False)
-
+        Si['par']=par
         return Si
 
 
@@ -401,16 +401,19 @@ class RFGraph_Model(QtGui.QMainWindow):
         s=''
         cmplx = 0;
         hasCoef=False
+        varUsedInEq=[]
 
 
         for i in range(len(parNode)):
             if(clf.coef_[i] > 0  ):
                 hasCoef=True
                 s += ' + ' + str(clf.coef_[i]) + ' * ' + parNode[i] + ' '
+                varUsedInEq.append(parNode[i])
                 cmplx += 4
             elif(clf.coef_[i] < 0 ):
                 hasCoef=True
                 s +=  str(clf.coef_[i]) + ' * ' + parNode[i] + ' '
+                varUsedInEq.append(parNode[i])
                 cmplx += 4
 
         if (clf.intercept_ != 0 and hasCoef):
@@ -431,6 +434,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         line.append(childNode)
         line.append(s)
         line.append(True)
+        line.append(varUsedInEq)
 
 
 
@@ -627,6 +631,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.computeInitialPos()
         self.computeFitandCmplxEdgeColor()
         self.computeComprEdgeColor()
+        self.computeSAEdgeColor()
 
         self.computeNxGraph()
 
@@ -756,6 +761,8 @@ class RFGraph_Model(QtGui.QMainWindow):
             self.edgeColorfull = copy.deepcopy(self.edgeColorFit)
         elif (self.ColorMode == 'Cmplx'):
             self.edgeColorfull = copy.deepcopy(self.edgeColorCmplx)
+        elif (self.ColorMode == 'SA'):
+            self.edgeColorfull = copy.deepcopy(self.edgeColorSA)
         for i in range(len(self.pareto)):  # i is child
             for j in range(len(self.pareto[i])):  # j is parent
                 lIdxColPareto = self.pareto[i][j]
@@ -926,6 +933,27 @@ class RFGraph_Model(QtGui.QMainWindow):
                         lcmap = list(np.array(cmap) / 255)
                         lcmap.extend([1.0])
                         self.edgeColorCmplx[(self.dataset.varnames[j], self.dataset.varnames[i])]=lcmap
+
+    def computeSAEdgeColor(self):
+        self.edgeColorSA={}
+        #print(self.equacolO[:, 6])
+        for e in self.edgeColorFit.keys():
+            self.edgeColorSA[e]=1
+            for eq in self.equacolO[self.equacolO[:,2]==e[1]]:
+                sa=eq[6]
+                if(self.edgeColorSA[e] > sa['ST'][sa['par'].index(e[0])] and e[0] in eq[5]):
+                    self.edgeColorSA[e]=sa['ST'][sa['par'].index(e[0])]
+
+        for e in self.edgeColorSA.keys():
+            v=self.edgeColorSA[e]
+            cmap = self.colors.get("SA", 1-v)
+            # color = QColor.fromRgb(*cmap)
+            lcmap = list(np.array(cmap) / 255)
+            lcmap.extend([1.0])
+            self.edgeColorSA[e]=lcmap
+        #self.edgeColorFit=self.edgeColorSA
+        print('it worked ?')
+
 
     def computeInitialPos(self):
         G=nx.DiGraph()

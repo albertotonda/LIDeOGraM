@@ -121,6 +121,7 @@ class Network:
         nxa.draw_networkx_edges(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
                                 node_color=self.modApp.nodeColor, with_labels=False, edgelist=hEdge,
                                 edge_color=hEdgeColor, edge_bold=hBold, ax=self.axes)
+
         # if (hover != None):
         nxa.draw_networkx_labels_angle(self.modApp.G, greyLabPos, greyLab, ax=self.axes, font_color=greyNode,
                                        rotate=45)

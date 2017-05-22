@@ -10,7 +10,7 @@ from classes.ToolMenu import ToolMenu
 from classes.SaveStatesStacks import SaveStatesStacks
 from classes.ListHistorical import ListHistorical
 
-class Window(QtGui.QMainWindow):
+class WindowClasses(QtGui.QMainWindow):
 
     def __init__(self, graph: ClassGraph,fctToCall):
         self.fctToCall=fctToCall

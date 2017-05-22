@@ -277,6 +277,9 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         cpAction = QtGui.QAction("&Complexity", self, checkable=True)
         cpAction.triggered.connect(cntrApp.clickCmplx)
         compleAction = viewGroupAction.addAction(cpAction)
+        saAction = QtGui.QAction("&Sensitivity Analysis", self, checkable=True)
+        saAction.triggered.connect(cntrApp.clickSA)
+        stvAnlsAction = viewGroupAction.addAction(saAction)
 
         self.showAction = QtGui.QAction("&Show Global model", self, checkable=True)
         self.showAction.triggered.connect(self.viewGlobalModel)
@@ -307,6 +310,7 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         viewMenu.addAction(comproAction)
         viewMenu.addAction(fitnesAction)
         viewMenu.addAction(compleAction)
+        viewMenu.addAction(stvAnlsAction)
         viewMenu.addSeparator()
         viewMenu.addAction(self.showAction)
 

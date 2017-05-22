@@ -47,6 +47,17 @@ class RFGraph_Controller:
         #self.vwApp.buttonComplexite.setStyleSheet("background-color: None")
         self.vwApp.networkGUI.fig.canvas.draw()
         QCoreApplication.processEvents()
+
+    def clickSA(self):
+        print("clic SA")
+        self.modApp.ColorMode = 'SA'
+        self.modApp.computeNxGraph()
+        self.vwApp.networkGUI.network.updateView()
+        # self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
+        # self.vwApp.buttonFitness.setStyleSheet("background-color: grey")
+        # self.vwApp.buttonComplexite.setStyleSheet("background-color: None")
+        self.vwApp.networkGUI.fig.canvas.draw()
+        QCoreApplication.processEvents()
     # TODO
     def clickCompromis(self):
         print("clic Compr")

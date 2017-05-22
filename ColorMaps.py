@@ -9,10 +9,17 @@ class colorm:
         fitnessCmap = LinearSegmentedColormap.from_list('fitness_map',[(0, 1-aggr1, 0), (1-aggr1, 1-aggr1, 0), (1-aggr1, 0, 0)])
         #complexityCmap = LinearSegmentedColormap.from_list('complexity_map', [(1,1,1),(aggr2, 1, 1), (aggr2,aggr2,1),(aggr2, aggr2, aggr2)])
         complexityCmap = LinearSegmentedColormap.from_list('complexity_map',[(0.8, 0.8, 0.95),(0.2, 0.2, 0.95),(0,0,0)])
-
+        saCmap = LinearSegmentedColormap.from_list('sa_map', [(0, 1 - aggr1, 0),
+                                                              ((1 - aggr1) * 0.2, 1 - aggr1, 0),
+                                                              ((1 - aggr1) * 0.4, 1 - aggr1, 0),
+                                                              ((1 - aggr1) * 0.6, 1 - aggr1, 0),
+                                                              ((1 - aggr1) * 0.8, 1 - aggr1, 0),
+                                                              (1 - aggr1, 1 - aggr1, 0),
+                                                                        (1 - aggr1, 0, 0)])
         self.complexity = complexityCmap#plt.get_cmap("cool")
         self.globalm = fitnessCmap
-        self.localm = fitnessCmap#plt.get_cmap("RdYlGn")
+        self.localm = fitnessCmap
+        self.sam = saCmap#plt.get_cmap("RdYlGn")
 
         #self.selectionColor=(0.5,0.5,0.9)
 
@@ -37,3 +44,5 @@ class colorm:
 
         if type == "local":
             return self.multiply(self.localm(normalizedValue)[0:3])
+        if type == "SA":
+            return self.multiply(self.sam(normalizedValue)[0:3])
