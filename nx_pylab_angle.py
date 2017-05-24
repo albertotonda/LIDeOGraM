@@ -656,10 +656,10 @@ def draw_networkx_edges(G, pos,
             #     pass
             edgeAngle1=edgeAngle+0.15
             edgeAngle2=edgeAngle-0.15
-            xa1=numpy.cos(edgeAngle1)*0.07+x0r
-            ya1=numpy.sin(edgeAngle1)*0.07+y0r
-            xa2=numpy.cos(edgeAngle2)*0.07+x0r
-            ya2=numpy.sin(edgeAngle2)*0.07+y0r
+            xa1=numpy.cos(edgeAngle1)*0.01+x0r
+            ya1=numpy.sin(edgeAngle1)*0.01+y0r
+            xa2=numpy.cos(edgeAngle2)*0.01+x0r
+            ya2=numpy.sin(edgeAngle2)*0.01+y0r
             dr1 = numpy.sqrt(float((xa1-x2) ** 2 + (ya1-y2) ** 2))
             dr2 = numpy.sqrt(float((xa2-x2) ** 2 + (ya2-y2) ** 2))
 

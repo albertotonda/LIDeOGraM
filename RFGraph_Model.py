@@ -938,11 +938,25 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.edgeColorSA={}
         #print(self.equacolO[:, 6])
         for e in self.edgeColorFit.keys():
-            self.edgeColorSA[e]=1
+            samin=1
+            samax=0
             for eq in self.equacolO[self.equacolO[:,2]==e[1]]:
                 sa=eq[6]
-                if(self.edgeColorSA[e] > sa['ST'][sa['par'].index(e[0])] and e[0] in eq[5]):
-                    self.edgeColorSA[e]=sa['ST'][sa['par'].index(e[0])]
+                if(samin > sa['ST'][sa['par'].index(e[0])] and e[0] in eq[5]):
+                    samin= sa['ST'][sa['par'].index(e[0])]
+                if(samax <sa['ST'][sa['par'].index(e[0])] and e[0] in eq[5]):
+                    samax = sa['ST'][sa['par'].index(e[0])]
+            if(samin > 0.5 and samax > 0.5):
+                self.edgeColorSA[e]=samin*0.5+samax*0.5
+            elif(samin<0.25 and samax < 0.25):
+                self.edgeColorSA[e] = samin * 0.5 + samax * 0.5
+            elif(samin<0.25 and samax > 0.5):
+                self.edgeColorSA[e]=0.5
+            elif(0.25<=samin<=0.5 or 0.25<=samax<=0.5):
+                self.edgeColorSA[e] = 0.5
+            else:
+                print("SA ERROR !")
+                    #self.edgeColorSA[e]=sa['ST'][sa['par'].index(e[0])]
 
         for e in self.edgeColorSA.keys():
             v=self.edgeColorSA[e]
