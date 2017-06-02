@@ -42,7 +42,9 @@ class RFGraph_Model(QtGui.QMainWindow):
     def __init__(self):
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
-        self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected.csv")
+        #self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert.csv")
+        self.dataset = Dataset("data/physico_meteo_dbn_modif_thomas.csv")
+
         self.createConstraintsGraph()
         self.firstInit=True
         #self.dataset = Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr.csv")
@@ -987,9 +989,9 @@ class RFGraph_Model(QtGui.QMainWindow):
                                         self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
                                         adjcontr=self.adj_contr[i, j])
 
-        with open('initpos.dat', 'rb') as f:
-            self.pos=pickle.load(f)
-        #self.pos = nx.nx_pydot.graphviz_layout(G, prog='dot')
+        #with open('initpos.dat', 'rb') as f:
+        #    self.pos=pickle.load(f)
+        self.pos = nx.nx_pydot.graphviz_layout(G, prog='dot')
         minx = np.inf
         maxx = -np.inf
         miny = np.inf
@@ -1003,9 +1005,24 @@ class RFGraph_Model(QtGui.QMainWindow):
                 miny = p[1]
             if (maxy < p[1]):
                 maxy = p[1]
+        if(miny==maxy):
+            for k in list(self.pos.keys()):
+                self.pos[k]=(self.pos[k][0],random.random()*300)
+            for k, p in list(self.pos.items()):
+                if (minx > p[0]):
+                    minx = p[0]
+                if (maxx < p[0]):
+                    maxx = p[0]
+                if (miny > p[1]):
+                    miny = p[1]
+                if (maxy < p[1]):
+                    maxy = p[1]
         for k in self.pos:
-            self.pos[k] = ((self.pos[k][0] - minx) / (maxx - minx), (self.pos[k][1] - miny) / (maxy - miny))
-#            print(k +" : (" + str(self.pos[k][0]) + ","+str(self.pos[k][1])+")")
+            try:
+                self.pos[k] = ((self.pos[k][0] - minx) / (maxx - minx), (self.pos[k][1] - miny) / (maxy - miny))
+            except:
+                a=5
+            # print(k +" : (" + str(self.pos[k][0]) + ","+str(self.pos[k][1])+")")
 
         self.lpos = copy.deepcopy(self.pos)
         for p in self.lpos:  # raise text positions

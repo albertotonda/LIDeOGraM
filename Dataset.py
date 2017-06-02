@@ -19,6 +19,14 @@ class Dataset:
         for i in range(len(self.varnames)):
             self.variablesClass[self.varnames[i]] = identvar[i]
 
+        line = datafileReader.readline() # Third line is the variable uncertainty of measurement
+        uncertVar=[]
+        for i in line.split(','):
+            uncertVar.append(float(i.strip()))
+        self.variablesUncertainty={}
+        for i in range(len(self.varnames)):
+            self.variablesUncertainty[self.varnames[i]] = uncertVar[i]
+
         self.data = []
         for line in datafileReader:
             linedata=[]
