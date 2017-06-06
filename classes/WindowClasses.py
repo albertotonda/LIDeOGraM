@@ -9,10 +9,13 @@ import copy
 from classes.ToolMenu import ToolMenu
 from classes.SaveStatesStacks import SaveStatesStacks
 from classes.ListHistorical import ListHistorical
+import time
 
 class WindowClasses(QtGui.QMainWindow):
 
-    def __init__(self, graph: ClassGraph,fctToCall):
+    def __init__(self, graph: ClassGraph,fctToCall,isLog=False,LogFilename=None):
+        self.isLog=isLog
+        self.LogFilename=LogFilename
         self.fctToCall=fctToCall
         self.graphReady = False
 
@@ -75,6 +78,10 @@ class WindowClasses(QtGui.QMainWindow):
 
 
     def notify(self, selectedNode=None, keepSelected = False):
+        # if (self.isLog):
+        #     f = open(self.LogFilename, "a")
+        #     f.write("t:" + str(time.time()) + " " + "notify:" + selectedNode + "\n")
+        #     f.close()
         if keepSelected:
             selectedNode = self.selectedNode
         else:
@@ -85,22 +92,38 @@ class WindowClasses(QtGui.QMainWindow):
         QCoreApplication.processEvents()
 
     def setReady(self, graph):
+        if(self.isLog):
+            f=open(self.LogFilename,"a")
+            f.write("t:"+str(time.time())+" "+"ClassValide"+"\n")
+            f.close()
         self.graph = graph
         self.graphReady = True
         print("pret !")
         self.fctToCall(self.graph)
         self.close()
 
-    def saveGraphState(self, action="Unknonw action", color: tuple = (0, 0, 0)):
+    def saveGraphState(self, action="Unknown action", color: tuple = (0, 0, 0)):
+        if (self.isLog):
+            f=open(self.LogFilename,"a")
+            f.write("t:"+str(time.time())+" "+"SaveGraph"+"\n")
+            f.close()
         self.undoRedo.saveState(self.canv.graph, action, color)
 
     def undoGraphState(self):
+        if (self.isLog):
+            f=open(self.LogFilename,"a")
+            f.write("t:"+str(time.time())+" "+"UndoGraph"+"\n")
+            f.close()
         g = self.undoRedo.undo(self.canv.graph)
         if g:
             self.canv.graph = g
             self.notify()
 
     def redoGraphState(self):
+        if (self.isLog):
+            f=open(self.LogFilename,"a")
+            f.write("t:"+str(time.time())+" "+"RedoGraph"+"\n")
+            f.close()
         g = self.undoRedo.redo(self.canv.graph)
         if g:
             self.canv.graph = g

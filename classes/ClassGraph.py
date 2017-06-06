@@ -3,7 +3,7 @@ import json
 from classes.ClassNode import ClassNode
 
 class ClassGraph(nx.DiGraph):
-    def __init__(self, unboundNode = None):
+    def __init__(self, unboundNode = None,isLog=False,LogFilename=None):
         if not unboundNode:
             unboundNode = []
         self.unboundNode = unboundNode

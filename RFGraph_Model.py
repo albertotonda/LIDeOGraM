@@ -36,12 +36,15 @@ from RFGraph_View import RFGraph_View
 from RFGraph_Controller import RFGraph_Controller
 from QtConnector import QtConnector
 from PyQt4 import QtGui
+import random
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model(QtGui.QMainWindow):
 
     def __init__(self):
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
+        self.isLog=True
+        self.LogFilename= "LOG"+str(random.random())+".log"
         self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert.csv")
         #self.dataset = Dataset("data/physico_meteo_dbn_modif_thomas.csv")
 
@@ -650,14 +653,14 @@ class RFGraph_Model(QtGui.QMainWindow):
 
     def createConstraintsGraph(self):
         #graph = nx.DiGraph()
-        graph = ClassGraph()
+        graph = ClassGraph(isLog=self.isLog,LogFilename=self.LogFilename)
         for i in np.unique(list(self.dataset.variablesClass.values())):
             #print(i)
             i_var = [v for (v, e) in self.dataset.variablesClass.items() if e ==i ]
             graph.add_node(ClassNode(i, i_var))
         #testMutex = threading.Lock()
         print("creating classes window")
-        classApp=WindowClasses(graph,self.init2)
+        classApp=WindowClasses(graph,self.init2,isLog=self.isLog,LogFilename=self.LogFilename)
         #classApp=Window(ClassGraph.readJson("classes/screen.clgraph"),self.init2)
         print("after classes window")
         #graph=classApp.exec()

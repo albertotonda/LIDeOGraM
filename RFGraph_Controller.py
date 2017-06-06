@@ -12,7 +12,7 @@ from itertools import compress
 
 import random
 from OnOffCheckBox import *
-
+import time
 class RFGraph_Controller:
     def __init__(self,modApp,vwApp):
         self.modApp=modApp
@@ -39,6 +39,11 @@ class RFGraph_Controller:
     # TODO
     def clickFitness(self):
         print("clic fitness")
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write("t:" + str(time.time()) + " " + "clic fitness" + "\n")
+            f.close()
+
         self.modApp.ColorMode='Fit'
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.updateView()
@@ -50,6 +55,10 @@ class RFGraph_Controller:
 
     def clickSA(self):
         print("clic SA")
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write("t:" + str(time.time()) + " " + "clic SA" + "\n")
+            f.close()
         self.modApp.ColorMode = 'SA'
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.updateView()
@@ -61,6 +70,10 @@ class RFGraph_Controller:
     # TODO
     def clickCompromis(self):
         print("clic Compr")
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write("t:" + str(time.time()) + " " + "clic compr" + "\n")
+            f.close()
         self.modApp.ColorMode='Compr'
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.updateView()
@@ -73,6 +86,10 @@ class RFGraph_Controller:
     # TODO
     def clickCmplx(self):
         print("clic Complx")
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write("t:" + str(time.time()) + " " + "clic cmplx" + "\n")
+            f.close()
         self.modApp.ColorMode='Cmplx'
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.updateView()
@@ -84,6 +101,10 @@ class RFGraph_Controller:
     # TODO
     def clickOptmuGP(self):
         #self.modApp.opt_params = OptimisationCanvas.get_params()
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write("t:" + str(time.time()) + " " + "clic optGlobal" + "\n")
+            f.close()
         if(len(self.modApp.nodesWithNoEquations)>0):
             self.vwApp.noEquationError()
         else:
@@ -99,6 +120,10 @@ class RFGraph_Controller:
 
     # TODO
     def clickHideModGlobal(self):
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write("t:" + str(time.time()) + " " + "clic hideGlobalModel" + "\n")
+            f.close()
         self.modApp.showGlobalModel = False
         self.vwApp.cmAction.setEnabled(True)
         self.modApp.computeNxGraph()
@@ -106,12 +131,20 @@ class RFGraph_Controller:
         self.clickFitness()
 
     def clickUncertaintyButton(self):
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write("t:" + str(time.time()) + " " + "clic change uncertainty" + "\n")
+            f.close()
         self.modApp.dataset.variablesUncertainty[self.modApp.lastNodeClicked] = float(self.vwApp.uncertaintyModifTxt.text())
         self.vwApp.fitGUI.updateView()
 
 
     # TODO Affiche le modèle d'équation global
     def clickShowModGlobal(self):
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write("t:" + str(time.time()) + " " + "clic showGlobalModel" + "\n")
+            f.close()
         self.modApp.globalModelView = True
         self.vwApp.cmAction.setDisabled(True)
         self.modApp.computeGlobalView()
@@ -119,11 +152,19 @@ class RFGraph_Controller:
 
     # TODO Enlève le lien entre les noeuds choisis
     def clickRemoveLink(self, event):
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write("t:" + str(time.time()) + " " + "clic removeLink" + "\n")
+            f.close()
         self.modApp.mode_cntrt = True
         self.vwApp.selectContrTxtLab.setText("Select the starting node")
 
     def clickChangeEq(self):
         print("clickChangeEq")
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write("t:" + str(time.time()) + " " + "clic changeEq" + "\n")
+            f.close()
         self.modApp.mode_changeEq=True
 
     def onPick(self,event):
@@ -136,7 +177,10 @@ class RFGraph_Controller:
                 self.vwApp.networkGUI.network.updateView()
                 self.modApp.lastHover = ''
             return
-
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write("t:" + str(time.time()) + " " + "onHover:" + str(dstMin) + "\n")
+            f.close()
 
         if(not self.modApp.lastHover==dstMin or movingOrClikingNode):
 
@@ -230,7 +274,10 @@ class RFGraph_Controller:
         #self.onMoveMutex.acquire()
         if(event.button==1 and self.modApp.lastNodeClicked != None):
             print(event)
-
+            # if self.modApp.isLog:
+            #     f = open(self.modApp.LogFilename, "a")
+            #     f.write("t:" + str(time.time()) + " " + "onMove:"+ str(self.modApp.lastNodeClicked) + " "+str(self.event) + "\n")
+            #     f.close()
             old_pos = self.modApp.pos[self.modApp.lastNodeClicked]
             self.modApp.pos[self.modApp.lastNodeClicked] = (event.xdata, event.ydata)
 
@@ -341,6 +388,11 @@ class RFGraph_Controller:
 
         self.modApp.clicked_line = -1
 
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write("t:" + str(time.time()) + " " + "clicGraph: "+str(self.modApp.lastNodeClicked) +" button: "+ str(event.button) + "\n")
+            f.close()
+
         if (not self.modApp.globalModelView):
             self.modApp.computeEdgeBold()
             self.modApp.computeNxGraph()
@@ -361,6 +413,7 @@ class RFGraph_Controller:
             self.vwApp.fitGUI.updateView()
 
     def deleteLink(self,nodeclicked,isRmNode=False):
+
         self.modApp.NodeConstraints.append(nodeclicked)
         self.atLeastOnce = []
         self.notEvenOnce = []
@@ -381,6 +434,10 @@ class RFGraph_Controller:
                     #for item in self.modApp.scrolledList:
                     #    self.vwApp.scrolledListBox.addItem(item)
 
+                    if self.modApp.isLog:
+                        f = open(self.modApp.LogFilename, "a")
+                        f.write("t:" + str(time.time()) + " " + "deleteLink: " + str(self.modApp.NodeConstraints) + "\n")
+                        f.close()
 
                     self.modApp.selectContrTxt = ""
                     self.modApp.mode_cntrt = False
@@ -420,6 +477,12 @@ class RFGraph_Controller:
         #if self.vwApp.scrolledListBox.currentText() == "Select link to reinstate":
         #    return
         #else:
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write(
+                "t:" + str(time.time()) + " " + "reinstateLink:"+str( name )+ "\n")
+            f.close()
+
         idx=self.modApp.scrolledList.index(name)
         v=name.split(' ')
 
@@ -449,6 +512,12 @@ class RFGraph_Controller:
 
     # TODO Change la couleur et la densité des "edges" en fonction du déplacement des sliders
     def SliderMoved(self, value):
+
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write(
+                "t:" + str(time.time()) + " " + "sliderMoved:"+str(value) + "\n")
+            f.close()
         if( self.modApp.adjThresholdVal!=self.vwApp.adjThreshold_slider.value() / 100.0):
             self.modApp.adjThresholdVal=self.vwApp.adjThreshold_slider.value() / 100.0
         #if(self.modApp.comprFitCmplxVal != self.vwApp.comprFitCmplx_slider.value() / 100.0 ):
@@ -460,6 +529,12 @@ class RFGraph_Controller:
 
     # TODO Affiche la courbe de l'équation sélectionnée
     def eqTableClicked(self, cellClicked):
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write(
+                "t:" + str(time.time()) + " " + "eqTableClicked:"+str(cellClicked) + "\n")
+            f.close()
+
         self.modApp.clicked_line = cellClicked.row()
         #print("self.modApp.mode_changeEq:" + str(self.modApp.mode_changeEq))
         if (self.modApp.mode_changeEq):
@@ -478,6 +553,12 @@ class RFGraph_Controller:
         #self.vwApp.networkGUI.updateView()
 
     def incMatClicked(self,cellClicked):
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write(
+                "t:" + str(time.time()) + " " + "incMatClick:"+str(cellClicked.row()) + "\n")
+            f.close()
+
         print(cellClicked.row())
         self.vwApp.incMatGUI.highlight(cellClicked.row())
         nodeToClick=self.vwApp.incMatGUI.order[cellClicked.row()]
@@ -529,6 +610,12 @@ class RFGraph_Controller:
 
     def onOffClicked(self,objClicked):
         lineToModify=np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][objClicked.id]
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write(
+                "t:" + str(time.time()) + " " + "onOffClicked:"+str(lineToModify) + "\n")
+            f.close()
+
         self.modApp.equacolO[lineToModify][4]=objClicked.isChecked()
         self.modApp.data[objClicked.id][3]=objClicked.isChecked()
         if objClicked.isChecked():
@@ -541,6 +628,12 @@ class RFGraph_Controller:
         self.vwApp.eqTableGUI.updateView()
 
     def removeNode(self,nodeToRemove):
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write(
+                "t:" + str(time.time()) + " " + "removeNode:"+str(nodeToRemove) + "\n")
+            f.close()
+
         for i, o in self.modApp.edgelist_inOrder:
             if( (i == nodeToRemove or o == nodeToRemove) and not (i,o) in self.modApp.forbidden_edge ):
                 self.deleteLink(i,True)
@@ -557,6 +650,12 @@ class RFGraph_Controller:
         self.vwApp.networkGUI.fig.canvas.draw()
 
     def restoreNode(self,nodeToRestore):
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write(
+                "t:" + str(time.time()) + " " + "restoreNode:"+str(nodeToRestore) + "\n")
+            f.close()
+
         self.modApp.debugCmp=0
         ix = np.ix_(self.modApp.equacolO[:, 2] == nodeToRestore)
         linesToRestore=[ixe for ixe in ix[0] if not ixe in [le for l in self.modApp.rmByRmEdge for le in l]]
@@ -579,6 +678,12 @@ class RFGraph_Controller:
 
         QCoreApplication.processEvents()
     def recomputeNode(self,nodeToCompute):
+        if self.modApp.isLog:
+            f = open(self.modApp.LogFilename, "a")
+            f.write(
+                "t:" + str(time.time()) + " " + "recomputeNode:"+str(nodeToCompute) + "\n")
+            f.close()
+
         print("Recomputing " + nodeToCompute)
         tmp_equacolO = self.modApp.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_expertcorrected.txt')
         tmp_equacolO = tmp_equacolO[tmp_equacolO[:, 2] == nodeToCompute, :]
