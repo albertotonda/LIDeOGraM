@@ -105,6 +105,10 @@ class RFGraph_Controller:
         self.vwApp.networkGUI.network.updateView()
         self.clickFitness()
 
+    def clickUncertaintyButton(self):
+        self.modApp.dataset.variablesUncertainty[self.modApp.lastNodeClicked] = float(self.vwApp.uncertaintyModifTxt.text())
+        self.vwApp.fitGUI.updateView()
+
 
     # TODO Affiche le modèle d'équation global
     def clickShowModGlobal(self):
@@ -349,6 +353,11 @@ class RFGraph_Controller:
         if(updateEqTable):
             self.vwApp.eqTableGUI.updateView()
         if(updateFitGUI):
+            if (not self.modApp.lastNodeClicked == None):
+                self.vwApp.uncertaintyModifTxt.setText(
+                    str(self.modApp.dataset.variablesUncertainty[self.modApp.lastNodeClicked]))
+            else:
+                self.vwApp.uncertaintyModifTxt.setText('')
             self.vwApp.fitGUI.updateView()
 
     def deleteLink(self,nodeclicked,isRmNode=False):
@@ -460,6 +469,11 @@ class RFGraph_Controller:
             self.modApp.mode_changeEq = False
         else:
             self.vwApp.eqTableGUI.updateView()
+            if (not self.modApp.lastNodeClicked == None):
+                self.vwApp.uncertaintyModifTxt.setText(
+                    str(self.modApp.dataset.variablesUncertainty[self.modApp.lastNodeClicked]))
+            else:
+                self.vwApp.uncertaintyModifTxt.setText('')
             self.vwApp.fitGUI.updateView()
         #self.vwApp.networkGUI.updateView()
 

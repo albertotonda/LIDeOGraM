@@ -17,7 +17,7 @@ class ClassNode:
         if color is None:
             color = ClassNode.nextColor()
         if pos is None:
-            pos = (0, 0)
+            pos = (random.random(), random.random())
         self.color = color
         self.name = name
         self.nodeList = nodeList

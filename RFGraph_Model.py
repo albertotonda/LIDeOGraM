@@ -42,8 +42,8 @@ class RFGraph_Model(QtGui.QMainWindow):
     def __init__(self):
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
-        #self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert.csv")
-        self.dataset = Dataset("data/physico_meteo_dbn_modif_thomas.csv")
+        self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert.csv")
+        #self.dataset = Dataset("data/physico_meteo_dbn_modif_thomas.csv")
 
         self.createConstraintsGraph()
         self.firstInit=True
@@ -305,7 +305,9 @@ class RFGraph_Model(QtGui.QMainWindow):
                             #print("Add : " + str(equacolOLine[3]))
                             Si = self.SA_Eq(X, par, clf)
                             equacolOLine.append(Si)
-                            print("was:" + str(len(equacolOLine)))
+                            if(len(equacolOLine)==8):
+                                print("stop:" + str(len(equacolOLine)))
+                            print("was:" + str(len(equacolOLine)) + " cpmlx:" + str(lastFoundCmplx))
                             equacolOtmp.extend(equacolOLine)
                         else:
                             alpha *= 2
@@ -338,17 +340,21 @@ class RFGraph_Model(QtGui.QMainWindow):
                                 #print("Add : " + str(equacolOLine[3]))
                                 Si = self.SA_Eq(X,par,clf)
                                 equacolOLine.append(Si)
-                                print("was:" + str(len(equacolOLine)))
+                                if (len(equacolOLine) == 8):
+                                    print("stop:" + str(len(equacolOLine)))
+                                print("was:" + str(len(equacolOLine)) + " cpmlx:" + str(lastFoundCmplx))
                                 equacolOtmp.extend(equacolOLine)
                                 currIter2=0
                                 curEqFound += 1
                                 break
-                        if(currIter==maxIter):
+                        if(currIter==maxIter and not len(equacolOLine) == 7): #and we don't already have the SA results
                             lastFoundCmplx=equacolOLine[0]
                             #print("Add : " + str(equacolOLine[3]))
                             Si = self.SA_Eq(X, par, clf)
                             equacolOLine.append(Si)
-                            print("was:" + str(len(equacolOLine)))
+                            if (len(equacolOLine) == 8):
+                                print("stop:" + str(len(equacolOLine)))
+                            print("was:" + str(len(equacolOLine)) + " cpmlx:"+str(lastFoundCmplx))
                             equacolOtmp.extend(equacolOLine)
                             currIter2=0
                             curEqFound += 1
@@ -359,7 +365,9 @@ class RFGraph_Model(QtGui.QMainWindow):
                         #print("Add : " + str(equacolOLine[3]))
                         Si = self.SA_Eq(X, par, clf)
                         equacolOLine.append(Si)
-                        print("was:" + str(len(equacolOLine)))
+                        if (len(equacolOLine) == 8):
+                            print("stop:" + str(len(equacolOLine)))
+                        print("was:" + str(len(equacolOLine)) + " cpmlx:" + str(lastFoundCmplx))
                         equacolOtmp.extend(equacolOLine)
                         currIter2=0
                         curEqFound += 1
@@ -989,9 +997,9 @@ class RFGraph_Model(QtGui.QMainWindow):
                                         self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
                                         adjcontr=self.adj_contr[i, j])
 
-        #with open('initpos.dat', 'rb') as f:
-        #    self.pos=pickle.load(f)
-        self.pos = nx.nx_pydot.graphviz_layout(G, prog='dot')
+        with open('initpos.dat', 'rb') as f:
+            self.pos=pickle.load(f)
+        #self.pos = nx.nx_pydot.graphviz_layout(G, prog='dot')
         minx = np.inf
         maxx = -np.inf
         miny = np.inf

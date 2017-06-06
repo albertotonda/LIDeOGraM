@@ -25,6 +25,7 @@ import networkx as nx
 import math
 from networkx.drawing.layout import shell_layout,\
     circular_layout,spectral_layout,spring_layout,random_layout
+from matplotlib.collections import PolyCollection
 
 __all__ = ['draw',
            'draw_networkx',
@@ -623,6 +624,30 @@ def draw_networkx_edges(G, pos,
         arrow_colors = edge_colors
         a_pos = []
         p = 1.0-0.25  # make head segment 25 percent of edge length
+        import numpy as np
+        xemin=np.Inf
+        xemax=-np.Inf
+        yemin=np.Inf
+        yemax=-np.Inf
+        for src, dst in edge_pos:
+            x1, y1 = src
+            x2, y2 = dst
+            if(x1<xemin):
+                xemin=x1
+            if(x2<xemin):
+                xemin=x2
+            if(x1 > xemax):
+                xemax = x1
+            if(x2 > xemax):
+                xemax = x2
+            if (y1 < yemin):
+                yemin = y1
+            if (y2 < yemin):
+                yemin = y2
+            if (y1 > yemax):
+                yemax = y1
+            if (y2 > yemax):
+                yemax = y2
         for src, dst in edge_pos:
             x1, y1 = src
             x2, y2 = dst
@@ -649,17 +674,23 @@ def draw_networkx_edges(G, pos,
             yr=(y1-y0r)/(d)
             dr=numpy.sqrt(float(xr**2 + yr**2))
 
-            edgeAngle = (numpy.sin(yr) / numpy.abs(numpy.sin(yr))) * numpy.arccos(xr)
+            edgeAngle = ((numpy.sin(yr) / numpy.abs(numpy.sin(yr))) * numpy.arccos(xr))
             # try:
             #     edgeAngle=(numpy.sin(yr)/numpy.abs(numpy.sin(yr)))*numpy.arccos(xr)
             # except:
             #     pass
             edgeAngle1=edgeAngle+0.15
             edgeAngle2=edgeAngle-0.15
-            xa1=numpy.cos(edgeAngle1)*0.01+x0r
-            ya1=numpy.sin(edgeAngle1)*0.01+y0r
-            xa2=numpy.cos(edgeAngle2)*0.01+x0r
-            ya2=numpy.sin(edgeAngle2)*0.01+y0r
+            print(xemax-xemin)
+            # xa1=numpy.cos(edgeAngle1)*(xemax-xemin)*0.1+x0r
+            # ya1=numpy.sin(edgeAngle1)*(yemax-yemin)*0.1+y0r
+            # xa2=numpy.cos(edgeAngle2)*(xemax-xemin)*0.1+x0r
+            # ya2=numpy.sin(edgeAngle2)*(yemax-yemin)*0.1+y0r
+
+            xa1 = numpy.cos(edgeAngle1)  * 0.05 + x0r
+            ya1 = numpy.sin(edgeAngle1)  * 0.05 + y0r
+            xa2 = numpy.cos(edgeAngle2)  * 0.05 + x0r
+            ya2 = numpy.sin(edgeAngle2)  * 0.05 + y0r
             dr1 = numpy.sqrt(float((xa1-x2) ** 2 + (ya1-y2) ** 2))
             dr2 = numpy.sqrt(float((xa2-x2) ** 2 + (ya2-y2) ** 2))
 
@@ -670,6 +701,13 @@ def draw_networkx_edges(G, pos,
         for item in arrow_colors:
             arrow_colors_x2.append(item)
             arrow_colors_x2.append(item)
+
+
+        # pcoll_np = PolyCollection(a_pos, closed=True,
+        #                           colors=arrow_colors_x2,
+        #                               )
+        # ax.add_collection(pcoll_np, autolim=True)
+
         arrow_collection = LineCollection(a_pos,
                                 colors=arrow_colors_x2,
                                 linewidths=[3*ww for ww in lw],

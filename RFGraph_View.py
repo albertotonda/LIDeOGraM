@@ -82,10 +82,17 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         # self.gridLayout.addWidget(selNodeLab,0,3,1,1)
         self.gridLayout.addWidget(self.clickedNodeLab, 0, 3, 1, 1)
 
+        self.uncertaintyModifTxt = QtGui.QLineEdit()
+        self.uncertaintyModifButton=QtGui.QPushButton("Change Uncertainty")
         self.fitGUI = FitCanvas(self.modApp)
         # self.gridLayout.addWidget(self.fitGUI, 7, 130, 6, 60)
-        self.gridLayout.addWidget(self.fitGUI, 2, 3, 2, 1)
 
+        self.fit_widget = QtGui.QWidget(self)
+        self.fitLayout = QtGui.QGridLayout(self.fit_widget)
+        self.fitLayout.addWidget(self.uncertaintyModifTxt,0,0,1,1)
+        self.fitLayout.addWidget(self.uncertaintyModifButton,0,1,1,1)
+        self.fitLayout.addWidget(self.fitGUI, 1, 0, 1, 2)
+        self.gridLayout.addWidget(self.fit_widget, 2, 3, 2, 1)
         # self.buttonCompromis = QtGui.QPushButton('Compromise', self)
         # self.buttonFitness = QtGui.QPushButton('Fitness', self)
         # self.buttonComplexite = QtGui.QPushButton('Complexity', self)
@@ -392,6 +399,11 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         if(self.modApp.globalModelView==True):
             pass
         self.networkGUI.network.updateView()
+
+        if(not self.modApp.lastNodeClicked==None):
+            self.uncertaintyModifTxt.setText(str(self.modApp.dataset.variablesUncertainty[self.modApp.lastNodeClicked]))
+        else:
+            self.uncertaintyModifTxt.setText('')
         self.fitGUI.updateView()
         self.eqTableGUI.updateView()
         # self.selectContrTxtLab.setText(self.modApp.lastNodeClicked)

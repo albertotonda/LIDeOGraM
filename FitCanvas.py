@@ -99,14 +99,15 @@ class FitCanvas(FigureCanvas):
             inter = (val_node_exp.max()- val_node_exp.min())*0.1
             plt.plot(val_node_exp, y, 'ro', label="Local Model",axes=currax)
             plt.plot([0, mx + inter], [0, mx + inter], 'r-',axes=currax)
-
             plt.xlim(mn - inter, mx + inter)
             plt.ylim(mn - inter, mx + inter)
+
             sizeYax = self.get_ax_size(self.fig, currax)[1]
             sizeYscale = currax.get_ylim()[1] - currax.get_ylim()[0]
             sizeUncertaintyPix=self.modApp.dataset.variablesUncertainty[self.modApp.lastNodeClicked]
             linewidthUncertainty = sizeUncertaintyPix / sizeYscale * sizeYax * np.sqrt(2)
             plt.plot([0, mx + inter], [0, mx + inter], 'r-', alpha=0.5, linewidth=linewidthUncertainty,axes=currax)
+
             currax.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=4, ncol=1, borderaxespad=0., numpoints= 1)
             plt.xlabel("Measured --->")
             plt.ylabel("Predicted --->")
@@ -127,6 +128,12 @@ class FitCanvas(FigureCanvas):
                 plt.suptitle('Measured    VS    Predicted    Plot', fontsize= 11, y= 1.00111)
                 plt.xlim(mn - inter, mx + inter)
                 plt.ylim(mn - inter, mx + inter)
+
+                sizeYax = self.get_ax_size(self.fig, currax)[1]
+                sizeYscale = currax.get_ylim()[1] - currax.get_ylim()[0]
+                sizeUncertaintyPix=self.modApp.dataset.variablesUncertainty[self.modApp.lastNodeClicked]
+                linewidthUncertainty = sizeUncertaintyPix / sizeYscale * sizeYax * np.sqrt(2)
+                plt.plot([0, mx + inter], [0, mx + inter], 'r-', alpha=0.5, linewidth=linewidthUncertainty,axes=currax)
             else:
                 mx = np.maximum(val_node_exp.max(), np.float64(z.max()))
                 mn = np.minimum(val_node_exp.min(), np.float64(z.min()))
@@ -140,5 +147,11 @@ class FitCanvas(FigureCanvas):
                 plt.suptitle('Measured    VS    Predicted    Plot', fontsize= 11, y= 1.00111)
                 plt.xlim(mn - inter, mx + inter)
                 plt.ylim(mn - inter, mx + inter)
+
+                sizeYax = self.get_ax_size(self.fig, currax)[1]
+                sizeYscale = currax.get_ylim()[1] - currax.get_ylim()[0]
+                sizeUncertaintyPix = self.modApp.dataset.variablesUncertainty[self.modApp.lastNodeClicked]
+                linewidthUncertainty = sizeUncertaintyPix / sizeYscale * sizeYax * np.sqrt(2)
+                plt.plot([0, mx + inter], [0, mx + inter], 'r-', alpha=0.5, linewidth=linewidthUncertainty, axes=currax)
         self.fig.canvas.draw()
 
