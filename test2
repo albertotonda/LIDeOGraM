@@ -1,0 +1,288 @@
+{
+    "edge": [
+        [
+            "Molsur",
+            "Cell"
+        ],
+        [
+            "PopLyo",
+            "PopSto3"
+        ],
+        [
+            "PopCentri",
+            "PopCong"
+        ],
+        [
+            "PopCong",
+            "PopLyo"
+        ],
+        [
+            "Molss",
+            "Cell"
+        ],
+        [
+            "condition",
+            "PopCentri"
+        ],
+        [
+            "condition",
+            "Molsur"
+        ],
+        [
+            "condition",
+            "PopCong"
+        ],
+        [
+            "condition",
+            "Molss"
+        ],
+        [
+            "condition",
+            "CellAniso"
+        ],
+        [
+            "condition",
+            "PopLyo"
+        ],
+        [
+            "condition",
+            "Cell"
+        ],
+        [
+            "condition",
+            "PopSto3"
+        ],
+        [
+            "CellAniso",
+            "PopCentri"
+        ],
+        [
+            "CellAniso",
+            "PopLyo"
+        ],
+        [
+            "CellAniso",
+            "PopSto3"
+        ],
+        [
+            "CellAniso",
+            "PopCong"
+        ],
+        [
+            "Cell",
+            "PopCentri"
+        ],
+        [
+            "Cell",
+            "CellAniso"
+        ],
+        [
+            "Cell",
+            "PopLyo"
+        ],
+        [
+            "Cell",
+            "PopCong"
+        ],
+        [
+            "Cell",
+            "PopSto3"
+        ]
+    ],
+    "node": [
+        {
+            "color": [
+                0.3174717621905623,
+                0.5376582536186938,
+                0.9137588209502118
+            ],
+            "lineWidth": 0,
+            "name": "Molsur",
+            "nodeList": [
+                "AMACBIOSYNTHsurexpr",
+                "FATTYACIDMETABOsurexpr",
+                "BIOSYNTH_CARRIERSsurexpr",
+                "PURINESsurexpr",
+                "CELLPROCESSESsurexpr",
+                "CELLENVELOPEsurexpr",
+                "TRANSLATIONsurexpr",
+                "CENTRINTMETABOsurexpr",
+                "TRANSPORTPROTEINSsurexpr",
+                "Hypoprotsurexpr",
+                "ENMETABOsurexpr",
+                "OTHERCATsurexpr",
+                "TRANSCRIPTIONsurexpr",
+                "REGULFUNsurexpr",
+                "REPLICATIONsurexpr"
+            ],
+            "pos": [
+                0.22677656319788275,
+                0.056636944831118696
+            ],
+            "size": 300
+        },
+        {
+            "color": [
+                0.3728594215161283,
+                0.9697702808481095,
+                0.09924031932558619
+            ],
+            "lineWidth": 0,
+            "name": "PopLyo",
+            "nodeList": [
+                "UFClyo",
+                "TpH07lyo"
+            ],
+            "pos": [
+                0.9561527991998103,
+                0.4202955182197585
+            ],
+            "size": 300
+        },
+        {
+            "color": [
+                0.09322624591067119,
+                0.6590007175761378,
+                0.8974449938094364
+            ],
+            "lineWidth": 0,
+            "name": "PopCentri",
+            "nodeList": [
+                "UFCcentri",
+                "tpH07centri"
+            ],
+            "pos": [
+                0.7245454187761574,
+                0.46769116699245683
+            ],
+            "size": 300
+        },
+        {
+            "color": [
+                0.44379102670631776,
+                0.19146317456319262,
+                0.4502258762482534
+            ],
+            "lineWidth": 0,
+            "name": "PopCong",
+            "nodeList": [
+                "tpH07cong",
+                "UFCcong"
+            ],
+            "pos": [
+                0.9307700640808033,
+                0.6068792913903296
+            ],
+            "size": 300
+        },
+        {
+            "color": [
+                0.6,
+                0.6,
+                0.2
+            ],
+            "lineWidth": 0,
+            "name": "Molss",
+            "nodeList": [
+                "PURINESsousexpr",
+                "REGULFUNsousexpr",
+                "AMACBIOSYNTHsousexpr",
+                "CELLENVELOPEsousexpr",
+                "Hypoprotsousexpr",
+                "TRANSLATIONsousexpr",
+                "REPLICATIONsousexpr",
+                "OTHERCATsousexpr",
+                "CENTRINTMETABOsousexpr",
+                "BIOSYNTH_CARRIERSsousexpr",
+                "FATTYACIDMETABOsousexpr",
+                "TRANSCRIPTIONsousexpr",
+                "TRANSPORTPROTEINSsousexpr",
+                "ENMETABOsousexpr",
+                "CELLPROCESSESsousexpr"
+            ],
+            "pos": [
+                0.05656143088673682,
+                0.6123614165331311
+            ],
+            "size": 300
+        },
+        {
+            "color": [
+                0.3407006389769164,
+                0.19165457137893205,
+                0.5115521044820387
+            ],
+            "lineWidth": 0,
+            "name": "condition",
+            "nodeList": [
+                "Age",
+                "Temperature"
+            ],
+            "pos": [
+                0.014081378141075906,
+                0.6948352339805697
+            ],
+            "size": 300
+        },
+        {
+            "color": [
+                0.7,
+                0.7,
+                0.2
+            ],
+            "lineWidth": 0,
+            "name": "CellAniso",
+            "nodeList": [
+                "Anisotropie"
+            ],
+            "pos": [
+                0.6085660026373677,
+                0.06461340099497215
+            ],
+            "size": 300
+        },
+        {
+            "color": [
+                0.8,
+                0.8,
+                0.2
+            ],
+            "lineWidth": 0,
+            "name": "Cell",
+            "nodeList": [
+                "C170",
+                "C160",
+                "C220",
+                "C180",
+                "C140",
+                "C19cyc",
+                "C181cis",
+                "C161cis"
+            ],
+            "pos": [
+                0.9462694001272361,
+                0.03842983739311168
+            ],
+            "size": 300
+        },
+        {
+            "color": [
+                0.1289722860056961,
+                0.33571258339377696,
+                0.847677967323416
+            ],
+            "lineWidth": 0,
+            "name": "PopSto3",
+            "nodeList": [
+                "tpH07sto3",
+                "UFCsto3"
+            ],
+            "pos": [
+                0.8665913415224218,
+                0.9888071434145218
+            ],
+            "size": 300
+        }
+    ],
+    "unbound": []
+}

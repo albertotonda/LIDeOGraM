@@ -1,6 +1,5 @@
 import copy
 from classes.ClassGraph import ClassGraph
-import time
 
 class SaveStatesStacks:
     def __init__(self, window):
@@ -79,9 +78,6 @@ class SaveStatesStacks:
             f()
 
     def returnToState(self, item):
-        f=open(self.window.LogFilename,"a")
-        f.write("t:"+str(time.time())+" "+"ClassValide"+"\n")
-        f.close()
         print("click : "+ str(item))
         if item.state is None:
             return

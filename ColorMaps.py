@@ -24,11 +24,14 @@ class colorm:
                                                               gCol,
                                                               gCol,
                                                               grnCol])
+
+        psCmap = LinearSegmentedColormap.from_list('Pearson_map', [(0.9,0.5,0.0),(0.9,0.9,0.9),(0.9,0.9,0.9),(0.9,0.9,0.9),(0.0,0.5,0.9)])
+
         self.complexity = complexityCmap#plt.get_cmap("cool")
         self.globalm = fitnessCmap
         self.localm = fitnessCmap
         self.sam = saCmap#plt.get_cmap("RdYlGn")
-
+        self.psm=psCmap
         #self.selectionColor=(0.5,0.5,0.9)
 
 
@@ -54,3 +57,5 @@ class colorm:
             return self.multiply(self.localm(normalizedValue)[0:3])
         if type == "SA":
             return self.multiply(self.sam(normalizedValue)[0:3])
+        if type == "Pearson":
+            return self.multiply(self.psm(normalizedValue)[0:3])

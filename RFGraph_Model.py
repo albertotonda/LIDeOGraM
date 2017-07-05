@@ -13,6 +13,7 @@ sys.path.append("fitness/")
 sys.path.append('SALib/SaLib-master')
 from SALib.analyze import sobol
 from SALib.sample import saltelli
+from scipy.stats.stats import pearsonr
 from SALib.test_functions import Ishigami
 from SALib.util import read_param_file
 #from fitness import fitness
@@ -36,16 +37,13 @@ from RFGraph_View import RFGraph_View
 from RFGraph_Controller import RFGraph_Controller
 from QtConnector import QtConnector
 from PyQt4 import QtGui
-import random
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model(QtGui.QMainWindow):
 
     def __init__(self):
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
-        self.isLog=True
-        self.LogFilename= "LOG"+str(random.random())+".log"
-        self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert.csv")
+        self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert_ifset.csv")
         #self.dataset = Dataset("data/physico_meteo_dbn_modif_thomas.csv")
 
         self.createConstraintsGraph()
@@ -58,6 +56,9 @@ class RFGraph_Model(QtGui.QMainWindow):
     def init2(self,contrgraph):
 
         self.adj_contrGraph = contrgraph
+        self.adj_contrGraph.edgesTrueName=[]
+        for (e0,e1) in self.adj_contrGraph.edges():
+            self.adj_contrGraph.edgesTrueName.append((e0.name,e1.name))
         self.correctDataset(self.dataset,self.adj_contrGraph)
 
         self.equacolO = self.findLassoEqs()
@@ -645,22 +646,43 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.computeFitandCmplxEdgeColor()
         self.computeComprEdgeColor()
         self.computeSAEdgeColor()
+        self.computePearsonColor()
 
         self.computeNxGraph()
 
+    def computePearsonColor(self):
+        self.allPearson={}
+        for v1 in self.dataset.varnames:
+            for v2 in self.dataset.varnames:
+                xd=self.dataset.getAllExpsforVar(v1)
+                yd=self.dataset.getAllExpsforVar(v2)
+                self.allPearson[(v1,v2)] = pearsonr(xd, yd)[0]
+        self.edgeColorPearson = {}
+        for ek, ev in self.allPearson.items():
+            ek0_parClass=self.dataset.variablesClass[ek[0]]
+            ek1_parClass = self.dataset.variablesClass[ek[1]]
+            if((ek0_parClass,ek1_parClass) in self.adj_contrGraph.edgesTrueName):
+                self.edgeColorPearson[(ek[0],ek[1])] =self.allPearson[(ek[0],ek[1])]
+
+        for e, v in self.edgeColorPearson.items():
+            cmap = self.colors.get("Pearson", 1 - v)
+            # color = QColor.fromRgb(*cmap)
+            lcmap = list(np.array(cmap) / 255)
+            lcmap.extend([1.0])
+            self.edgeColorPearson[e] = lcmap
 
 
 
     def createConstraintsGraph(self):
         #graph = nx.DiGraph()
-        graph = ClassGraph(isLog=self.isLog,LogFilename=self.LogFilename)
+        graph = ClassGraph()
         for i in np.unique(list(self.dataset.variablesClass.values())):
             #print(i)
             i_var = [v for (v, e) in self.dataset.variablesClass.items() if e ==i ]
             graph.add_node(ClassNode(i, i_var))
         #testMutex = threading.Lock()
         print("creating classes window")
-        classApp=WindowClasses(graph,self.init2,isLog=self.isLog,LogFilename=self.LogFilename)
+        classApp=WindowClasses(graph,self.init2)
         #classApp=Window(ClassGraph.readJson("classes/screen.clgraph"),self.init2)
         print("after classes window")
         #graph=classApp.exec()
@@ -776,14 +798,16 @@ class RFGraph_Model(QtGui.QMainWindow):
             self.edgeColorfull = copy.deepcopy(self.edgeColorCmplx)
         elif (self.ColorMode == 'SA'):
             self.edgeColorfull = copy.deepcopy(self.edgeColorSA)
+        elif (self.ColorMode == 'Pearson'):
+            self.edgeColorfull = copy.deepcopy(self.edgeColorPearson)
         for i in range(len(self.pareto)):  # i is child
             for j in range(len(self.pareto[i])):  # j is parent
                 lIdxColPareto = self.pareto[i][j]
                 if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
                     # if self.nbeq[i] == np.float64(0.0): continue
                     r = self.adj_simple[i, j] / self.nbeq[i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
-                    if (r <= self.adjThresholdVal):
-                        tup = (self.dataset.varnames[j], self.dataset.varnames[i])
+                    tup = (self.dataset.varnames[j], self.dataset.varnames[i])
+                    if (self.ColorMode!='Pearson' and r <= self.adjThresholdVal):
                         self.invisibleTup.append(tup)
                         #try:
                         #    del (self.edgeBoldDict[tup])
@@ -793,6 +817,9 @@ class RFGraph_Model(QtGui.QMainWindow):
                         #    del (self.edgeColorfull[tup])
                         #except:
                         #    pass
+                    elif(self.ColorMode=='Pearson' and  -1+self.adjThresholdVal < self.allPearson[tup] < 1-self.adjThresholdVal ):
+                        self.invisibleTup.append(tup)
+
 
         self.edgeColor = self.colorDictToConstraintedcolorList(self.edgeColorfull,self.edgelist_inOrder)
         self.edgeBold = self.colorDictToConstraintedcolorList(self.edgeBoldDict,self.edgelist_inOrder)
@@ -1000,9 +1027,9 @@ class RFGraph_Model(QtGui.QMainWindow):
                                         self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
                                         adjcontr=self.adj_contr[i, j])
 
-        with open('initpos.dat', 'rb') as f:
-            self.pos=pickle.load(f)
-        #self.pos = nx.nx_pydot.graphviz_layout(G, prog='dot')
+        #with open('initpos.dat', 'rb') as f:
+        #    self.pos=pickle.load(f)
+        self.pos = nx.nx_pydot.graphviz_layout(G, prog='dot')
         minx = np.inf
         maxx = -np.inf
         miny = np.inf

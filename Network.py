@@ -118,7 +118,12 @@ class Network:
                                 with_labels=False, edgelist=hEdge, edge_color=hEdgeColor, linewidths=lineWidthsNode,
                                 linewidthsColors=linewidthsColors, ax=self.axes)
 
-        nxa.draw_networkx_edges(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
+        if(self.modApp.ColorMode == 'Pearson'):
+            nxa.draw_networkx_edges(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
+                                    node_color=self.modApp.nodeColor, with_labels=False, edgelist=hEdge,
+                                    edge_color=hEdgeColor, edge_bold=hBold, ax=self.axes)
+        else:
+            nxa.draw_networkx_edges(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
                                 node_color=self.modApp.nodeColor, with_labels=False, edgelist=hEdge,
                                 edge_color=hEdgeColor, edge_bold=hBold, ax=self.axes)
 
