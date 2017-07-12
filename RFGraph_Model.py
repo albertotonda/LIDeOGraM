@@ -43,7 +43,7 @@ class RFGraph_Model(QtGui.QMainWindow):
     def __init__(self):
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
-        self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert_ifset.csv")
+        self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert.csv")
         #self.dataset = Dataset("data/physico_meteo_dbn_modif_thomas.csv")
 
         self.createConstraintsGraph()
@@ -75,7 +75,10 @@ class RFGraph_Model(QtGui.QMainWindow):
         for l in range(self.nbequa):
             for h in range(self.dataset.nbVar):
                 #Possible parents for the equations
-                cont_h=len(re.findall(r'\b%s\b' % re.escape(self.dataset.varnames[h]),self.equacolO[l,3]))  #How many times the variable self.varname[h] is found in the equation self.equacolO[l,3]
+                try:
+                    cont_h=len(re.findall(r'\b%s\b' % re.escape(self.dataset.varnames[h]),self.equacolO[l,3]))  #How many times the variable self.varname[h] is found in the equation self.equacolO[l,3]
+                except:
+                    pass
                 if(cont_h>0): #If present, add infos in adjacence matrix
                     ind_parent=h
                     ind_offspring=list(self.dataset.varnames).index(self.equacolO[l,2])
@@ -286,95 +289,105 @@ class RFGraph_Model(QtGui.QMainWindow):
                 X=self.dataset.data[:,idx]
 
                 nbEqToFind=10
-                curEqFound=0
-                alpha=1
-                cmplxOneFound=False
-                lastFoundCmplx=1
-                maxIter=10
-                currIter=0
-                maxIter2=20
-                currIter2=0
-                while(curEqFound != nbEqToFind and currIter2!=maxIter2):
-                    currIter2+=1
-                    while(not cmplxOneFound): #Find equation of complexity one
-                        clf = linear_model.Lasso(alpha=alpha)
-                        clf.fit(X, Y)
 
-                        pred = clf.predict(X)
-                        equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames[i], Y, pred)
-                        #print("Find first : equacolOLine[0]" + str(equacolOLine[0]) + " alpha= "+str(alpha) + " curEqFound: " + str(curEqFound))
-                        if(equacolOLine[0]==1):
-                            cmplxOneFound = True
-                            curEqFound+=1
-                            #print("Add : " + str(equacolOLine[3]))
-                            Si = self.SA_Eq(X, par, clf)
-                            equacolOLine.append(Si)
-                            if(len(equacolOLine)==8):
-                                print("stop:" + str(len(equacolOLine)))
-                            print("was:" + str(len(equacolOLine)) + " cpmlx:" + str(lastFoundCmplx))
-                            equacolOtmp.extend(equacolOLine)
-                        else:
-                            alpha *= 2
+                for j in range(1,np.minimum(nbEqToFind,len(idx))+1):
+                    clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=j)
 
-                    alpha/=2
-                    clf = linear_model.Lasso(alpha=alpha)
                     clf.fit(X, Y)
-                    pred=clf.predict(X)
-                    equacolOLine=self.regrToEquaColO(clf,par,self.dataset.varnames[i],Y,pred)
-                    #print("cmplx : " + str(equacolOLine[0]) + " alpha= " + str(alpha)  + " curEqFound: " + str(curEqFound)+ " lastFoundCmplx : " + str(lastFoundCmplx))
-                    if (equacolOLine[0] > lastFoundCmplx + 4):
-                        minAlpha=alpha
-                        maxAlpha=alpha*2
-                        currIter=0
-                        while(equacolOLine[0]!=lastFoundCmplx + 4 and currIter!=maxIter):
-                            currIter+=1
-                            alpha=(minAlpha+maxAlpha)/2
-                            clf = linear_model.Lasso(alpha=alpha)
-                            clf.fit(X, Y)
-                            pred = clf.predict(X)
-                            equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames[i], Y, pred)
-                            #print("cmplx : " + str(equacolOLine[0]) + " alpha= " + str(alpha) + " curEqFound: " + str(curEqFound) + " lastFoundCmplx : " + str(lastFoundCmplx))
-                            #print("     minAlpha = " + str(minAlpha) + " maxAlpha = " + str(maxAlpha) + " lastFoundCmplx:"+str(lastFoundCmplx))
-                            if(equacolOLine[0] > lastFoundCmplx + 4):
-                                minAlpha=alpha
-                            elif(equacolOLine[0] < lastFoundCmplx + 4):
-                                maxAlpha=alpha
-                            else:
-                                lastFoundCmplx = equacolOLine[0]
-                                #print("Add : " + str(equacolOLine[3]))
-                                Si = self.SA_Eq(X,par,clf)
-                                equacolOLine.append(Si)
-                                if (len(equacolOLine) == 8):
-                                    print("stop:" + str(len(equacolOLine)))
-                                print("was:" + str(len(equacolOLine)) + " cpmlx:" + str(lastFoundCmplx))
-                                equacolOtmp.extend(equacolOLine)
-                                currIter2=0
-                                curEqFound += 1
-                                break
-                        if(currIter==maxIter and not len(equacolOLine) == 7): #and we don't already have the SA results
-                            lastFoundCmplx=equacolOLine[0]
-                            #print("Add : " + str(equacolOLine[3]))
-                            Si = self.SA_Eq(X, par, clf)
-                            equacolOLine.append(Si)
-                            if (len(equacolOLine) == 8):
-                                print("stop:" + str(len(equacolOLine)))
-                            print("was:" + str(len(equacolOLine)) + " cpmlx:"+str(lastFoundCmplx))
-                            equacolOtmp.extend(equacolOLine)
-                            currIter2=0
-                            curEqFound += 1
-                    elif(equacolOLine[0] < lastFoundCmplx + 4):
-                        alpha /= 2
-                    else:
-                        lastFoundCmplx = equacolOLine[0]
-                        #print("Add : " + str(equacolOLine[3]))
-                        Si = self.SA_Eq(X, par, clf)
-                        equacolOLine.append(Si)
-                        if (len(equacolOLine) == 8):
-                            print("stop:" + str(len(equacolOLine)))
-                        print("was:" + str(len(equacolOLine)) + " cpmlx:" + str(lastFoundCmplx))
-                        equacolOtmp.extend(equacolOLine)
-                        currIter2=0
-                        curEqFound += 1
+                    pred = clf.predict(X)
+                    equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames[i], Y, pred)
+                    Si = self.SA_Eq(X, par, clf)
+                    equacolOLine.append(Si)
+                    equacolOtmp.extend(equacolOLine)
+                # curEqFound=0
+                # alpha=1
+                # cmplxOneFound=False
+                # lastFoundCmplx=1
+                # maxIter=10
+                # currIter=0
+                # maxIter2=20
+                # currIter2=0
+                # while(curEqFound != nbEqToFind and currIter2!=maxIter2):
+                #     currIter2+=1
+                #     while(not cmplxOneFound): #Find equation of complexity one
+                #         clf = linear_model.Lasso(alpha=alpha)
+                #         clf.fit(X, Y)
+                #
+                #         pred = clf.predict(X)
+                #         equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames[i], Y, pred)
+                #         #print("Find first : equacolOLine[0]" + str(equacolOLine[0]) + " alpha= "+str(alpha) + " curEqFound: " + str(curEqFound))
+                #         if(equacolOLine[0]==1):
+                #             cmplxOneFound = True
+                #             curEqFound+=1
+                #             #print("Add : " + str(equacolOLine[3]))
+                #             Si = self.SA_Eq(X, par, clf)
+                #             equacolOLine.append(Si)
+                #             if(len(equacolOLine)==8):
+                #                 print("stop:" + str(len(equacolOLine)))
+                #             print("was:" + str(len(equacolOLine)) + " cpmlx:" + str(lastFoundCmplx))
+                #             equacolOtmp.extend(equacolOLine)
+                #         else:
+                #             alpha *= 2
+                #
+                #     alpha/=2
+                #     clf = linear_model.Lasso(alpha=alpha)
+                #     clf.fit(X, Y)
+                #     pred=clf.predict(X)
+                #     equacolOLine=self.regrToEquaColO(clf,par,self.dataset.varnames[i],Y,pred)
+                #     #print("cmplx : " + str(equacolOLine[0]) + " alpha= " + str(alpha)  + " curEqFound: " + str(curEqFound)+ " lastFoundCmplx : " + str(lastFoundCmplx))
+                #     if (equacolOLine[0] > lastFoundCmplx + 4):
+                #         minAlpha=alpha
+                #         maxAlpha=alpha*2
+                #         currIter=0
+                #         while(equacolOLine[0]!=lastFoundCmplx + 4 and currIter!=maxIter):
+                #             currIter+=1
+                #             alpha=(minAlpha+maxAlpha)/2
+                #             clf = linear_model.Lasso(alpha=alpha)
+                #             clf.fit(X, Y)
+                #             pred = clf.predict(X)
+                #             equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames[i], Y, pred)
+                #             #print("cmplx : " + str(equacolOLine[0]) + " alpha= " + str(alpha) + " curEqFound: " + str(curEqFound) + " lastFoundCmplx : " + str(lastFoundCmplx))
+                #             #print("     minAlpha = " + str(minAlpha) + " maxAlpha = " + str(maxAlpha) + " lastFoundCmplx:"+str(lastFoundCmplx))
+                #             if(equacolOLine[0] > lastFoundCmplx + 4):
+                #                 minAlpha=alpha
+                #             elif(equacolOLine[0] < lastFoundCmplx + 4):
+                #                 maxAlpha=alpha
+                #             else:
+                #                 lastFoundCmplx = equacolOLine[0]
+                #                 #print("Add : " + str(equacolOLine[3]))
+                #                 Si = self.SA_Eq(X,par,clf)
+                #                 equacolOLine.append(Si)
+                #                 if (len(equacolOLine) == 8):
+                #                     print("stop:" + str(len(equacolOLine)))
+                #                 print("was:" + str(len(equacolOLine)) + " cpmlx:" + str(lastFoundCmplx))
+                #                 equacolOtmp.extend(equacolOLine)
+                #                 currIter2=0
+                #                 curEqFound += 1
+                #                 break
+                #         if(currIter==maxIter and not len(equacolOLine) == 7): #and we don't already have the SA results
+                #             lastFoundCmplx=equacolOLine[0]
+                #             #print("Add : " + str(equacolOLine[3]))
+                #             Si = self.SA_Eq(X, par, clf)
+                #             equacolOLine.append(Si)
+                #             if (len(equacolOLine) == 8):
+                #                 print("stop:" + str(len(equacolOLine)))
+                #             print("was:" + str(len(equacolOLine)) + " cpmlx:"+str(lastFoundCmplx))
+                #             equacolOtmp.extend(equacolOLine)
+                #             currIter2=0
+                #             curEqFound += 1
+                #     elif(equacolOLine[0] < lastFoundCmplx + 4):
+                #         alpha /= 2
+                #     else:
+                #         lastFoundCmplx = equacolOLine[0]
+                #         #print("Add : " + str(equacolOLine[3]))
+                #         Si = self.SA_Eq(X, par, clf)
+                #         equacolOLine.append(Si)
+                #         if (len(equacolOLine) == 8):
+                #             print("stop:" + str(len(equacolOLine)))
+                #         print("was:" + str(len(equacolOLine)) + " cpmlx:" + str(lastFoundCmplx))
+                #         equacolOtmp.extend(equacolOLine)
+                #         currIter2=0
+                #         curEqFound += 1
 
         self.hide()
         equacolOtmp = np.array(equacolOtmp, dtype=object)
@@ -1027,9 +1040,9 @@ class RFGraph_Model(QtGui.QMainWindow):
                                         self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
                                         adjcontr=self.adj_contr[i, j])
 
-        #with open('initpos.dat', 'rb') as f:
-        #    self.pos=pickle.load(f)
-        self.pos = nx.nx_pydot.graphviz_layout(G, prog='dot')
+        with open('initpos.dat', 'rb') as f:
+            self.pos=pickle.load(f)
+        #self.pos = nx.nx_pydot.graphviz_layout(G, prog='dot')
         minx = np.inf
         maxx = -np.inf
         miny = np.inf
