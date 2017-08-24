@@ -486,6 +486,7 @@ class RFGraph_Controller:
             else:
                 self.vwApp.uncertaintyModifTxt.setText('')
             self.vwApp.fitGUI.updateView()
+        pass
         #self.vwApp.networkGUI.updateView()
 
     def incMatClicked(self,cellClicked):

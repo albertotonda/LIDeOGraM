@@ -109,10 +109,19 @@ class Individual:
                 yr=[]
                 for j in range(len(results)):
                  if bkeys[i] in results[case] and bkeys[i] in self.exp:
-                     yr.append(float(results[j][bkeys[i]]))
-                     xr.append(float(self.exp[bkeys[i]][j]))
+                     try:
+                        yr.append(float(results[j][bkeys[i]]))
+                     except:
+                        yr.append(np.nan)
+                     try:
+                        xr.append(float(self.exp[bkeys[i]][j]))
+                     except:
+                        xr.append(np.nan)
                 acc+=1
-                errVarSum[bkeys[i]]=fitness(xr, yr)
+                if( not np.nan in xr and not np.nan in yr):
+                    errVarSum[bkeys[i]]=fitness(xr, yr)
+                else:
+                    errVarSum[bkeys[i]] = 1
                     #errVarSum[bkeys[i]] = p
                 #if(bkeys[i] != 'C150' and bkeys[i] != 'C181trans'):
                 errTot+=errVarSum[bkeys[i]]

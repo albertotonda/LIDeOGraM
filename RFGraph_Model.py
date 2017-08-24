@@ -77,6 +77,9 @@ class RFGraph_Model(QtGui.QMainWindow):
                 #Possible parents for the equations
                 try:
                     cont_h=len(re.findall(r'\b%s\b' % re.escape(self.dataset.varnames[h]),self.equacolO[l,3]))  #How many times the variable self.varname[h] is found in the equation self.equacolO[l,3]
+                    cont_h =cont_h+len(re.findall(r'\b%s\b' % re.escape(self.dataset.varnames[h]+"^2"), self.equacolO[l, 3]))
+
+
                 except:
                     pass
                 if(cont_h>0): #If present, add infos in adjacence matrix
@@ -84,7 +87,8 @@ class RFGraph_Model(QtGui.QMainWindow):
                     ind_offspring=list(self.dataset.varnames).index(self.equacolO[l,2])
                     self.adj_simple[ind_offspring,ind_parent]+=1
                     self.adj_cmplx[ind_offspring,ind_parent]*=self.equacolO[l,0] #  GEOMETRIC mean
-                    self.adj_fit[ind_offspring,ind_parent]*=self.equacolO[l,1] #  GEOMETRIC mean
+                    if(self.equacolO[l,1] != 0):
+                        self.adj_fit[ind_offspring,ind_parent]*=self.equacolO[l,1] #  GEOMETRIC mean
                     self.equacolPO.append([self.equacolO[l,0],self.equacolO[l,1],self.equacolO[l,2],self.dataset.varnames[h],self.equacolO[l,3], self.equacolO[l,4]])
             self.nbeq[list(self.dataset.varnames).index(self.equacolO[l,2])]+=1 # Comptage du nombre d'équations pour chaque enfant
 
@@ -237,11 +241,49 @@ class RFGraph_Model(QtGui.QMainWindow):
         allidx=[]
         for unv in constrGraph.unboundNode:
             idx = np.where(dataset.varnames == unv)
-            dataset.varnames=np.delete(dataset.varnames,idx)
             dataset.variablesClass.pop(unv)
             allidx.append(idx)
-        dataset.nbVar=len(dataset.varnames)
+
+        dataset.varnames = np.delete(dataset.varnames,allidx)
+        dataset.nbVar = len(dataset.varnames)
         dataset.data = np.delete(dataset.data,allidx,axis=1)
+
+        dataset.varnames_extd=copy.deepcopy(dataset.varnames)
+        dataset.data_extd=copy.deepcopy(dataset.data)
+
+        for v in dataset.varnames:
+            idx=np.where(dataset.varnames == v)
+            idx=idx[0][0]
+            newVar=v+"^2"
+            dataset.varnames_extd=np.append(dataset.varnames_extd,newVar)
+            dataset.data_extd=np.append(dataset.data_extd,np.transpose(np.array([dataset.data_extd[:,idx]**2])),axis=1)
+            dataset.variablesClass[newVar]=dataset.variablesClass[v]
+
+            newVar = "exp("+v+")"
+            expV=np.transpose(np.exp(np.array([dataset.data_extd[:, idx]])))
+            if(not True in np.isinf(expV)):
+                dataset.varnames_extd = np.append(dataset.varnames_extd, newVar)
+                dataset.data_extd = np.append(dataset.data_extd, expV,axis=1)
+                dataset.variablesClass[newVar] = dataset.variablesClass[v]
+
+            newVar = "log("+v+")"
+            logV=np.transpose(np.log(np.array([dataset.data_extd[:, idx]])))
+            if (not True in np.isinf(logV) and not True in np.isnan(logV)):
+                dataset.varnames_extd = np.append(dataset.varnames_extd, newVar)
+                dataset.data_extd = np.append(dataset.data_extd, logV,axis=1)
+                dataset.variablesClass[newVar] = dataset.variablesClass[v]
+
+            newVar = "1/"+v
+            divV=np.transpose(np.divide(1,np.array([dataset.data_extd[:, idx]])))
+            if (not True in np.isinf(divV)):
+                dataset.varnames_extd = np.append(dataset.varnames_extd, newVar)
+                dataset.data_extd = np.append(dataset.data_extd, divV, axis=1)
+                dataset.variablesClass[newVar] = dataset.variablesClass[v]
+
+
+
+
+
 
         dataset.classesIn=[]
         dataset.varsIn=[]
@@ -275,27 +317,28 @@ class RFGraph_Model(QtGui.QMainWindow):
             if(not iClass in self.dataset.classesIn):
                 parIClass=[]
                 for (e1,e2) in self.adj_contrGraph.edges():
-                    if(e2.name ==iClass and not e1.name in parIClass):
+                    if(e2.name==iClass and not e1.name in parIClass):
                         parIClass.append(e1.name)
                 #parIClass=list(self.adj_contrGraph.edge[iClass].keys())
                 par=[]
-                for v in self.dataset.varnames:
+                for v in self.dataset.varnames_extd:
                     if(self.dataset.variablesClass[v] in parIClass):
                         par.append(v)
                 Y = list(self.dataset.data[:, i])
-                X=[]
 
-                idx=[list(self.dataset.varnames).index(v) for v in par]
-                X=self.dataset.data[:,idx]
 
-                nbEqToFind=10
+                idx=[list(self.dataset.varnames_extd).index(v) for v in par]
+                X=self.dataset.data_extd[:,idx]
+
+
+                nbEqToFind=13
 
                 for j in range(1,np.minimum(nbEqToFind,len(idx))+1):
                     clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=j)
 
                     clf.fit(X, Y)
                     pred = clf.predict(X)
-                    equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames[i], Y, pred)
+                    equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames_extd[i], Y, pred)
                     Si = self.SA_Eq(X, par, clf)
                     equacolOLine.append(Si)
                     equacolOtmp.extend(equacolOLine)
@@ -1069,10 +1112,8 @@ class RFGraph_Model(QtGui.QMainWindow):
                 if (maxy < p[1]):
                     maxy = p[1]
         for k in self.pos:
-            try:
-                self.pos[k] = ((self.pos[k][0] - minx) / (maxx - minx), (self.pos[k][1] - miny) / (maxy - miny))
-            except:
-                a=5
+            self.pos[k] = ((self.pos[k][0] - minx) / (maxx - minx), (self.pos[k][1] - miny) / (maxy - miny))
+
             # print(k +" : (" + str(self.pos[k][0]) + ","+str(self.pos[k][1])+")")
 
         self.lpos = copy.deepcopy(self.pos)

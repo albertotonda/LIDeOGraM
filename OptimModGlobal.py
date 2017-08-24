@@ -30,7 +30,10 @@ class OptimModGlobal:
         indvDict={}
         for i in range(len(self.modApp.dataset.varnames)):
             indvDict[self.modApp.dataset.varnames[i]]=indv[i]
-        res = ft.get_fitness(indvDict)
+        try:
+            res = ft.get_fitness(indvDict)
+        except:
+            res = ft.get_fitness(indvDict)
         return (res[0],)
 
     def mutEqua(self,indv, probmut):
@@ -98,11 +101,11 @@ class OptimModGlobal:
         #    r = pickle.load(f)
 
         #print('r:\n'+r)
-        NGEN=2
+        NGEN=25
         CXPB=0.8
         MUTPB=0.2
-        mu=2
-        lmbd=1
+        mu=100
+        lmbd=80
         halloffame=tools.HallOfFame(1)
         pop=toolbox.new_population(n=mu)
         fitnesses=toolbox.map(toolbox.evaluate, pop)
@@ -166,18 +169,18 @@ class OptimModGlobal:
         fit_maxs = logbook.select("max")
 
 
-        import matplotlib.pyplot as plt
-
-        fig, ax1 = plt.subplots()
-        ax1.plot(gen, fit_mins, "g-", label="Minimum Fitness")
-        ax1.plot(gen, fit_avgs, "y-", label="Average Fitness")
-        ax1.plot(gen, fit_stds, "k-", label="Std Fitness")
-        ax1.plot(gen, fit_maxs, "r-", label="Maximum Fitness")
-        ax1.set_xlabel("Generation")
-        ax1.set_ylabel("Fitness")
-        for tl in ax1.get_yticklabels():
-            tl.set_color("b")
-        fig.show()
+        # import matplotlib.pyplot as plt
+        #
+        # fig, ax1 = plt.subplots()
+        # ax1.plot(gen, fit_mins, "g-", label="Minimum Fitness")
+        # ax1.plot(gen, fit_avgs, "y-", label="Average Fitness")
+        # ax1.plot(gen, fit_stds, "k-", label="Std Fitness")
+        # ax1.plot(gen, fit_maxs, "r-", label="Maximum Fitness")
+        # ax1.set_xlabel("Generation")
+        # ax1.set_ylabel("Fitness")
+        # for tl in ax1.get_yticklabels():
+        #     tl.set_color("b")
+        # fig.show()
 
 
         with open('fitEvolNoExpNoMol10.dat','wb') as f:

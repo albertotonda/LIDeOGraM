@@ -133,8 +133,9 @@ class IncMatrixCanvas(QTableWidget):
         tableOrder = self.modApp.dataIncMat.columns
         eqs = []
         for place, col in enumerate(tableOrder):
-            if col == "Temperature": continue
-            if col == "Age" : continue
+            if col in self.modApp.dataset.varsIn: continue
+            #if col == "Temperature": continue
+            #if col == "Age" : continue
             eqs.append(self.modApp.dataIncMat.index.tolist().index(col)+int(best_ind[col]))
         l = len(self.modApp.dataIncMat.index.tolist())
         gmodelSize = len(eqs)
