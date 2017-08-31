@@ -20,7 +20,8 @@ from types import *
 class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
 
     def sceneEventFilter(self, event):
-        print(event)
+        #print(event)
+        pass
 
     def __init__(self,modApp):
 

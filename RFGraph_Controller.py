@@ -29,11 +29,11 @@ class RFGraph_Controller:
         self.modApp.help_params = Help.get_params()
 
     def testmultitouch(self,event):
-        print('event :'+str(event))
+        #print('event :'+str(event))
         return True
 
     def testmultitouch2(self,event):
-        print('event2 :'+str(event))
+        #print('event2 :'+str(event))
         return True
 
     # TODO
@@ -171,7 +171,7 @@ class RFGraph_Controller:
 
 
     def onMove2(self,event):
-        print('new event : ' + str(event))
+        #print('new event : ' + str(event))
         self.moveListMutex.acquire(True)
         self.moveEventList.append(event)
         self.moveListMutex.release()
@@ -211,7 +211,7 @@ class RFGraph_Controller:
 
 
     def onMove(self,event):
-        print(event)
+        #print(event)
 
         (x, y) = (event.xdata, event.ydata)
         if not x or not y:
@@ -240,7 +240,7 @@ class RFGraph_Controller:
 
         #self.onMoveMutex.acquire()
         if(event.button==1 and self.modApp.lastNodeClicked != None):
-            print(event)
+           # print(event)
 
             old_pos = self.modApp.pos[self.modApp.lastNodeClicked]
             self.modApp.pos[self.modApp.lastNodeClicked] = (event.xdata, event.ydata)

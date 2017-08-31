@@ -44,7 +44,7 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
         #self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert.csv")
-        self.dataset = Dataset("data/dataset_mol_cell_pop_nocalc_surexpr_x.x.x.-2.csv")
+        self.dataset = Dataset("data/branchednormalizied.ldg")
         #self.dataset = Dataset("data/physico_meteo_dbn_modif_thomas.csv")
 
         self.createConstraintsGraph()
