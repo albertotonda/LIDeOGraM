@@ -186,6 +186,7 @@ class EqTableCanvas(QTableWidget):
 
         if(self.modApp.globalModelView and not self.modApp.lastNodeClicked in self.modApp.varsIn and self.modApp.lastNodeClicked != None):
             self.item(self.modApp.selectedEq[self.modApp.lastNodeClicked], 2).setBackground(QColor(100, 100, 150))
+        pass
 
 
     def reformatNumberEquation(self,eq):

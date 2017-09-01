@@ -1074,18 +1074,24 @@ class RFGraph_Model(QtGui.QMainWindow):
         G.clear()
         for v in self.dataset.varnames:
             G.add_node(v)
-
+        ed=[]
         for i in range(len(self.pareto)):
             for j in range(len(self.pareto[i])):
                 #lIdxColPareto = self.pareto[i][j]
                 #if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
                     #if self.nbeq[i] == np.float64(0.0): continue
-                    if self.adj_contrGraph.has_edge(self.dataset.variablesClass[self.dataset.varnames[j]], self.dataset.variablesClass[self.dataset.varnames[i]]):
+                for k in range(len(self.adj_contrGraph.nodes())):
+                    if self.adj_contrGraph.nodes()[k].name == self.dataset.variablesClass[self.dataset.varnames[j]]:
+                        jClass=self.adj_contrGraph.nodes()[k]
+                    if self.adj_contrGraph.nodes()[k].name == self.dataset.variablesClass[self.dataset.varnames[i]]:
+                        iClass=self.adj_contrGraph.nodes()[k]
+                if self.adj_contrGraph.has_edge(jClass, iClass):
 #                        print(self.dataset.varnames[j] + " --> " + self.dataset.varnames[i] + " : " + self.dataset.variablesClass[self.dataset.varnames[j]] + " --> " + self.dataset.variablesClass[self.dataset.varnames[i]])
-                        G.add_edge(self.dataset.varnames[j], self.dataset.varnames[i],
-                                        adjsimple=self.adj_simple[i, j], adjfit=
-                                        self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
-                                        adjcontr=self.adj_contr[i, j])
+                    ed.append((self.dataset.varnames[j], self.dataset.varnames[i]))
+                    G.add_edge(self.dataset.varnames[j], self.dataset.varnames[i],
+                                    adjsimple=self.adj_simple[i, j], adjfit=
+                                    self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
+                                    adjcontr=self.adj_contr[i, j])
 
         #with open('initpos.dat', 'rb') as f:
         #    self.pos=pickle.load(f)

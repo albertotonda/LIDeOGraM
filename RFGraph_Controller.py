@@ -211,7 +211,7 @@ class RFGraph_Controller:
 
 
     def onMove(self,event):
-        print(event)
+        #print(event)
 
         (x, y) = (event.xdata, event.ydata)
         if not x or not y:
