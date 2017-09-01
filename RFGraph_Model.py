@@ -1094,6 +1094,12 @@ class RFGraph_Model(QtGui.QMainWindow):
         maxx = -np.inf
         miny = np.inf
         maxy = -np.inf
+        #minx = min(self.pos.values() ,lambda x : x[0])
+        #maxx = max(self.pos.values() ,lambda x : x[0])
+        #miny = min(self.pos.values() ,lambda x : x[1])
+        #maxy = max(self.pos.values() ,lambda x : x[1])
+
+
         for k, p in list(self.pos.items()):
             if (minx > p[0]):
                 minx = p[0]

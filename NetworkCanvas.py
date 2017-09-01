@@ -1,5 +1,7 @@
 #-*- coding: utf-8
 from sys import path
+from vispy import app, scene
+#import vispy.mpl_plot as plt
 path.append("fitness/")
 import matplotlib
 matplotlib.use("qt4agg")

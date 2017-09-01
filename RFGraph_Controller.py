@@ -9,6 +9,7 @@ from OptimModGlobal import OptimModGlobal
 import threading
 import re
 from itertools import compress
+#import neoselenium
 
 import random
 from OnOffCheckBox import *
@@ -24,6 +25,7 @@ class RFGraph_Controller:
         self.moveEventList=[]
         self.nbOnMoveWaiting=0
         self.lastEvent=None
+        #self.contextInfoDisplay = neoselenium.webgraph()
 
     def clickHelp(self):
         self.modApp.help_params = Help.get_params()
@@ -281,7 +283,6 @@ class RFGraph_Controller:
             return s
 
     def onClick(self, event):
-        # TODO  affichage du nom du noeud selectionné + changer couleur
         print("clicked")
         print(event)
         (x, y) = (event.xdata, event.ydata)
@@ -302,8 +303,6 @@ class RFGraph_Controller:
             self.modApp.clicked_line = -1
             updateFitGUI=True#Clean the equation table and the measured/predicted plot
             updateEqTable=True
-            #self.vwApp.eqTableGUI.updateView()
-            #self.vwApp.fitGUI.updateView()
             self.vwApp.clickedNodeLab.setText('Selected node: ' + self.p(self.modApp.lastNodeClicked))
 
         else:
@@ -313,6 +312,8 @@ class RFGraph_Controller:
             print("highlighting "+nodeclicked)
             #self.higlight(nodeclicked, self.p(self.modApp.lastNodeClicked))
             self.modApp.lastNodeClicked = nodeclicked
+
+            #self.contextInfoDisplay.request('MATCH (n) WHERE n.name = {} RETURN n\n'.format(nodeclicked))
 
             if (self.modApp.mode_cntrt == True):                    #Click action when we are deleting a link
                 self.deleteLink(nodeclicked)

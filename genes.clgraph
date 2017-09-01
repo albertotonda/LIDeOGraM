@@ -1,0 +1,169 @@
+{
+    "edge": [
+        [
+            "gene",
+            "alcohol"
+        ],
+        [
+            "gene",
+            "other"
+        ],
+        [
+            "gene",
+            "aldehyde"
+        ],
+        [
+            "gene",
+            "ester"
+        ]
+    ],
+    "node": [
+        {
+            "color": [
+                0.12156862745098039,
+                0.47058823529411764,
+                0.7058823529411765
+            ],
+            "lineWidth": 0,
+            "name": "alcohol",
+            "nodeList": [
+                "_2_methyl_1_propanol",
+                "_2_methyl_1_butanol",
+                "_3_methyl_1_butanol"
+            ],
+            "pos": [
+                0.46459709638752555,
+                0.7343784174723458
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6980392156862745,
+                0.8745098039215686,
+                0.5411764705882353
+            ],
+            "lineWidth": 0,
+            "name": "aldehyde",
+            "nodeList": [
+                "_2_methyl_butanal",
+                "_3_methyl_butanal",
+                "_2_methyl_propanal"
+            ],
+            "pos": [
+                0.4920807102935256,
+                0.1828966562715736
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.41568627450980394,
+                0.23921568627450981,
+                0.6039215686274509
+            ],
+            "lineWidth": 0,
+            "name": "other",
+            "nodeList": [
+                "ethyl_isobutyrate"
+            ],
+            "pos": [
+                0.6975509345884664,
+                0.20521500493892597
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.9921568627450981,
+                0.7490196078431373,
+                0.43529411764705883
+            ],
+            "lineWidth": 0,
+            "name": "gene",
+            "nodeList": [
+                "GECA10s00109g",
+                "KLLA0A10791g",
+                "KLLA0C19382g",
+                "KLLA0E23057g",
+                "KLLA0E19889g",
+                "DEHA2G21032g",
+                "HAAL_v1_70428",
+                "GECA24s00615g",
+                "GECA15s00373g",
+                "HAAL_v1_800100",
+                "KLLA0A02673g",
+                "KLLA0F22022g",
+                "GECA09s03013g",
+                "GECA09s00098g",
+                "LALA_v1_830008",
+                "GECA07s02430g",
+                "GECA32s02474g",
+                "KLLA0C12243g",
+                "KLLA0C07777g",
+                "GECA20s01396g",
+                "KLLA0F15202g",
+                "GECA01s04487g",
+                "KLLA0F21010g",
+                "GECA01s06104g",
+                "KLLA0B00451g",
+                "GECA03s03733g",
+                "GECA01s06874g",
+                "GECA01s10493g",
+                "KLLA0A10307g",
+                "GECA15s00593g",
+                "DEHA2G03740g",
+                "KLLA0F12364g",
+                "GECA20s00208g",
+                "DEHA2F09570g",
+                "GECA12s00527g",
+                "GECA08s02584g",
+                "GECA11s03343g",
+                "GECA18s01209g",
+                "GECA19s01275g",
+                "GECA12s03519g",
+                "DEHA2F00792g",
+                "KLLA0D10593g",
+                "GECA18s01803g",
+                "KLLA0C04774g",
+                "GECA07s02870g",
+                "KLLA0F07073g",
+                "GECA19s01407g",
+                "GECA05s06643g",
+                "CAJL_v1_250038",
+                "KLLA0B12584g",
+                "KLLA0F00440g",
+                "KLLA0D09999g",
+                "CAFW_v1_410017",
+                "GECA02s02694g",
+                "GECA11s00197g",
+                "GECA02s07072g"
+            ],
+            "pos": [
+                0.5785125110111315,
+                0.23635594224295398
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.8901960784313725,
+                0.10196078431372549,
+                0.10980392156862745
+            ],
+            "lineWidth": 0,
+            "name": "ester",
+            "nodeList": [
+                "isoamyl_acetate",
+                "_2_methyl_1_butanol_acetate",
+                "isobutyl_acetate"
+            ],
+            "pos": [
+                0.03503790921217054,
+                0.30601782062185545
+            ],
+            "size": 700
+        }
+    ],
+    "unbound": []
+}
