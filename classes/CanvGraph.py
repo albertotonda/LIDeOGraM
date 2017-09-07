@@ -165,6 +165,10 @@ class CanvGraph(QCanvas):
         renameAction.triggered.connect(lambda: [nodeClicked.changeColor(self.saveState), self.notifyAll()])
         rightclickMenu.addAction(renameAction)
 
+        operatorsAction=QtGui.QAction("Define the authorised operators for " + nodeClicked.name, self)
+        operatorsAction.triggered.connect(lambda: [nodeClicked.changeOperators(self.saveState), self.notifyAll()])
+        rightclickMenu.addAction(operatorsAction)
+
         yPxlSizeFig=int((self.fig.get_size_inches()*self.fig.dpi)[1])
         rightclickMenu.move(self.mapToGlobal(QtCore.QPoint(event.x, yPxlSizeFig-event.y)))
         rightclickMenu.show()
