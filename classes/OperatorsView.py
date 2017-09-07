@@ -1,71 +1,75 @@
+from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import *
 
+from PyQt4.QtGui import *
+
 class OperatorsView(QtGui.QMainWindow,QtGui.QGraphicsItem):
-    def __init__(self, modApp):
+    def __init__(self, classnode):
+
         QtGui.QMainWindow.__init__(self)
         QtGui.QGraphicsItem.__init__(self)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        # self.setWindowTitle(QtGui.QLabel("Test"))
-        self.setWindowTitle("LIDeoGraM")
+        self.classnode=classnode
+        self.setWindowTitle("Choose operators for " + classnode.name)
         self.icon = QtGui.QIcon("Icone.png")
         self.setWindowIcon(self.icon)
-
-        self.setWindowState(QtCore.Qt.WindowMaximized)
 
         self.main_widget = QtGui.QWidget(self)
 
         self.gridLayout = QtGui.QGridLayout(self.main_widget)
         self.gridLayout.setSpacing(5)
-        self.networkGUI = NetworkCanvas(self.modApp, self)
-        # self.gridLayout.addWidget(self.networkGUI, 1, 0, 7, 60)
-        self.gridLayout.addWidget(self.networkGUI, 1, 0, 2, 2)
-        self.incMatGUI = IncMatrixCanvas(self.modApp, self)
-        # self.gridLayout.addWidget(self.incMatGUI,1,61,12,60)
-        # self.gridLayout.addWidget(self.incMatGUI, 1, 2, 3, 1)
-        self.adjThreshold_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
-        self.adjThreshold_slider.setValue(self.modApp.adjThresholdVal * 100)
 
-        self.adjThreshold_lab = QtGui.QLabel('Edges importance : ')
-        # self.gridLayout.addWidget(self.adjThreshold_lab, 8, 0, 1, 2)
-        self.gridLayout.addWidget(self.adjThreshold_lab, 3, 0, 1, 1)
-        # self.gridLayout.addWidget(self.adjThreshold_slider, 8, 2, 1, 57)
-        self.gridLayout.addWidget(self.adjThreshold_slider, 3, 1, 1, 1)
+        self.CBexp=QCheckBox()
+        self.gridLayout.addWidget(self.CBexp, 0, 0, 1, 1)
+        self.Lexp = QtGui.QLabel('Exponentiel')
+        self.gridLayout.addWidget(self.Lexp, 0, 1, 1, 1)
+        self.CBlog = QCheckBox()
+        self.gridLayout.addWidget(self.CBlog, 1, 0, 1, 1)
+        self.Llog = QtGui.QLabel('Logarithm')
+        self.gridLayout.addWidget(self.Llog, 1, 1, 1, 1)
+        self.CBdiv = QCheckBox()
+        self.gridLayout.addWidget(self.CBdiv, 2, 0, 1, 1)
+        self.Ldiv = QtGui.QLabel('Inverse')
+        self.gridLayout.addWidget(self.Ldiv, 2, 1, 1, 1)
+        self.CBsq = QCheckBox()
+        self.gridLayout.addWidget(self.CBsq, 3, 0, 1, 1)
+        self.Lsq = QtGui.QLabel('Square')
+        self.gridLayout.addWidget(self.Lsq, 3, 1, 1, 1)
+        self.buttonOk = QtGui.QPushButton('Ok', self)
+        self.gridLayout.addWidget(self.buttonOk, 4, 1, 1, 1)
+        self.buttonCancel = QtGui.QPushButton('Cancel', self)
+        self.gridLayout.addWidget(self.buttonCancel, 4, 0, 1, 1)
 
+        if('Exponentiel' in self.classnode.operators):
+            self.CBexp.setChecked(True)
+        if ('Logarithm' in self.classnode.operators):
+            self.CBlog.setChecked(True)
+        if ('Inverse' in self.classnode.operators):
+            self.CBdiv.setChecked(True)
+        if ('Square' in self.classnode.operators):
+            self.CBsq.setChecked(True)
 
-        self.comprFitCmplx_lab_fit = QtGui.QLabel('Fitness')
-        # self.gridLayout.addWidget(self.comprFitCmplx_lab_fit, 9, 59, 1, 1)
-        self.selectContrTxtLab = QtGui.QLabel('')
-        self.gridLayout.addWidget(self.selectContrTxtLab, 0, 1, 1, 1)
-        selectContrFont = QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold)
-        self.selectContrTxtLab.setFont(selectContrFont)
-
-        self.clickedNodeLab = QtGui.QLabel('Selected node:')
-        selNodeFont = QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold)
-        self.clickedNodeLab.setFont(selNodeFont)
-        self.eqTableGUI = EqTableCanvas(self.modApp)
-        # self.gridLayout.addWidget(self.eqTableGUI, 1, 130, 6, 60)
-        self.gridLayout.addWidget(self.eqTableGUI, 1, 3, 1, 1)
-
-        self.gridLayout.addWidget(self.clickedNodeLab, 0, 3, 1, 1)
-
-        self.uncertaintyModifTxt = QtGui.QLineEdit()
-        self.uncertaintyModifButton = QtGui.QPushButton("Change Uncertainty")
-        self.fitGUI = FitCanvas(self.modApp)
-        # self.gridLayout.addWidget(self.fitGUI, 7, 130, 6, 60)
-
-        self.fit_widget = QtGui.QWidget(self)
-        self.fitLayout = QtGui.QGridLayout(self.fit_widget)
-        self.fitLayout.addWidget(self.uncertaintyModifTxt, 0, 0, 1, 1)
-        self.fitLayout.addWidget(self.uncertaintyModifButton, 0, 1, 1, 1)
-        self.fitLayout.addWidget(self.fitGUI, 1, 0, 1, 2)
-        self.gridLayout.addWidget(self.fit_widget, 2, 3, 2, 1)
-
-        self.buttonChangerEq = QtGui.QPushButton('Change equation', self)
-
-        self.gridLayout.addWidget(self.buttonChangerEq, 4, 0, 1, 1)
-
-
+        self.buttonOk.clicked.connect(self.OkClicked)
+        self.buttonCancel.clicked.connect(self.CancelClicked)
 
         self.setCentralWidget(self.main_widget)
+        QtGui.QMainWindow.show(self)
 
-        self.updateView()
+
+    def OkClicked(self):
+        newOps=[]
+        if(self.CBexp.isChecked()):
+            newOps.append('Exponentiel')
+        if(self.CBlog.isChecked()):
+            newOps.append('Logarithm')
+        if (self.CBdiv.isChecked()):
+            newOps.append('Inverse')
+        if (self.CBsq.isChecked()):
+            newOps.append('Square')
+        self.classnode.operators=newOps
+        self.close()
+
+
+
+    def CancelClicked(self):
+        self.close()

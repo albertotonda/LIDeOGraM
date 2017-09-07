@@ -255,31 +255,38 @@ class RFGraph_Model(QtGui.QMainWindow):
         for v in dataset.varnames:
             idx=np.where(dataset.varnames == v)
             idx=idx[0][0]
-            newVar=v+"^2"
-            dataset.varnames_extd=np.append(dataset.varnames_extd,newVar)
-            dataset.data_extd=np.append(dataset.data_extd,np.transpose(np.array([dataset.data_extd[:,idx]**2])),axis=1)
-            dataset.variablesClass[newVar]=dataset.variablesClass[v]
 
-            newVar = "exp("+v+")"
-            expV=np.transpose(np.exp(np.array([dataset.data_extd[:, idx]])))
-            if(not True in np.isinf(expV)):
-                dataset.varnames_extd = np.append(dataset.varnames_extd, newVar)
-                dataset.data_extd = np.append(dataset.data_extd, expV,axis=1)
+            constrNodeV=[n for n in constrGraph.nodes() if n.name == dataset.variablesClass[v]][0]
+
+            if('Square' in constrNodeV.operators):
+                newVar=v+"^2"
+                dataset.varnames_extd=np.append(dataset.varnames_extd,newVar)
+                dataset.data_extd=np.append(dataset.data_extd,np.transpose(np.array([dataset.data_extd[:,idx]**2])),axis=1)
+                dataset.variablesClass[newVar]=dataset.variablesClass[v]
+
+            if ('Exponentiel' in constrNodeV.operators):
+                newVar = "exp("+v+")"
+                expV=np.transpose(np.exp(np.array([dataset.data_extd[:, idx]])))
+                if(not True in np.isinf(expV)):
+                    dataset.varnames_extd = np.append(dataset.varnames_extd, newVar)
+                    dataset.data_extd = np.append(dataset.data_extd, expV,axis=1)
                 dataset.variablesClass[newVar] = dataset.variablesClass[v]
 
-            newVar = "log("+v+")"
-            logV=np.transpose(np.log(np.array([dataset.data_extd[:, idx]])))
-            if (not True in np.isinf(logV) and not True in np.isnan(logV)):
-                dataset.varnames_extd = np.append(dataset.varnames_extd, newVar)
-                dataset.data_extd = np.append(dataset.data_extd, logV,axis=1)
-                dataset.variablesClass[newVar] = dataset.variablesClass[v]
+            if ('Logarithm' in constrNodeV.operators):
+                newVar = "log("+v+")"
+                logV=np.transpose(np.log(np.array([dataset.data_extd[:, idx]])))
+                if (not True in np.isinf(logV) and not True in np.isnan(logV)):
+                    dataset.varnames_extd = np.append(dataset.varnames_extd, newVar)
+                    dataset.data_extd = np.append(dataset.data_extd, logV,axis=1)
+                    dataset.variablesClass[newVar] = dataset.variablesClass[v]
 
-            newVar = "1/"+v
-            divV=np.transpose(np.divide(1,np.array([dataset.data_extd[:, idx]])))
-            if (not True in np.isinf(divV)):
-                dataset.varnames_extd = np.append(dataset.varnames_extd, newVar)
-                dataset.data_extd = np.append(dataset.data_extd, divV, axis=1)
-                dataset.variablesClass[newVar] = dataset.variablesClass[v]
+            if ('Inverse' in constrNodeV.operators):
+                newVar = "1/"+v
+                divV=np.transpose(np.divide(1,np.array([dataset.data_extd[:, idx]])))
+                if (not True in np.isinf(divV)):
+                    dataset.varnames_extd = np.append(dataset.varnames_extd, newVar)
+                    dataset.data_extd = np.append(dataset.data_extd, divV, axis=1)
+                    dataset.variablesClass[newVar] = dataset.variablesClass[v]
 
 
 

@@ -1,5 +1,6 @@
 import random
 from PyQt4 import QtGui
+from classes.OperatorsView import *
 
 class ClassNode:
 
@@ -47,7 +48,8 @@ class ClassNode:
             self.color = (rep.red()/255, rep.green()/255, rep.blue()/255)
 
     def changeOperators(self,beforeChange=None):
-
+        self.OpView=OperatorsView(self)
+        #print(str(self.abc))
 
     color = [(31,120,180), (178,223,138), (227,26,28), (253,191,111), (106,61,154), (166,206,227), (51,160,44), (251,154,153), (255,127,0), (202,178,214), (177,89,40)]
     for n in range(len(color)):

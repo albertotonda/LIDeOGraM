@@ -128,7 +128,7 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
 
         #self.main_widget.setFocus()
         self.setCentralWidget(self.main_widget)
-        # self.show()
+        # c)
         self.updateView()
 
 
