@@ -49,7 +49,8 @@ class ClassNode:
 
     def changeOperators(self,beforeChange=None):
         self.OpView=OperatorsView(self)
-        #print(str(self.abc))
+        pass
+
 
     color = [(31,120,180), (178,223,138), (227,26,28), (253,191,111), (106,61,154), (166,206,227), (51,160,44), (251,154,153), (255,127,0), (202,178,214), (177,89,40)]
     for n in range(len(color)):

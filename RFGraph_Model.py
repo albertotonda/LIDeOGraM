@@ -44,7 +44,8 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
         #self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert.csv")
-        self.dataset = Dataset("data/dataset_mol_cell_pop_nocalc_surexpr_x.x.x.-2.csv")
+        #self.dataset = Dataset("data/dataset_mol_cell_pop_nocalc_surexpr_x.x.x.-2.csv")
+        self.dataset = Dataset("C:/Users/Admin/Downloads/infos_parcelles_lideogram (5).csv")
         #self.dataset = Dataset("data/physico_meteo_dbn_modif_thomas.csv")
 
         self.createConstraintsGraph()
@@ -723,7 +724,10 @@ class RFGraph_Model(QtGui.QMainWindow):
             for v2 in self.dataset.varnames:
                 xd=self.dataset.getAllExpsforVar(v1)
                 yd=self.dataset.getAllExpsforVar(v2)
-                self.allPearson[(v1,v2)] = pearsonr(xd, yd)[0]
+                try:
+                    self.allPearson[(v1,v2)] = pearsonr(xd, yd)[0]
+                except:
+                    pass
         self.edgeColorPearson = {}
         for ek, ev in self.allPearson.items():
             ek0_parClass=self.dataset.variablesClass[ek[0]]
@@ -1011,10 +1015,10 @@ class RFGraph_Model(QtGui.QMainWindow):
             for j in range(len(self.pareto[i])):  # j is parent
                 lIdxColPareto = self.pareto[i][j]
                 if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
-                    if (self.adj_fit[i, j] == 0):
-                        raise Exception('Error on fit color')
-                    if (self.adj_cmplx[i, j] == 0):
-                        raise Exception('Error on cmplx color')
+                    #if (self.adj_fit[i, j] == 0):
+                    #    raise Exception('Error on fit color')
+                    #if (self.adj_cmplx[i, j] == 0):
+                    #    raise Exception('Error on cmplx color')
 
                     #if self.nbeq[i] == np.float64(0.0): continue
 
@@ -1103,6 +1107,8 @@ class RFGraph_Model(QtGui.QMainWindow):
         #with open('initpos.dat', 'rb') as f:
         #    self.pos=pickle.load(f)
         self.pos = nx.nx_pydot.graphviz_layout(G, prog='dot')
+        #self.pos = nx.circular_layout(G)
+        #self.pos = nx.nx_pydot.pydot_layout(G)
         minx = np.inf
         maxx = -np.inf
         miny = np.inf
