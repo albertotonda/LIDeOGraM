@@ -18,6 +18,11 @@ from SALib.test_functions import Ishigami
 from SALib.util import read_param_file
 #from fitness import fitness
 from fitness import Individual
+from equaOptim import equaOptim
+from deap import base
+from deap import creator
+from deap import tools
+from deap import algorithms
 import pandas as pd
 from Dataset import Dataset
 from sympy.parsing.sympy_parser import parse_expr
@@ -44,8 +49,8 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
         #self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert.csv")
-        #self.dataset = Dataset("data/dataset_mol_cell_pop_nocalc_surexpr_x.x.x.-2.csv")
-        self.dataset = Dataset("C:/Users/Admin/Downloads/infos_parcelles_lideogram (5).csv")
+        self.dataset = Dataset("data/dataset_mol_cell_pop_nocalc_surexpr_x.x.x.-2.csv")
+        #self.dataset = Dataset("C:/Users/Admin/Downloads/infos_parcelles_lideogram (5).csv")
         #self.dataset = Dataset("data/physico_meteo_dbn_modif_thomas.csv")
 
         self.createConstraintsGraph()
@@ -315,6 +320,66 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.show()
 
 
+    def eaForLinearRegression(self,X,Y,nb):
+
+        if(nb==1):
+            bestFit=np.Inf
+            bestX=-1
+            bestReg=None
+            for i in range(X.shape[1]):
+                reg=linear_model.LinearRegression()
+                X1D=[]
+                for e in X[:,i]:
+                    X1D.append([e])
+                reg.fit(X1D,Y)
+                pred=reg.predict(X1D)
+                fit = fitness(Y, pred)
+                if(fit < bestFit):
+                    bestFit=fit
+                    bestX=i
+                    bestReg=reg
+
+            class MyReg():
+                def __init__(self,coef,intercept,pred):
+                    self.coef_=coef
+                    self.intercept_=intercept
+                    self.pred=pred
+
+            coef=np.zeros(X.shape[1])
+            coef[bestX]=bestReg.coef_[0]
+            X1D = []
+            for e in X[:, bestX]:
+                X1D.append([e])
+            falseReg=MyReg(coef,bestReg.intercept_,bestReg.predict(X1D))
+            return falseReg
+        else:
+            print("OPTIMISATION WITH " + str(nb) )
+            eqOpt=equaOptim(X,Y,nb)
+            ret=eqOpt.startOptim()
+
+            reg = linear_model.LinearRegression()
+            xind=np.argwhere(np.array(ret) == 1).flatten()
+            reg.fit(X[:,xind], Y)
+            pred = reg.predict(X[:,xind])
+
+            class MyReg():
+                def __init__(self, coef, intercept, pred):
+                    self.coef_ = coef
+                    self.intercept_ = intercept
+                    self.pred = pred
+
+            coef = np.zeros(X.shape[1])
+
+            for i in range(len(xind)):
+                coef[xind[i]]=reg.coef_[i]
+
+            falseReg=MyReg(coef,reg.intercept_,pred)
+
+            return falseReg
+
+
+
+
     def findLassoEqs(self):
         equacolOtmp=[]
         self.createProgressBar()
@@ -340,14 +405,18 @@ class RFGraph_Model(QtGui.QMainWindow):
                 X=self.dataset.data_extd[:,idx]
 
 
-                nbEqToFind=13
+                nbEqToFind=6
 
                 for j in range(1,np.minimum(nbEqToFind,len(idx))+1):
-                    clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=j)
 
-                    clf.fit(X, Y)
-                    pred = clf.predict(X)
+
+                    clf = self.eaForLinearRegression(X,Y,j)#linear_model.LinearRegression()#linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=j)
+                    #clf.fit(X, Y)
+                    #pred = clf.predict(X)
+                    pred=clf.pred
+
                     equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames_extd[i], Y, pred)
+                    #TODO restaurer sensitivity analysis
                     Si = random.random()#self.SA_Eq(X, par, clf)
                     equacolOLine.append(Si)
                     equacolOtmp.extend(equacolOLine)
