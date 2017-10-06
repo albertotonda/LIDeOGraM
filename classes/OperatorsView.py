@@ -35,6 +35,11 @@ class OperatorsView(QtGui.QMainWindow,QtGui.QGraphicsItem):
         self.gridLayout.addWidget(self.CBsq, 3, 0, 1, 1)
         self.Lsq = QtGui.QLabel('Square')
         self.gridLayout.addWidget(self.Lsq, 3, 1, 1, 1)
+        self.CBmult = QCheckBox()
+        self.gridLayout.addWidget(self.CBmult, 3, 0, 1, 1)
+        self.Lmult = QtGui.QLabel('Multiplication(x1 * x2)')
+        self.gridLayout.addWidget(self.Lmult, 3, 1, 1, 1)
+
         self.buttonOk = QtGui.QPushButton('Ok', self)
         self.gridLayout.addWidget(self.buttonOk, 4, 1, 1, 1)
         self.buttonCancel = QtGui.QPushButton('Cancel', self)
@@ -48,7 +53,8 @@ class OperatorsView(QtGui.QMainWindow,QtGui.QGraphicsItem):
             self.CBdiv.setChecked(True)
         if ('Square' in self.classnode.operators):
             self.CBsq.setChecked(True)
-
+        if ('Multiplication(x1 * x2)' in self.classnode.operators):
+            self.CBmult.setChecked(True)
         self.buttonOk.clicked.connect(self.OkClicked)
         self.buttonCancel.clicked.connect(self.CancelClicked)
 
@@ -66,6 +72,9 @@ class OperatorsView(QtGui.QMainWindow,QtGui.QGraphicsItem):
             newOps.append('Inverse')
         if (self.CBsq.isChecked()):
             newOps.append('Square')
+        if (self.CBsq.isChecked()):
+            newOps.append('Multiplication(x1 * x2)')
+
         self.classnode.operators=newOps
         self.close()
 
