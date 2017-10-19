@@ -45,8 +45,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
         #self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert.csv")
         #self.dataset = Dataset("data/dataset_mol_cell_pop_nocalc_surexpr_x.x.x.-2.csv")
-        self.dataset = Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert_FOODSIM.csv")
-        #self.dataset = Dataset("C:/Users/Admin/Downloads/infos_parcelles_lideogram (5).csv")
+        self.dataset = Dataset("data/balloon2.csv")
         #self.dataset = Dataset("data/physico_meteo_dbn_modif_thomas.csv")
 
         self.createConstraintsGraph()
@@ -295,8 +294,8 @@ class RFGraph_Model(QtGui.QMainWindow):
                 for v2 in [v2 for v2 in constrNodeV.nodeList if v2!=v]:
                     idx2 = np.where(dataset.varnames == v2)
                     idx2 = idx2[0][0]
-                    newVar = v+"*"+v2
-                    multV=np.transpose(np.array([dataset.data_extd[:, idx2]])*np.array([dataset.data_extd[:, idx]]))
+                    newVar = v+"/"+v2
+                    multV=np.transpose(np.array([dataset.data_extd[:, idx2]])/np.array([dataset.data_extd[:, idx]]))
                     dataset.varnames_extd = np.append(dataset.varnames_extd, newVar)
                     dataset.data_extd = np.append(dataset.data_extd, multV, axis=1)
                     dataset.variablesClass[newVar] = dataset.variablesClass[v]
@@ -352,7 +351,7 @@ class RFGraph_Model(QtGui.QMainWindow):
                 X=self.dataset.data_extd[:,idx]
 
 
-                nbEqToFind=6
+                nbEqToFind=13
 
                 for j in range(1,np.minimum(nbEqToFind,len(idx))+1):
                     clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=j)

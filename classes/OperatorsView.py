@@ -36,14 +36,14 @@ class OperatorsView(QtGui.QMainWindow,QtGui.QGraphicsItem):
         self.Lsq = QtGui.QLabel('Square')
         self.gridLayout.addWidget(self.Lsq, 3, 1, 1, 1)
         self.CBmult = QCheckBox()
-        self.gridLayout.addWidget(self.CBmult, 3, 0, 1, 1)
+        self.gridLayout.addWidget(self.CBmult, 4, 0, 1, 1)
         self.Lmult = QtGui.QLabel('Multiplication(x1 * x2)')
-        self.gridLayout.addWidget(self.Lmult, 3, 1, 1, 1)
+        self.gridLayout.addWidget(self.Lmult, 4, 1, 1, 1)
 
         self.buttonOk = QtGui.QPushButton('Ok', self)
-        self.gridLayout.addWidget(self.buttonOk, 4, 1, 1, 1)
+        self.gridLayout.addWidget(self.buttonOk, 5, 1, 1, 1)
         self.buttonCancel = QtGui.QPushButton('Cancel', self)
-        self.gridLayout.addWidget(self.buttonCancel, 4, 0, 1, 1)
+        self.gridLayout.addWidget(self.buttonCancel, 5, 0, 1, 1)
 
         if('Exponentiel' in self.classnode.operators):
             self.CBexp.setChecked(True)
