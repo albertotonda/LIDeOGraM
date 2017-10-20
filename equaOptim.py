@@ -80,8 +80,9 @@ class equaOptim:
     def mutation(self,indv):
         idx0 = np.argwhere(np.array(indv) == 0).flatten()
         idx1 = np.argwhere(np.array(indv) == 1).flatten()
-        indv[random.sample(list(idx0), 1)[0]]=1.0
-        indv[random.sample(list(idx1), 1)[0]]=0.0
+        if len(list(idx0)) != 0:
+            indv[random.sample(list(idx0), 1)[0]]=1.0
+            indv[random.sample(list(idx1), 1)[0]]=0.0
 
         return (indv,)
 
@@ -124,11 +125,11 @@ class equaOptim:
         logbook = tools.Logbook()
 
 
-        NGEN = 25
+        NGEN = 50
         CXPB = 0.8
         MUTPB = 0.2
-        mu = 1000
-        lmbd = 800
+        mu = 5000 #1000
+        lmbd = 4000 #800
         halloffame = tools.HallOfFame(1)
         pop = toolbox.new_population(n=mu)
         fitnesses = toolbox.map(toolbox.evaluate, pop)

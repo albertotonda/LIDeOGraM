@@ -3,7 +3,8 @@ import numpy as np
 
 class Dataset:
 
-    def __init__(self,datafile):
+    def __init__(self,datafile, constmodel="data/cmdl"):
+        self.ctmod = constmodel
         datafileReader = open(datafile)
         line = datafileReader.readline()  # First line are the variables name
         self.varnames = []
@@ -48,6 +49,8 @@ class Dataset:
         self.true_variablesClass=self.variablesClass
         self.true_data=self.data
         self.true_nbExp=self.nbExp
+        self.varnames_extd = None
+        self.data_extd = None
 
 
 

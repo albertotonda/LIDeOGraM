@@ -1,12 +1,13 @@
+#recupere la soltuion réel,
+#recupere les soltuion lideo
+# Tracé démo de l'algo d'apprentissage ?
+# Tracé démo de l'optimisation global en fct bruit et taille model
+#Auto générer les tests ?
 #-*- coding: utf-8
 import random
-import matplotlib as mpl
 import numpy as np
-from numpy import genfromtxt
 import copy
 import networkx as nx
-#nx.use('qt4agg')
-from ArrayConverter import ArrayConverter
 import re
 import sys
 sys.path.append("fitness/")
@@ -14,52 +15,43 @@ sys.path.append('SALib/SaLib-master')
 from SALib.analyze import sobol
 from SALib.sample import saltelli
 from scipy.stats.stats import pearsonr
-from SALib.test_functions import Ishigami
-from SALib.util import read_param_file
-#from fitness import fitness
 from fitness import Individual
 from equaOptim import equaOptim
-from deap import base
-from deap import creator
-from deap import tools
-from deap import algorithms
 import pandas as pd
 from Dataset import Dataset
-from sympy.parsing.sympy_parser import parse_expr
-from sympy import sympify
-import pickle
-from PyQt4.QtGui import *
 import ColorMaps
 from collections import OrderedDict
 from sklearn import linear_model
 from fitness import fitness
 from classes.ClassGraph import ClassGraph
 from classes.ClassNode import ClassNode
+from OptimModGlobal import OptimModGlobal
 from classes.WindowClasses import WindowClasses
-from time import sleep
-import threading
-from RFGraph_View import RFGraph_View
+import logging
+import time
+
 from RFGraph_Controller import RFGraph_Controller
-from QtConnector import QtConnector
-from PyQt4 import QtGui
 # TODO  Définie la position des noeuds et les initialise
-class RFGraph_Model(QtGui.QMainWindow):
+class RandomModels():
 
-    def __init__(self):
-
-        QtGui.QMainWindow.__init__(self) #Only for the progress bar
-        #self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert.csv")
-        self.dataset = Dataset("data/outbig.mdl")
-        #self.dataset = Dataset("C:/Users/Admin/Downloads/infos_parcelles_lideogram (5).csv")
-        #self.dataset = Dataset("data/physico_meteo_dbn_modif_thomas.csv")
-
-        self.createConstraintsGraph()
+    def __init__(self, mdl):
+        logging.basicConfig(filename=mdl+'.log', level=logging.DEBUG)
+        logging.info("Program started -- {}".format(time.strftime("%d %m %y: %H %M %S")))
+        self.name = mdl
+        self.dataset = Dataset(mdl)
         self.firstInit=True
-        #self.dataset = Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr.csv")
-        #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr.txt')
-        #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_noMol.txt')
+        ctgraph = self.createConstraintsGraph()
+        self.init2(ctgraph)
+        logging.info("global search started -- {}".format(time.strftime("%d %m %y: %H %M %S")))
+        optModGlob = OptimModGlobal(self)
+        self.best_indv = optModGlob.startOptim()
+        logging.info("global search finished -- {}".format(time.strftime("%d %m %y: %H %M %S")))
+        logging.info("Program end -- {}".format(time.strftime("%d %m %y: %H %M %S")))
 
-        #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_expertcorrected.txt')
+        logging.info("==============================================================")
+
+
+
     def init2(self,contrgraph):
 
         self.adj_contrGraph = contrgraph
@@ -67,12 +59,18 @@ class RFGraph_Model(QtGui.QMainWindow):
         for (e0,e1) in self.adj_contrGraph.edges():
             self.adj_contrGraph.edgesTrueName.append((e0.name,e1.name))
         self.correctDataset(self.dataset,self.adj_contrGraph)
-
+        logging.info("local search started -- {}".format(time.strftime("%d %m %y: %H %M %S")))
         self.equacolO = self.findLassoEqs()
+        logging.info("local search finished -- {}".format(time.strftime("%d %m %y: %H %M %S")))
 
-        #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_expertcorrected_noMol.txt')
+
+        lst = self.equacolO.tolist() #("equationscree", sep=",")
+        with open(self.name+"_equas",'w') as output:
+            for _ in lst:
+                output.write(",".join(map(lambda x: str(x),_)))
+                output.write("\n")
+
         self.nbequa = len(self.equacolO)  # Number of Equation for all variables taken together
-
         self.adj_simple=np.zeros((self.dataset.nbVar,self.dataset.nbVar))
         self.adj_fit=np.ones((self.dataset.nbVar,self.dataset.nbVar))
         self.adj_cmplx=np.ones((self.dataset.nbVar,self.dataset.nbVar))
@@ -82,11 +80,10 @@ class RFGraph_Model(QtGui.QMainWindow):
         for l in range(self.nbequa):
             for h in range(self.dataset.nbVar):
                 #Possible parents for the equations
+                cont_h = -1
                 try:
                     cont_h=len(re.findall(r'\b%s\b' % re.escape(self.dataset.varnames[h]),self.equacolO[l,3]))  #How many times the variable self.varname[h] is found in the equation self.equacolO[l,3]
                     cont_h =cont_h+len(re.findall(r'\b%s\b' % re.escape(self.dataset.varnames[h]+"^2"), self.equacolO[l, 3]))
-
-
                 except:
                     pass
                 if(cont_h>0): #If present, add infos in adjacence matrix
@@ -99,7 +96,6 @@ class RFGraph_Model(QtGui.QMainWindow):
                     self.equacolPO.append([self.equacolO[l,0],self.equacolO[l,1],self.equacolO[l,2],self.dataset.varnames[h],self.equacolO[l,3], self.equacolO[l,4]])
             self.nbeq[list(self.dataset.varnames).index(self.equacolO[l,2])]+=1 # Comptage du nombre d'équations pour chaque enfant
 
-        #self.equacolPO=ArrayConverter.convertPO(self.equacolPO)
         self.equacolPO =np.array(self.equacolPO, dtype=object)
         self.adj_cmplx=np.power(self.adj_cmplx,1/self.adj_simple)
         self.adj_cmplx[self.adj_simple==0]=0
@@ -109,23 +105,7 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         self.adj_contr=self.createConstraints()
 
-        #self.pos=self.pos_graph()
         self.pos = []
-        #self.adj_simple = genfromtxt('data/adj_simple_withMol.csv', delimiter=',')
-        #self.adj_cmplx = genfromtxt('data/adj_cmplx_withMol.csv', delimiter=',')
-        #self.adj_fit = genfromtxt('data/adj_fit_withMol.csv', delimiter=',')
-        #self.adj_contr = genfromtxt('data/adj_contraintes_withMol.csv', delimiter=',')
-        #self.dataset.varnames = genfromtxt('data/varnames_withMol.csv', dtype='str', delimiter=',')
-        #self.nbeq = genfromtxt('data/nbeq_withMol.csv', delimiter=',')
-        #self.equacolPOf = genfromtxt('data/equa_with_col_ParentOffspring_withMol.csv', 'float', delimiter=',')
-        #self.equacolPOs = genfromtxt('data/equa_with_col_ParentOffspring_withMol.csv', 'str', delimiter=',')
-        #self.equacolOf = genfromtxt('data/equa_with_col_Parent_withMol.csv', 'float', delimiter=',')
-        #self.equacolOs = genfromtxt('data/equa_with_col_Parent_withMol.csv', 'str', delimiter=',')
-        #self.datasetset_cell_popS = genfromtxt('data/dataset_cell_pop.csv', 'str', delimiter=',')
-        #self.datasetset_mol_cellS = genfromtxt('data/dataset_mol_cell.csv', 'str', delimiter=',')
-        #self.datasetset_cell_popF = genfromtxt('data/dataset_cell_pop.csv', 'float', delimiter=',')
-        #self.datasetset_mol_cellF = genfromtxt('data/dataset_mol_cell.csv', 'float', delimiter=',')
-        #self.varsIn = ['Temperature','Age','AMACBIOSYNTHsousexpr','BIOSYNTH_CARRIERSsousexpr','CELLENVELOPEsousexpr','CELLPROCESSESsousexpr','CENTRINTMETABOsousexpr','ENMETABOsousexpr','FATTYACIDMETABOsousexpr','Hypoprotsousexpr','OTHERCATsousexpr','PURINESsousexpr','REGULFUNsousexpr','REPLICATIONsousexpr','TRANSCRIPTIONsousexpr','TRANSLATIONsousexpr','TRANSPORTPROTEINSsousexpr','AMACBIOSYNTHsurexpr','BIOSYNTH_CARRIERSsurexpr','CELLENVELOPEsurexpr','CELLPROCESSESsurexpr','CENTRINTMETABOsurexpr','ENMETABOsurexpr','FATTYACIDMETABOsurexpr','Hypoprotsurexpr','OTHERCATsurexpr','PURINESsurexpr','REGULFUNsurexpr','REPLICATIONsurexpr','TRANSCRIPTIONsurexpr','TRANSLATIONsurexpr','TRANSPORTPROTEINSsurexpr']
         self.varsIn = self.dataset.varsIn
         self.NodeConstraints = []
         self.lastNodeClicked = None
@@ -178,24 +158,10 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.forbiddenNodes = []
         self.nodesWithNoEquations=[]
 
-        #Necessaire de faire une deepcopy ?
-        #self.lpos= copy.deepcopy(self.pos)
-        #for p in self.lpos:  # raise text positions
-        # self.modApp.lpos[p] = (self.modApp.lpos[p][0],self.modApp.lpos[p][1]+0.04)
-        #    self.lpos[p][1] +=0.04
-
-        # Charge la base de données d'équations à afficher après chargement
-        # TODO: Base de données d'équations à changer
-
-
         self.data = []
 
-        #self.dataMaxComplexity = self.cmplxMax
         for i in range(len(self.equacolO)):
             self.data.append(self.equacolO[i, np.ix_([0, 1, 3, 4])][0])
-            #self.dataMaxComplexity = max(self.dataMaxComplexity, self.equacolPO[i,np.ix_([0])][0][0])
-            #self.dataMaxFitness = max(self.dataMaxFitness, self.equacolPO[i,np.ix_([1])][0][0])
-
 
 
         self.labels = {}
@@ -206,10 +172,8 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.computeEquaPerNode()
 
         ##########################
-        #self.datumIncMat = pd.read_csv("data/equa_with_col_Parent_withMol.csv", header=None)
-        #self.datumIncMat = self.datumIncMat.sort(2)
+
         self.datumIncMat=pd.DataFrame(self.equacolO)
-        variables = self.varsIn + sorted(self.datumIncMat[2].unique().tolist())
 
         self.df_IncMat = pd.DataFrame(index=self.datumIncMat[2], columns=self.varsIn + self.datumIncMat[2].unique().tolist())
         for row in range(self.df_IncMat.shape[0]):
@@ -219,23 +183,15 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.dataIncMat = self.df_IncMat
         self.shapeIncMat = self.dataIncMat.shape
 
-        #self.dataIncMat.to_csv('debugMat.csv',header = True, index = True)
-
         ##########################
 
 
 
         self.initGraph()
-        if self.firstInit:
-            vwApp = RFGraph_View(self)
-            cntrApp = RFGraph_Controller(self, vwApp)
-            vwApp.cntrApp = cntrApp
-            vwApp.eqTableGUI.cntrApp = cntrApp
-            vwApp.updateMenuBar(cntrApp)
-            qtconnector = QtConnector(vwApp, cntrApp)
-        self.firstInit=False
+
 
     def correctDataset(self,dataset,constrGraph):
+        #TODO viere ceux qui servent a rien
         dataset.varnames=dataset.true_varnames
         dataset.nbVar = dataset.true_nbVar
         dataset.variablesClass = dataset.true_variablesClass
@@ -306,22 +262,11 @@ class RFGraph_Model(QtGui.QMainWindow):
                 dataset.classesIn.append(vc.name)
                 dataset.varsIn.extend(vc.nodeList)
 
-
     def recomputeNode(self,node,neweqs):
         self.equacolO[self.equacolO[:, 2] == node, :]
         linesToRemove = np.ix_(self.equacolO[:, 2] == node)
 
-    def createProgressBar(self):
-        self.setWindowTitle("Searching for models")
-        self.progress = QtGui.QProgressBar(self)
-        self.progress.setGeometry(0, 0, 250, 20)
-        self.setGeometry(50, 50, 295, 25)
-        self.progress.setValue(0)
-        self.show()
-
-
     def eaForLinearRegression(self,X,Y,nb):
-
         if(nb==1):
             bestFit=np.Inf
             bestX=-1
@@ -377,15 +322,10 @@ class RFGraph_Model(QtGui.QMainWindow):
 
             return falseReg
 
-
-
-
     def findLassoEqs(self):
         equacolOtmp=[]
-        self.createProgressBar()
         for i in range(len(self.dataset.varnames)):
             print('computing : ' + self.dataset.varnames[i])
-            self.progress.setValue(i*100/len(self.dataset.varnames))
             iClass = self.dataset.variablesClass[self.dataset.varnames[i]]
             print(self.dataset.classesIn)
             if(not iClass in self.dataset.classesIn):
@@ -510,7 +450,7 @@ class RFGraph_Model(QtGui.QMainWindow):
                 #         currIter2=0
                 #         curEqFound += 1
 
-        self.hide()
+       # self.hide()
         equacolOtmp = np.array(equacolOtmp, dtype=object)
         equacolOtmp = equacolOtmp.reshape(len(equacolOtmp)/7,7)
 
@@ -531,6 +471,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         pb['groups'] = None
         pb['names'] = par
         pb['num_vars'] = len(par)
+        param_values = None
         try:
             param_values = saltelli.sample(pb, 100, calc_second_order=False)
         except:
@@ -545,7 +486,6 @@ class RFGraph_Model(QtGui.QMainWindow):
         #                   print_to_console=False, parallel=False)
         Si['par']=par
         return Si
-
 
     def regrToEquaColO(self,clf,parNode,childNode,Y,pred):
         line=[]
@@ -598,7 +538,6 @@ class RFGraph_Model(QtGui.QMainWindow):
                 self.equaPerNode[v] = self.equacolO[np.ix_(self.equacolO[:, 2] == [v], [0, 1, 2, 3, 4])]
 
     def readEureqaResults(self,file):
-        #Read eureqa file
         stringTab=[]
         eureqafile = open(file, 'r')
         for line in eureqafile:
@@ -642,94 +581,13 @@ class RFGraph_Model(QtGui.QMainWindow):
     def getV(self,variables, line, v):
         table = []
         for i in variables:
-            # g = "\W"+i+"\W"
-            # if re.search(g, line):
             if (re.findall(r'\b%s\b' % re.escape(i), line)):
-                # if i in line:
                 table.append(1)
             elif v == i:
                 table.append(-1)
             else:
                 table.append(0)
-        # print(v)
-        # print(table)
         return table
-
-    def pos_graph(self):
-        pos = {}
-        pos['Age'] = np.array([0.66, 15.0 / 15.0])
-        pos['Temperature'] = np.array([0.33, 15.0 / 15.0])
-        pos['AMACBIOSYNTH'] = np.array([random.random() * 0.1 + 0.05,14.0/15.0])
-        pos['BIOSYNTH_CARRIERS'] = np.array([random.random() * 0.1 + 0.25,14.0/15.0])
-        pos['CELLENVELOPE'] = np.array([random.random() * 0.1 + 0.45,14.0/15.0])
-        pos['CELLPROCESSES'] = np.array([random.random() * 0.1 + 0.65,14.0/15.0])
-        pos['CENTRINTMETABO'] = np.array([random.random() * 0.1 + 0.85,14.0/15.0])
-        pos['ENMETABO'] = np.array([random.random() * 0.1 + 0.05,13.0/15.0])
-        pos['FATTYACIDMETABO'] = np.array([random.random() * 0.1 + 0.25,13.0/15.0])
-        pos['Hypoprot'] = np.array([random.random() * 0.1 + 0.45,13.0/15.0])
-        pos['OTHERCAT'] = np.array([random.random() * 0.1 + 0.65,13.0/15.0])
-        pos['PURINES'] = np.array([random.random() * 0.1 + 0.85,13.0/15.0])
-        pos['REGULFUN'] = np.array([random.random() * 0.1 + 0.05,12.0/15.0])
-        pos['REPLICATION'] = np.array([random.random() * 0.1 + 0.25,12.0/15.0])
-        pos['TRANSCRIPTION'] = np.array([random.random() * 0.1 + 0.45,12.0/15.0])
-        pos['TRANSLATION'] = np.array([random.random() * 0.1 + 0.65,12.0/15.0])
-        pos['TRANSPORTPROTEINS'] = np.array([random.random() * 0.1 + 0.85,12.0/15.0])
-        #pos['UFA'] = np.array([1 / 4.0, 11.0 / 15.0])
-        #pos['SFA'] = np.array([2 / 4.0, 11.0 / 15.0])
-        #pos['CFA'] = np.array([3 / 4.0, 11.0 / 15.0])
-        pos['C140'] = np.array([random.random() * 0.15 + 0.05,9.0/15.0])
-        pos['C150'] = np.array([random.random() * 0.15 + 0.30,9.0/15.0])
-        pos['C160'] = np.array([random.random() * 0.15 + 0.55,9.0/15.0])
-        pos['C161cis'] = np.array([random.random() * 0.15 + 0.80,9.0/15.0])
-        pos['C170'] = np.array([random.random() * 0.15 + 0.05,8.0/15.0])
-        pos['C180'] = np.array([random.random() * 0.15 + 0.30,8.0/15.0])
-        pos['C181trans'] = np.array([random.random() * 0.15 + 0.55,8.0/15.0])
-        pos['C181trans11'] = np.array([random.random() * 0.15 + 0.80,8.0/15.0])
-        pos['C181cis'] = np.array([random.random() * 0.1 + 0.05,7.0/15.0])
-        pos['C181cis11'] = np.array([random.random() * 0.1 + 0.25,7.0/15.0])
-        pos['C19cyc'] = np.array([random.random() * 0.1 + 0.45,7.0/15.0])
-        pos['C220'] = np.array([random.random() * 0.1 + 0.65,7.0/15.0])
-        pos['Anisotropie'] = np.array([random.random() * 0.1 + 0.85, 7.0 / 15.0])
-        #pos['UFAdivSFA'] = np.array([random.random() * 0.15 + 0.3, 10.0 / 15.0])
-        #pos['CFAdivSFA'] = np.array([random.random() * 0.15 + 0.55, 10.0 / 15.0])
-        #pos['CFAdivUFA'] = np.array([random.random() * 0.15 + 0.8, 10.0 / 15.0])
-        pos['UFCcentri'] = np.array([random.random() * 0.2 + 0.15, 4.0 / 15.0])
-        pos['tpH07centri'] = np.array([random.random() * 0.2 + 0.65, 4.0 / 15.0])
-        #pos['tpH07scentri'] = np.array([random.random() * 0.15 + 0.55, 9.0 / 15.0])
-        #pos['tpH07spe2centri'] = np.array([random.random() * 0.15 + 0.85, 9.0 / 15.0])
-        pos['UFCcong'] = np.array([random.random() * 0.2 + 0.15, 3.00 / 15.0])
-        pos['tpH07cong'] = np.array([random.random() * 0.2 + 0.65, 3.0 / 15.0])
-        #pos['tpH07scong'] = np.array([random.random() * 0.15 + 0.55, 8.0 / 15.0])
-        #pos['tpH07spe2cong'] = np.array([random.random() * 0.15 + 0.8, 8.0 / 15.0])
-        #pos['dUFCcong'] = np.array([random.random() * 0.15 + 0.05, 7.0 / 15.0])
-        #pos['dtpH07cong'] = np.array([random.random() * 0.15 + 0.3, 7.0 / 15.0])
-        #pos['dtpH07scong'] = np.array([random.random() * 0.15 + 0.55, 7.0 / 15.0])
-        #pos['dtpH07spe2cong'] = np.array([random.random() * 0.15 + 0.8, 7.0 / 15.0])
-        pos['UFClyo'] = np.array([random.random() * 0.2 + 0.15, 2.0 / 15.0])
-        pos['TpH07lyo'] = np.array([random.random() * 0.2 + 0.65, 2.0 / 15.0])
-        #pos['tpH07slyo'] = np.array([random.random() * 0.15 + 0.55, 6.0 / 15.0])
-        #pos['tpH07spe2lyo'] = np.array([random.random() * 0.15 + 0.8, 6.0 / 15.0])
-        #pos['dUFCdes'] = np.array([random.random() * 0.15 + 0.05, 5.0 / 15.0])
-        #pos['dtpH07des'] = np.array([random.random() * 0.15 + 0.3, 5.0 / 15.0])
-        #pos['dtpH07sdes'] = np.array([random.random() * 0.15 + 0.55, 5.0 / 15.0])
-        #pos['dtpH07spe2des'] = np.array([random.random() * 0.15 + 0.8, 5.0 / 15.0])
-        #pos['dtUFClyo'] = np.array([random.random() * 0.15 + 0.05, 4.0 / 15.0])
-        #pos['dtpH07lyo'] = np.array([random.random() * 0.15 + 0.3, 4.0 / 15.0])
-        #pos['dtpH07slyo'] = np.array([random.random() * 0.15 + 0.55, 4.0 / 15.0])
-        #pos['dtpH07spe2lyo'] = np.array([random.random() * 0.15 + 0.8, 4.0 / 15.0])
-        pos['UFCsto3'] = np.array([random.random() * 0.2 + 0.15, 1.0 / 15.0])
-        pos['tpH07sto3'] = np.array([random.random() * 0.2 + 0.65, 1.0 / 15.0])
-        #pos['tpH07ssto3'] = np.array([random.random() * 0.15 + 0.55, 3.0 / 15.0])
-        #pos['tpH07spe2sto3'] = np.array([random.random() * 0.15 + 0.8, 3.0 / 15.0])
-        #pos['dUFCsto3'] = np.array([random.random() * 0.15 + 0.05, 2.0 / 15.0])
-        #pos['dtpH07sto3'] = np.array([random.random() * 0.15 + 0.3, 2.0 / 15.0])
-        #pos['dtpH07ssto3'] = np.array([random.random() * 0.15 + 0.55, 2.0 / 15.0])
-        #pos['dtpH07spe2sto3'] = np.array([random.random() * 0.15 + 0.8, 2.0 / 15.0])
-        #pos['dUFCtot'] = np.array([random.random() * 0.15 + 0.05, 1.0 / 15.0])
-        #pos['dtpH07tot'] = np.array([random.random() * 0.15 + 0.3, 1.0 / 15.0])
-        #pos['dtpH07stot'] = np.array([random.random() * 0.15 + 0.55, 1.0 / 15.0])
-        #pos['dtpH07spe2tot'] = np.array([random.random() * 0.15 + 0.8, 1.0 / 15.0])
-        return pos
 
     def initGraph(self):
         self.G = nx.DiGraph()
@@ -760,31 +618,10 @@ class RFGraph_Model(QtGui.QMainWindow):
                     break
             self.nodeColor.append(vcolor)
 
-            #self.nodeColor.append((0.5, 0.5 + 0.5 * self.nodeWeight[i] / np.amax(self.nodeWeight), 0.5))
-            #if(self.dataset.varnames[i])
-            #self.
-            # if(self.dataset.variablesClass[self.dataset.varnames[i]]== 'Molss' or self.dataset.variablesClass[self.dataset.varnames[i]]== 'Molsur'):
-            #     self.nodeColor.append((0.5, 0.5, 0.9))
-            # if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'condition'):
-            #     self.nodeColor.append((0.9, 0.55, 0.55))
-            # if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'Cell'):#CellAniso
-            #     self.nodeColor.append((0.3, 0.9, 0.9))
-            # if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'CellAniso'):
-            #     self.nodeColor.append((0.7, 0.7, 0.5))
-            # if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopCentri'):
-            #     self.nodeColor.append((0.8, 0.8, 0.2))
-            # if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopLyo'):
-            #     self.nodeColor.append((0.8, 0.8, 0.2))
-            # if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopCong'):
-            #     self.nodeColor.append((0.8, 0.8, 0.2))
-            # if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopSto3'):
-            #     self.nodeColor.append((0.8, 0.8, 0.2))
         self.computeInitialPos()
         self.computeFitandCmplxEdgeColor()
         self.computeComprEdgeColor()
-        #self.computeSAEdgeColor()
         self.computePearsonColor()
-
         self.computeNxGraph()
 
     def computePearsonColor(self):
@@ -806,60 +643,37 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         for e, v in self.edgeColorPearson.items():
             cmap = self.colors.get("Pearson", 1 - v)
-            # color = QColor.fromRgb(*cmap)
             lcmap = list(np.array(cmap) / 255)
             lcmap.extend([1.0])
             self.edgeColorPearson[e] = lcmap
 
-
-
+    #TODO Vérif fonctionnement
     def createConstraintsGraph(self):
-        #graph = nx.DiGraph()
-        graph = ClassGraph()
-        for i in np.unique(list(self.dataset.variablesClass.values())):
-            #print(i)
-            i_var = [v for (v, e) in self.dataset.variablesClass.items() if e ==i ]
-            graph.add_node(ClassNode(i, i_var))
-        #testMutex = threading.Lock()
-        print("creating classes window")
-        classApp=WindowClasses(graph,self.init2)
-        #classApp=Window(ClassGraph.readJson("classes/screen.clgraph"),self.init2)
-        print("after classes window")
-        #graph=classApp.exec()
-        #testMutex.acquire(True)
+        ctgraph = ClassGraph()
+        try:
+            node_edge = None
+            nodes = {}
+            with open(self.dataset.ctmod) as f:
+                for _ in f:
+                    if _.startswith('nodes'):
+                        node_edge = True
+                        continue
+                    if _.startswith('edges'):
+                        node_edge = False
+                        continue
+                    if node_edge == True:
+                        node, *names = _.strip().split(" ")
+                        cn  = ClassNode(node,names)
+                        ctgraph.add_node(cn)
+                        nodes[node] = cn
+                    if node_edge == False:
+                        nNode = _.strip().split(" ")
+                        ctgraph.add_edge(nodes[nNode[0]], nodes[nNode[1]])
 
+        except FileNotFoundError as fnf :
+            print("file error : {}".format(fnf))
 
-
-        #graph=classApp.graph
-        # graph.add_edge('condition','Molss')
-        # graph.add_edge('condition', 'Molsur')
-        # graph.add_edge('condition','Cell')
-        # graph.add_edge('Molss','Cell')
-        # graph.add_edge('Molsur', 'Cell')
-        # #graph.add_edge('Molsur','Molss')
-        # graph.add_edge('Cell', 'CellAniso')
-        # graph.add_edge('Cell','PopCentri')
-        # graph.add_edge('Cell','PopCong')
-        # graph.add_edge('Cell','PopLyo')
-        # graph.add_edge('Cell','PopSto3')
-        # graph.add_edge('CellAniso', 'PopCentri')
-        # graph.add_edge('CellAniso', 'PopCong')
-        # graph.add_edge('CellAniso', 'PopLyo')
-        # graph.add_edge('CellAniso', 'PopSto3')
-        # graph.add_edge('condition','PopCentri')
-        # graph.add_edge('condition','PopCong')
-        # graph.add_edge('condition','PopLyo')
-        # graph.add_edge('condition','PopSto3')
-        # graph.add_edge('PopCentri','PopCong')
-        # graph.add_edge('PopCentri','PopLyo')
-        # graph.add_edge('PopCentri','PopSto3')
-        # graph.add_edge('PopCong','PopLyo')
-        # graph.add_edge('PopCong', 'PopSto3')
-        # graph.add_edge('PopLyo','PopSto3')
-
-        #nx.draw(graph,with_labels=True)
-
-        return graph
+        return ctgraph
 
     def createConstraints(self):
         adj_contr=np.ones((self.dataset.nbVar,self.dataset.nbVar))
@@ -869,40 +683,6 @@ class RFGraph_Model(QtGui.QMainWindow):
                     if(self.dataset.variablesClass[self.dataset.varnames[var1]]==edge[0] and self.dataset.variablesClass[self.dataset.varnames[var2]]==edge[1]):
                         adj_contr[var2][var1]-=1
         return adj_contr
-
-    # def computeBoldNodes(self):
-    #
-    #     self.edgelist_inOrder = []
-    #     self.edgeBold = []
-    #
-    #     for i in range(len(self.pareto)):  # i is child
-    #         for j in range(len(self.pareto[i])):  # j is parent
-    #             lIdxColPareto = self.pareto[i][j]
-    #             if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
-    #                 #if self.nbeq[i] == np.float64(0.0): continue
-    #                 r = self.adj_simple[i, j] / self.nbeq[
-    #                     i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
-    #                 if (r > self.adjThresholdVal):
-    #
-    #                     self.edgelist_inOrder.append((self.data.varnames[j], self.data.varnames[i]))
-    #
-    #                     if (self.lastNodeClicked == self.data.varnames[i]):
-    #                         self.edgeBold.append(True)
-    #                     else:
-    #                         self.edgeBold.append(False)
-    #
-    #
-    #                 n1 = self.data.varnames[i] + ' - ' + self.data.varnames[j]
-    #                 n2 = self.data.varnames[j] + ' - ' + self.data.varnames[i]
-    #                 allItems = [self.scrolledList[i] for i in range(len(self.scrolledList))]
-    #                 if n1 in allItems or n2 in allItems:
-    #                     try:
-    #                         index = self.edgelist_inOrder.index((self.data.varnames[i], self.data.varnames[j]))
-    #                     except:
-    #                         index = self.edgelist_inOrder.index((self.data.varnames[j], self.data.varnames[i]))
-    #                     self.edgelist_inOrder.pop(index)
-
-
 
     def removeForbiddenEdges(self):
         self.forbiddenEdges = []
@@ -925,10 +705,8 @@ class RFGraph_Model(QtGui.QMainWindow):
                         #self.edgeBold.pop(index)
                         #self.edgeColor.pop(index)
 
-
     def removeInvisibleEdges(self):
         self.invisibleTup = []
-
         self.edgeBoldDict=copy.deepcopy(self.edgeBoldfull)
         if (self.ColorMode == 'Compr'):
             self.edgeColorfull = copy.deepcopy(self.edgeColorCompr)
@@ -944,60 +722,39 @@ class RFGraph_Model(QtGui.QMainWindow):
             for j in range(len(self.pareto[i])):  # j is parent
                 lIdxColPareto = self.pareto[i][j]
                 if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
-                    # if self.nbeq[i] == np.float64(0.0): continue
                     r = self.adj_simple[i, j] / self.nbeq[i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
                     tup = (self.dataset.varnames[j], self.dataset.varnames[i])
                     if (self.ColorMode!='Pearson' and r <= self.adjThresholdVal):
                         self.invisibleTup.append(tup)
-                        #try:
-                        #    del (self.edgeBoldDict[tup])
-                        #except:
-                        #    pass
-                        #try:
-                        #    del (self.edgeColorfull[tup])
-                        #except:
-                        #    pass
                     elif(self.ColorMode=='Pearson' and  -1+self.adjThresholdVal < self.allPearson[tup] < 1-self.adjThresholdVal ):
                         self.invisibleTup.append(tup)
-
-
         self.edgeColor = self.colorDictToConstraintedcolorList(self.edgeColorfull,self.edgelist_inOrder)
         self.edgeBold = self.colorDictToConstraintedcolorList(self.edgeBoldDict,self.edgelist_inOrder)
-
 
     def computeNxGraph(self):
         self.G.clear()
         for v in self.dataset.varnames:
             self.G.add_node(v)
-
         self.nodesWithNoEquations=[]
-
         self.edgelist_inOrder = []
-
         for i in range(len(self.pareto)):#i is child
             for j in range(len(self.pareto[i])): #j is parent
                 lIdxColPareto = self.pareto[i][j]
                 if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
-
-                    #if self.nbeq[i] == np.float64(0.0): continue
                     r = self.adj_simple[i, j] / self.nbeq[i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
-                    #if (r > self.adjThresholdVal):
                     self.G.add_edge(self.dataset.varnames[j], self.dataset.varnames[i],
                                            adjsimple=self.adj_simple[i, j], adjfit=
                                            self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
                                            adjcontr=self.adj_contr[i, j])
                     self.edgelist_inOrder.append((self.dataset.varnames[j], self.dataset.varnames[i]))
-
         for v in self.dataset.varnames.tolist():
             if not v in self.varsIn:
                 ix = np.ix_(self.equacolO[:, 2] == v)
                 if(not True in self.equacolO[ix[0], 4] and not v in self.forbiddenNodes):
                     self.nodesWithNoEquations.append(v)
-
         self.computeEdgeBold()
         self.removeInvisibleEdges()
         self.removeForbiddenEdges()
-
 
     def colorDictToConstraintedcolorList(self,colorDict,edgesToShow):
         colorList=[]
@@ -1009,14 +766,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         return colorList
 
     def computeEdgeBold(self):
-
         self.edgeBoldfull = {}
-
-        #for i in range(len(self.pareto)):  # i is child
-        #    for j in range(len(self.pareto[i])):  # j is parent
-        #        lIdxColPareto = self.pareto[i][j]
-        #        if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
-                    #if self.nbeq[i] == np.float64(0.0): continue
         for (x, y) in self.edgelist_inOrder:
             if (self.lastNodeClicked == x or self.lastNodeClicked == y):
                 self.edgeBoldfull[(x,y)]=True
@@ -1024,41 +774,21 @@ class RFGraph_Model(QtGui.QMainWindow):
                 self.edgeBoldfull[(x, y)]=False
 
     def computeComprEdgeColor(self):
-
         self.edgeColorCompr = {}
-
         for i in range(len(self.pareto)):  # i is child
             for j in range(len(self.pareto[i])):  # j is parent
                 lIdxColPareto = self.pareto[i][j]
                 if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
-
                     lIdxColPareto[:, 0] = (lIdxColPareto[:, 0] - self.cmplxMin) / (
                         self.cmplxMax - self.cmplxMin)  # Normalisation de la complexité
                     dist_lIdxColPareto = np.sqrt(
                         np.power(np.cos(self.comprFitCmplxVal * (np.pi / 2)) * lIdxColPareto[:, 0], 2) +
                         np.power(np.sin(self.comprFitCmplxVal * (np.pi / 2)) * lIdxColPareto[:, 1], 2))
-
                     dist_lIdxColPareto_idxMin = np.argmin(
                         dist_lIdxColPareto)  # Indice dans dist_lIdxColPareto correspondant au meilleur compromi
                     dist_lIdxColPareto_valMin = dist_lIdxColPareto[
                         dist_lIdxColPareto_idxMin]  # Distance meilleur compromi
-                    #if self.nbeq[i] == np.float64(0.0): continue
                     r = self.adj_simple[i, j] / self.nbeq[i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
-
-                    #cdict1 = {'red': ((0.0, 0.0, 0.0),
-                    #                  (0.5, 0.0, 0.0),
-                    #                  (1.0, 0.0, 0.0)),
-                    #          'green': ((0.0, 0.0, 0.0),
-                    #                    (0.0, 0.5, 0.0),
-                    #                    (0.0, 1.0, 0.0)),
-                    #          'blue': ((0.0, 0.0, 0.5),
-                    #                   (0.0, 0.0, 0.5),
-                    #                   (0.0, 0.0, 0.5))
-                    #          }
-                    #cmap = mpl.colors.ListedColormap(["red", "grey", "green"], name='from_list')
-                    #mycmap=mpl.colors.LinearSegmentedColormap('CustomMap', cdict1)
-                    #m = mpl.cm.ScalarMappable(norm=[0,1], cmap=mycmap)
-
                     if(dist_lIdxColPareto_valMin<0.5):
                         cr = dist_lIdxColPareto_valMin
                         cg = 1-dist_lIdxColPareto_valMin
@@ -1067,10 +797,6 @@ class RFGraph_Model(QtGui.QMainWindow):
                         cr = dist_lIdxColPareto_valMin
                         cg = 1 - dist_lIdxColPareto_valMin
                         cb = 1 - dist_lIdxColPareto_valMin
-                        #cr = np.minimum(dist_lIdxColPareto_valMin * 2, 1)
-                        #cg = np.minimum((1 - dist_lIdxColPareto_valMin) * 2, 1)
-                        #cb = 0
-
                     if (self.transparentEdges):
                         self.edgeColorCompr[(self.dataset.varnames[j], self.dataset.varnames[i])]=[cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r)]
                     else:
@@ -1079,17 +805,10 @@ class RFGraph_Model(QtGui.QMainWindow):
     def computeFitandCmplxEdgeColor(self):
         self.edgeColorFit = {}
         self.edgeColorCmplx = {}
-
         for i in range(len(self.pareto)):  # i is child
             for j in range(len(self.pareto[i])):  # j is parent
                 lIdxColPareto = self.pareto[i][j]
                 if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
-                    #if (self.adj_fit[i, j] == 0):
-                    #    raise Exception('Error on fit color')
-                    #if (self.adj_cmplx[i, j] == 0):
-                    #    raise Exception('Error on cmplx color')
-
-                    #if self.nbeq[i] == np.float64(0.0): continue
 
                     cr = np.minimum(self.adj_fit[i, j] * 2, 1)
                     cg = np.minimum((1 - self.adj_fit[i, j]) * 2, 1)
@@ -1098,7 +817,6 @@ class RFGraph_Model(QtGui.QMainWindow):
                         self.edgeColorFit[(self.dataset.varnames[j], self.dataset.varnames[i])]=[cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r),1]
                     else:
                         cmap = self.colors.get("local",self.adj_fit[i, j])
-                        #color = QColor.fromRgb(*cmap)
                         lcmap=list(np.array(cmap)/255)
                         lcmap.extend([1.0])
                         self.edgeColorFit[(self.dataset.varnames[j], self.dataset.varnames[i])]= lcmap  #(cr, cg, cb)
@@ -1109,14 +827,12 @@ class RFGraph_Model(QtGui.QMainWindow):
                         self.edgeColorCmplx[(self.dataset.varnames[j], self.dataset.varnames[i])]=[cr + (1 - cr) * (1 - r), cg + (1 - cg) * (1 - r), cb + (1 - cb) * (1 - r),1]
                     else:
                         cmap = self.colors.get("complexity", self.adj_cmplx[i, j]/self.cmplxMax)
-                        #color = QColor.fromRgb(*cmap)
                         lcmap = list(np.array(cmap) / 255)
                         lcmap.extend([1.0])
                         self.edgeColorCmplx[(self.dataset.varnames[j], self.dataset.varnames[i])]=lcmap
 
     def computeSAEdgeColor(self):
         self.edgeColorSA={}
-        #print(self.equacolO[:, 6])
         for e in self.edgeColorFit.keys():
             samin=1
             samax=0
@@ -1136,19 +852,16 @@ class RFGraph_Model(QtGui.QMainWindow):
                 self.edgeColorSA[e] = 0.5
             else:
                 print("SA ERROR !")
-                    #self.edgeColorSA[e]=sa['ST'][sa['par'].index(e[0])]
 
         for e in self.edgeColorSA.keys():
             v=self.edgeColorSA[e]
             cmap = self.colors.get("SA", 1-v)
-            # color = QColor.fromRgb(*cmap)
             lcmap = list(np.array(cmap) / 255)
             lcmap.extend([1.0])
             self.edgeColorSA[e]=lcmap
-        #self.edgeColorFit=self.edgeColorSA
         print('it worked ?')
 
-
+#TODO pos normalement inutile ?
     def computeInitialPos(self):
         G=nx.DiGraph()
         G.clear()
@@ -1157,27 +870,18 @@ class RFGraph_Model(QtGui.QMainWindow):
         ed=[]
         for i in range(len(self.pareto)):
             for j in range(len(self.pareto[i])):
-                #lIdxColPareto = self.pareto[i][j]
-                #if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
-                    #if self.nbeq[i] == np.float64(0.0): continue
                 for k in range(len(self.adj_contrGraph.nodes())):
                     if self.adj_contrGraph.nodes()[k].name == self.dataset.variablesClass[self.dataset.varnames[j]]:
                         jClass=self.adj_contrGraph.nodes()[k]
                     if self.adj_contrGraph.nodes()[k].name == self.dataset.variablesClass[self.dataset.varnames[i]]:
                         iClass=self.adj_contrGraph.nodes()[k]
                 if self.adj_contrGraph.has_edge(jClass, iClass):
-#                        print(self.dataset.varnames[j] + " --> " + self.dataset.varnames[i] + " : " + self.dataset.variablesClass[self.dataset.varnames[j]] + " --> " + self.dataset.variablesClass[self.dataset.varnames[i]])
                     ed.append((self.dataset.varnames[j], self.dataset.varnames[i]))
                     G.add_edge(self.dataset.varnames[j], self.dataset.varnames[i],
                                     adjsimple=self.adj_simple[i, j], adjfit=
                                     self.adj_fit[i, j], adjcmplx=self.adj_cmplx[i, j],
                                     adjcontr=self.adj_contr[i, j])
-
-        #with open('initpos.dat', 'rb') as f:
-        #    self.pos=pickle.load(f)
         self.pos = nx.nx_pydot.graphviz_layout(G, prog='dot')
-        #self.pos = nx.circular_layout(G)
-        #self.pos = nx.nx_pydot.pydot_layout(G)
         minx = np.inf
         maxx = -np.inf
         miny = np.inf
@@ -1205,18 +909,12 @@ class RFGraph_Model(QtGui.QMainWindow):
                     maxy = p[1]
         for k in self.pos:
             self.pos[k] = ((self.pos[k][0] - minx) / (maxx - minx), (self.pos[k][1] - miny) / (maxy - miny))
-
-            # print(k +" : (" + str(self.pos[k][0]) + ","+str(self.pos[k][1])+")")
-
         self.lpos = copy.deepcopy(self.pos)
         for p in self.lpos:  # raise text positions
             self.lpos[p] = (self.lpos[p][0], self.lpos[p][1] + 0.04)
-
         self.fpos = copy.deepcopy(self.pos)
         for p in self.fpos:
             self.fpos[p] = (self.fpos[p][0], self.fpos[p][1] - 0.04)
-
-
 
     def computeGlobalNxGraph(self):
         self.G.clear()
@@ -1229,8 +927,6 @@ class RFGraph_Model(QtGui.QMainWindow):
             for j in range(len(self.pareto[i])):  # j is parent
                 lIdxColPareto = self.pareto[i][j]
                 if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
-
-                    # if self.nbeq[i] == np.float64(0.0): continue
                     r = self.adj_simple[i, j] / self.nbeq[
                         i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
                     if (r > self.adjThresholdVal):
@@ -1250,8 +946,8 @@ class RFGraph_Model(QtGui.QMainWindow):
                 self.selectedEq[v] = self.best_indv[v]
             except:
                 pass
-    def computeGlobalView(self):
 
+    def computeGlobalView(self):
         ft = Individual(self)
         res=ft.get_fitness(self.selectedEq)
         self.globErrDet=copy.deepcopy(res[2])
@@ -1259,9 +955,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.globErrLab = copy.deepcopy(res[2])
         for k in self.globErrLab.keys():
             self.globErrLab[k] = "{0:.2f}".format(self.globErrDet[k])
-
         equaLines=[]
-
         for v in self.selectedEq.keys():
             if(not v in self.varsIn):
                 equaLines.append(self.equaPerNode[v][self.selectedEq[v]])
@@ -1279,9 +973,6 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         for (h, l) in self.edgelist_inOrder:
             err_coef= res[2][l]/err_max
-#            print(res[2][l])
-
-
             cr = np.maximum(np.minimum(err_coef * 2, 1),0)
             cg = np.maximum(np.minimum((1 - err_coef) * 2, 1),0)
             cb = 0
@@ -1298,8 +989,3 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         self.fitCmplxlPos= dict(list(map(lambda x: (x[0], (x[1][0] + 0.04, x[1][1] + 0.04)), list(self.fitCmplxPos.items()))))
         self.fitCmplxfPos = dict(list(map(lambda x: (x[0], (x[1][0] - 0.04, x[1][1] - 0.04)), list(self.fitCmplxPos.items()))))
-        #self.fitCmplxlPos = 0
-        #self.pos=self.fitCmplxPos
-        #self.fpos=self.fitCmplxfPos
-        #self.lpos=self.fitCmplxlPos
-
