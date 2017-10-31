@@ -34,17 +34,20 @@ from RFGraph_Controller import RFGraph_Controller
 # TODO  Définie la position des noeuds et les initialise
 class RandomModels():
 
-    def __init__(self, mdl):
+    def __init__(self, mdl, output, cgraph):
+        self.outputfolder = output
         logging.basicConfig(filename=mdl+'.log', level=logging.DEBUG)
         logging.info("Program started -- {}".format(time.strftime("%d %m %y: %H %M %S")))
         self.name = mdl
-        self.dataset = Dataset(mdl)
+        self.dataset = Dataset(mdl,cgraph)
         self.firstInit=True
         ctgraph = self.createConstraintsGraph()
         self.init2(ctgraph)
         logging.info("global search started -- {}".format(time.strftime("%d %m %y: %H %M %S")))
         optModGlob = OptimModGlobal(self)
         self.best_indv = optModGlob.startOptim()
+        with open(self.outputfolder+"\\"+self.name.split("\\")[-1]+"_equasglob", 'w') as outp:
+            outp.write(str(self.best_indv))
         logging.info("global search finished -- {}".format(time.strftime("%d %m %y: %H %M %S")))
         logging.info("Program end -- {}".format(time.strftime("%d %m %y: %H %M %S")))
 
@@ -65,7 +68,7 @@ class RandomModels():
 
 
         lst = self.equacolO.tolist() #("equationscree", sep=",")
-        with open(self.name+"_equas",'w') as output:
+        with open(self.outputfolder+"/"+self.name.split("\\")[-1]+"_equas",'w') as output:
             for _ in lst:
                 output.write(",".join(map(lambda x: str(x),_)))
                 output.write("\n")
@@ -97,6 +100,11 @@ class RandomModels():
             self.nbeq[list(self.dataset.varnames).index(self.equacolO[l,2])]+=1 # Comptage du nombre d'équations pour chaque enfant
 
         self.equacolPO =np.array(self.equacolPO, dtype=object)
+
+
+
+
+
         self.adj_cmplx=np.power(self.adj_cmplx,1/self.adj_simple)
         self.adj_cmplx[self.adj_simple==0]=0
         self.adj_fit = np.power(self.adj_fit, 1 / self.adj_simple)
@@ -159,17 +167,17 @@ class RandomModels():
         self.nodesWithNoEquations=[]
 
         self.data = []
-
+        #
         for i in range(len(self.equacolO)):
             self.data.append(self.equacolO[i, np.ix_([0, 1, 3, 4])][0])
-
-
+        #
+        #
         self.labels = {}
         self.edges = None
 
         self.varEquasize=OrderedDict(list(zip(self.dataset.varnames,self.nbeq)))
         self.varEquasizeOnlyTrue=self.varEquasize.copy()
-        self.computeEquaPerNode()
+        # self.computeEquaPerNode()
 
         ##########################
 
@@ -187,8 +195,7 @@ class RandomModels():
 
 
 
-        self.initGraph()
-
+       # self.initGraph()
 
     def correctDataset(self,dataset,constrGraph):
         #TODO viere ceux qui servent a rien

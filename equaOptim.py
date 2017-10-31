@@ -125,11 +125,11 @@ class equaOptim:
         logbook = tools.Logbook()
 
 
-        NGEN = 50
+        NGEN = 5 #50
         CXPB = 0.8
         MUTPB = 0.2
-        mu = 5000 #1000
-        lmbd = 4000 #800
+        mu = 5 #5000 #1000
+        lmbd = 4 # 4000 #800
         halloffame = tools.HallOfFame(1)
         pop = toolbox.new_population(n=mu)
         fitnesses = toolbox.map(toolbox.evaluate, pop)
