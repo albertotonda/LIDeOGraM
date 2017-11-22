@@ -8,12 +8,13 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import random
 import copy
+import matplotlib
 
-dataSize=12
-nbPotentialParents=range(1)
-offsetPP=100
-nbAllowedParents=range(5)
-nbRepet=10
+dataSize=50
+nbPotentialParents=range(50)
+offsetPP=450
+nbAllowedParents=range(8)
+nbRepet=100
 rdmOMP=False
 nbRepetrdmOMP=1000
 
@@ -52,9 +53,33 @@ f.tofile('ds'+str(dataSize+1)+'npp'+str(nbPotentialParents[-1]+1)+'nba'+str(nbAl
 f2=np.fromfile('ds'+str(dataSize+1)+'npp'+str(nbPotentialParents[-1]+1)+'nba'+str(nbAllowedParents[-1]+1)+'nbr'+str(nbRepet))
 f2=f2.reshape(nbPotentialParents[-1]+1,nbAllowedParents[-1]+1)
 aggr1=0.2
-mp = LinearSegmentedColormap.from_list('fitness_map',[(0, 1-aggr1, 0), (1-aggr1, 1-aggr1, 0), (1-aggr1, 0, 0)])
+mp = LinearSegmentedColormap.from_list('fitness_map',[(1,1,1),(0, 1-aggr1, 0), (1-aggr1, 1-aggr1, 0), (1-aggr1, 0, 0), ])
+
+font = {'family' : 'normal',
+        'weight' : 'normal',
+        'size'   : 8}
+
+matplotlib.rc('font', **font)
+
 ax=sns.heatmap(f2,cmap=mp,annot=True,vmin=0,vmax=1)
+
+font = {'family' : 'normal',
+        'weight' : 'normal',
+        'size'   : 12}
+
+matplotlib.rc('font', **font)
 ax.invert_yaxis()
-plt.show()
+ax.set_xticks(np.arange(0.5,nbAllowedParents[-1]+1.5,1))
+ax.set_xticklabels(range(1,len(nbAllowedParents)+1))
+ax.set_xlim((0,nbAllowedParents[-1]+1))
+ax.set_yticklabels(range(offsetPP+1,nbPotentialParents[-1]+2+offsetPP))
+ax.set_yticks(np.arange(0.5,nbPotentialParents[-1]+1.5,1))
+ax.set_xlabel('Number of components in equation')
+ax.set_ylabel('Number of candidate components')
+ax.set_title('Heatmap of the mean fitness for '+str(nbRepet)+' runs and using '+str(dataSize) +' datapoints')
+
+
+plt.show(block=True)
 a=5
+print(a)
 

@@ -101,11 +101,11 @@ class OptimModGlobal:
         #    r = pickle.load(f)
 
         #print('r:\n'+r)
-        NGEN=2
+        NGEN=10
         CXPB=0.8
         MUTPB=0.2
-        mu=5
-        lmbd=4
+        mu=50
+        lmbd=40
         halloffame=tools.HallOfFame(1)
         pop=toolbox.new_population(n=mu)
         fitnesses=toolbox.map(toolbox.evaluate, pop)
