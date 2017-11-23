@@ -1,0 +1,710 @@
+{
+    "edge": [
+        [
+            "BOLOTIN2",
+            "PoptpH07spelyo"
+        ],
+        [
+            "BOLOTIN2",
+            "PoptpH07lyo"
+        ],
+        [
+            "BOLOTIN2",
+            "Cell"
+        ],
+        [
+            "BOLOTIN2",
+            "PopUFClyo"
+        ],
+        [
+            "BOLOTIN2",
+            "PoptpH07Sto3"
+        ],
+        [
+            "BOLOTIN2",
+            "PopUFCSto3"
+        ],
+        [
+            "BOLOTIN2",
+            "PoptpH07speSto3"
+        ],
+        [
+            "CellAniso",
+            "PoptpH07spelyo"
+        ],
+        [
+            "CellAniso",
+            "PopUFClyo"
+        ],
+        [
+            "CellAniso",
+            "PoptpH07lyo"
+        ],
+        [
+            "ECNUMBER",
+            "PoptpH07spelyo"
+        ],
+        [
+            "ECNUMBER",
+            "PoptpH07lyo"
+        ],
+        [
+            "ECNUMBER",
+            "Cell"
+        ],
+        [
+            "ECNUMBER",
+            "PopUFClyo"
+        ],
+        [
+            "ECNUMBER",
+            "PoptpH07Sto3"
+        ],
+        [
+            "ECNUMBER",
+            "PopUFCSto3"
+        ],
+        [
+            "ECNUMBER",
+            "PoptpH07speSto3"
+        ],
+        [
+            "Cell",
+            "PoptpH07spelyo"
+        ],
+        [
+            "Cell",
+            "PopUFClyo"
+        ],
+        [
+            "Cell",
+            "PoptpH07lyo"
+        ],
+        [
+            "EC_NB2",
+            "PoptpH07spelyo"
+        ],
+        [
+            "EC_NB2",
+            "PoptpH07lyo"
+        ],
+        [
+            "EC_NB2",
+            "PoptpH07speSto3"
+        ],
+        [
+            "EC_NB2",
+            "PopUFClyo"
+        ],
+        [
+            "EC_NB2",
+            "PoptpH07Sto3"
+        ],
+        [
+            "EC_NB2",
+            "PopUFCSto3"
+        ],
+        [
+            "EC_NB2",
+            "Cell"
+        ],
+        [
+            "VOIESMETABO",
+            "PoptpH07spelyo"
+        ],
+        [
+            "VOIESMETABO",
+            "PoptpH07lyo"
+        ],
+        [
+            "VOIESMETABO",
+            "Cell"
+        ],
+        [
+            "VOIESMETABO",
+            "PopUFClyo"
+        ],
+        [
+            "VOIESMETABO",
+            "PoptpH07Sto3"
+        ],
+        [
+            "VOIESMETABO",
+            "PopUFCSto3"
+        ],
+        [
+            "VOIESMETABO",
+            "PoptpH07speSto3"
+        ],
+        [
+            "RANG_B",
+            "PoptpH07spelyo"
+        ],
+        [
+            "RANG_B",
+            "PoptpH07lyo"
+        ],
+        [
+            "RANG_B",
+            "Cell"
+        ],
+        [
+            "RANG_B",
+            "PopUFClyo"
+        ],
+        [
+            "RANG_B",
+            "PoptpH07Sto3"
+        ],
+        [
+            "RANG_B",
+            "PopUFCSto3"
+        ],
+        [
+            "RANG_B",
+            "PoptpH07speSto3"
+        ],
+        [
+            "BOLOTIN",
+            "PoptpH07spelyo"
+        ],
+        [
+            "BOLOTIN",
+            "PoptpH07lyo"
+        ],
+        [
+            "BOLOTIN",
+            "Cell"
+        ],
+        [
+            "BOLOTIN",
+            "PopUFClyo"
+        ],
+        [
+            "BOLOTIN",
+            "PoptpH07Sto3"
+        ],
+        [
+            "BOLOTIN",
+            "PopUFCSto3"
+        ],
+        [
+            "BOLOTIN",
+            "PoptpH07speSto3"
+        ],
+        [
+            "condition",
+            "PoptpH07lyo"
+        ],
+        [
+            "condition",
+            "ECNUMBER"
+        ],
+        [
+            "condition",
+            "Cell"
+        ],
+        [
+            "condition",
+            "PopUFClyo"
+        ],
+        [
+            "condition",
+            "RANG_B"
+        ],
+        [
+            "condition",
+            "EC_NB2"
+        ],
+        [
+            "condition",
+            "PoptpH07spelyo"
+        ],
+        [
+            "condition",
+            "VOIESMETABO"
+        ],
+        [
+            "condition",
+            "BOLOTIN2"
+        ],
+        [
+            "condition",
+            "BOLOTIN"
+        ],
+        [
+            "condition",
+            "CellAniso"
+        ]
+    ],
+    "node": [
+        {
+            "color": [
+                1.0,
+                0.4980392156862745,
+                0.0
+            ],
+            "lineWidth": 0,
+            "name": "PoptpH07lyo",
+            "nodeList": [
+                "dtpH07Lyo"
+            ],
+            "operators": [],
+            "pos": [
+                0.45761383117570603,
+                -0.004593425201837281
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6175436781675834,
+                0.7252698600570067,
+                0.9603848719508897
+            ],
+            "lineWidth": 0,
+            "name": "PoptpH07speSto3",
+            "nodeList": [
+                "dtpH07speSto3"
+            ],
+            "operators": [],
+            "pos": [
+                0.8025112694320692,
+                0.16165989986466406
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.8901960784313725,
+                0.10196078431372549,
+                0.10980392156862745
+            ],
+            "lineWidth": 0,
+            "name": "BOLOTIN2",
+            "nodeList": [
+                "DNAreplicationrestrictionmodificationrecombinationandrepair",
+                "Aerobic",
+                "Sugar_nucleotidebiosynthesisandinterconversions",
+                "Branchedchainfamily",
+                "Antibioticresistance",
+                "Thioredoxinglutaredoxinandglutathione",
+                "Other",
+                "Proteinandpeptidesecretion",
+                "Degradationofproteinspeptidesandglycopeptides",
+                "Pantothenate",
+                "RNAsynthesismodificationandDNAtranscription",
+                "Electrontransport",
+                "TCAcycle",
+                "DegradationofDNA",
+                "Pyridinenucleotides",
+                "Cellkilling",
+                "DegradationofRNA",
+                "Translationfactors",
+                "Aminosugars",
+                "Anaerobic",
+                "LacI_familyregulators",
+                "Anions",
+                "MarR_familyregulators",
+                "Nucleosidespurinesandpyrimidines",
+                "Degradationofpolysaccharides",
+                "Riboflavinandcobalamin",
+                "Chaperones",
+                "Glutamatefamily",
+                "AminoacyltRNAsynthetases",
+                "Purineribonucleotidebiosynthesis",
+                "lysinefamily",
+                "Phagerelatedfunctionsandprophages",
+                "Cations",
+                "Sugars",
+                "Ribosomalproteins:synthesisandmodification",
+                "Detoxification",
+                "Multidrugresistance",
+                "Polyaminebiosynthesis",
+                "ATP_protonmotiveforceinterconversion",
+                "sugars",
+                "Serinefamily",
+                "Celldivision",
+                "Hemeandporphyrin",
+                "Phosphoruscompounds",
+                "Adaptationsandatypicalconditions",
+                "Folicacid",
+                "Bacteriocin",
+                "Aminoacidsandamines",
+                "Pentosephosphatepathway",
+                "Pyrimidineribonucleotidebiosynthesis",
+                "Transposonrelatedfunctions",
+                "Aromaticamino_acidfamily",
+                "Transformation",
+                "Pyruvatedehydrogenase",
+                "Drugandanalogsensitivity",
+                "Aminoacidspeptidesandamines",
+                "Steroid",
+                "Aspartatefamily",
+                "2_deoxyribonucleotidemetabolism",
+                "Proteinmodification",
+                "Mureinsacculusandpeptidoglycan",
+                "General",
+                "Histidinefamily",
+                "Two_componentsystems",
+                "Nicotinateandnicotinamidemetabolism",
+                "AraC_familyregulators",
+                "Surfacepolysaccharideslipopolysaccharidesandantigens",
+                "Carbohydratesorganicalcoholsandacids",
+                "Hypotheticalprotein_",
+                "Membraneslipoproteinsandporins",
+                "Thiamin",
+                "RNAprocessing",
+                "Gluconeogenesis",
+                "Entner_Doudoroff",
+                "Lysine",
+                "PTSsystem",
+                "Salvageofnucleosidesandnucleotides",
+                "Menaquinoneandubiquinone",
+                "Siderophorebiosynthesis",
+                "Fermentation",
+                "Nucleotideandnucleosideinterconversions",
+                "Glycolysis"
+            ],
+            "operators": [],
+            "pos": [
+                0.5194809090987014,
+                0.6779202250711681
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.41568627450980394,
+                0.23921568627450981,
+                0.6039215686274509
+            ],
+            "lineWidth": 0,
+            "name": "CellAniso",
+            "nodeList": [
+                "Anisotropie"
+            ],
+            "operators": [],
+            "pos": [
+                0.4321741462251549,
+                0.35708047494283224
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6509803921568628,
+                0.807843137254902,
+                0.8901960784313725
+            ],
+            "lineWidth": 0,
+            "name": "ECNUMBER",
+            "nodeList": [
+                "Hydrolases",
+                "Lyases",
+                "Transferases",
+                "Unknown",
+                "Isomerases",
+                "Ligases",
+                "Oxidoreductases"
+            ],
+            "operators": [],
+            "pos": [
+                -0.017401652380873683,
+                0.8266732001306694
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.9921568627450981,
+                0.7490196078431373,
+                0.43529411764705883
+            ],
+            "lineWidth": 0,
+            "name": "Cell",
+            "nodeList": [
+                "CFA",
+                "SFA",
+                "CFASFA",
+                "UFA",
+                "UFASFA",
+                "CFAUFA"
+            ],
+            "operators": [],
+            "pos": [
+                0.04825421919772949,
+                0.4124982499649994
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.984313725490196,
+                0.6039215686274509,
+                0.6
+            ],
+            "lineWidth": 0,
+            "name": "PopUFClyo",
+            "nodeList": [
+                "dUFCLyo"
+            ],
+            "operators": [],
+            "pos": [
+                0.06361101627882654,
+                -0.019177050207670715
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.8084341546805651,
+                0.8675935361059054,
+                0.7640729898386526
+            ],
+            "lineWidth": 0,
+            "name": "PoptpH07Sto3",
+            "nodeList": [
+                "dtpH07Sto3"
+            ],
+            "operators": [],
+            "pos": [
+                0.3952734960211015,
+                0.09165849983666347
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.2,
+                0.6274509803921569,
+                0.17254901960784313
+            ],
+            "lineWidth": 0,
+            "name": "EC_NB2",
+            "nodeList": [
+                "2_3__",
+                "1_7__",
+                "5_4__",
+                "6_5__",
+                "1_20__",
+                "2_7__",
+                "2_1__",
+                "4_3__",
+                "4_1__",
+                "2_8__",
+                "1_6__",
+                "1_17__",
+                "6_3__",
+                "2_2__",
+                "5_3__",
+                "3_5__",
+                "3_2__",
+                "6_2__",
+                "1_3__",
+                "5_99__",
+                "1_1__",
+                "6_1__",
+                "1_10__",
+                "4_4__",
+                "6_4__",
+                "1______",
+                "3_11__",
+                "1_11__",
+                "3_3__",
+                "2_5__",
+                "1_15__",
+                "3______",
+                "4_2__",
+                "1_4__",
+                "3_4__",
+                "3_6__",
+                "1_97__",
+                "3_1__",
+                "4_99__",
+                "1_8__",
+                "5_1__",
+                "2_4__",
+                "2_6__",
+                "1_13__",
+                "1_14__",
+                "_",
+                "1_5__",
+                "1_2__",
+                "5_2__"
+            ],
+            "operators": [],
+            "pos": [
+                -0.0054945705861100536,
+                0.7216711000886685
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.792156862745098,
+                0.6980392156862745,
+                0.8392156862745098
+            ],
+            "lineWidth": 0,
+            "name": "PoptpH07spelyo",
+            "nodeList": [
+                "dtpH07speLyo"
+            ],
+            "operators": [],
+            "pos": [
+                0.8554334652584525,
+                0.04207417481682976
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6233518550592447,
+                0.3630718214110734,
+                0.32916199979334915
+            ],
+            "lineWidth": 0,
+            "name": "VOIESMETABO",
+            "nodeList": [
+                "Metabolism",
+                "OrganismalSystems",
+                "EnvironmentalInformationProcessing",
+                "CellularProcesses",
+                "HumanDiseases",
+                "GeneticInformationProcessing"
+            ],
+            "operators": [],
+            "pos": [
+                0.8199664791699028,
+                0.8704240751481698
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6941176470588235,
+                0.34901960784313724,
+                0.1568627450980392
+            ],
+            "lineWidth": 0,
+            "name": "RANG_B",
+            "nodeList": [
+                "Replicationandrepair",
+                "Lipidmetabolism",
+                "Metabolismofterpenoidsandpolyketides",
+                "Metabolismofotheraminoacids",
+                "Transcription",
+                "Digestivesystem",
+                "Cellmotility",
+                "Nucleotidemetabolism",
+                "Cellgrowthanddeath",
+                "Biosynthesisofothersecondarymetabolites",
+                "Carbohydratemetabolism",
+                "Foldingsortinganddegradation",
+                "Signaltransduction",
+                "Membranetransport",
+                "Drugresistance",
+                "Environmentaladaptation",
+                "Xenobioticsbiodegradationandmetabolism",
+                "Neurodegenerativediseases",
+                "Transportandcatabolism",
+                "Endocrinesystem",
+                "Translation",
+                "Energymetabolism",
+                "Cellularcommunity_prokaryotes",
+                "Nervoussystem",
+                "Cancers",
+                "Glycanbiosynthesisandmetabolism",
+                "Metabolismofcofactorsandvitamins",
+                "Immunesystem",
+                "Endocrineandmetabolicdiseases",
+                "Immunediseases",
+                "Aminoacidmetabolism",
+                "Aging",
+                "Infectiousdiseases"
+            ],
+            "operators": [],
+            "pos": [
+                0.8288914041534943,
+                0.7333380000933353
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6980392156862745,
+                0.8745098039215686,
+                0.5411764705882353
+            ],
+            "lineWidth": 0,
+            "name": "BOLOTIN",
+            "nodeList": [
+                "FATTYACIDANDPHOSPHOLIPIDMETABOLISM",
+                "AMINO_ACIDBIOSYNTHESIS",
+                "BIOSYNTHESISOFCOFACTORSPROSTHETICGROUPSANDCARRIERS",
+                "ENERGYMETABOLISM",
+                "OTHERCATEGORIES",
+                "CENTRALINTERMEDIARYMETABOLISM",
+                "TRANSCRIPTION",
+                "TRANSLATION",
+                "CELLULARPROCESSES",
+                "REPLICATION",
+                "TRANSPORTANDBINDINGPROTEINS",
+                "REGULATORYFUNCTIONS",
+                "CELLENVELOPE",
+                "Hypotheticalprotein",
+                "PURINESPYRIMIDINESNUCLEOSIDESANDNUCLEOTIDES"
+            ],
+            "operators": [],
+            "pos": [
+                0.47312560510808016,
+                0.7566718001026688
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.8079744702499129,
+                0.13310085506232638,
+                0.3183570165501598
+            ],
+            "lineWidth": 0,
+            "name": "condition",
+            "nodeList": [
+                "Temperature",
+                "Age"
+            ],
+            "operators": [],
+            "pos": [
+                0.40402001824314365,
+                0.9433422001773368
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.8929859107690626,
+                0.6311017702458505,
+                0.8569780153738933
+            ],
+            "lineWidth": 0,
+            "name": "PopUFCSto3",
+            "nodeList": [
+                "dUFCSto3"
+            ],
+            "operators": [],
+            "pos": [
+                -0.010676880204270794,
+                0.05374107482149654
+            ],
+            "size": 700
+        }
+    ],
+    "unbound": [
+        "dUFCCong",
+        "dtpH07Cong",
+        "dtpH07speCong",
+        "numexp"
+    ]
+}
