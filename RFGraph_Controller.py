@@ -12,6 +12,7 @@ from itertools import compress
 
 import random
 from OnOffCheckBox import *
+import pickle
 
 class RFGraph_Controller:
     def __init__(self,modApp,vwApp):
@@ -136,6 +137,12 @@ class RFGraph_Controller:
     def clickChangeEq(self):
         print("clickChangeEq")
         self.modApp.mode_changeEq=True
+
+    def clickSaveEq(self):
+        print("clickSaveEq")
+        filehandler = open('equations'+str(random.random())+'.txt', 'wb')
+        pickle.dump(self.modApp.equacolO, filehandler)
+        print("Saved")
 
     def onPick(self,event):
         pass

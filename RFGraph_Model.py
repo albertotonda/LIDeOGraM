@@ -45,8 +45,11 @@ class RFGraph_Model(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
         #self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert.csv")
         #self.dataset = Dataset("data/dataset_mol_cell_pop_nocalc_surexpr_x.x.x.-2.csv")
-        self.dataset = Dataset("data/balloon2.csv")
+        #self.dataset = Dataset("data/balloon2.csv")
         #self.dataset = Dataset("data/physico_meteo_dbn_modif_thomas.csv")
+        self.dataset = Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert_ifset3.csv")
+        #self.dataset = Dataset("data/datatestmaturation.csv")
+
 
         self.createConstraintsGraph()
         self.firstInit=True
@@ -242,9 +245,11 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         allidx=[]
         for unv in constrGraph.unboundNode:
+            if unv == 'Hypotheticalprotein_':
+                a=5
             idx = np.where(dataset.varnames == unv)
             dataset.variablesClass.pop(unv)
-            allidx.append(idx)
+            allidx.append(idx[0][0])
 
         dataset.varnames = np.delete(dataset.varnames,allidx)
         dataset.nbVar = len(dataset.varnames)
@@ -256,9 +261,10 @@ class RFGraph_Model(QtGui.QMainWindow):
         for v in dataset.varnames:
             idx=np.where(dataset.varnames == v)
             idx=idx[0][0]
-
-            constrNodeV=[n for n in constrGraph.nodes() if n.name == dataset.variablesClass[v]][0]
-
+            try:
+                constrNodeV=[n for n in constrGraph.nodes() if n.name == dataset.variablesClass[v]][0]
+            except:
+                a=5
             if('Square' in constrNodeV.operators):
                 newVar=v+"^2"
                 dataset.varnames_extd=np.append(dataset.varnames_extd,newVar)
@@ -294,8 +300,8 @@ class RFGraph_Model(QtGui.QMainWindow):
                 for v2 in [v2 for v2 in constrNodeV.nodeList if v2!=v]:
                     idx2 = np.where(dataset.varnames == v2)
                     idx2 = idx2[0][0]
-                    newVar = v+"/"+v2
-                    multV=np.transpose(np.array([dataset.data_extd[:, idx2]])/np.array([dataset.data_extd[:, idx]]))
+                    newVar = v+"*"+v2
+                    multV=np.transpose(np.array([dataset.data_extd[:, idx2]])*np.array([dataset.data_extd[:, idx]]))
                     dataset.varnames_extd = np.append(dataset.varnames_extd, newVar)
                     dataset.data_extd = np.append(dataset.data_extd, multV, axis=1)
                     dataset.variablesClass[newVar] = dataset.variablesClass[v]
@@ -330,6 +336,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         equacolOtmp=[]
         self.createProgressBar()
         for i in range(len(self.dataset.varnames)):
+
             print('computing : ' + self.dataset.varnames[i])
             self.progress.setValue(i*100/len(self.dataset.varnames))
             iClass = self.dataset.variablesClass[self.dataset.varnames[i]]
@@ -351,7 +358,7 @@ class RFGraph_Model(QtGui.QMainWindow):
                 X=self.dataset.data_extd[:,idx]
 
 
-                nbEqToFind=13
+                nbEqToFind=11
 
                 for j in range(1,np.minimum(nbEqToFind,len(idx))+1):
                     clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=j)
@@ -359,7 +366,7 @@ class RFGraph_Model(QtGui.QMainWindow):
                     clf.fit(X, Y)
                     pred = clf.predict(X)
                     equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames_extd[i], Y, pred)
-                    Si = random.random()#self.SA_Eq(X, par, clf)
+                    Si = self.SA_Eq(X, par, clf) #random.random()#
                     equacolOLine.append(Si)
                     equacolOtmp.extend(equacolOLine)
                 # curEqFound=0
@@ -724,7 +731,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.computeInitialPos()
         self.computeFitandCmplxEdgeColor()
         self.computeComprEdgeColor()
-        #self.computeSAEdgeColor()
+        self.computeSAEdgeColor()
         self.computePearsonColor()
 
         self.computeNxGraph()
