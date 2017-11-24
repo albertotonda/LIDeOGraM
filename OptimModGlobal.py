@@ -87,6 +87,7 @@ class OptimModGlobal:
         stats.register("std", np.std)
         stats.register("min", np.min)
         stats.register("max", np.max)
+        stats.register("all", lambda x: list(x))
         logbook = tools.Logbook()
 
         #with open('bestIndv.dat', 'rb') as f:
@@ -101,11 +102,11 @@ class OptimModGlobal:
         #    r = pickle.load(f)
 
         #print('r:\n'+r)
-        NGEN=2
+        NGEN=35
         CXPB=0.8
         MUTPB=0.2
-        mu=2
-        lmbd=3
+        mu=20
+        lmbd=16
         halloffame=tools.HallOfFame(1)
         pop=toolbox.new_population(n=mu)
         fitnesses=toolbox.map(toolbox.evaluate, pop)
@@ -113,7 +114,7 @@ class OptimModGlobal:
             print(fit)
             ind.fitness.values = fit
         pop,logbook=algorithms.eaMuPlusLambda(pop,toolbox,mu,lmbd,CXPB,MUTPB,NGEN,stats=stats,halloffame=halloffame,verbose=True)
-        pass
+
         # record = stats.compile(pop)
         # popfit = [ind.fitness.values for ind in pop]
         # logbook.record(gen=0, evals=mu, popfitnesses=popfit,pop=pop,**record)
@@ -163,10 +164,11 @@ class OptimModGlobal:
         # print(logbook)
 
         gen = logbook.select("gen")
-        fit_avgs = logbook.select("avg")
-        fit_stds = logbook.select("std")
-        fit_mins = logbook.select("min")
-        fit_maxs = logbook.select("max")
+        #fit_avgs = logbook.select("avg")
+        #fit_stds = logbook.select("std")
+        #fit_mins = logbook.select("min")
+        #fit_maxs = logbook.select("max")
+        fit_alls = logbook.select("all")
 
 
         # import matplotlib.pyplot as plt
@@ -183,8 +185,10 @@ class OptimModGlobal:
         # fig.show()
 
 
-        with open('fitEvolNoExpNoMol10.dat','wb') as f:
-            pickle.dump([fit_mins,fit_avgs,fit_stds,fit_maxs],f)
+        #with open('fitEvolNoExpNoMol10.dat','wb') as f:
+        #    pickle.dump([fit_mins,fit_avgs,fit_stds,fit_maxs],f)
+
+
 
         #popfitnesses = logbook.select("popfitnesses")
         #flatPopFit = []
@@ -193,8 +197,12 @@ class OptimModGlobal:
         #    for indFit in popGenI:
         #        p.append(indFit[0])
         #    flatPopFit.append(p)
+        with open("file_individual", 'w') as output:
+            for _ in fit_alls:
+                output.write(str(_))
+                output.write("\n")
 
-
+        pass
 
         bestindvDict = {}
         for i in range(len(self.modApp.dataset.varnames)):

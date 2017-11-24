@@ -8,6 +8,8 @@ from deap import tools
 from deap import algorithms
 import numpy as np
 from sklearn import linear_model
+from scipy.special import binom
+from math import log
 import pickle
 
 
@@ -17,6 +19,8 @@ class equaOptim:
         self.X=X
         self.Y=Y
         self.nbElmt=nbElmt
+        nbVar=self.X.shape[1]
+        self.nvars = nbVar
 
     def initIndividual(self,indv,nbElmt):
         nbVar=self.X.shape[1]
@@ -125,11 +129,13 @@ class equaOptim:
         logbook = tools.Logbook()
 
 
-        NGEN = 5 #50
+        NGEN = max(min(int(50*log(binom(self.nvars,self.nbElmt))), 200), 25)
+        print(NGEN)
         CXPB = 0.8
         MUTPB = 0.2
-        mu = 5 #5000 #1000
-        lmbd = 4 # 4000 #800
+        mu =  max(int(log(binom(self.nvars,self.nbElmt))*log(binom(self.nvars,self.nbElmt))),10)
+        lmbd = int(0.8* mu) #800
+        print(mu)
         halloffame = tools.HallOfFame(1)
         pop = toolbox.new_population(n=mu)
         fitnesses = toolbox.map(toolbox.evaluate, pop)

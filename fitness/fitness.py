@@ -144,7 +144,7 @@ def fitness(xr,yr):
     if (allEqual):
         fit = 1
     else:
-        linslope, intercept, r_value, p_value, std_err = stats.linregress(xr, yr)
+        linslope, intercept, r_value, p_value, std_err = stats.linregress(list(map(float, xr)), list(map(float, yr)))
         if (linslope > 1):
             directionErr = 1 / linslope
         else:
@@ -153,7 +153,7 @@ def fitness(xr,yr):
         # errVarSum[bkeys[i]] = 1 - (np.maximum(pearsonr(xr, yr)[0],0) * directionErr)
         # errVarSum[bkeys[i]] = 1 - (np.maximum(pearsonr(xr, yr)[0], 0) )
         # errVarSum[bkeys[i]] = 1 - pearsonr(xr, yr)[0]
-        p = pearsonr(xr, yr)[0]
+        p = pearsonr(list(map(float, xr)), list(map(float, yr)))[0]
         if (p > 0):
             fit = 1 - p * directionErr
         else:
@@ -161,7 +161,7 @@ def fitness(xr,yr):
     return fit
 
 def fitnessr2(xr,yr):
-    return 1 - r2_score(xr,yr)
+    return 1 - r2_score(list(map(float, xr)), list(map(float, yr)))
 
 
 def get_multithread_fitness(var,exps,initv):

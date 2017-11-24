@@ -45,7 +45,7 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         self.gridLayout.addWidget(self.networkGUI, 1, 0, 2, 2)
         self.incMatGUI = IncMatrixCanvas(self.modApp, self)
         # self.gridLayout.addWidget(self.incMatGUI,1,61,12,60)
-        #self.gridLayout.addWidget(self.incMatGUI, 1, 2, 3, 1)
+        self.gridLayout.addWidget(self.incMatGUI, 1, 2, 3, 1)
         self.adjThreshold_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
         self.adjThreshold_slider.setValue(self.modApp.adjThresholdVal * 100)
 

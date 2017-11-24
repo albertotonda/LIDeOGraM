@@ -49,7 +49,7 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
         #self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert.csv")
-        self.dataset = Dataset("data/outbig.mdl")
+        self.dataset = Dataset("data/BallonNoise.csv")
         #self.dataset = Dataset("C:/Users/Admin/Downloads/infos_parcelles_lideogram (5).csv")
         #self.dataset = Dataset("data/physico_meteo_dbn_modif_thomas.csv")
 
@@ -68,9 +68,9 @@ class RFGraph_Model(QtGui.QMainWindow):
             self.adj_contrGraph.edgesTrueName.append((e0.name,e1.name))
         self.correctDataset(self.dataset,self.adj_contrGraph)
 
-        self.equacolO = self.findLassoEqs()
+        self.equacolO2 = self.findLassoEqs()
 
-        #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_expertcorrected_noMol.txt')
+        self.equacolO = self.readEureqaResults('data/eq_erqa2.txt')
         self.nbequa = len(self.equacolO)  # Number of Equation for all variables taken together
 
         self.adj_simple=np.zeros((self.dataset.nbVar,self.dataset.nbVar))
@@ -618,25 +618,23 @@ class RFGraph_Model(QtGui.QMainWindow):
         convertArr = []
         for s in stringTab:
             convertArr.append(np.float32(s[0]))
-            #xr=self.dataset.getAllExpsforVar(s[2])
-            #yr=[]
-            #for numExp in range(self.dataset.nbExp):
-            #    yr.append(parse_expr(s[3], local_dict=self.dataset.getAllVarsforExp(numExp)))
-            #try:
-            #    recomputedFitness=fitness(xr,yr)
-            #except:
-            #    pass
-            convertArr.append(np.float32(s[1]))
-            #convertArr.append(recomputedFitness)
+            xr=self.dataset.getAllExpsforVar(s[2])
+            yr=[]
+            for numExp in range(self.dataset.nbExp):
+                yr.append(parse_expr(s[3].replace("^","**"), local_dict=self.dataset.getAllVarsforExp(numExp)))
+            recomputedFitness=fitness(list(map(float, xr)), list(map(float, yr)))
+            #convertArr.append(np.float32(s[1]))
+            convertArr.append(recomputedFitness)
             convertArr.append(s[2])
             convertArr.append(s[3])
             convertArr.append(True)
+            convertArr.append(list(filter(lambda x: x in s[3], self.dataset.varnames)))
             #convertArr.append(sympify(s[3]))
 
 
         finalTab = np.array(convertArr, dtype=object)
         shp = np.shape(stringTab)
-        finalTab = finalTab.reshape((shp[0], shp[1] + 1))
+        finalTab = finalTab.reshape((shp[0], shp[1] + 2))
         return finalTab
 
     def getV(self,variables, line, v):
@@ -754,6 +752,7 @@ class RFGraph_Model(QtGui.QMainWindow):
                 self.nodeWeight.append(0)
         for i in range(len(self.dataset.varnames)):
             v=self.dataset.varnames[i]
+            #vcolor=(0,0,0)
             for vclasse in self.adj_contrGraph.nodes():
                 if(v in vclasse.nodeList):
                     vcolor=tuple(vclasse.color)

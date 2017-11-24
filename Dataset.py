@@ -10,12 +10,14 @@ class Dataset:
         self.varnames = []
         for i in line.split(','):
             self.varnames.append(i.strip())
+        print(len(self.varnames))
         self.varnames=np.array(self.varnames)
         self.nbVar = len(self.varnames)
         line = datafileReader.readline()  # Second line is variables scale/step identifiers
         identvar = []
         for i in line.split(','):
             identvar.append(i.strip())
+        print(len(identvar))
         self.variablesClass = {}
         for i in range(len(self.varnames)):
             self.variablesClass[self.varnames[i]] = identvar[i]

@@ -1,6 +1,6 @@
 import random
-from PyQt4 import QtGui
-from classes.OperatorsView import *
+#from PyQt4 import QtGui
+#from classes.OperatorsView import *
 
 class ClassNode:
 
@@ -31,24 +31,25 @@ class ClassNode:
         return str(self.name)
 
     def rename(self, beforeChange=None):
-        from classes.MenuAction import MenuAction
-        rep = QtGui.QInputDialog.getText(MenuAction.window, "Rename class", "Class' new name :", text=self.name)
-        if rep[1]:
-            if beforeChange:
-                beforeChange("Rename "+self.name + " into " + rep[0], color=(255, 255, 150))
-            self.name = rep[0]
+        pass
+        #from classes.MenuAction import MenuAction
+        #rep = QtGui.QInputDialog.getText(MenuAction.window, "Rename class", "Class' new name :", text=self.name)
+        #if rep[1]:
+        #    if beforeChange:
+        #        beforeChange("Rename "+self.name + " into " + rep[0], color=(255, 255, 150))
+        #    self.name = rep[0]
 
     def changeColor(self, beforeChange=None):
-        from classes.MenuAction import MenuAction
+        #from classes.MenuAction import MenuAction
         print(self.color)
-        rep = QtGui.QColorDialog.getColor(QtGui.QColor(self.color[0]*255, self.color[1]*255, self.color[2]*255) ,MenuAction.window, "Class' color")
-        if rep.isValid() and [int(c * 255) for c in self.color] != [rep.red(), rep.green(), rep.blue()]:
-            if beforeChange:
-                beforeChange("Change the color of " + self.name, color=(255, 255, 150))
-            self.color = (rep.red()/255, rep.green()/255, rep.blue()/255)
+        #rep = QtGui.QColorDialog.getColor(QtGui.QColor(self.color[0]*255, self.color[1]*255, self.color[2]*255) ,MenuAction.window, "Class' color")
+        #if rep.isValid() and [int(c * 255) for c in self.color] != [rep.red(), rep.green(), rep.blue()]:
+        #    if beforeChange:
+        #        beforeChange("Change the color of " + self.name, color=(255, 255, 150))
+        #    self.color = (rep.red()/255, rep.green()/255, rep.blue()/255)
 
     def changeOperators(self,beforeChange=None):
-        self.OpView=OperatorsView(self)
+        #self.OpView=OperatorsView(self)
         pass
 
 

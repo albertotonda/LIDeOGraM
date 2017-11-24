@@ -26,7 +26,7 @@ from fitness import fitness
 from classes.ClassGraph import ClassGraph
 from classes.ClassNode import ClassNode
 from OptimModGlobal import OptimModGlobal
-from classes.WindowClasses import WindowClasses
+#from classes.WindowClasses import WindowClasses
 import logging
 import time
 
@@ -35,6 +35,7 @@ from RFGraph_Controller import RFGraph_Controller
 class RandomModels():
 
     def __init__(self, mdl, output, cgraph):
+        print(mdl,output,cgraph)
         self.outputfolder = output
         logging.basicConfig(filename=mdl+'.log', level=logging.DEBUG)
         logging.info("Program started -- {}".format(time.strftime("%d %m %y: %H %M %S")))
@@ -46,8 +47,10 @@ class RandomModels():
         logging.info("global search started -- {}".format(time.strftime("%d %m %y: %H %M %S")))
         optModGlob = OptimModGlobal(self)
         self.best_indv = optModGlob.startOptim()
-        with open(self.outputfolder+"\\"+self.name.split("\\")[-1]+"_equasglob", 'w') as outp:
-            outp.write(str(self.best_indv))
+        with open(self.outputfolder+"\\"+self.name.split("\\")[-1]+"_equasgflgob", 'w') as outp:
+            #outp.write(str(self.best_indv))
+            for k, v in self.best_indv.items():
+                 outp.write(str(k) + ' >>> ' + str(v) + '\n')
         logging.info("global search finished -- {}".format(time.strftime("%d %m %y: %H %M %S")))
         logging.info("Program end -- {}".format(time.strftime("%d %m %y: %H %M %S")))
 
@@ -68,7 +71,7 @@ class RandomModels():
 
 
         lst = self.equacolO.tolist() #("equationscree", sep=",")
-        with open(self.outputfolder+"/"+self.name.split("\\")[-1]+"_equas",'w') as output:
+        with open(self.outputfolder+"/"+self.name.split("\\")[-1]+"_equafgs",'w') as output:
             for _ in lst:
                 output.write(",".join(map(lambda x: str(x),_)))
                 output.write("\n")
