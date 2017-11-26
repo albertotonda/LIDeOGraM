@@ -11,10 +11,7 @@ from PyQt4.Qt import QPoint
 import sys
 import math
 from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.uic import *
-from types import *
-
+import logging
 
 # TODO Crée tout les boutons (or graphes + équations)
 class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
@@ -46,14 +43,14 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         self.incMatGUI = IncMatrixCanvas(self.modApp, self)
         # self.gridLayout.addWidget(self.incMatGUI,1,61,12,60)
         self.gridLayout.addWidget(self.incMatGUI, 1, 2, 3, 1)
-        self.adjThreshold_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
-        self.adjThreshold_slider.setValue(self.modApp.adjThresholdVal * 100)
+        #self.adjThreshold_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
+        #self.adjThreshold_slider.setValue(self.modApp.adjThresholdVal * 100)
 
-        self.adjThreshold_lab = QtGui.QLabel('Edges importance : ')
+        #self.adjThreshold_lab = QtGui.QLabel('Edges importance : ')
         # self.gridLayout.addWidget(self.adjThreshold_lab, 8, 0, 1, 2)
-        self.gridLayout.addWidget(self.adjThreshold_lab, 3, 0, 1, 1)
+        #self.gridLayout.addWidget(self.adjThreshold_lab, 3, 0, 1, 1)
         # self.gridLayout.addWidget(self.adjThreshold_slider, 8, 2, 1, 57)
-        self.gridLayout.addWidget(self.adjThreshold_slider , 3, 1, 1, 1)
+        #self.gridLayout.addWidget(self.adjThreshold_slider , 3, 1, 1, 1)
 
         # self.comprFitCmplx_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
         # self.comprFitCmplx_slider.setValue(self.modApp.comprFitCmplxVal * 100)
@@ -99,7 +96,7 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         # self.buttonOptUgp3 = QtGui.QPushButton('Global Optimisation', self)
         # self.buttonShowModGlobal = QtGui.QPushButton('Show Global Model', self)
         # self.buttonHideModGlobal = QtGui.QPushButton('Hide Global Model', self)
-        self.buttonChangerEq = QtGui.QPushButton('Change equation', self)
+        #self.buttonChangerEq = QtGui.QPushButton('Change equation', self)
         # self.buttonRemoveLink = QtGui.QPushButton('Remove Link', self)
         # self.buttonReinstateLink = QtGui.QPushButton('Reinstate', self)
         # self.buttonHelp = QtGui.QPushButton('Help', self)
@@ -111,7 +108,7 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         # self.gridLayout.addWidget(self.buttonOptUgp3, 10, 45, 1, 15)
         # self.gridLayout.addWidget(self.buttonShowModGlobal, 11, 0, 1, 30)
         # self.gridLayout.addWidget(self.buttonHideModGlobal, 11, 30, 1, 30)
-        self.gridLayout.addWidget(self.buttonChangerEq, 4, 0, 1, 1)
+        #self.gridLayout.addWidget(self.buttonChangerEq, 4, 0, 1, 1)
         # self.gridLayout.addWidget(self.buttonRemoveLink, 12, 0, 1, 30)
         # self.gridLayout.addWidget(self.buttonReinstateLink, 0, 12, 1, 8)
         #        self.gridLayout.addWidget(self.buttonHelp, 0, 120, 1, 12)
@@ -274,9 +271,9 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
 
         viewGroupAction = QtGui.QActionGroup(self, exclusive=True)
 
-        self.cmAction = QtGui.QAction("&Compromise", self, checkable=True)
-        self.cmAction.triggered.connect(cntrApp.clickCompromis)
-        comproAction = viewGroupAction.addAction(self.cmAction)
+        #self.cmAction = QtGui.QAction("&Compromise", self, checkable=True)
+        #self.cmAction.triggered.connect(cntrApp.clickCompromis)
+        #comproAction = viewGroupAction.addAction(self.cmAction)
         ftAction = QtGui.QAction("&Fitness", self, checkable=True)
         ftAction.triggered.connect(cntrApp.clickFitness)
         ftAction.activate(QtGui.QAction.Trigger)
@@ -284,9 +281,9 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         cpAction = QtGui.QAction("&Complexity", self, checkable=True)
         cpAction.triggered.connect(cntrApp.clickCmplx)
         compleAction = viewGroupAction.addAction(cpAction)
-        saAction = QtGui.QAction("&Sensitivity Analysis", self, checkable=True)
-        saAction.triggered.connect(cntrApp.clickSA)
-        stvAnlsAction = viewGroupAction.addAction(saAction)
+        #saAction = QtGui.QAction("&Sensitivity Analysis", self, checkable=True)
+        #saAction.triggered.connect(cntrApp.clickSA)
+        #stvAnlsAction = viewGroupAction.addAction(saAction)
         psAction = QtGui.QAction("&Pearson correlation", self, checkable=True)
         psAction.triggered.connect(cntrApp.clickPearson)
         PearsonAction = viewGroupAction.addAction(psAction)
@@ -317,10 +314,10 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         self.editMenu.addSeparator()
 
         viewMenu = menubar.addMenu("&View")
-        viewMenu.addAction(comproAction)
+        #viewMenu.addAction(comproAction)
         viewMenu.addAction(fitnesAction)
         viewMenu.addAction(compleAction)
-        viewMenu.addAction(stvAnlsAction)
+        #viewMenu.addAction(stvAnlsAction)
         viewMenu.addAction(psAction)
         viewMenu.addSeparator()
         viewMenu.addAction(self.showAction)
@@ -393,6 +390,7 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         #remove de la liste aussi peu être histoire que ça soit pas trop inutile.
 
     def noEquationError(self):
+        logging.info("NoEquationError")
         msg=QtGui.QMessageBox()
         s="Impossible to start the optimisation while the following node have no candidate equations.\nRemove the nodes from the model or restart a local optimisation on them :\n"
         for v in self.modApp.nodesWithNoEquations:
