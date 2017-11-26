@@ -8,6 +8,8 @@ from deap import tools
 from deap import algorithms
 import numpy as np
 import pickle
+import logging
+from time import strftime
 
 
 class OptimModGlobal:
@@ -197,7 +199,8 @@ class OptimModGlobal:
         #    for indFit in popGenI:
         #        p.append(indFit[0])
         #    flatPopFit.append(p)
-        with open("file_individual", 'w') as output:
+        logging.info("Global search finished {} -- {}".format(strftime("%d%m%y%H%M%S"), strftime("%d %m %y: %H %M %S")))
+        with open(strftime("%d%m%y%H%M%S"), 'w') as output:
             for _ in fit_alls:
                 output.write(str(_))
                 output.write("\n")

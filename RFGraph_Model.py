@@ -1,12 +1,8 @@
 #-*- coding: utf-8
 import random
-import matplotlib as mpl
 import numpy as np
-from numpy import genfromtxt
 import copy
 import networkx as nx
-#nx.use('qt4agg')
-from ArrayConverter import ArrayConverter
 import re
 import sys
 sys.path.append("fitness/")
@@ -14,21 +10,11 @@ sys.path.append('SALib/SaLib-master')
 from SALib.analyze import sobol
 from SALib.sample import saltelli
 from scipy.stats.stats import pearsonr
-from SALib.test_functions import Ishigami
-from SALib.util import read_param_file
-#from fitness import fitness
 from fitness import Individual
 from equaOptim import equaOptim
-from deap import base
-from deap import creator
-from deap import tools
-from deap import algorithms
 import pandas as pd
 from Dataset import Dataset
 from sympy.parsing.sympy_parser import parse_expr
-from sympy import sympify
-import pickle
-from PyQt4.QtGui import *
 import ColorMaps
 from collections import OrderedDict
 from sklearn import linear_model
@@ -36,22 +22,22 @@ from fitness import fitness
 from classes.ClassGraph import ClassGraph
 from classes.ClassNode import ClassNode
 from classes.WindowClasses import WindowClasses
-from time import sleep
-import threading
 from RFGraph_View import RFGraph_View
 from RFGraph_Controller import RFGraph_Controller
 from QtConnector import QtConnector
 from PyQt4 import QtGui
+import logging
+from time import strftime
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model(QtGui.QMainWindow):
 
     def __init__(self):
+        logging.basicConfig(filename=strftime("%d %m %y: %H %M %S")+'.log', level=logging.DEBUG)
+        logging.info("Program started -- {}".format(strftime("%d %m %y: %H %M %S")))
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
-        #self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert.csv")
         self.dataset = Dataset("data/BallonNoise.csv")
-        #self.dataset = Dataset("C:/Users/Admin/Downloads/infos_parcelles_lideogram (5).csv")
-        #self.dataset = Dataset("data/physico_meteo_dbn_modif_thomas.csv")
+
 
         self.createConstraintsGraph()
         self.firstInit=True
