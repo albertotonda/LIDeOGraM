@@ -25,6 +25,7 @@ class Dataset:
         line = datafileReader.readline() # Third line is the variable uncertainty of measurement
         uncertVar=[]
         for i in line.split(','):
+            print(i)
             uncertVar.append((float(i.strip())))
         self.variablesUncertainty={}
         for i in range(len(self.varnames)):

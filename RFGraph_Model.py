@@ -36,8 +36,10 @@ class RFGraph_Model(QtGui.QMainWindow):
         logging.info("Program started -- {}".format(strftime("%d %m %y: %H %M %S")))
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
-        self.dataset = Dataset("data/BallonNoise.csv")
-
+        #self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert.csv")
+        self.dataset = Dataset("data/use_case.mld")
+        #self.dataset = Dataset("C:/Users/Admin/Downloads/infos_parcelles_lideogram (5).csv")
+        #self.dataset = Dataset("data/physico_meteo_dbn_modif_thomas.csv")
 
         self.createConstraintsGraph()
         self.firstInit=True
@@ -54,9 +56,9 @@ class RFGraph_Model(QtGui.QMainWindow):
             self.adj_contrGraph.edgesTrueName.append((e0.name,e1.name))
         self.correctDataset(self.dataset,self.adj_contrGraph)
 
-        self.equacolO2 = self.findLassoEqs()
+        self.equacolO = self.findLassoEqs()
 
-        self.equacolO = self.readEureqaResults('data/eq_erqa2.txt')
+        #self.equacolO = self.readEureqaResults('data/eq_erqa2.txt')
         self.nbequa = len(self.equacolO)  # Number of Equation for all variables taken together
 
         self.adj_simple=np.zeros((self.dataset.nbVar,self.dataset.nbVar))

@@ -1,0 +1,4 @@
+conda create --name lideogram python=3.5
+activate lideogram
+conda install numpy matplotlib pyqt=4 networkx scipy scikit-learn sympy pandas 
+pip install deap
