@@ -185,7 +185,10 @@ class EqTableCanvas(QTableWidget):
         self.resizeRowsToContents()
 
         if(self.modApp.globalModelView and not self.modApp.lastNodeClicked in self.modApp.varsIn and self.modApp.lastNodeClicked != None):
-            self.item(self.modApp.selectedEq[self.modApp.lastNodeClicked], 2).setBackground(QColor(100, 100, 150))
+            idx_node=np.ix_(self.modApp.equacolO[:, 2] == self.modApp.lastNodeClicked)
+            idx_true=np.ix_(self.modApp.equacolO[idx_node, 4][0] == True)[0]
+            idx_selected = idx_true[self.modApp.selectedEq[self.modApp.lastNodeClicked]]
+            self.item(idx_selected, 2).setBackground(QColor(100, 100, 150))
         pass
 
 

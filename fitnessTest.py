@@ -10,10 +10,10 @@ import random
 import copy
 import matplotlib
 
-dataSize=50
-nbPotentialParents=range(50)
-offsetPP=450
-nbAllowedParents=range(8)
+dataSize=12
+nbPotentialParents=range(1)
+offsetPP=11
+nbAllowedParents=range(11)
 nbRepet=100
 rdmOMP=False
 nbRepetrdmOMP=1000

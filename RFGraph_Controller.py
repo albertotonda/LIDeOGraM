@@ -481,7 +481,8 @@ class RFGraph_Controller:
         self.modApp.clicked_line = cellClicked.row()
         #print("self.modApp.mode_changeEq:" + str(self.modApp.mode_changeEq))
         if (self.modApp.mode_changeEq):
-            self.modApp.selectedEq[self.modApp.lastNodeClicked] = cellClicked.row()
+            self.modApp.selectedEq[self.modApp.lastNodeClicked] = cellClicked.row()-int(self.modApp.varEquasize[self.modApp.lastNodeClicked] - self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked])
+
             self.modApp.computeGlobalView()
             self.vwApp.updateView()
             self.modApp.mode_changeEq = False
