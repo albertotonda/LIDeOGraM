@@ -32,12 +32,15 @@ from time import strftime
 class RFGraph_Model(QtGui.QMainWindow):
 
     def __init__(self):
-        logging.basicConfig(filename=strftime("%d %m %y: %H %M %S")+'.log', level=logging.DEBUG)
+        logging.basicConfig(filename=strftime("%d_%m_%y_%H_%M_%S")+'.log', level=logging.DEBUG)
         logging.info("Program started -- {}".format(strftime("%d %m %y: %H %M %S")))
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
         #self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert.csv")
-        self.dataset = Dataset("data/use_case.mld")
+
+        self.dataset = Dataset("data/type3_extra_0.2")
+        #self.dataset = Dataset("data/use_case.mld")
+
         #self.dataset = Dataset("C:/Users/Admin/Downloads/infos_parcelles_lideogram (5).csv")
         #self.dataset = Dataset("data/physico_meteo_dbn_modif_thomas.csv")
 
@@ -58,7 +61,7 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         self.equacolO = self.findLassoEqs()
 
-        #self.equacolO = self.readEureqaResults('data/eq_erqa2.txt')
+        self.equacolO = self.readEureqaResults('data/eq_erqa4.txt')
         self.nbequa = len(self.equacolO)  # Number of Equation for all variables taken together
 
         self.adj_simple=np.zeros((self.dataset.nbVar,self.dataset.nbVar))
@@ -610,7 +613,10 @@ class RFGraph_Model(QtGui.QMainWindow):
             yr=[]
             for numExp in range(self.dataset.nbExp):
                 yr.append(parse_expr(s[3].replace("^","**"), local_dict=self.dataset.getAllVarsforExp(numExp)))
-            recomputedFitness=fitness(list(map(float, xr)), list(map(float, yr)))
+            mfx = list(map(float, xr.tolist()))
+            print(yr)
+            mfy = list(map(float, yr))
+            recomputedFitness=fitness(mfx, mfy)
             #convertArr.append(np.float32(s[1]))
             convertArr.append(recomputedFitness)
             convertArr.append(s[2])

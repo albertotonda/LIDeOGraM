@@ -11,7 +11,7 @@ class QtConnector:
         self.vwApp=vwApp
         self.cntrApp=cntrApp
         self.vwApp.eqTableGUI.itemClicked.connect(self.cntrApp.eqTableClicked)
-        self.vwApp.adjThreshold_slider.valueChanged.connect(self.cntrApp.SliderMoved)
+        #self.vwApp.adjThreshold_slider.valueChanged.connect(self.cntrApp.SliderMoved)
 
         #self.vwApp.comprFitCmplx_slider.valueChanged.connect(self.cntrApp.SliderMoved)
         #self.vwApp.buttonFitness.clicked.connect(self.cntrApp.clickFitness)
@@ -23,7 +23,7 @@ class QtConnector:
         #self.vwApp.buttonRemoveLink.clicked.connect(self.cntrApp.clickRemoveLink)
         #self.vwApp.buttonReinstateLink.clicked.connect(self.cntrApp.clickReinstateLink)
 #        self.vwApp.buttonHelp.clicked.connect(self.cntrApp.clickHelp)
-        self.vwApp.buttonChangerEq.clicked.connect(self.cntrApp.clickChangeEq)
+#        self.vwApp.buttonChangerEq.clicked.connect(self.cntrApp.clickChangeEq)
         self.vwApp.uncertaintyModifButton.clicked.connect(self.cntrApp.clickUncertaintyButton)
         self.vwApp.networkGUI.fig.canvas.mpl_connect('button_press_event', self.cntrApp.onClick)
         self.vwApp.networkGUI.fig.canvas.mpl_connect('motion_notify_event',self.cntrApp.onMove3)
