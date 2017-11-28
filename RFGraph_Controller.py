@@ -513,6 +513,7 @@ class RFGraph_Controller:
         #self.vwApp.networkGUI.updateView()
 
     def eqTableHeaderClicked(self, clicked):
+        print("ertaer'ta")
         pass
 
     def incMatClicked(self,cellClicked):
