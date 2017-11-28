@@ -99,7 +99,7 @@ class RFGraph_Controller:
         self.vwApp.networkGUI.fig.canvas.draw()
         logging.info("Clicked view complexity -- {}".format(strftime("%d %m %y: %H %M %S")))
         QCoreApplication.processEvents()
-    # TODO
+
     def clickOptmuGP(self):
         logging.info("Global optimisation started -- {}".format(strftime("%d %m %y: %H %M %S")))
         #self.modApp.opt_params = OptimisationCanvas.get_params()
@@ -501,7 +501,7 @@ class RFGraph_Controller:
             self.vwApp.updateView()
             self.modApp.mode_changeEq = False
         else:
-            logging.info("Clicked equation table {} -- {}".format(self.modApp.lastNodeClicked, strftime("%d %m %y: %H %M %S")))
+            logging.info("Clicked equation table {}:{} -- {}".format(self.modApp.lastNodeClicked,self.modApp.clicked_line, strftime("%d %m %y: %H %M %S")))
             self.vwApp.eqTableGUI.updateView()
             if (not self.modApp.lastNodeClicked == None):
                 self.vwApp.uncertaintyModifTxt.setText(
@@ -511,6 +511,9 @@ class RFGraph_Controller:
             self.vwApp.fitGUI.updateView()
         pass
         #self.vwApp.networkGUI.updateView()
+
+    def eqTableHeaderClicked(self, clicked):
+        pass
 
     def incMatClicked(self,cellClicked):
         print(cellClicked.row())

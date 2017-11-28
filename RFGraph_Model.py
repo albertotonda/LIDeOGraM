@@ -10,16 +10,11 @@ sys.path.append('SALib/SaLib-master')
 from SALib.analyze import sobol
 from SALib.sample import saltelli
 from scipy.stats.stats import pearsonr
-from SALib.test_functions import Ishigami
-from SALib.util import read_param_file
-#from fitness import fitness
+from equaOptim import equaOptim
 from fitness import Individual
 import pandas as pd
 from Dataset import Dataset
 from sympy.parsing.sympy_parser import parse_expr
-from sympy import sympify
-import pickle
-from PyQt4.QtGui import *
 import ColorMaps
 from collections import OrderedDict
 from sklearn import linear_model
@@ -27,14 +22,13 @@ from fitness import fitness
 from classes.ClassGraph import ClassGraph
 from classes.ClassNode import ClassNode
 from classes.WindowClasses import WindowClasses
-from time import sleep
-import threading
 from RFGraph_View import RFGraph_View
 from RFGraph_Controller import RFGraph_Controller
 from QtConnector import QtConnector
 from PyQt4 import QtGui
 import logging
 from time import strftime
+
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model(QtGui.QMainWindow):
 
@@ -230,6 +224,7 @@ class RFGraph_Model(QtGui.QMainWindow):
             vwApp.cntrApp = cntrApp
             vwApp.eqTableGUI.cntrApp = cntrApp
             vwApp.updateMenuBar(cntrApp)
+            #self.progress_bar_global = vwApp.global_compute_progress
             qtconnector = QtConnector(vwApp, cntrApp)
         self.firstInit=False
 
@@ -315,7 +310,6 @@ class RFGraph_Model(QtGui.QMainWindow):
                 dataset.classesIn.append(vc.name)
                 dataset.varsIn.extend(vc.nodeList)
 
-
     def recomputeNode(self,node,neweqs):
         self.equacolO[self.equacolO[:, 2] == node, :]
         linesToRemove = np.ix_(self.equacolO[:, 2] == node)
@@ -327,7 +321,6 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.setGeometry(50, 50, 295, 25)
         self.progress.setValue(0)
         self.show()
-
 
     def eaForLinearRegression(self,X,Y,nb):
 
@@ -385,9 +378,6 @@ class RFGraph_Model(QtGui.QMainWindow):
             falseReg=MyReg(coef,reg.intercept_,pred)
 
             return falseReg
-
-
-
 
     def findLassoEqs(self):
         equacolOtmp=[]
@@ -1294,7 +1284,7 @@ class RFGraph_Model(QtGui.QMainWindow):
 
             cr = np.maximum(np.minimum(err_coef * 2, 1),0)
             cg = np.maximum(np.minimum((1 - err_coef) * 2, 1),0)
-            cb = 0
+            cb = 0.0
             self.global_Edge_Color.append([cr,cg,cb,1.0])
         pass
 

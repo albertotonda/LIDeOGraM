@@ -10,6 +10,7 @@ import numpy as np
 import pickle
 import logging
 from time import strftime
+from PyQt4.QtGui import QProgressBar
 
 
 class OptimModGlobal:
@@ -115,7 +116,7 @@ class OptimModGlobal:
         for ind, fit in list(zip(pop, fitnesses)):
             print(fit)
             ind.fitness.values = fit
-        pop,logbook=algorithms.eaMuPlusLambda(pop,toolbox,mu,lmbd,CXPB,MUTPB,NGEN,stats=stats,halloffame=halloffame,verbose=True)
+        pop,logbook=algorithms.eaMuPlusLambda(pop,toolbox,mu,lmbd,CXPB,MUTPB,NGEN,stats=stats,halloffame=halloffame,verbose=2)
 
         # record = stats.compile(pop)
         # popfit = [ind.fitness.values for ind in pop]
@@ -185,11 +186,6 @@ class OptimModGlobal:
         # for tl in ax1.get_yticklabels():
         #     tl.set_color("b")
         # fig.show()
-
-
-        #with open('fitEvolNoExpNoMol10.dat','wb') as f:
-        #    pickle.dump([fit_mins,fit_avgs,fit_stds,fit_maxs],f)
-
 
 
         #popfitnesses = logbook.select("popfitnesses")

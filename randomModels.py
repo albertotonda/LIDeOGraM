@@ -70,7 +70,7 @@ class RandomModels():
         logging.info("local search finished -- {}".format(time.strftime("%d %m %y: %H %M %S")))
 
 
-        lst = self.equacolO.tolist() #("equationscree", sep=",")
+        lst = self.equacolO.tolist()
         with open(self.outputfolder+"/"+self.name.split("\\")[-1]+"_equafgs",'w') as output:
             for _ in lst:
                 output.write(",".join(map(lambda x: str(x),_)))
