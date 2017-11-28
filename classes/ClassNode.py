@@ -25,8 +25,9 @@ class ClassNode:
         self.pos = pos
         self.lineWidth = lineWidth
         self.size = size
-        self.operators=[]
+        self.operators=['Exponentiel','Logarithm','Inverse','Square','Multiplication (x1*x2)']
 
+        self.operators =[]
     def __str__(self):
         return str(self.name)
 

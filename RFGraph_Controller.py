@@ -14,6 +14,7 @@ from time import strftime
 
 import random
 from OnOffCheckBox import *
+import pickle
 
 class RFGraph_Controller:
     def __init__(self,modApp,vwApp):
@@ -148,7 +149,13 @@ class RFGraph_Controller:
         logging.info("clicked change equation -- {}".format(strftime("%d %m %y: %H %M %S")))
         self.modApp.mode_changeEq=True
 
-    def onPick(self, event):
+    def clickSaveEq(self):
+        print("clickSaveEq")
+        filehandler = open('equations'+str(random.random())+'.txt', 'wb')
+        pickle.dump(self.modApp.equacolO, filehandler)
+        print("Saved")
+
+    def onPick(self,event):
         pass
 
     def onHover(self, dstMin,movingOrClikingNode):
@@ -488,7 +495,8 @@ class RFGraph_Controller:
         self.modApp.clicked_line = cellClicked.row()
         #print("self.modApp.mode_changeEq:" + str(self.modApp.mode_changeEq))
         if (self.modApp.mode_changeEq):
-            self.modApp.selectedEq[self.modApp.lastNodeClicked] = cellClicked.row()
+            self.modApp.selectedEq[self.modApp.lastNodeClicked] = cellClicked.row()-int(self.modApp.varEquasize[self.modApp.lastNodeClicked] - self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked])
+
             self.modApp.computeGlobalView()
             self.vwApp.updateView()
             self.modApp.mode_changeEq = False

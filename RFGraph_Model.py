@@ -10,11 +10,16 @@ sys.path.append('SALib/SaLib-master')
 from SALib.analyze import sobol
 from SALib.sample import saltelli
 from scipy.stats.stats import pearsonr
+from SALib.test_functions import Ishigami
+from SALib.util import read_param_file
+#from fitness import fitness
 from fitness import Individual
-from equaOptim import equaOptim
 import pandas as pd
 from Dataset import Dataset
 from sympy.parsing.sympy_parser import parse_expr
+from sympy import sympify
+import pickle
+from PyQt4.QtGui import *
 import ColorMaps
 from collections import OrderedDict
 from sklearn import linear_model
@@ -22,6 +27,8 @@ from fitness import fitness
 from classes.ClassGraph import ClassGraph
 from classes.ClassNode import ClassNode
 from classes.WindowClasses import WindowClasses
+from time import sleep
+import threading
 from RFGraph_View import RFGraph_View
 from RFGraph_Controller import RFGraph_Controller
 from QtConnector import QtConnector
@@ -240,7 +247,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         for unv in constrGraph.unboundNode:
             idx = np.where(dataset.varnames == unv)
             dataset.variablesClass.pop(unv)
-            allidx.append(idx)
+            allidx.append(idx[0][0])
 
         dataset.varnames = np.delete(dataset.varnames,allidx)
         dataset.nbVar = len(dataset.varnames)
@@ -283,6 +290,17 @@ class RFGraph_Model(QtGui.QMainWindow):
                 if (not True in np.isinf(divV)):
                     dataset.varnames_extd = np.append(dataset.varnames_extd, newVar)
                     dataset.data_extd = np.append(dataset.data_extd, divV, axis=1)
+                    dataset.variablesClass[newVar] = dataset.variablesClass[v]
+
+            if ('Multiplication (x1*x2)' in constrNodeV.operators):
+
+                for v2 in [v2 for v2 in constrNodeV.nodeList if v2!=v]:
+                    idx2 = np.where(dataset.varnames == v2)
+                    idx2 = idx2[0][0]
+                    newVar = v+"*"+v2
+                    multV=np.transpose(np.array([dataset.data_extd[:, idx2]])*np.array([dataset.data_extd[:, idx]]))
+                    dataset.varnames_extd = np.append(dataset.varnames_extd, newVar)
+                    dataset.data_extd = np.append(dataset.data_extd, multV, axis=1)
                     dataset.variablesClass[newVar] = dataset.variablesClass[v]
 
 
@@ -746,7 +764,6 @@ class RFGraph_Model(QtGui.QMainWindow):
                 self.nodeWeight.append(0)
         for i in range(len(self.dataset.varnames)):
             v=self.dataset.varnames[i]
-            #vcolor=(0,0,0)
             for vclasse in self.adj_contrGraph.nodes():
                 if(v in vclasse.nodeList):
                     vcolor=tuple(vclasse.color)
