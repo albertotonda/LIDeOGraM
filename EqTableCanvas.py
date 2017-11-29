@@ -130,7 +130,7 @@ class EqTableCanvas(QTableWidget):
             if(0.299*cmap[0] + 0.587*cmap[1]+0.114*cmap[2] < 110):
                 newitem.setTextColor(Qt.white)
             if (self.modApp.data[n][3] == False):
-                mash = 0.6;
+                mash = 0.6
                 newitem.setTextColor(QColor(int(255 * mash), int(255 * mash), int(255 * mash)))
             self.setItem(n, 0, newitem)
 
