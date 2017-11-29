@@ -43,6 +43,8 @@ class FitCanvas(FigureCanvas):
             self.fig.canvas.draw()
             return
 
+        #datafrom = None
+
         try:
             eq = self.modApp.data[self.modApp.clicked_line][2]
         except:
@@ -56,28 +58,15 @@ class FitCanvas(FigureCanvas):
         y = []
 
         if datafrom=='1':
-
-            #currdataset = self.modApp.dataset
-
             for n, i in enumerate(self.cell_pop):
                 x.append(n)
                 y.append(parse_expr(eq.replace("^","**"),i))
-            v =  "fitness/params_ce_po.csv"
 
         else:
-
-            #currdataset = self.modApp.dataset
-
-            #for n, i in enumerate(self.modApp.dataset):
-            #    x.append(n)
-            #    y.append(parse_expr(eq.replace("^","**"), i))
-            #v = "fitness/params_mo_ce.csv"
-
             for i in range(self.modApp.dataset.nbExp):
                 x.append(i)
                 y.append(parse_expr(eq.replace("^","**"),self.modApp.dataset.getAllVarsforExp(i)))
 
-        #num_exp=range(len(currdataset[2:,currdataset[0,:]==self.modApp.lastNodeClicked].astype('float64').flatten()))
         num_exp = range(self.modApp.dataset.nbExp)
 
         if self.modApp.globalModelView:
@@ -86,8 +75,6 @@ class FitCanvas(FigureCanvas):
             z = [ft.process(i,self.modApp.selectedEq)[self.modApp.lastNodeClicked] for i in x]
             z = np.asarray(z)
 
-
-        #val_node_exp=currdataset[2:,currdataset[0,:]==self.modApp.lastNodeClicked].astype('float64').flatten()
         val_node_exp=self.modApp.dataset.getAllExpsforVar(self.modApp.lastNodeClicked)
         self.fig.clear()
         currax=self.fig.add_subplot(111)
