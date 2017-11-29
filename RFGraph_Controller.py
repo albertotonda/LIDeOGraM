@@ -1,9 +1,6 @@
 #-*- coding: utf-8
 from Help import Help
 from PyQt4.QtCore import QCoreApplication
-from OptimisationCanvas import OptimisationCanvas
-from ErrorConstraint import ErrorConstraint
-from Network import Network
 import numpy as np
 from OptimModGlobal import OptimModGlobal
 import logging
@@ -11,9 +8,7 @@ import threading
 import re
 from itertools import compress
 from time import strftime
-
 import random
-from OnOffCheckBox import *
 import pickle
 
 class RFGraph_Controller:
@@ -27,6 +22,7 @@ class RFGraph_Controller:
         self.moveEventList=[]
         self.nbOnMoveWaiting=0
         self.lastEvent=None
+        self.on_off_state = False
 
     def clickHelp(self):
         self.modApp.help_params = Help.get_params()
@@ -513,8 +509,41 @@ class RFGraph_Controller:
         #self.vwApp.networkGUI.updateView()
 
     def eqTableHeaderClicked(self, clicked):
-        print("ertaer'ta")
-        pass
+        print("Header {}".format(clicked))
+        if clicked == 3:
+            #self.vwApp.eqTableGUI.updateView(self.on_off_state)
+            #neq = len(self.modApp.data)
+            # for _ in range(len(np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0])):
+            #     lineToModify = np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][_]
+            #     self.modApp.equacolO[lineToModify][4] = self.on_off_state
+            #     self.modApp.data[_][3] = self.on_off_state
+            #     # add = 1 if self.on_off_state == True else 0
+            #     if self.on_off_state == True:
+            #         self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] += 1
+            #         self.modApp.rmByRmEq.remove(lineToModify)
+            #     else:
+            #         self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] -= 1
+            #         self.modApp.rmByRmEq.append(lineToModify)
+            #
+
+            for _ in range(len(np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0])):
+                lineToModify = np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][_]
+                self.modApp.equacolO[lineToModify][4] = self.on_off_state
+                self.modApp.data[_][3] = self.on_off_state
+            self.vwApp.eqTableGUI.updateView()
+
+            # class Foo(QObject):
+            #     trigger = pyqtSignal(int,int)
+            #     def __init__(self, vwApp):
+            #         QObject.__init__(self)
+            #         self.trigger.connect(vwApp.eqTableGUI.cellClicked)
+            #     def emit(self,n):
+            #         self.trigger.emit(n, 3)
+            # f = Foo(self.vwApp)
+            # for _ in range(len(self.modApp.data)):
+            #     f.emit(_)
+
+            self.on_off_state = not self.on_off_state
 
     def incMatClicked(self,cellClicked):
         print(cellClicked.row())
@@ -567,7 +596,7 @@ class RFGraph_Controller:
     def closeEvent(self, ce):
         self.fileQuit()
 
-    def onOffClicked(self,objClicked):
+    def onOffClicked(self,objClicked, id = 0):
         lineToModify=np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][objClicked.id]
         logging.info("OnOffClicked {} -- {}".format(lineToModify, strftime("%d %m %y: %H %M %S")))
         self.modApp.equacolO[lineToModify][4]=objClicked.isChecked()
@@ -580,6 +609,7 @@ class RFGraph_Controller:
             self.modApp.rmByRmEq.append(lineToModify)
 
         self.vwApp.eqTableGUI.updateView()
+        self.vwApp.eqTableGUI.scrollToItem(self.vwApp.eqTableGUI.item(id, 0))
 
     def removeNode(self,nodeToRemove):
         logging.info("Removing node {} -- {}".format(str(nodeToRemove), strftime("%d %m %y: %H %M %S")))

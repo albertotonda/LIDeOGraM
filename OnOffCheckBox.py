@@ -37,7 +37,7 @@ class OnOffCheckBox(QtGui.QCheckBox):
                 self.setChecked(False)
             else:
                 self.setChecked(True)
-            self.cntrApp.onOffClicked(self)
+            self.cntrApp.onOffClicked(self, self.id)
             return QtGui.QCheckBox.mousePressEvent(self, *args, **kwargs)
 #|--------------------------End of mousePressEvent-----------------------------|
 

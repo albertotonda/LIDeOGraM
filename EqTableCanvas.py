@@ -119,11 +119,9 @@ class EqTableCanvas(QTableWidget):
         self.clear()
         self.setRowCount(len(self.modApp.data))
         self.setColumnCount(4)
-        self.wordWrap()
         self.setTextElideMode(Qt.ElideNone)
         self.setHorizontalHeaderLabels(['Complexity', 'Fitness', 'Equation', 'On/Off'])
 
-        self.resizeColumnsToContents()
         #eqList = self.generateLatex()
         for n  in range(len(self.modApp.data)):
             newitem = QTableWidgetItem(str(self.modApp.data[n][0]))
@@ -157,24 +155,24 @@ class EqTableCanvas(QTableWidget):
                 newitem.setBackground(QColor(255, 255, 255))
             self.setItem(n, 2, newitem)
 
-
             cb = OnOffCheckBox(self.cntrApp, n)
             cb.setParent(self)
-            cb.setCheckState(self.modApp.data[n][3])
+            state = self.modApp.data[n][3]
+            cb.setCheckState(state)
             self.setCellWidget(n,3,cb)
 
         self.wordWrap()
 
-        self.resizeRowsToContents()
         self.horizontalHeader().setResizeMode(2,QtGui.QHeaderView.Stretch)
-        self.resizeRowsToContents()
 
         if(self.modApp.globalModelView and not self.modApp.lastNodeClicked in self.modApp.varsIn and self.modApp.lastNodeClicked != None):
             idx_node=np.ix_(self.modApp.equacolO[:, 2] == self.modApp.lastNodeClicked)
             idx_true=np.ix_(self.modApp.equacolO[idx_node, 4][0] == True)[0]
             idx_selected = idx_true[self.modApp.selectedEq[self.modApp.lastNodeClicked]]
             self.item(idx_selected, 2).setBackground(QColor(100, 100, 150))
-        pass
+
+        self.resizeRowsToContents()
+        self.show()
 
 
     def reformatNumberEquation(self,eq):

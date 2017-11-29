@@ -224,7 +224,7 @@ class RFGraph_Model(QtGui.QMainWindow):
             vwApp.cntrApp = cntrApp
             vwApp.eqTableGUI.cntrApp = cntrApp
             vwApp.updateMenuBar(cntrApp)
-            vwApp.horizontalHeader().sortIndicatorChanged.connect(cntrApp.eqTableHeaderClicked)
+            vwApp.eqTableGUI.horizontalHeader().sortIndicatorChanged.connect(cntrApp.eqTableHeaderClicked)
 
             #self.progress_bar_global = vwApp.global_compute_progress
             qtconnector = QtConnector(vwApp, cntrApp)
