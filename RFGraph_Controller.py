@@ -1,6 +1,7 @@
 #-*- coding: utf-8
 from Help import Help
 from PyQt4.QtCore import QCoreApplication
+from PyQt4.QtGui import QAbstractItemView
 import numpy as np
 from OptimModGlobal import OptimModGlobal
 import logging
@@ -597,6 +598,12 @@ class RFGraph_Controller:
         self.fileQuit()
 
     def onOffClicked(self,objClicked, id = 0):
+        #position = self.vwApp.eqTableGUI.rowViewportPosition(id)
+        scroll_handle = self.vwApp.eqTableGUI.verticalScrollBar()
+        scroll_position = scroll_handle.value()
+        first_row = self.vwApp.eqTableGUI.rowAt(0)
+        print(first_row)
+        print(scroll_position)
         lineToModify=np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][objClicked.id]
         logging.info("OnOffClicked {} -- {}".format(lineToModify, strftime("%d %m %y: %H %M %S")))
         self.modApp.equacolO[lineToModify][4]=objClicked.isChecked()
@@ -609,7 +616,9 @@ class RFGraph_Controller:
             self.modApp.rmByRmEq.append(lineToModify)
 
         self.vwApp.eqTableGUI.updateView()
-        self.vwApp.eqTableGUI.scrollToItem(self.vwApp.eqTableGUI.item(id, 0))
+        self.vwApp.eqTableGUI.scrollToItem(self.vwApp.eqTableGUI.item(first_row, 0), QAbstractItemView.PositionAtTop)
+        #self.vwApp.eqTableGUI.scrollTo(scroll_position)
+        self.vwApp.eqTableGUI.show()
 
     def removeNode(self,nodeToRemove):
         logging.info("Removing node {} -- {}".format(str(nodeToRemove), strftime("%d %m %y: %H %M %S")))
