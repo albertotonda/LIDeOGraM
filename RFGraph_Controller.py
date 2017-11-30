@@ -546,15 +546,7 @@ class RFGraph_Controller:
                     break
         else:
 
-            cmmplxM = self.modApp.datumIncMat.iloc[cellClicked.row()][0]
-            ftnessL = self.modApp.datumIncMat.iloc[cellClicked.row()][1]
-
-            for indice in range(self.vwApp.eqTableGUI.rowCount()):
-                complxT = float(self.vwApp.eqTableGUI.item(indice, 0).data(0))
-                ftnessT = float(self.vwApp.eqTableGUI.item(indice, 1).data(0))
-                if complxT == cmmplxM and fabs(ftnessL - ftnessT) < 1e-7:
-                    eqCellToClick = indice
-                    break
+            eqCellToClick = self.vwApp.incMatGUI.newOrder[cellClicked.row()]
 
         class MyWidgetItem:
             self.row2 = -1

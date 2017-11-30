@@ -139,6 +139,7 @@ class IncMatrixCanvas(QTableWidget):
         gmodelSize = len(eqs)
         diff = set(range(l)) - set(eqs)
         others = list(sorted(list(diff)))
+        self.newOrder = eqs+others
         for i in others:
             eqs.append(i)
         #eqs contiens maintenant normalement le nouvel ordonanamcement.
@@ -146,10 +147,6 @@ class IncMatrixCanvas(QTableWidget):
         for i in eqs:
             nameOrder.append(self.modApp.dataIncMat.index.tolist()[i])
         self.order = nameOrder
-
-        #self.setVerticalHeaderLabels(nameOrder)
-
-
 
         for i,k in enumerate(eqs) : #range(self.modApp.shapeIncMat[0]):
             self.setRowHeight(i, 15)
