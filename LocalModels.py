@@ -36,7 +36,6 @@ class LocalModels:
     def computeAdjMatrix(self):
 
         #Init
-        nbVar=self.modApp.dataset.nbVar
         self.adj_simple=AdjacenceMatrix(self.modApp.dataset.varnames,0)
         self.adj_fit=AdjacenceMatrix(self.modApp.dataset.varnames,1)
         self.adj_cmplx=AdjacenceMatrix(self.modApp.dataset.varnames,1)
@@ -45,7 +44,7 @@ class LocalModels:
 
         # Number of equations for each variables
         for v in self.modApp.dataset.varnames:
-            self.nbEqForVar[v]=0;
+            self.nbEqForVar[v]=0
 
         for e in self.allEquations: #For every equation
             for v in self.modApp.dataset.varnames :  # for every possible parents in this equation

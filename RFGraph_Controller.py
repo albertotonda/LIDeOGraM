@@ -102,7 +102,9 @@ class RFGraph_Controller:
         if (len(self.modApp.nodesWithNoEquations) > 0):
             self.vwApp.noEquationError()
         else:
+            self.vwApp.global_compute_progress.reset()
             optModGlob = OptimModGlobal(self.modApp)
+            optModGlob.update_bar_signal.connect(self.vwApp.global_compute_progress.setValue)
             self.modApp.best_indv = optModGlob.startOptim()
             self.modApp.globalModelView = True
             self.modApp.bestindvToSelectedEq()
@@ -111,6 +113,7 @@ class RFGraph_Controller:
             self.vwApp.incMatGUI.mutipleHighlight(-1)
             self.vwApp.updateView()
             self.vwApp.showAction.setChecked(True)
+            optModGlob.update_bar_signal.disconnect(self.vwApp.global_compute_progress.setValue)
 
     # TODO
     def clickHideModGlobal(self):

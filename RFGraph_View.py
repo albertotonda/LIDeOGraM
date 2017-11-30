@@ -6,11 +6,7 @@ from EqTableCanvas import EqTableCanvas
 from IncMatrixCanvas import IncMatrixCanvas
 from FitCanvas import FitCanvas
 from OnOffCheckBox import *
-from PyQt4.Qt import QPoint
 from PyQt4.QtGui import QProgressBar
-
-import sys
-import math
 from PyQt4.QtCore import *
 import logging
 
@@ -39,13 +35,13 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         self.gridLayout = QtGui.QGridLayout(self.main_widget)
         self.gridLayout.setSpacing(5)
         self.networkGUI = NetworkCanvas(self.modApp, self)
-        self.gridLayout.addWidget(self.networkGUI, 1, 0, 3, 2)
+        self.gridLayout.addWidget(self.networkGUI, 1, 0, 2, 2)
         self.incMatGUI = IncMatrixCanvas(self.modApp, self)
         self.gridLayout.addWidget(self.incMatGUI, 1, 2, 3, 1)
 
-        #self.global_compute_progress = QProgressBar()
-        #self.global_compute_progress.setRange(0, 100)
-        #self.gridLayout.addWidget(self.global_compute_progress,1,3,1,1)
+        self.global_compute_progress = QProgressBar(self)
+        self.global_compute_progress.setRange(0, 100)
+        self.gridLayout.addWidget(self.global_compute_progress,3,1,1,1)
 
         self.comprFitCmplx_lab_fit = QtGui.QLabel('Fitness')
         self.selectContrTxtLab = QtGui.QLabel('')
