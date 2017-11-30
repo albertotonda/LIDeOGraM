@@ -182,6 +182,14 @@ class Network:
                     if (not v in self.modApp.varsIn):
                         blackFLab[v] = self.modApp.globErrLab[v]
                         blackFpos[v] = self.modApp.fpos[v]
+
+        else:
+            for v in self.modApp.dataset.varnames.tolist():
+                    blackLab[v] = v
+                    blackLabPos[v] = self.modApp.lpos[v]
+                    if (not v in self.modApp.varsIn):
+                        blackFLab[v] = self.modApp.globErrLab[v]
+                        blackFpos[v] = self.modApp.fpos[v]
                         # for v in parOffNodes:
                         #    hNodeColor[self.modApp.dataset.varnames.tolist().index(v)] = (0, 0, 1)
 
