@@ -109,7 +109,7 @@ class OptimModGlobal(QWidget):
                                                      halloffame=halloffame, verbose=1)
             evolutionlog.record(gen=gen, book=logbook)
             self.update_bar_signal.emit(int(100*float(gen)/(NGEN-1)))
-            #QCoreApplication.processEvents()
+            QCoreApplication.processEvents()
 
         fit_alls = logbook.select("all")
 

@@ -51,7 +51,7 @@ class WindowClasses(QtGui.QMainWindow):
         histTools = ToolMenu(self, "hist")
 
         self.cancelButton = QtGui.QPushButton("Cancel")
-        self.cancelButton.clicked.connect(lambda: self.setReady(self.initialGraph))
+        self.cancelButton.clicked.connect(lambda: self.setReady(QtCore.QCoreApplication.exit(0)))
         self.cancelButton.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.Normal))
 
         self.historical = ListHistorical(self.undoRedo)

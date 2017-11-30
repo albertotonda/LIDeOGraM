@@ -60,7 +60,7 @@ class RFGraph_Model(QtGui.QMainWindow):
             self.adj_contrGraph.edgesTrueName.append((e0.name,e1.name))
         self.correctDataset(self.dataset,self.adj_contrGraph)
 
-        self.equacolO = self.findLassoEqs()
+        #self.equacolO = self.findLassoEqs()
 
         self.equacolO = self.readEureqaResults('data/eq_erqa4.txt')
         self.nbequa = len(self.equacolO)  # Number of Equation for all variables taken together

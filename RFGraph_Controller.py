@@ -249,7 +249,6 @@ class RFGraph_Controller:
 
         # self.onMoveMutex.acquire()
         if (event.button == 1 and self.modApp.lastNodeClicked != None):
-            print(event)
             logging.info("Moving {} -- {}".format(self.modApp.lastNodeClicked, strftime("%d %m %y: %H %M %S")))
             old_pos = self.modApp.pos[self.modApp.lastNodeClicked]
             self.modApp.pos[self.modApp.lastNodeClicked] = (event.xdata, event.ydata)
@@ -442,9 +441,6 @@ class RFGraph_Controller:
             self.modApp.NodeConstraints = []
 
     def clickReinstateLink(self, name, isRestoreByNode=False):
-        # if self.vwApp.scrolledListBox.currentText() == "Select link to reinstate":
-        #    return
-        # else:
         idx = self.modApp.scrolledList.index(name)
         v = name.split(' ')
 
@@ -464,9 +460,6 @@ class RFGraph_Controller:
 
         if (not isRestoreByNode):
             self.vwApp.eqTableGUI.updateView()
-            # self.vwApp.scrolledListBox.clear()
-            # for item in self.modApp.scrolledList:
-            #    self.vwApp.scrolledListBox.addItem(item)
             self.modApp.computeEdgeBold()
             self.modApp.computeNxGraph()
             self.vwApp.networkGUI.network.updateView()
@@ -477,10 +470,6 @@ class RFGraph_Controller:
     def SliderMoved(self, value):
         if (self.modApp.adjThresholdVal != self.vwApp.adjThreshold_slider.value() / 100.0):
             self.modApp.adjThresholdVal = self.vwApp.adjThreshold_slider.value() / 100.0
-        # if(self.modApp.comprFitCmplxVal != self.vwApp.comprFitCmplx_slider.value() / 100.0 ):
-        #    self.modApp.comprFitCmplxVal=self.vwApp.comprFitCmplx_slider.value() / 100.0
-        #    self.modApp.computeComprEdgeColor()
-        #    self.modApp.computeEdgeBold()
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.updateView()
 
@@ -502,10 +491,28 @@ class RFGraph_Controller:
                                                             strftime("%d %m %y: %H %M %S")))
             self.vwApp.eqTableGUI.updateView()
             if not self.modApp.lastNodeClicked is None:
+                #invOrder = self.vwApp.incMatGUI.newOrder[:]
+                #for c, _ in enumerate(self.vwApp.incMatGUI.newOrder):
+                #    invOrder[_] = c
+                counter = 0
+                matrix_position =0
                 uncertainty = str(self.modApp.dataset.variablesUncertainty[self.modApp.lastNodeClicked])
                 self.vwApp.uncertaintyModifTxt.setText(uncertainty)
+                for n,i in enumerate(self.vwApp.incMatGUI.order):
+                    if i == self.modApp.lastNodeClicked:
+                        if counter == self.modApp.clicked_line:
+                            #matrix_position = invOrder[n]
+                            matrix_position =self.vwApp.incMatGUI.newOrder.index(n)
+                            break
+                        counter += 1
+
+                self.vwApp.incMatGUI.highlight(matrix_position)
+
+
             else:
+
                 self.vwApp.uncertaintyModifTxt.setText('')
+
             self.vwApp.fitGUI.updateView()
             item_to_select = self.vwApp.eqTableGUI.item(self.modApp.clicked_line, 0)
             self.vwApp.eqTableGUI.scrollToItem(item_to_select, QAbstractItemView.PositionAtCenter)
@@ -539,14 +546,12 @@ class RFGraph_Controller:
         ev = MyEvent(*posNode)
         self.onClick(ev)
         eqCellToClick = -1
-        if (not self.modApp.best_indv):
-            for i in range(len(self.modApp.data)):
-                if (self.modApp.data[i][2] == self.modApp.datumIncMat.iloc[cellClicked.row()][3]):
-                    eqCellToClick = i
-                    break
-        else:
-
-            eqCellToClick = self.vwApp.incMatGUI.newOrder[cellClicked.row()]
+        for i in range(len(self.modApp.data)):
+            if (self.modApp.data[i][2] == self.modApp.datumIncMat.iloc[cellClicked.row()][3]):
+                eqCellToClick = i
+                break
+        if self.modApp.best_indv:
+            eqCellToClick = self.vwApp.incMatGUI.newOrder[eqCellToClick]
 
         class MyWidgetItem:
             self.row2 = -1

@@ -76,6 +76,8 @@ class IncMatrixCanvas(QTableWidget):
         self.order = self.modApp.dataIncMat.index
         self.colorClasses = dict(zip(self.modApp.dataset.varnames, self.modApp.nodeColor))
 
+        self.newOrder = list(range(self.modApp.shapeIncMat[0]))
+
 
         for i in range(self.modApp.shapeIncMat[0]):
             self.setRowHeight(i, 15)
@@ -226,9 +228,10 @@ class IncMatrixCanvas(QTableWidget):
                 color = cell.background().color().getRgb()
                 if color == (190, 190, 190, 255):
                     color = [255, 255, 255, 255]
-                    cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
+                    cell.setBackgroundColor(QColor.fromRgb(*color))
                 else:
-                    color = [int((255 / 190) * i) for i in color]
+                    color = [int((255 / 190) * i) for i in color[:-1]]
+                    color.append(255)
                     cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
         if value == -1:
             self.lastSelected = False
@@ -239,10 +242,11 @@ class IncMatrixCanvas(QTableWidget):
             color = cell.background().color().getRgb()
             if color == (255,255,255,255):
                 color = [190,190,190,125]
-                cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
+                cell.setBackgroundColor(QColor.fromRgb(*color))
             else:
-                color = [int((190/255)*i) for i in color]
-                cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
+                color = [int((190/255)*i) for i in color[:-1]]
+                color.append(255)
+                cell.setBackgroundColor(QColor.fromRgb(*color))
 
     def mutipleHighlight(self, label: str):
         if self.lastSelectedRows:
