@@ -1,10 +1,12 @@
 #-*- coding: utf-8
-from RFGraph_View import RFGraph_View
-from RFGraph_Model import RFGraph_Model
-from RFGraph_Controller import RFGraph_Controller
-from QtConnector import QtConnector
 import sys
+
 from PyQt4 import QtGui
+
+from QtConnector import QtConnector
+from RFGraph_Controller import RFGraph_Controller
+from RFGraph_Model import RFGraph_Model
+from RFGraph_View import RFGraph_View
 
 qApp = QtGui.QApplication(sys.argv)
 modApp=RFGraph_Model()

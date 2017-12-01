@@ -1,17 +1,21 @@
 # -*- coding: utf-8
-from Help import Help
+import logging
+import pickle
+import random
+import re
+import threading
+from itertools import compress
+from math import fabs
+from time import strftime
+import traceback
+
+import numpy as np
 from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QAbstractItemView
-import numpy as np
+
+from Help import Help
 from OptimModGlobal import OptimModGlobal
-import logging
-import threading
-import re
-from itertools import compress
-from time import strftime
-import random
-import pickle
-from math import fabs
+
 
 class RFGraph_Controller:
     def __init__(self, modApp, vwApp):
@@ -167,21 +171,21 @@ class RFGraph_Controller:
                 self.modApp.lastHover = ''
             return
 
-        if (not self.modApp.lastHover == dstMin or movingOrClikingNode):
+        if not self.modApp.lastHover == dstMin or movingOrClikingNode:
             logging.info("Hovered {} -- {}".format(str(dstMin), strftime("%d %m %y: %H %M %S")))
             self.vwApp.networkGUI.network.updateView(dstMin)
             self.modApp.lastHover = dstMin
             # print('hover: '+dstMin[1])
 
     def onMove3(self, event):
-        if (not self.onMoveMutex.acquire(False)):
+        if not self.onMoveMutex.acquire(False):
             # print('already computing,return : ' + str(event))
             self.lastEvent = event
             return
         # print('computing' + str(event))
         self.onMove(event)
         # print('computing finished :' + str(event))
-        if (self.lastEvent != None):
+        if self.lastEvent != None:
             # print('computing last : ' + str(self.lastEvent))
             self.onMove(self.lastEvent)
             self.lastEvent = None
@@ -206,12 +210,12 @@ class RFGraph_Controller:
             print('waiting : ' + str(event))
             self.returnMutex.acquire(True)
             print('released : ' + event)
-            if (self.nbOnMoveWaiting > 1):
+            if self.nbOnMoveWaiting > 1:
                 print('another is already in the list, return : ' + str(event))
                 self.nbOnMoveWaiting -= 1
                 return
         self.protectMutex.release()
-        if (not self.onMoveMutex.acquire(False)):
+        if not self.onMoveMutex.acquire(False):
             print('already computing : ' + str(event))
             return
         self.moveListMutex.acquire(True)
@@ -229,29 +233,29 @@ class RFGraph_Controller:
 
         (x, y) = (event.xdata, event.ydata)
         if not x or not y:
-            if (self.modApp.lastHover != ''):
+            if self.modApp.lastHover != '':
                 self.vwApp.networkGUI.network.updateView()
                 self.modApp.lastHover = ''
             return
         dst = [(pow(x - self.modApp.pos[node][0], 2) + pow(y - self.modApp.pos[node][1], 2), node) for node in
                self.modApp.pos]
         dst = list(filter(lambda x: x[0] < self.modApp.radius, dst))
-        if (len(dst) != 0):
+        if len(dst) != 0:
             dstMin = min(dst, key=(lambda x: x[0]))
         else:
             dstMin = ('', '')
 
-        if (event.button == None and self.modApp.lastHover == dstMin[1]):
+        if event.button == None and self.modApp.lastHover == dstMin[1]:
             # print('return1')
             return
 
         # if (self.onMoveMutex.locked() or event.inaxes == None ):
-        if (event.inaxes == None):
+        if event.inaxes == None:
             # print('return2')
             return
 
         # self.onMoveMutex.acquire()
-        if (event.button == 1 and self.modApp.lastNodeClicked != None):
+        if event.button == 1 and self.modApp.lastNodeClicked != None:
             logging.info("Moving {} -- {}".format(self.modApp.lastNodeClicked, strftime("%d %m %y: %H %M %S")))
             old_pos = self.modApp.pos[self.modApp.lastNodeClicked]
             self.modApp.pos[self.modApp.lastNodeClicked] = (event.xdata, event.ydata)
@@ -521,7 +525,8 @@ class RFGraph_Controller:
         # self.vwApp.networkGUI.updateView()
 
     def eqTableHeaderClicked(self, clicked):
-        print("Header {}".format(clicked))
+        print("eqTableHeaderClicked {}".format(clicked))
+        logging.info("node {} All Equations {} -- {}".format(self.modApp.lastNodeClicked, self.on_off_state, strftime("%d %m %y: %H %M %S")))
         if clicked == 3:
             try:
                 for _ in range(len(np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0])):
@@ -534,10 +539,18 @@ class RFGraph_Controller:
                     else:
                         self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] -= 1
                         self.modApp.rmByRmEq.append(lineToModify)
+                        print(self.modApp.equacolO[lineToModify][4])
+                        print(self.modApp.data[_][3])
+                    print(self.modApp.rmByRmEq)
+                    self.modApp.rmByRmEq = list(set(self.modApp.rmByRmEq))
+
                 self.vwApp.eqTableGUI.updateView()
-            except:
+            except Exception as e:
+                print(traceback.format_exc())
+                print(e)
                 pass
-            # TODO really bad idea Marc,
+            # TODO really bad idea Marc.
+            # TODO possible to check the class of node and compare against the number of on/off to determine what state to turn to
 
             self.on_off_state = not self.on_off_state
 
@@ -608,6 +621,7 @@ class RFGraph_Controller:
         first_row = self.vwApp.eqTableGUI.rowAt(0)
         lineToModify = np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][objClicked.id]
         logging.info("OnOffClicked {} -- {}".format(lineToModify, strftime("%d %m %y: %H %M %S")))
+        #TODO correct me ! ( Attention à l'état de equacol0 vs varEquasizeOnelyTrue )
         self.modApp.equacolO[lineToModify][4] = objClicked.isChecked()
         self.modApp.data[objClicked.id][3] = objClicked.isChecked()
         if self.modApp.best_indv != {}:
@@ -615,12 +629,18 @@ class RFGraph_Controller:
                 self.clean_global_state = False
                 self.vwApp.incMatGUI.broken(True)
 
+        print(self.modApp.equacolO[lineToModify][4])
+        print(self.modApp.data[objClicked.id][3])
+
         if objClicked.isChecked():
             self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] += 1
             self.modApp.rmByRmEq.remove(lineToModify)
         else:
             self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] -= 1
             self.modApp.rmByRmEq.append(lineToModify)
+
+        self.modApp.rmByRmEq = list(set(self.modApp.rmByRmEq))
+        print(self.modApp.rmByRmEq)
 
         # TODO detect invalid models
 

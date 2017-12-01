@@ -39,48 +39,48 @@ class RFGraph_Model(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
         datafile = "data/type3_extra_0.2"
         self.dataset = Dataset(datafile)
-        self.trueture = Dataset("data/ballon_clean_no_noise.csv")
+       # self.trueture = Dataset("data/ballon_clean_no_noise.csv")
         #self.dataset = Dataset("data/use_case.mld")
 
         logging.info("Data file {} -- {}".format(datafile, strftime("%d %m %y: %H %M %S")))
         self.createConstraintsGraph()
-        self.firstInit=True
+        self.firstInit = True
 
-    def init2(self,contrgraph):
+    def init2(self, contrgraph):
 
         self.adj_contrGraph = contrgraph
-        self.adj_contrGraph.edgesTrueName=[]
-        for (e0,e1) in self.adj_contrGraph.edges():
-            self.adj_contrGraph.edgesTrueName.append((e0.name,e1.name))
-        self.correctDataset(self.dataset,self.adj_contrGraph)
+        self.adj_contrGraph.edgesTrueName = []
+        for (e0, e1) in self.adj_contrGraph.edges():
+            self.adj_contrGraph.edgesTrueName.append((e0.name, e1.name))
+        self.correctDataset(self.dataset, self.adj_contrGraph)
 
         #self.equacolO = self.findLassoEqs()
 
         self.equacolO = self.readEureqaResults('data/eq_erqa4.txt')
         self.nbequa = len(self.equacolO)  # Number of Equation for all variables taken together
 
-        self.adj_simple=np.zeros((self.dataset.nbVar,self.dataset.nbVar))
-        self.adj_fit=np.ones((self.dataset.nbVar,self.dataset.nbVar))
-        self.adj_cmplx=np.ones((self.dataset.nbVar,self.dataset.nbVar))
-        self.nbeq=np.zeros(self.dataset.nbVar) # Number of equations for each variables
+        self.adj_simple = np.zeros((self.dataset.nbVar,self.dataset.nbVar))
+        self.adj_fit = np.ones((self.dataset.nbVar,self.dataset.nbVar))
+        self.adj_cmplx = np.ones((self.dataset.nbVar,self.dataset.nbVar))
+        self.nbeq = np.zeros(self.dataset.nbVar) # Number of equations for each variables
 
-        self.equacolPO=[]
+        self.equacolPO = []
         for l in range(self.nbequa):
             for h in range(self.dataset.nbVar):
                 #Possible parents for the equations
                 try:
-                    cont_h=len(re.findall(r'\b%s\b' % re.escape(self.dataset.varnames[h]),self.equacolO[l,3]))  #How many times the variable self.varname[h] is found in the equation self.equacolO[l,3]
-                    cont_h =cont_h+len(re.findall(r'\b%s\b' % re.escape(self.dataset.varnames[h]+"^2"), self.equacolO[l, 3]))
+                    cont_h = len(re.findall(r'\b%s\b' % re.escape(self.dataset.varnames[h]),self.equacolO[l,3]))  #How many times the variable self.varname[h] is found in the equation self.equacolO[l,3]
+                    cont_h = cont_h+len(re.findall(r'\b%s\b' % re.escape(self.dataset.varnames[h]+"^2"), self.equacolO[l, 3]))
 
 
                 except:
                     pass
-                if(cont_h>0): #If present, add infos in adjacence matrix
+                if cont_h>0: #If present, add infos in adjacence matrix
                     ind_parent=h
                     ind_offspring=list(self.dataset.varnames).index(self.equacolO[l,2])
                     self.adj_simple[ind_offspring,ind_parent]+=1
                     self.adj_cmplx[ind_offspring,ind_parent]*=self.equacolO[l,0] #  GEOMETRIC mean
-                    if(self.equacolO[l,1] != 0):
+                    if self.equacolO[l,1] != 0:
                         self.adj_fit[ind_offspring,ind_parent]*=self.equacolO[l,1] #  GEOMETRIC mean
                     self.equacolPO.append([self.equacolO[l,0],self.equacolO[l,1],self.equacolO[l,2],self.dataset.varnames[h],self.equacolO[l,3], self.equacolO[l,4]])
             self.nbeq[list(self.dataset.varnames).index(self.equacolO[l,2])]+=1 # Comptage du nombre d'équations pour chaque enfant
@@ -1157,10 +1157,10 @@ class RFGraph_Model(QtGui.QMainWindow):
                 #if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
                     #if self.nbeq[i] == np.float64(0.0): continue
                 for k in range(len(self.adj_contrGraph.nodes())):
-                    if self.adj_contrGraph.nodes()[k].name == self.dataset.variablesClass[self.dataset.varnames[j]]:
-                        jClass=self.adj_contrGraph.nodes()[k]
-                    if self.adj_contrGraph.nodes()[k].name == self.dataset.variablesClass[self.dataset.varnames[i]]:
-                        iClass=self.adj_contrGraph.nodes()[k]
+                    if list(self.adj_contrGraph.nodes())[k].name == self.dataset.variablesClass[self.dataset.varnames[j]]:
+                        jClass=list(self.adj_contrGraph.nodes())[k]
+                    if list(self.adj_contrGraph.nodes())[k].name == self.dataset.variablesClass[self.dataset.varnames[i]]:
+                        iClass=list(self.adj_contrGraph.nodes())[k]
                 if self.adj_contrGraph.has_edge(jClass, iClass):
 #                        print(self.dataset.varnames[j] + " --> " + self.dataset.varnames[i] + " : " + self.dataset.variablesClass[self.dataset.varnames[j]] + " --> " + self.dataset.variablesClass[self.dataset.varnames[i]])
                     ed.append((self.dataset.varnames[j], self.dataset.varnames[i]))
