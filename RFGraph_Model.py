@@ -152,7 +152,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.transparentEdges=False
         self.edgeBoldfull=[]
         self.adj_cmplx_max = np.amax(self.adj_cmplx)
-        self.best_indv=[]
+        self.best_indv={}
         self.globalModelView = False
         self.selectedEq={}
         self.global_Edge_Color = []

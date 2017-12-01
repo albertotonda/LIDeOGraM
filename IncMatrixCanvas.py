@@ -131,7 +131,7 @@ class IncMatrixCanvas(QTableWidget):
 
     def updateView(self):
         best_ind = self.modApp.best_indv
-        if best_ind == []: return
+        if best_ind == {}: return
         tableOrder = self.modApp.dataIncMat.columns
         eqs = []
         for place, col in enumerate(tableOrder):

@@ -317,7 +317,7 @@ class RFGraph_Controller:
             logging.info("Clicked graph deselect all -- {}".format(strftime("%d %m %y: %H %M %S")))
             nodeclicked = min(dst, key=(lambda x: x[0]))[1]  # Closest node
             self.vwApp.incMatGUI.mutipleHighlight(nodeclicked)
-            self.vwApp.incMatGUI.highlight(-1)
+            #self.vwApp.incMatGUI.highlight(-1)
             print("highlighting " + nodeclicked)
             # self.higlight(nodeclicked, self.p(self.modApp.lastNodeClicked))
             self.modApp.lastNodeClicked = nodeclicked
@@ -351,7 +351,7 @@ class RFGraph_Controller:
                 eqCellToClick = self.modApp.selectedEq[self.modApp.lastNodeClicked]
                 eqCellToClickWid = MyWidgetItem(eqCellToClick)
                 # print("clickedEq:"+str(eqCellToClick))
-                self.eqTableClicked(eqCellToClickWid)
+                self.eqTableClicked(eqCellToClickWid,False)
             else:
                 self.modApp.clicked_line = -1
                 updateFitGUI = True
@@ -474,7 +474,9 @@ class RFGraph_Controller:
         self.vwApp.networkGUI.network.updateView()
 
     # TODO Affiche la courbe de l'équation sélectionnée
-    def eqTableClicked(self, cellClicked):
+    def eqTableClicked(self, cellClicked, higlight_matrix=True):
+        if not cellClicked:
+            return
         self.modApp.clicked_line = cellClicked.row()
         # print("self.modApp.mode_changeEq:" + str(self.modApp.mode_changeEq))
         if (self.modApp.mode_changeEq):
@@ -491,28 +493,22 @@ class RFGraph_Controller:
                                                             strftime("%d %m %y: %H %M %S")))
             self.vwApp.eqTableGUI.updateView()
             if not self.modApp.lastNodeClicked is None:
-                #invOrder = self.vwApp.incMatGUI.newOrder[:]
-                #for c, _ in enumerate(self.vwApp.incMatGUI.newOrder):
-                #    invOrder[_] = c
-                counter = 0
-                matrix_position =0
                 uncertainty = str(self.modApp.dataset.variablesUncertainty[self.modApp.lastNodeClicked])
                 self.vwApp.uncertaintyModifTxt.setText(uncertainty)
-                for n,i in enumerate(self.vwApp.incMatGUI.order):
-                    if i == self.modApp.lastNodeClicked:
-                        if counter == self.modApp.clicked_line:
-                            #matrix_position = invOrder[n]
-                            matrix_position =self.vwApp.incMatGUI.newOrder.index(n)
-                            break
-                        counter += 1
 
-                self.vwApp.incMatGUI.highlight(matrix_position)
-
-
+                matrix_position = self.modApp.clicked_line
+                global_ind = len(list(filter(lambda x: True if x[1] > 0 else False, self.modApp.best_indv.items())))
+                offsets = list(self.vwApp.incMatGUI.order[global_ind:])
+                first_occu = offsets.index(self.modApp.lastNodeClicked)
+                offsets = offsets[:first_occu]
+                class_offset =list( set(offsets) - {self.modApp.lastNodeClicked} )
+                for c in class_offset:
+                    offset = offsets.count(c)
+                    matrix_position += offset+1
+                if higlight_matrix:
+                    self.vwApp.incMatGUI.highlight(self.vwApp.incMatGUI.newOrder.index(matrix_position))
             else:
-
                 self.vwApp.uncertaintyModifTxt.setText('')
-
             self.vwApp.fitGUI.updateView()
             item_to_select = self.vwApp.eqTableGUI.item(self.modApp.clicked_line, 0)
             self.vwApp.eqTableGUI.scrollToItem(item_to_select, QAbstractItemView.PositionAtCenter)
@@ -530,10 +526,9 @@ class RFGraph_Controller:
             self.on_off_state = not self.on_off_state
 
     def incMatClicked(self, cellClicked):
-        print(cellClicked.row())
+        self.vwApp.incMatGUI.highlight(-1)
         self.vwApp.incMatGUI.highlight(cellClicked.row())
         nodeToClick = self.vwApp.incMatGUI.order[cellClicked.row()]
-        print(nodeToClick)
         logging.info("Clicked Matrix {} -- {}".format(nodeToClick, strftime("%d %m %y: %H %M %S")))
         posNode = self.modApp.pos[nodeToClick]
 
@@ -545,13 +540,20 @@ class RFGraph_Controller:
 
         ev = MyEvent(*posNode)
         self.onClick(ev)
-        eqCellToClick = -1
-        for i in range(len(self.modApp.data)):
-            if (self.modApp.data[i][2] == self.modApp.datumIncMat.iloc[cellClicked.row()][3]):
-                eqCellToClick = i
-                break
-        if self.modApp.best_indv:
-            eqCellToClick = self.vwApp.incMatGUI.newOrder[eqCellToClick]
+
+        xp = cellClicked.row()
+        ipx =  self.vwApp.incMatGUI.newOrder[xp]
+
+        eq_table_position = ipx
+        offset = len(list(filter(lambda x: True if x[1] > 0 else False, self.modApp.best_indv.items())))
+        offsets = list(self.vwApp.incMatGUI.order)
+        class_offset = offsets[offset:xp]
+        x = set(class_offset)
+        y = {offsets[xp]} # set
+        z = x - y
+        class_offset = list(z)
+        for c in class_offset:
+            eq_table_position -= offsets.count(c)
 
         class MyWidgetItem:
             self.row2 = -1
@@ -562,9 +564,9 @@ class RFGraph_Controller:
             def row(self):
                 return self.row2
 
-        eqCellToClickWid = MyWidgetItem(eqCellToClick)
+        eqCellToClickWid = MyWidgetItem(eq_table_position)
 
-        self.eqTableClicked(eqCellToClickWid)
+        self.eqTableClicked(eqCellToClickWid, False)
 
     # TODO Crée le surlignage des noeuds
     def higlight(self, new_node: str, old_node: str = None):
