@@ -37,21 +37,15 @@ class RFGraph_Model(QtGui.QMainWindow):
         logging.info("Program started -- {}".format(strftime("%d %m %y: %H %M %S")))
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
-        #self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert.csv")
         datafile = "data/type3_extra_0.2"
         self.dataset = Dataset(datafile)
+        self.trueture = Dataset("data/ballon_clean_no_noise.csv")
         #self.dataset = Dataset("data/use_case.mld")
 
-        #self.dataset = Dataset("C:/Users/Admin/Downloads/infos_parcelles_lideogram (5).csv")
-        #self.dataset = Dataset("data/physico_meteo_dbn_modif_thomas.csv")
         logging.info("Data file {} -- {}".format(datafile, strftime("%d %m %y: %H %M %S")))
         self.createConstraintsGraph()
         self.firstInit=True
-        #self.dataset = Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr.csv")
-        #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr.txt')
-        #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_noMol.txt')
 
-        #self.equacolO = self.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_expertcorrected.txt')
     def init2(self,contrgraph):
 
         self.adj_contrGraph = contrgraph

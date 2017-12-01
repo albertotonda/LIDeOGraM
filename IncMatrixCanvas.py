@@ -132,6 +132,9 @@ class IncMatrixCanvas(QTableWidget):
     def updateView(self):
         best_ind = self.modApp.best_indv
         if best_ind == {}: return
+        self.setColumnCount(len(self.modApp.dataIncMat.columns)+4)
+        self.setHorizontalHeaderLabels(["Complexity","Fitness","Name"]+self.modApp.dataIncMat.columns.values.tolist()+["state"])
+
         tableOrder = self.modApp.dataIncMat.columns
         eqs = []
         for place, col in enumerate(tableOrder):
@@ -152,7 +155,7 @@ class IncMatrixCanvas(QTableWidget):
 
         for i,k in enumerate(eqs) : #range(self.modApp.shapeIncMat[0]):
             self.setRowHeight(i, 15)
-            for j in range(self.modApp.shapeIncMat[1] + 3):
+            for j in range(self.modApp.shapeIncMat[1] + 4):
                 if j == 0:
                     self.setColumnWidth(j, 15)
                     cmap = self.modApp.colors.get("complexity",self.modApp.equacolO[eqs[i],0] / self.modApp.cmplxMax)
@@ -187,6 +190,19 @@ class IncMatrixCanvas(QTableWidget):
                     cell.setTextColor(QColor.fromRgb(*t))
                     self.setItem(i, j, cell)
                     continue
+
+                if j == self.modApp.shapeIncMat[1] + 3:
+                    if i < gmodelSize:
+                        t = [0, 255, 0]
+                    else:
+                        t = [255, 255, 255]
+                    cell = QTableWidgetItem(" ")
+                    cell.setBackgroundColor(QColor.fromRgb(*t))
+                    self.setColumnWidth(j, 15)
+                    self.setItem(i, j, cell)
+                    continue
+
+
                 self.setColumnWidth(j, 15)
                 fnt = QFont()
                 fnt.setPointSize(5)
@@ -284,6 +300,17 @@ class IncMatrixCanvas(QTableWidget):
 
     def StructureChange(self):
         pass
+
+    def broken(self, state: bool):
+        bests = self.modApp.best_indv.items()
+        lst = list(filter(lambda x : x[1] != -1, bests))
+        length = len(lst)
+        color = QColor.fromRgb(125, 0, 0)
+        j = self.modApp.shapeIncMat[1] + 3
+
+        for i in range(length):
+            cell = self.item(i,j)
+            cell.setBackgroundColor(color)
 
 
 

@@ -26,6 +26,8 @@ class OptimModGlobal(QWidget):
         for size_i in sizes:
             if (size_i > 0):
                 vect.append(random.randint(0, size_i - 1))
+                # random.randint(a, b)
+                # Return a random integer N such that a <= N <= b. Alias for randrange(a, b+1).
             else:
                 vect.append(-1)
         return indv(vect)

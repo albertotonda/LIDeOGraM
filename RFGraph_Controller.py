@@ -25,6 +25,7 @@ class RFGraph_Controller:
         self.nbOnMoveWaiting = 0
         self.lastEvent = None
         self.on_off_state = False
+        self.clean_global_state = None
 
     def clickHelp(self):
         self.modApp.help_params = Help.get_params()
@@ -114,8 +115,10 @@ class RFGraph_Controller:
             self.vwApp.updateView()
             self.vwApp.showAction.setChecked(True)
             optModGlob.update_bar_signal.disconnect(self.vwApp.global_compute_progress.setValue)
+            self.clean_global_state = True
 
-    # TODO
+
+        # TODO
     def clickHideModGlobal(self):
         logging.info("Clicked Hide global model -- {}".format(strftime("%d %m %y: %H %M %S")))
         self.modApp.showGlobalModel = False
@@ -504,7 +507,9 @@ class RFGraph_Controller:
                 class_offset =list( set(offsets) - {self.modApp.lastNodeClicked} )
                 for c in class_offset:
                     offset = offsets.count(c)
-                    matrix_position += offset+1
+                    matrix_position += offset
+                    if self.modApp.best_indv != {}:
+                        matrix_position+=1
                 if higlight_matrix:
                     self.vwApp.incMatGUI.highlight(self.vwApp.incMatGUI.newOrder.index(matrix_position))
             else:
@@ -518,11 +523,22 @@ class RFGraph_Controller:
     def eqTableHeaderClicked(self, clicked):
         print("Header {}".format(clicked))
         if clicked == 3:
-            for _ in range(len(np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0])):
-                lineToModify = np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][_]
-                self.modApp.equacolO[lineToModify][4] = self.on_off_state
-                self.modApp.data[_][3] = self.on_off_state
-            self.vwApp.eqTableGUI.updateView()
+            try:
+                for _ in range(len(np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0])):
+                    lineToModify = np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][_]
+                    self.modApp.equacolO[lineToModify][4] = self.on_off_state
+                    self.modApp.data[_][3] = self.on_off_state
+                    if self.on_off_state:
+                        self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] += 1
+                        self.modApp.rmByRmEq.remove(lineToModify)
+                    else:
+                        self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] -= 1
+                        self.modApp.rmByRmEq.append(lineToModify)
+                self.vwApp.eqTableGUI.updateView()
+            except:
+                pass
+            # TODO really bad idea Marc,
+
             self.on_off_state = not self.on_off_state
 
     def incMatClicked(self, cellClicked):
@@ -547,6 +563,8 @@ class RFGraph_Controller:
         eq_table_position = ipx
         offset = len(list(filter(lambda x: True if x[1] > 0 else False, self.modApp.best_indv.items())))
         offsets = list(self.vwApp.incMatGUI.order)
+        if offset > xp:
+            offset = 0
         class_offset = offsets[offset:xp]
         x = set(class_offset)
         y = {offsets[xp]} # set
@@ -587,18 +605,26 @@ class RFGraph_Controller:
 
     def onOffClicked(self, objClicked, id=0):
         scroll_handle = self.vwApp.eqTableGUI.verticalScrollBar()
-        scroll_position = scroll_handle.value()
         first_row = self.vwApp.eqTableGUI.rowAt(0)
         lineToModify = np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][objClicked.id]
         logging.info("OnOffClicked {} -- {}".format(lineToModify, strftime("%d %m %y: %H %M %S")))
         self.modApp.equacolO[lineToModify][4] = objClicked.isChecked()
         self.modApp.data[objClicked.id][3] = objClicked.isChecked()
+        if self.modApp.best_indv != {}:
+            if self.modApp.best_indv[self.modApp.lastNodeClicked] == id:
+                self.clean_global_state = False
+                self.vwApp.incMatGUI.broken(True)
+
         if objClicked.isChecked():
             self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] += 1
             self.modApp.rmByRmEq.remove(lineToModify)
         else:
             self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] -= 1
             self.modApp.rmByRmEq.append(lineToModify)
+
+        # TODO detect invalid models
+
+
 
         self.vwApp.eqTableGUI.updateView()
         self.vwApp.eqTableGUI.scrollToItem(self.vwApp.eqTableGUI.item(first_row, 0), QAbstractItemView.PositionAtTop)

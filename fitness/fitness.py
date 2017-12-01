@@ -74,14 +74,9 @@ class Individual:
         while neq and nnode:
             for eq in self.equations:
                 if eq.name not in computed.keys() and set(eq.variables).issubset(set(computed.keys()))  :
-                    #Attention ensemble vide inclus dans n'importe quel autre ensemble !
+                    # Attention ensemble vide inclus dans n'importe quel autre ensemble !
                     neq -= 1
                     eq.equation=eq.equation.replace("^","**")
-                    #eq.equation=eq.equation.replace(".",",")
-                    #result = eq.computedEq.evalf(subs=computed)
-                    #result = lambdify(computed,eq.computedEq)
-                    #symbols = tuple(eq.computedEq.free_symbols)
-                    #lbd = lambdify(symbols, eq.computedEq)
                     result = (parse_expr(eq.equation, local_dict=computed))
                     computed[eq.name] = result
             nnode -= 1
@@ -89,7 +84,7 @@ class Individual:
             #print("Error in process, variables not found") ATTENTION ERREUR LEVE LORS DE L'EXECUTION !!!
         return computed
 
-    def get_fitness(self,chosenEqs,  fun=(lambda x, y: math.fabs(x - y)/math.fabs(x)), penalty=0):
+    def get_fitness(self, chosenEqs, fun=(lambda x, y: math.fabs(x - y)/math.fabs(x)), penalty=0):
     #def get_fitness(self,chosenEqs,  fun=(lambda x, y: np.maximum(math.fabs(x / y),math.fabs(y / x))), penalty=0):
         """match solution against given data."""
         bkeys = self.variables
@@ -97,7 +92,6 @@ class Individual:
         results = []
         for case in range(ncases):
             results.append(self.process(case,chosenEqs))
-        var = 0.
         acc = 0
         cpx = 0
         errVarSum = {}
@@ -131,12 +125,6 @@ class Individual:
              cpx += self.complexity[i]
         return errTot, cpx ,errVarSum, self.complexity
 
-def get_multithread_fitness(var,exps,initv):
-    tasks = [Individual(initv,var,exp) for exp in exps]
-    p = ThreadPool.Pool(multiprocessing.cpu_count())
-    xs = p.map(lambda x : x.get_fitness(), tasks)
-    return xs
-
 def fitness(xr,yr):
     allEqual = True
     for yri in range(len(yr) - 1):
@@ -163,12 +151,6 @@ def fitness(xr,yr):
 def fitnessr2(xr,yr):
     return 1 - r2_score(list(map(float, xr)), list(map(float, yr)))
 
-
-def get_multithread_fitness(var,exps,initv):
-    tasks = [Individual(initv,var,exp) for exp in exps]
-    p = ThreadPool.Pool(multiprocessing.cpu_count())
-    xs = p.map(lambda x : x.get_fitness(), tasks)
-    return xs
 
 
 if __name__ == "__main__":
