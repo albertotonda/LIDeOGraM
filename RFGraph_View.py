@@ -42,7 +42,7 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
 
         self.global_compute_progress = QProgressBar(self)
         self.global_compute_progress.setRange(0, 100)
-        self.gridLayout.addWidget(self.global_compute_progress,3,1,1,1)
+        self.gridLayout.addWidget(self.global_compute_progress,4,0,1,4)
 
         self.comprFitCmplx_lab_fit = QtGui.QLabel('Fitness')
         self.selectContrTxtLab = QtGui.QLabel('')
@@ -73,7 +73,7 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         # self.buttonReinstateLink = QtGui.QPushButton('Reinstate', self)
 
         #self.gridLayout.addWidget(self.buttonChangerEq, 4, 0, 1, 1)
-        self.gridLayout.addWidget(self.buttonSaveEq, 4, 1, 1, 1)
+        self.gridLayout.addWidget(self.buttonSaveEq, 3, 1, 1, 1)
         # self.gridLayout.addWidget(self.buttonRemoveLink, 12, 0, 1, 30)
         # self.gridLayout.addWidget(self.buttonReinstateLink, 0, 12, 1, 8)
 

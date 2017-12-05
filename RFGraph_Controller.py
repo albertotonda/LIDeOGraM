@@ -299,6 +299,8 @@ class RFGraph_Controller:
         (x, y) = (event.xdata, event.ydata)
         if x == None or y == None:
             return
+        if event.button is not None:
+            self.vwApp.incMatGUI.highlight(-1)
 
         updateFitGUI = False
         updateEqTable = False
@@ -309,13 +311,13 @@ class RFGraph_Controller:
 
         if (len(list(filter(lambda x: x[0] < self.modApp.radius,
                             dst))) == 0 and event.button == 1):  # If no node is close enougth, select no node update view and exit
+
             self.modApp.lastNodeClicked = None
             self.modApp.computeEdgeBold()
             self.modApp.data = []
             updateFitGUI = True  # Clean the equation table and the measured/predicted plot
             updateEqTable = True
-            # self.vwApp.eqTableGUI.updateView()
-            # self.vwApp.fitGUI.updateView()
+
             self.vwApp.clickedNodeLab.setText('Selected node: ' + self.p(self.modApp.lastNodeClicked))
             logging.info("Clicked {} -- {}".format(self.modApp.lastNodeClicked, strftime("%d %m %y: %H %M %S")))
 
@@ -621,7 +623,6 @@ class RFGraph_Controller:
         first_row = self.vwApp.eqTableGUI.rowAt(0)
         lineToModify = np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][objClicked.id]
         logging.info("OnOffClicked {} -- {}".format(lineToModify, strftime("%d %m %y: %H %M %S")))
-        #TODO correct me ! ( Attention à l'état de equacol0 vs varEquasizeOnelyTrue )
         self.modApp.equacolO[lineToModify][4] = objClicked.isChecked()
         self.modApp.data[objClicked.id][3] = objClicked.isChecked()
         if self.modApp.best_indv != {}:

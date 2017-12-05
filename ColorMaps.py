@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib
 matplotlib.use("qt4agg")
-import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 
 class colorm:

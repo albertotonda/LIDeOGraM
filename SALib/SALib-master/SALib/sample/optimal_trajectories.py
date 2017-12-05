@@ -87,7 +87,7 @@ def return_max_combo(input_data, N, num_params, k_choices, groups=None):
     for v in variables:
         if (v.X > 0) & (v.VarName[0] == 'x'):
                 x_vars.append(v.VarName)
-    b = [re.findall("\d{1,}", str(v)) for v in x_vars]
+    b = [re.findall("\d+", str(v)) for v in x_vars]
     maximum_combo = list(set([int(y) for z in b for y in z]))
     
     print(maximum_combo)
