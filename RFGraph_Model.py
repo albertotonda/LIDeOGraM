@@ -753,7 +753,7 @@ class RFGraph_Model(QtGui.QMainWindow):
                 self.edgeColorPearson[(ek[0],ek[1])] =self.allPearson[(ek[0],ek[1])]
 
         for e, v in self.edgeColorPearson.items():
-            cmap = self.colors.get("Pearson", 1 - v)
+            cmap = self.colors.get("Pearson", (v/2)+0.5)
             # color = QColor.fromRgb(*cmap)
             lcmap = list(np.array(cmap) / 255)
             lcmap.extend([1.0])
