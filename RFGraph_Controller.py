@@ -327,9 +327,9 @@ class RFGraph_Controller:
 
             if (not self.modApp.mode_cntrt):        #Update the Equation table
                 #print('action:', nodeclicked)
-                data_tmp = self.modApp.equacolO[np.ix_(self.modApp.equacolO[:, 2] == [nodeclicked], [0, 1, 3, 4])]
+                data_tmp = self.modApp.equacolO[np.ix_(self.modApp.equacolO[:, 2] == [nodeclicked], [0, 1, 3, 4, 7])]
                 self.modApp.curr_tabl = self.modApp.equacolO[
-                    np.ix_(self.modApp.equacolO[:, 2] == [nodeclicked], [0, 1, 3, 4])]
+                    np.ix_(self.modApp.equacolO[:, 2] == [nodeclicked], [0, 1, 3, 4, 7])]
                 data = []
                 for i in range(len(data_tmp)):
                     data.append(data_tmp[i])
@@ -451,7 +451,7 @@ class RFGraph_Controller:
         linesToReinstate=[av for av in linesToReinstate if not av in flist]
         linesToReinstate = [av for av in linesToReinstate if not av in self.modApp.rmByRmEq]
         self.modApp.equacolO[linesToReinstate, 4] = True
-        self.modApp.data= self.modApp.equacolO[np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked], [0, 1, 3, 4])]
+        self.modApp.data= self.modApp.equacolO[np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked], [0, 1, 3, 4, 7])]
 
         if(not isRestoreByNode):
             self.vwApp.eqTableGUI.updateView()

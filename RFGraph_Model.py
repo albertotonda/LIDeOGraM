@@ -43,7 +43,7 @@ class RFGraph_Model(QtGui.QMainWindow):
     def __init__(self):
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
-        self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert_ifset_bolotin.csv")
+        self.dataset=Dataset("data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert_ifset_bolotin_1_5.csv")
         #self.dataset = Dataset("data/r3_no_zero (1).csv")
         #self.dataset = Dataset("data/datatestvinLIDEO.csv")
         #self.dataset = Dataset("data/dataset_mol_cell_pop_nocalc_surexpr_x.x.x.-2.csv")
@@ -193,7 +193,7 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         #self.dataMaxComplexity = self.cmplxMax
         for i in range(len(self.equacolO)):
-            self.data.append(self.equacolO[i, np.ix_([0, 1, 3, 4])][0])
+            self.data.append(self.equacolO[i, np.ix_([0, 1, 3, 4, 7])][0])
             #self.dataMaxComplexity = max(self.dataMaxComplexity, self.equacolPO[i,np.ix_([0])][0][0])
             #self.dataMaxFitness = max(self.dataMaxFitness, self.equacolPO[i,np.ix_([1])][0][0])
 
@@ -331,6 +331,20 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.progress.setValue(0)
         self.show()
 
+    def evalfit(self,nbAP, nbPP, dataSize, nbRepet=100):
+        if (nbAP > nbPP):
+            nbAPr = nbPP
+        else:
+            nbAPr = nbAP
+        meanf = 0
+        for i in range(nbRepet):
+            X = np.random.rand(dataSize)
+            P = np.random.rand(dataSize, nbPP)
+            clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=nbAPr)
+            clf.fit(P, X)
+            Y = clf.predict(P)
+            meanf += fitness(X, Y) / nbRepet
+        return meanf
 
     def findLassoEqs(self):
         equacolOtmp=[]
@@ -367,6 +381,8 @@ class RFGraph_Model(QtGui.QMainWindow):
                     equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames_extd[i], Y, pred)
                     Si = random.random()#self.SA_Eq(X, par, clf) ##
                     equacolOLine.append(Si)
+                    evFit=self.evalfit(j, len(par), len(Y))
+                    equacolOLine.append(evFit)
                     equacolOtmp.extend(equacolOLine)
                 # curEqFound=0
                 # alpha=1
@@ -460,10 +476,12 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         self.hide()
         equacolOtmp = np.array(equacolOtmp, dtype=object)
-        equacolOtmp = equacolOtmp.reshape(len(equacolOtmp)/7,7)
+        equacolOtmp = equacolOtmp.reshape(len(equacolOtmp)/8,8)
 
 
         return equacolOtmp
+
+
 
     def SA_Eq(self,X,par,clf):
         xmin = np.amin(X, axis=0)
