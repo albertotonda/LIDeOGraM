@@ -625,6 +625,8 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         #Convert the table of String to a nice table with float and String
         convertArr = []
+        lastval = None
+        counter = 1
         for s in stringTab:
             convertArr.append(np.float32(s[0]))
             xr=self.dataset.getAllExpsforVar(s[2])
@@ -641,12 +643,29 @@ class RFGraph_Model(QtGui.QMainWindow):
             convertArr.append(s[3])
             convertArr.append(True)
             convertArr.append(list(filter(lambda x: x in s[3], self.dataset.varnames)))
+            convertArr.append(random.random()) #SA Thomas .
+            parIClass = []
+            iClass = self.dataset.variablesClass[s[2]]
+            for (e1, e2) in self.adj_contrGraph.edges():
+                if (e2.name == iClass and not e1.name in parIClass):
+                    parIClass.append(e1.name)
+            # parIClass=list(self.adj_contrGraph.edge[iClass].keys())
+            par = []
+            for v in self.dataset.varnames_extd:
+                if (self.dataset.variablesClass[v] in parIClass):
+                    par.append(v)
+            if lastval == s[2]:
+                counter += 1
+            else:
+                counter = 1
+                lastval = s[2]
+            convertArr.append(self.evalfit(counter, len(par), self.dataset.true_nbExp))
             #convertArr.append(sympify(s[3]))
 
 
         finalTab = np.array(convertArr, dtype=object)
         shp = np.shape(stringTab)
-        finalTab = finalTab.reshape((shp[0], shp[1] + 2))
+        finalTab = finalTab.reshape((shp[0], shp[1] + 4))
         return finalTab
 
     def getV(self,variables, line, v):

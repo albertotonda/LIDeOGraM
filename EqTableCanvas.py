@@ -160,7 +160,7 @@ class EqTableCanvas(QTableWidget):
                 newitem.setTextColor(Qt.white)
             newitem.setBackground(QColor(*cmap))
             if (self.modApp.data[n][3] == False):
-                mash = 0.6;
+                mash = 0.6
                 newitem.setTextColor(QColor(int(255 * mash), int(255 * mash), int(255 * mash)))
             self.setItem(n, 2, newitem)
 
@@ -175,7 +175,7 @@ class EqTableCanvas(QTableWidget):
                 newitem.setBackground(QColor(130, 130, 110))
             else:
                 newitem.setBackground(QColor(255, 255, 255))
-            self.setItem(n, 2, newitem)
+            self.setItem(n, 3, newitem)
 
             cb = OnOffCheckBox(self.cntrApp, n)
             cb.setParent(self)
