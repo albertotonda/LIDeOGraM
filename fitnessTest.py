@@ -10,11 +10,41 @@ import random
 import copy
 import matplotlib
 
+
+
+
+def evalfit(nbAP,nbPP,dataSize,nbRepet=1000):
+        if(nbAP>nbPP):
+            nbAPr=nbPP
+        else:
+            nbAPr=nbAP
+        meanf=0
+        print("nbPP:"+str(nbPP)+ " nbAP:"+str(nbAPr))
+        for i in range(nbRepet):
+            X=np.random.rand(dataSize)
+            P=np.random.rand(dataSize,nbPP)
+            clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=nbAPr)
+            clf.fit(P, X)
+            Y=clf.predict(P)
+            meanf+=fitness(X,Y)/nbRepet
+        return meanf
+
+
+
+
+evalfit(2,50,12)
+
+
+
+
+
+
+
 dataSize=12
-nbPotentialParents=range(1)
-offsetPP=11
-nbAllowedParents=range(11)
-nbRepet=100
+nbPotentialParents=range(20)
+offsetPP=0
+nbAllowedParents=range(6)
+nbRepet=5000
 rdmOMP=False
 nbRepetrdmOMP=1000
 

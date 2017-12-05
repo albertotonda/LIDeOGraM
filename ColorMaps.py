@@ -27,7 +27,7 @@ class colorm:
                                                               gCol,
                                                               grnCol])
 
-        psCmap = LinearSegmentedColormap.from_list('Pearson_map', [(0.9,0.5,0.0),(0.9,0.9,0.9),(0.9,0.9,0.9),(0.9,0.9,0.9),(0.0,0.5,0.9)])
+        psCmap = LinearSegmentedColormap.from_list('Pearson_map', [(0.9,0.5,0.0),(0.9,0.9,0.9),(0.0,0.5,0.9)])
 
         self.complexity = complexityCmap#plt.get_cmap("cool")
         self.globalm = fitnessCmap

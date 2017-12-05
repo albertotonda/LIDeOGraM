@@ -179,7 +179,7 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         #self.dataMaxComplexity = self.cmplxMax
         for i in range(len(self.equacolO)):
-            self.data.append(self.equacolO[i, np.ix_([0, 1, 3, 4])][0])
+            self.data.append(self.equacolO[i, np.ix_([0, 1, 3, 4, 7])][0])
             #self.dataMaxComplexity = max(self.dataMaxComplexity, self.equacolPO[i,np.ix_([0])][0][0])
             #self.dataMaxFitness = max(self.dataMaxFitness, self.equacolPO[i,np.ix_([1])][0][0])
 
@@ -319,6 +319,21 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.progress.setValue(0)
         self.show()
 
+    def evalfit(self,nbAP, nbPP, dataSize, nbRepet=100):
+        if (nbAP > nbPP):
+            nbAPr = nbPP
+        else:
+            nbAPr = nbAP
+        meanf = 0
+        for i in range(nbRepet):
+            X = np.random.rand(dataSize)
+            P = np.random.rand(dataSize, nbPP)
+            clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=nbAPr)
+            clf.fit(P, X)
+            Y = clf.predict(P)
+            meanf += fitness(X, Y) / nbRepet
+        return meanf
+
     def eaForLinearRegression(self,X,Y,nb):
 
         if(nb==1):
@@ -404,17 +419,16 @@ class RFGraph_Model(QtGui.QMainWindow):
                 nbEqToFind=6
 
                 for j in range(1,np.minimum(nbEqToFind,len(idx))+1):
-
-
-                    clf = self.eaForLinearRegression(X,Y,j)#linear_model.LinearRegression()#linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=j)
-                    #clf.fit(X, Y)
-                    #pred = clf.predict(X)
-                    pred=clf.pred
-
+                    clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=j)
+                    #clf = self.eaForLinearRegression(X, Y, j)
+                    clf.fit(X, Y)
+                    pred = clf.predict(X)
                     equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames_extd[i], Y, pred)
                     #TODO restaurer sensitivity analysis
                     Si = random.random()#self.SA_Eq(X, par, clf)
                     equacolOLine.append(Si)
+                    evFit=self.evalfit(j, len(par), len(Y))
+                    equacolOLine.append(evFit)
                     equacolOtmp.extend(equacolOLine)
                 # curEqFound=0
                 # alpha=1
@@ -508,7 +522,7 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         self.hide()
         equacolOtmp = np.array(equacolOtmp, dtype=object)
-        equacolOtmp = equacolOtmp.reshape(len(equacolOtmp)/7,7)
+        equacolOtmp = equacolOtmp.reshape(len(equacolOtmp)/8,8)
 
 
         return equacolOtmp
@@ -725,7 +739,7 @@ class RFGraph_Model(QtGui.QMainWindow):
                 self.edgeColorPearson[(ek[0],ek[1])] =self.allPearson[(ek[0],ek[1])]
 
         for e, v in self.edgeColorPearson.items():
-            cmap = self.colors.get("Pearson", 1 - v)
+            cmap = self.colors.get("Pearson", (v/2)+0.5)
             # color = QColor.fromRgb(*cmap)
             lcmap = list(np.array(cmap) / 255)
             lcmap.extend([1.0])

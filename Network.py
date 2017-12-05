@@ -141,7 +141,8 @@ class Network:
                     hNodeColor[self.modApp.dataset.varnames.tolist().index(v)] = greyNode
                     greyLab[v] = v
                     greyLabPos[v] = self.modApp.lpos[v]
-                elif (not v in self.modApp.varsIn):
+                    if (not v in self.modApp.varsIn):
+                        #TODO possibly un elif
                         greyFLab[v] = self.modApp.globErrLab[v]
                         greyFpos[v] = self.modApp.fpos[v]
                 else:
@@ -174,28 +175,27 @@ class Network:
         blackFLab['GlobErr'] = ' Global fitness: ' + "{0:.3f}".format(self.modApp.GlobErr)
 
 
-        k = []
-        for i in hNodeColor:
-            k.append(list(i))
-        hNodeColor = k
+        # nx.draw_networkx_labels(self.modApp.G,labpos,lab,ax=self.axes)
+        # nx.draw_networkx_nodes(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
+        #                        node_color=self.modApp.nodeColor,
+        #                        with_labels=False, edgelist=self.modApp.edgelist_inOrder,
+        #                        #edge_color=self.modApp.edgeColor,
+        #                        ax=self.axes)
+        # nx.draw_networkx_edges(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
+        #                         node_color=self.modApp.nodeColor, with_labels=False,
+        #                         edgelist=self.modApp.edgelist_inOrder,
+        #                         edge_color=self.modApp.global_Edge_Color,
+        #                         #edge_bold=self.modApp.edgeBold,
+        #                         ax=self.axes)
 
 
-        lineWidthsNode=[]
-        linewidthsColors=[]
-        for v in self.modApp.dataset.varnames.tolist():
-            if v == self.modApp.lastNodeClicked:
-                lineWidthsNode.append(5.0)
-                linewidthsColors.append([0., 0., 0.])
-            else:
-                lineWidthsNode.append(0.0)
-                linewidthsColors.append([0., 0., 0.])
-
+        # nx.draw_networkx(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
+        #                      node_color=hNodeColor,
+        #                      with_labels=False, edgelist=hEdge,edge_color=hEdgeColor,ax=self.axes)
 
         nx.draw_networkx_nodes(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
-                                node_color=hNodeColor,
-                               with_labels=False, edgelist=hEdge, edge_color=hEdgeColor, linewidths=lineWidthsNode,
-                                linewidthsColors=linewidthsColors, ax=self.axes)
-
+                               node_color=hNodeColor,
+                               with_labels=False, edgelist=hEdge, edge_color=hEdgeColor, ax=self.axes)
         nxa.draw_networkx_edges(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
                                 node_color=self.modApp.nodeColor, with_labels=False, edgelist=hEdge,
                                 edge_color=hEdgeColor, edge_bold=hBold, ax=self.axes)
