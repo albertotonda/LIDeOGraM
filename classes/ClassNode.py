@@ -32,13 +32,13 @@ class ClassNode:
         return str(self.name)
 
     def rename(self, beforeChange=None):
-        pass
         #from classes.MenuAction import MenuAction
         #rep = QtGui.QInputDialog.getText(MenuAction.window, "Rename class", "Class' new name :", text=self.name)
         #if rep[1]:
         #    if beforeChange:
         #        beforeChange("Rename "+self.name + " into " + rep[0], color=(255, 255, 150))
         #    self.name = rep[0]
+        pass
 
     def changeColor(self, beforeChange=None):
         #from classes.MenuAction import MenuAction

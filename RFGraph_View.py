@@ -50,6 +50,11 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         selectContrFont = QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold)
         self.selectContrTxtLab.setFont(selectContrFont)
 
+
+        self.toyFitness = QtGui.QLabel('')
+        self.toyFitness.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold))
+        self.gridLayout.addWidget(self.toyFitness, 0, 0, 1, 1)
+
         self.clickedNodeLab = QtGui.QLabel('Selected node:')
         selNodeFont = QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold)
         self.clickedNodeLab.setFont(selNodeFont)

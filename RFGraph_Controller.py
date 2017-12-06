@@ -5,7 +5,7 @@ import random
 import re
 import threading
 from itertools import compress
-from math import fabs
+from fitness import Individual_true
 from time import strftime
 import traceback
 
@@ -55,6 +55,7 @@ class RFGraph_Controller:
         logging.info("Clicked view fitness -- {}".format(strftime("%d %m %y: %H %M %S")))
         QCoreApplication.processEvents()
 
+
     def clickSA(self):
         print("clic SA")
         self.modApp.ColorMode = 'SA'
@@ -101,6 +102,14 @@ class RFGraph_Controller:
         logging.info("Clicked view complexity -- {}".format(strftime("%d %m %y: %H %M %S")))
         QCoreApplication.processEvents()
 
+    def toyModel_dstTruth(self):
+        logging.info("Computing distance to truth")
+        iT = Individual_true(self.modApp, self.modApp.truth)
+        true_fit = iT.get_fitness(self.modApp.best_indv)
+        self.vwApp.toyFitness.setText("Distance à la vérité {}".format(true_fit[0]))
+        print(true_fit)
+
+
     def clickOptmuGP(self):
         logging.info("Global optimisation started -- {}".format(strftime("%d %m %y: %H %M %S")))
         # self.modApp.opt_params = OptimisationCanvas.get_params()
@@ -120,6 +129,7 @@ class RFGraph_Controller:
             self.vwApp.showAction.setChecked(True)
             optModGlob.update_bar_signal.disconnect(self.vwApp.global_compute_progress.setValue)
             self.clean_global_state = True
+            self.toyModel_dstTruth()
 
 
         # TODO
@@ -531,7 +541,7 @@ class RFGraph_Controller:
     def eqTableHeaderClicked(self, clicked):
         print("eqTableHeaderClicked {}".format(clicked))
         logging.info("node {} All Equations {} -- {}".format(self.modApp.lastNodeClicked, self.on_off_state, strftime("%d %m %y: %H %M %S")))
-        if clicked == 3:
+        if clicked == 4:
             try:
                 for _ in range(len(np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0])):
                     lineToModify = np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][_]
