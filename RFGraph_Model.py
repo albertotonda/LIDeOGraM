@@ -29,15 +29,19 @@ from PyQt4 import QtGui
 import logging
 from time import strftime
 
+
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model(QtGui.QMainWindow):
 
     def __init__(self):
-        logging.basicConfig(filename=strftime("%d_%m_%y_%H_%M_%S")+'.log', level=logging.DEBUG)
+        logging.basicConfig(filename=strftime("lastlog")+'.log', level=logging.DEBUG)
         logging.info("Program started -- {}".format(strftime("%d %m %y: %H %M %S")))
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
-        datafile = "data/type3_extra_0.2"
+
+        datafile =  QtGui.QFileDialog.getOpenFileName(self, caption="Load a datafile",directory="data", filter="Datafile (*.csv)")
+        #datafile = "data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert_ifset_bolotin_2_nooutlier.csv"
+
         #datafile = "data/Classeur1.csv"
 
         self.dataset = Dataset(datafile)
@@ -56,9 +60,9 @@ class RFGraph_Model(QtGui.QMainWindow):
             self.adj_contrGraph.edgesTrueName.append((e0.name, e1.name))
         self.correctDataset(self.dataset, self.adj_contrGraph)
 
-        #self.equacolO = self.findLassoEqs()
+        self.equacolO = self.findLassoEqs()
 
-        self.equacolO = self.readEureqaResults('data/eq_erqa4.txt')
+        #self.equacolO = self.readEureqaResults('data/eq_erqa4.txt')
         self.nbequa = len(self.equacolO)  # Number of Equation for all variables taken together
 
         self.adj_simple = np.zeros((self.dataset.nbVar,self.dataset.nbVar))
