@@ -11,7 +11,7 @@ class QtConnector:
         self.vwApp=vwApp
         self.cntrApp=cntrApp
         self.vwApp.eqTableGUI.itemClicked.connect(self.cntrApp.eqTableClicked)
-        #self.vwApp.adjThreshold_slider.valueChanged.connect(self.cntrApp.SliderMoved)
+        self.vwApp.adjThreshold_slider.valueChanged.connect(self.cntrApp.SliderMoved)
 
         #self.vwApp.comprFitCmplx_slider.valueChanged.connect(self.cntrApp.SliderMoved)
         #self.vwApp.buttonFitness.clicked.connect(self.cntrApp.clickFitness)

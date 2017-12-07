@@ -443,14 +443,14 @@ class CanvGraph(QCanvas):
             connect.append(self.mpl_connect('motion_notify_event', self.prepareDrag))
             connect.append(self.mpl_connect('button_release_event', self.release))
             connect.append(self.mpl_connect('scroll_event', self.scroll))
-            print("Connected !")
+            #print("Connected !")
 
     def disconnectMpl(self):
         if self.mplConnections:
             for connection in self.mplConnections:
                 self.mpl_disconnect(connection)
             self.mplConnections = None;
-            print("Disconnected !")
+            #print("Disconnected !")
 
     def saveState(self, action ="Unknonw action", color: tuple = (255, 255, 255)):
         for obs in self.observers:

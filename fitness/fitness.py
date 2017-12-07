@@ -155,4 +155,4 @@ def fitnessr2(xr,yr):
 
 if __name__ == "__main__":
     i = Individual("params.csv", "ex_indiv.csv", "varnames.csv")
-    print(i.get_fitness())
+    #print(i.get_fitness())

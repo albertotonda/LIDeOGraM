@@ -423,13 +423,19 @@ class RFGraph_Model(QtGui.QMainWindow):
                 nbEqToFind=6
 
                 for j in range(1,np.minimum(nbEqToFind,len(idx))+1):
+
                     clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=j)
                     #clf = self.eaForLinearRegression(X, Y, j)
-                    clf.fit(X, Y)
+                    factnormY=(1 / np.mean(np.array(Y)))
+                    Yn=list(np.array(Y)*factnormY)
+                    clf.fit(X, Yn)
+                    clf.coef_ = clf.coef_ / factnormY
+                    clf.intercept_ = clf.intercept_ / factnormY
+
                     pred = clf.predict(X)
                     equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames_extd[i], Y, pred)
                     #TODO restaurer sensitivity analysis
-                    Si = random.random()#self.SA_Eq(X, par, clf)
+                    Si = self.SA_Eq(X, par, clf)
                     equacolOLine.append(Si)
                     evFit=self.evalfit(j, len(par), len(Y))
                     equacolOLine.append(evFit)
@@ -545,10 +551,9 @@ class RFGraph_Model(QtGui.QMainWindow):
         pb['groups'] = None
         pb['names'] = par
         pb['num_vars'] = len(par)
-        try:
-            param_values = saltelli.sample(pb, 100, calc_second_order=False)
-        except:
-            pass
+
+        param_values = saltelli.sample(pb, 1000, calc_second_order=False)
+
         YSobol = clf.predict(param_values)
 
 
@@ -557,6 +562,7 @@ class RFGraph_Model(QtGui.QMainWindow):
                            print_to_console=False, parallel=False)
         #Si = sobol.analyze(pb, YSobol, calc_second_order=False, conf_level=0.95,
         #                   print_to_console=False, parallel=False)
+        print("par =" + str(np.array(par)) + "\n"+ str(Si['ST_conf']))
         Si['par']=par
         return Si
 
@@ -638,7 +644,7 @@ class RFGraph_Model(QtGui.QMainWindow):
             for numExp in range(self.dataset.nbExp):
                 yr.append(parse_expr(s[3].replace("^","**"), local_dict=self.dataset.getAllVarsforExp(numExp)))
             mfx = list(map(float, xr.tolist()))
-            print(yr)
+            #print(yr)
             mfy = list(map(float, yr))
             recomputedFitness=fitness(mfx, mfy)
             #convertArr.append(np.float32(s[1]))
@@ -739,7 +745,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.computeInitialPos()
         self.computeFitandCmplxEdgeColor()
         self.computeComprEdgeColor()
-        #self.computeSAEdgeColor()
+        self.computeSAEdgeColor()
         self.computePearsonColor()
 
         self.computeNxGraph()
@@ -778,10 +784,10 @@ class RFGraph_Model(QtGui.QMainWindow):
             i_var = [v for (v, e) in self.dataset.variablesClass.items() if e ==i ]
             graph.add_node(ClassNode(i, i_var))
         #testMutex = threading.Lock()
-        print("creating classes window")
+        #print("creating classes window")
         classApp=WindowClasses(graph,self.init2)
         #classApp=Window(ClassGraph.readJson("classes/screen.clgraph"),self.init2)
-        print("after classes window")
+        #print("after classes window")
         #graph=classApp.exec()
         #testMutex.acquire(True)
 
@@ -867,7 +873,7 @@ class RFGraph_Model(QtGui.QMainWindow):
                     tup = (self.dataset.varnames[j], self.dataset.varnames[i])
                     if (self.ColorMode!='Pearson' and r <= self.adjThresholdVal):
                         self.invisibleTup.append(tup)
-                    elif(self.ColorMode=='Pearson' and  -1+self.adjThresholdVal < self.allPearson[tup] < 1-self.adjThresholdVal ):
+                    elif(self.ColorMode=='Pearson' and not -1+self.adjThresholdVal < self.allPearson[tup] < 1-self.adjThresholdVal ):
                         self.invisibleTup.append(tup)
 
         self.edgeColor = self.colorDictToConstraintedcolorList(self.edgeColorfull,self.edgelist_inOrder)
@@ -994,6 +1000,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         for e in self.edgeColorFit.keys():
             samin=1
             samax=0
+
             for eq in self.equacolO[self.equacolO[:,2]==e[1]]:
                 sa=eq[6]
                 if(samin > sa['ST'][sa['par'].index(e[0])] and e[0] in eq[5]):
@@ -1020,7 +1027,7 @@ class RFGraph_Model(QtGui.QMainWindow):
             lcmap.extend([1.0])
             self.edgeColorSA[e]=lcmap
         #self.edgeColorFit=self.edgeColorSA
-        print('it worked ?')
+        #print('it worked ?')
 
 
     def computeInitialPos(self):

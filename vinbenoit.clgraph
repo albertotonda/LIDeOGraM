@@ -1,0 +1,212 @@
+{
+    "edge": [
+        [
+            "raisin_sensoriel",
+            "vin_sensoriel"
+        ],
+        [
+            "vin_chimique",
+            "vin_sensoriel"
+        ],
+        [
+            "parcelle",
+            "vin_sensoriel"
+        ],
+        [
+            "parcelle",
+            "vin_chimique"
+        ],
+        [
+            "parcelle",
+            "raisin_sensoriel"
+        ],
+        [
+            "parcelle",
+            "mout_chimique"
+        ],
+        [
+            "mout_chimique",
+            "vin_sensoriel"
+        ],
+        [
+            "mout_chimique",
+            "vin_chimique"
+        ],
+        [
+            "mout_chimique",
+            "raisin_sensoriel"
+        ]
+    ],
+    "node": [
+        {
+            "color": [
+                0.8901960784313725,
+                0.10196078431372549,
+                0.10980392156862745
+            ],
+            "lineWidth": 0,
+            "name": "raisin_sensoriel",
+            "nodeList": [
+                "raisin_Agrespelli",
+                "raisin_Teinteb",
+                "raisin_Teintej",
+                "raisin_Champignon",
+                "raisin_Fexot",
+                "raisin_IntGloAro",
+                "raisin_Couleurpepin",
+                "raisin_Nconfite",
+                "raisin_Dilapelli",
+                "raisin_Sucrej",
+                "raisin_Fjaune",
+                "raisin_Acidej",
+                "raisin_Fermeteb",
+                "raisin_Qtitechairped",
+                "raisin_FAgrume",
+                "raisin_Croquant",
+                "raisin_Fermeteg",
+                "raisin_Forcepedi",
+                "raisin_Vegetal",
+                "raisin_Fblanc"
+            ],
+            "operators": [],
+            "pos": [
+                0.8380829139628885,
+                0.46208257498483307
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.9921568627450981,
+                0.7490196078431373,
+                0.43529411764705883
+            ],
+            "lineWidth": 0,
+            "name": "vin_chimique",
+            "nodeList": [
+                "vin_dioxyde_de_soufre_libre",
+                "vin_titre_alcoometrique_volumique_acquis",
+                "vin_acide_acetique",
+                "vin_dioxyde_de_soufre_total",
+                "vin_acidite_totale",
+                "vin_pH",
+                "vin_acide_tartrique",
+                "vin_acide_malique",
+                "vin_gaz_carbonique",
+                "vin_glucos_fructose"
+            ],
+            "operators": [],
+            "pos": [
+                0.06096209302826833,
+                0.5583345000233337
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.41568627450980394,
+                0.23921568627450981,
+                0.6039215686274509
+            ],
+            "lineWidth": 5,
+            "name": "vin_sensoriel",
+            "nodeList": [
+                "vin_Odeur_Floral_autre",
+                "vin_Arome_Fruits_secs",
+                "vin_Odeur_Fruits_exotiques",
+                "vin_Odeur_Fruits_secs",
+                "vin_Odeur_Sucre",
+                "vin_Arome_Fruits_cuits",
+                "vin_Odeur_Grille",
+                "vin_Arome_Epice",
+                "vin_Arome_Grille",
+                "vin_Odeur_Agrumes",
+                "vin_Odeur_Fruits_blancs",
+                "vin_Odeur_Moisi_terreux",
+                "vin_Odeur_Vegetal",
+                "vin_Arome_Fruits_blancs",
+                "vin_Arome_Soufre",
+                "vin_Odeur_Amer",
+                "vin_Odeur_Epice",
+                "vin_Odeur_Fruits_cuits",
+                "vin_Arome_Vegetal",
+                "vin_Arome_Fruits_jaunes",
+                "vin_Odeur_Lacte",
+                "vin_Arome_Floral_autre",
+                "vin_Arome_Fruits_exotiques",
+                "vin_Odeur_Soufre",
+                "vin_Arome_Agrumes",
+                "vin_Odeur_Fleurs_blanches",
+                "vin_Arome_Boise",
+                "vin_Arome_Moisi_terreux",
+                "vin_Odeur_Astringent",
+                "vin_Odeur_Brulant",
+                "vin_Arome_Lacte",
+                "vin_Odeur_Boise",
+                "vin_Odeur_Perlant",
+                "vin_Arome_Fleurs_blanches",
+                "vin_Odeur_Fruits_jaunes",
+                "vin_Odeur_Acide"
+            ],
+            "operators": [],
+            "pos": [
+                0.46358308669063547,
+                0.07415814982966329
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6980392156862745,
+                0.8745098039215686,
+                0.5411764705882353
+            ],
+            "lineWidth": 0,
+            "name": "parcelle",
+            "nodeList": [
+                "rendement",
+                "nb_ceps",
+                "etat_sanitaire"
+            ],
+            "operators": [],
+            "pos": [
+                0.44241201094588617,
+                0.9929265251971706
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.12156862745098039,
+                0.47058823529411764,
+                0.7058823529411765
+            ],
+            "lineWidth": 0,
+            "name": "mout_chimique",
+            "nodeList": [
+                "mout_sucre_mout",
+                "mout_Acide_tartrique",
+                "mout_pH",
+                "mout_acide_malique_TH2",
+                "mout_acidite_totale",
+                "mout_azote_alpha_amine",
+                "mout_masse_volumique_a_20C",
+                "mout_Dioxy_de_soufre_libre",
+                "mout_titre_alcoometrique_volumique_naturel_refracto",
+                "mout_Dioxy_de_soufre_total",
+                "mout_azote_amoniacal",
+                "mout_titre_alcoometrique_volumique_naturel_moy",
+                "mout_azote_assimilable",
+                "mout_acidite_totale_H2SO4",
+                "mout_titre_alcoometrique_volumique_naturel_aero"
+            ],
+            "operators": [],
+            "pos": [
+                0.6806487742658078,
+                0.7887557751155023
+            ],
+            "size": 700
+        }
+    ],
+    "unbound": []
+}

@@ -1,0 +1,123 @@
+{
+    "edge": [
+        [
+            "Cell",
+            "PoptpH07"
+        ],
+        [
+            "Cell",
+            "PopUFC"
+        ],
+        [
+            "PoptpH07",
+            "PoptpH07spe"
+        ],
+        [
+            "PopUFC",
+            "PoptpH07spe"
+        ]
+    ],
+    "node": [
+        {
+            "color": [
+                0.8901960784313725,
+                0.10196078431372549,
+                0.10980392156862745
+            ],
+            "lineWidth": 0,
+            "name": "Cell",
+            "nodeList": [
+                "SFA",
+                "CFA",
+                "CFAUFA",
+                "UFA",
+                "CFASFA",
+                "UFASFA"
+            ],
+            "operators": [],
+            "pos": [
+                0.5678258537748451,
+                0.9229251251691701
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.2,
+                0.6274509803921569,
+                0.17254901960784313
+            ],
+            "lineWidth": 0,
+            "name": "PoptpH07spe",
+            "nodeList": [
+                "dtpH07speCong",
+                "dtpH07speSto3",
+                "dtpH07speLyo"
+            ],
+            "operators": [],
+            "pos": [
+                0.4050368604271311,
+                0.10040867484016358
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6509803921568628,
+                0.807843137254902,
+                0.8901960784313725
+            ],
+            "lineWidth": 0,
+            "name": "PoptpH07",
+            "nodeList": [
+                "dtpH07Cong",
+                "dtpH07Sto3",
+                "dtpH07Lyo"
+            ],
+            "operators": [],
+            "pos": [
+                0.6783449310977676,
+                0.5274428988900388
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.41568627450980394,
+                0.23921568627450981,
+                0.6039215686274509
+            ],
+            "lineWidth": 0,
+            "name": "PopUFC",
+            "nodeList": [
+                "dUFCLyo",
+                "dUFCCong",
+                "dUFCSto3"
+            ],
+            "operators": [],
+            "pos": [
+                0.07896781335992353,
+                0.4795829249918332
+            ],
+            "size": 700
+        }
+    ],
+    "unbound": [
+        "ATP-protonmotiveforceinterconversion",
+        "Adaptationsandatypicalconditions",
+        "Age",
+        "Anisotropie",
+        "Cations",
+        "Chaperones",
+        "Detoxification",
+        "Electrontransport",
+        "General",
+        "Membraneslipoproteinsandporins",
+        "Multidrugresistance",
+        "Mureinsacculusandpeptidoglycan",
+        "Siderophorebiosynthesis",
+        "Temperature",
+        "Thioredoxinglutaredoxinandglutathione",
+        "numexp"
+    ]
+}

@@ -24,7 +24,7 @@ class SaveStatesStacks:
 
     def undo(self, currentGraph: ClassGraph):
         if not self.undoStack:
-            print("Undo Stack empty")
+            #print("Undo Stack empty")
             return
         if not self.redoStack:
             self.callFunc(self.nonEmptyRedoFunc)
@@ -37,7 +37,7 @@ class SaveStatesStacks:
 
     def redo(self, currentGraph: ClassGraph):
         if not self.redoStack:
-            print("Redo Stack empty")
+            #print("Redo Stack empty")
             return
         if not self.undoStack: #If empty
             self.callFunc(self.nonEmptyUndoFunc)
@@ -78,7 +78,7 @@ class SaveStatesStacks:
             f()
 
     def returnToState(self, item):
-        print("click : "+ str(item))
+        #print("click : "+ str(item))
         if item.state is None:
             return
         graph = self.window.canv.graph

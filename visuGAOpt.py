@@ -10,7 +10,7 @@ with open('logbook.dat','rb') as f:
     logbook=pickle.load(f)
 
 popfitnesses=logbook.select("popfitnesses")
-print(logbook)
+#print(logbook)
 
 flatPopFit=[]
 for popGenI in popfitnesses:

@@ -87,7 +87,7 @@ class WindowClasses(QtGui.QMainWindow):
     def setReady(self, graph):
         self.graph = graph
         self.graphReady = True
-        print("pret !")
+        #print("pret !")
         self.fctToCall(self.graph)
         self.close()
 

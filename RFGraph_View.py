@@ -42,13 +42,32 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
 
         self.global_compute_progress = QProgressBar(self)
         self.global_compute_progress.setRange(0, 100)
-        self.gridLayout.addWidget(self.global_compute_progress,4,0,1,4)
+        self.gridLayout.addWidget(self.global_compute_progress,4,1,1,3)
 
+        self.adjThreshold_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
+        self.adjThreshold_slider.setValue(self.modApp.adjThresholdVal * 100)
+
+        self.adjThreshold_lab = QtGui.QLabel('Edges importance : ')
+        # self.gridLayout.addWidget(self.adjThreshold_lab, 8, 0, 1, 2)
+        self.gridLayout.addWidget(self.adjThreshold_lab, 3, 0, 1, 1)
+        # self.gridLayout.addWidget(self.adjThreshold_slider, 8, 2, 1, 57)
+        self.gridLayout.addWidget(self.adjThreshold_slider, 3, 1, 1, 1)
+
+        # self.comprFitCmplx_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
+        # self.comprFitCmplx_slider.setValue(self.modApp.comprFitCmplxVal * 100)
+        # self.comprFitCmplx_lab = QtGui.QLabel('Compromise : ')
+        # self.gridLayout.addWidget(self.comprFitCmplx_lab, 9, 0)
+        # self.comprFitCmplx_lab_cmplx = QtGui.QLabel('Complexity')
+        # self.gridLayout.addWidget(self.comprFitCmplx_lab_cmplx, 9, 1)
+        # self.gridLayout.addWidget(self.comprFitCmplx_slider, 9, 2, 1, 57)
         self.comprFitCmplx_lab_fit = QtGui.QLabel('Fitness')
+        # self.gridLayout.addWidget(self.comprFitCmplx_lab_fit, 9, 59, 1, 1)
         self.selectContrTxtLab = QtGui.QLabel('')
         self.gridLayout.addWidget(self.selectContrTxtLab, 0, 1, 1, 1)
         selectContrFont = QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold)
         self.selectContrTxtLab.setFont(selectContrFont)
+
+
 
         self.clickedNodeLab = QtGui.QLabel('Selected node:')
         selNodeFont = QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold)
@@ -73,7 +92,7 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         # self.buttonReinstateLink = QtGui.QPushButton('Reinstate', self)
 
         #self.gridLayout.addWidget(self.buttonChangerEq, 4, 0, 1, 1)
-        self.gridLayout.addWidget(self.buttonSaveEq, 3, 1, 1, 1)
+        self.gridLayout.addWidget(self.buttonSaveEq, 4, 0, 1, 1)
         # self.gridLayout.addWidget(self.buttonRemoveLink, 12, 0, 1, 30)
         # self.gridLayout.addWidget(self.buttonReinstateLink, 0, 12, 1, 8)
 
@@ -131,9 +150,9 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         cpAction = QtGui.QAction("&Complexity", self, checkable=True)
         cpAction.triggered.connect(cntrApp.clickCmplx)
         compleAction = viewGroupAction.addAction(cpAction)
-        #saAction = QtGui.QAction("&Sensitivity Analysis", self, checkable=True)
-        #saAction.triggered.connect(cntrApp.clickSA)
-        #stvAnlsAction = viewGroupAction.addAction(saAction)
+        saAction = QtGui.QAction("&Sensitivity Analysis", self, checkable=True)
+        saAction.triggered.connect(cntrApp.clickSA)
+        stvAnlsAction = viewGroupAction.addAction(saAction)
         psAction = QtGui.QAction("&Pearson correlation", self, checkable=True)
         psAction.triggered.connect(cntrApp.clickPearson)
         PearsonAction = viewGroupAction.addAction(psAction)
@@ -165,7 +184,7 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         #viewMenu.addAction(comproAction)
         viewMenu.addAction(fitnesAction)
         viewMenu.addAction(compleAction)
-        #viewMenu.addAction(stvAnlsAction)
+        viewMenu.addAction(stvAnlsAction)
         viewMenu.addAction(psAction)
         viewMenu.addSeparator()
         viewMenu.addAction(self.showAction)
@@ -202,17 +221,17 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
     def removeConstrain(self,name,isRestoreByNode=False):
         #print("Inside")
         self.modApp.debugCmp+=1
-        print("Cmp:" + str(self.modApp.debugCmp))
-        print("removing : " + name)
+        #print("Cmp:" + str(self.modApp.debugCmp))
+        #print("removing : " + name)
         b=len(self.editMenu.actions())
-        print("sizeActionB=" + str(len(self.editMenu.actions())))
+        #print("sizeActionB=" + str(len(self.editMenu.actions())))
         self.editMenu.removeAction(self.mapper.mapping(name))
         self.mapper.removeMappings(self.mapper.mapping(name))
         a=len(self.editMenu.actions())
-        print("sizeActionA=" + str(len(self.editMenu.actions())))
+        #print("sizeActionA=" + str(len(self.editMenu.actions())))
         if(b==a):
             a=''
-            print(a)
+            #print(a)
         self.cntrApp.clickReinstateLink(name,isRestoreByNode)
 
     def noEquationError(self):

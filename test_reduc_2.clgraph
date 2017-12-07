@@ -1,0 +1,222 @@
+{
+    "edge": [
+        [
+            "Bolotin",
+            "PoptpH07spe"
+        ],
+        [
+            "Bolotin",
+            "PoptpH07"
+        ],
+        [
+            "Bolotin",
+            "Cell"
+        ],
+        [
+            "Bolotin",
+            "PopUFC"
+        ],
+        [
+            "Bolotin",
+            "CellAniso"
+        ],
+        [
+            "condition",
+            "Bolotin"
+        ],
+        [
+            "condition",
+            "PoptpH07spe"
+        ],
+        [
+            "condition",
+            "PoptpH07"
+        ],
+        [
+            "condition",
+            "Cell"
+        ],
+        [
+            "condition",
+            "PopUFC"
+        ],
+        [
+            "condition",
+            "CellAniso"
+        ],
+        [
+            "CellAniso",
+            "PoptpH07spe"
+        ],
+        [
+            "CellAniso",
+            "PoptpH07"
+        ],
+        [
+            "CellAniso",
+            "PopUFC"
+        ],
+        [
+            "Cell",
+            "PoptpH07spe"
+        ],
+        [
+            "Cell",
+            "PoptpH07"
+        ],
+        [
+            "Cell",
+            "PopUFC"
+        ],
+        [
+            "Cell",
+            "CellAniso"
+        ]
+    ],
+    "node": [
+        {
+            "color": [
+                0.6980392156862745,
+                0.8745098039215686,
+                0.5411764705882353
+            ],
+            "lineWidth": 0,
+            "name": "Bolotin",
+            "nodeList": [
+                "Membraneslipoproteinsandporins",
+                "Cations",
+                "General",
+                "Thioredoxinglutaredoxinandglutathione"
+            ],
+            "operators": [],
+            "pos": [
+                0.9235916528202592,
+                0.8879244251551699
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.984313725490196,
+                0.6039215686274509,
+                0.6
+            ],
+            "lineWidth": 0,
+            "name": "condition",
+            "nodeList": [
+                "Age",
+                "Temperature"
+            ],
+            "operators": [],
+            "pos": [
+                0.5422311919730167,
+                1.0045934252018374
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.9921568627450981,
+                0.7490196078431373,
+                0.43529411764705883
+            ],
+            "lineWidth": 0,
+            "name": "CellAniso",
+            "nodeList": [
+                "Anisotropie"
+            ],
+            "operators": [],
+            "pos": [
+                0.5473501243333825,
+                0.6720867750688347
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.2,
+                0.6274509803921569,
+                0.17254901960784313
+            ],
+            "lineWidth": 0,
+            "name": "PoptpH07spe",
+            "nodeList": [
+                "dtpH07speCong",
+                "dtpH07speSto3",
+                "dtpH07speLyo"
+            ],
+            "operators": [],
+            "pos": [
+                0.06316955796480273,
+                -0.045427575218170924
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6509803921568628,
+                0.807843137254902,
+                0.8901960784313725
+            ],
+            "lineWidth": 0,
+            "name": "PoptpH07",
+            "nodeList": [
+                "dtpH07Lyo",
+                "dtpH07Cong",
+                "dtpH07Sto3"
+            ],
+            "operators": [],
+            "pos": [
+                0.6631225285056159,
+                -0.03959412521583755
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.8901960784313725,
+                0.10196078431372549,
+                0.10980392156862745
+            ],
+            "lineWidth": 0,
+            "name": "Cell",
+            "nodeList": [
+                "SFA",
+                "CFA",
+                "UFASFA",
+                "CFAUFA",
+                "CFASFA",
+                "UFA"
+            ],
+            "operators": [],
+            "pos": [
+                0.2965224386754645,
+                0.7216711000886685
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.41568627450980394,
+                0.23921568627450981,
+                0.6039215686274509
+            ],
+            "lineWidth": 0,
+            "name": "PopUFC",
+            "nodeList": [
+                "dUFCLyo",
+                "dUFCSto3",
+                "dUFCCong"
+            ],
+            "operators": [],
+            "pos": [
+                0.3579496269998526,
+                -0.016260325206504028
+            ],
+            "size": 700
+        }
+    ],
+    "unbound": [
+        "numexp"
+    ]
+}

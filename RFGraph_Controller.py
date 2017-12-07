@@ -192,39 +192,39 @@ class RFGraph_Controller:
         self.onMoveMutex.release()
 
     def onMove2(self, event):
-        print('new event : ' + str(event))
+        #print('new event : ' + str(event))
         self.moveListMutex.acquire(True)
         self.moveEventList.append(event)
         self.moveListMutex.release()
         self.protectMutex.acquire(True)
         if (not self.returnMutex.acquire(False)):
-            print('already in computation : ' + str(event))
+            #print('already in computation : ' + str(event))
             self.nbOnMoveWaiting += 1
             self.returnMutex.release()
             self.returnMutex.acquire(True)
             while (self.nbOnMoveWaiting > 1):
-                print('cleaning : nbOnMoveWaiting = ' + str(self.nbOnMoveWaiting) + '  event : ' + str(event))
+                #print('cleaning : nbOnMoveWaiting = ' + str(self.nbOnMoveWaiting) + '  event : ' + str(event))
                 self.returnMutex.release()
                 self.returnMutex.acquire(True)
             self.protectMutex.release()
-            print('waiting : ' + str(event))
+            #print('waiting : ' + str(event))
             self.returnMutex.acquire(True)
-            print('released : ' + event)
+            #print('released : ' + event)
             if self.nbOnMoveWaiting > 1:
-                print('another is already in the list, return : ' + str(event))
+                #print('another is already in the list, return : ' + str(event))
                 self.nbOnMoveWaiting -= 1
                 return
         self.protectMutex.release()
         if not self.onMoveMutex.acquire(False):
-            print('already computing : ' + str(event))
+            #print('already computing : ' + str(event))
             return
         self.moveListMutex.acquire(True)
         lastevent = self.moveEventList[-1]
         self.moveEventList = []
         self.moveListMutex.release()
-        print('computing' + str(lastevent))
+        #print('computing' + str(lastevent))
         self.onMove(lastevent)
-        print('computing finished :' + str(lastevent))
+        #print('computing finished :' + str(lastevent))
         self.onMoveMutex.release()
         self.returnMutex.release()
 
@@ -296,8 +296,8 @@ class RFGraph_Controller:
 
     def onClick(self, event):
         # TODO  affichage du nom du noeud selectionné + changer couleur
-        print("clicked")
-        print(event)
+        #print("clicked")
+        #print(event)
         (x, y) = (event.xdata, event.ydata)
         if x == None or y == None:
             return
@@ -329,7 +329,7 @@ class RFGraph_Controller:
             nodeclicked = min(dst, key=(lambda x: x[0]))[1]  # Closest node
             self.vwApp.incMatGUI.mutipleHighlight(nodeclicked)
             #self.vwApp.incMatGUI.highlight(-1)
-            print("highlighting " + nodeclicked)
+            #print("highlighting " + nodeclicked)
             # self.higlight(nodeclicked, self.p(self.modApp.lastNodeClicked))
             self.modApp.lastNodeClicked = nodeclicked
 
@@ -370,7 +370,7 @@ class RFGraph_Controller:
                 # self.vwApp.fitGUI.updateView()
             self.vwApp.clickedNodeLab.setText('Selected node: ' + self.p(self.modApp.lastNodeClicked))
             if (event.button == 3):
-                print("right click")
+                #print("right click")
                 self.vwApp.updateRightClickMenu(self, event, nodeclicked)
 
         self.modApp.clicked_line = -1
@@ -529,7 +529,7 @@ class RFGraph_Controller:
         # self.vwApp.networkGUI.updateView()
 
     def eqTableHeaderClicked(self, clicked):
-        print("eqTableHeaderClicked {}".format(clicked))
+        #print("eqTableHeaderClicked {}".format(clicked))
         logging.info("node {} All Equations {} -- {}".format(self.modApp.lastNodeClicked, self.on_off_state, strftime("%d %m %y: %H %M %S")))
         if clicked == 3:
             try:
@@ -543,9 +543,9 @@ class RFGraph_Controller:
                     else:
                         self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] -= 1
                         self.modApp.rmByRmEq.append(lineToModify)
-                        print(self.modApp.equacolO[lineToModify][4])
-                        print(self.modApp.data[_][3])
-                    print(self.modApp.rmByRmEq)
+                        #print(self.modApp.equacolO[lineToModify][4])
+                        #print(self.modApp.data[_][3])
+                    #print(self.modApp.rmByRmEq)
                     self.modApp.rmByRmEq = list(set(self.modApp.rmByRmEq))
 
                 self.vwApp.eqTableGUI.updateView()
@@ -632,8 +632,8 @@ class RFGraph_Controller:
                 self.clean_global_state = False
                 self.vwApp.incMatGUI.broken(True)
 
-        print(self.modApp.equacolO[lineToModify][4])
-        print(self.modApp.data[objClicked.id][3])
+        #print(self.modApp.equacolO[lineToModify][4])
+        #print(self.modApp.data[objClicked.id][3])
 
         if objClicked.isChecked():
             self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] += 1
@@ -643,7 +643,7 @@ class RFGraph_Controller:
             self.modApp.rmByRmEq.append(lineToModify)
 
         self.modApp.rmByRmEq = list(set(self.modApp.rmByRmEq))
-        print(self.modApp.rmByRmEq)
+        #print(self.modApp.rmByRmEq)
 
         # TODO detect invalid models
 

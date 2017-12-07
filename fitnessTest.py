@@ -111,5 +111,5 @@ ax.set_title('Heatmap of the mean fitness for '+str(nbRepet)+' runs and using '+
 
 plt.show(block=True)
 a=5
-print(a)
+#print(a)
 

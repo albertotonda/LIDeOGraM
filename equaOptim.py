@@ -131,13 +131,13 @@ class equaOptim:
 
         NGEN = max(min(int(50*log(binom(self.nvars,self.nbElmt))), 200), 25)/4
         NGEN = int(NGEN)
-        print(NGEN)
+        #print(NGEN)
         CXPB = 0.8
         MUTPB = 0.2
         mu =  max(int(log(binom(self.nvars,self.nbElmt))*log(binom(self.nvars,self.nbElmt))),10)/4
         mu = int(mu)
         lmbd = int(0.8* mu) #800
-        print(mu)
+        #print(mu)
         halloffame = tools.HallOfFame(1)
         pop = toolbox.new_population(n=mu)
         fitnesses = toolbox.map(toolbox.evaluate, pop)

@@ -4,6 +4,17 @@ matplotlib.use("qt4agg")
 from matplotlib.colors import LinearSegmentedColormap
 
 class colorm:
+
+    #Complexity : The darkness of the blue represents the level of complexity
+    #Fitness : Red = Bad fitness (worst among everything)
+    #          Green = Good fitness
+    #Pearson : Orange = negativ correlation (-1)
+    #          Blue = positiv correlation   (+1)
+    #          Gray = no significant correlation (0)
+    #Sensitivity Analysis :
+    #          Green =
+    #          Violet =
+
     def __init__(self):
         aggr1=0.2
         aggr2 = 0.5

@@ -19,7 +19,7 @@ class ClassGraph(nx.DiGraph):
         selectedNode = None
         for node in dicoG["node"]:
             listeNode[node["name"]] = ClassNode(node["name"], node["nodeList"], pos=node["pos"], color=node["color"], lineWidth=0)    #node["lineWidth"])
-            print(node["name"], node["pos"])
+            #print(node["name"], node["pos"])
         for edge in dicoG["edge"]:
             listeEdge.append((
                 listeNode[edge[0]]
@@ -43,7 +43,7 @@ class ClassGraph(nx.DiGraph):
         file = open(path, "w")
         saveGraph = dict()
 
-        print("save")
+        #print("save")
 
         saveGraph["edge"] = []
         for ed in self.edges():
