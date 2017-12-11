@@ -489,6 +489,7 @@ class RFGraph_Controller:
         if not cellClicked:
             return
         self.modApp.clicked_line = cellClicked.row()
+        self.modApp.eqButton = self.vwApp.eqTableGUI.button
         # print("self.modApp.mode_changeEq:" + str(self.modApp.mode_changeEq))
         if (self.modApp.mode_changeEq):
             self.modApp.selectedEq[self.modApp.lastNodeClicked] = cellClicked.row() - int(
@@ -525,7 +526,7 @@ class RFGraph_Controller:
             self.vwApp.fitGUI.updateView()
             item_to_select = self.vwApp.eqTableGUI.item(self.modApp.clicked_line, 0)
             self.vwApp.eqTableGUI.scrollToItem(item_to_select, QAbstractItemView.PositionAtCenter)
-        pass
+
         # self.vwApp.networkGUI.updateView()
 
     def eqTableHeaderClicked(self, clicked):

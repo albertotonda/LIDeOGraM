@@ -9,14 +9,17 @@ from sympy.parsing.sympy_parser import parse_expr
 import numpy as np
 import ColorMaps
 from OnOffCheckBox import *
+from RightClickQTableWidget import RightClickQTableWidget
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 
 # TODO Crée la table contenant les équations du noeud sélectionné
-class EqTableCanvas(QTableWidget):
+class EqTableCanvas(RightClickQTableWidget):
     def __init__(self, modApp, *args):
         self.modApp = modApp
         self.cntrApp=None #Defined in RFGraphMain
         self.colors = ColorMaps.colorm()
-        QTableWidget.__init__(self)
+        RightClickQTableWidget.__init__(self)
 
 
     def paintSection(self, painter, rect, logicalIndex):
@@ -195,6 +198,35 @@ class EqTableCanvas(QTableWidget):
             idx_true=np.ix_(self.modApp.equacolO[idx_node, 4][0] == True)[0]
             idx_selected = idx_true[self.modApp.selectedEq[self.modApp.lastNodeClicked]]
             self.item(idx_selected, 3).setBackground(QColor(100, 100, 150))
+
+        try:
+            if self.modApp.eqButton.button() == 2:
+                print("click Eq")
+                SA=self.modApp.equacolO[np.where(self.modApp.equacolO[:,3]==self.modApp.data[self.modApp.clicked_line][2]),6][0][0]
+                wSA = QtGui.QMainWindow()
+                wSA.__init__()
+                wSA.setWindowTitle("Sensitivity analysis of the equation")
+                wSA.setGeometry(500, 500, 300, 300)
+                #fig, ax = plt.subplots()
+                a = np.arange(len(SA['ST']))
+                b = SA['ST']
+                fig = plt.figure()
+                ax= fig.add_subplot(111)
+                #fig, ax = plt.subplots()
+                ax.bar(a + 0.35, b, 0.35)
+                fig.patch.set_visible(False)
+                figCanv = FigureCanvas(fig)
+                SAWidget= QtGui.QWidget(wSA)
+                SALayout = QtGui.QGridLayout(SAWidget)
+                SALayout.addWidget(figCanv, 0, 0, 1, 1)
+                wSA.show()
+
+
+
+
+        except AttributeError as e:
+            pass #This is a feature !
+
         self.show()
 
 

@@ -168,6 +168,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.invisibleTup = []
         self.forbiddenNodes = []
         self.nodesWithNoEquations=[]
+        self.eqButton=-1
 
         #Necessaire de faire une deepcopy ?
         #self.lpos= copy.deepcopy(self.pos)
@@ -552,7 +553,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         pb['names'] = par
         pb['num_vars'] = len(par)
 
-        param_values = saltelli.sample(pb, 1000, calc_second_order=False)
+        param_values = saltelli.sample(pb, 10, calc_second_order=False)
 
         YSobol = clf.predict(param_values)
 
