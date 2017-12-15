@@ -12,6 +12,7 @@ from OnOffCheckBox import *
 from RightClickQTableWidget import RightClickQTableWidget
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+from SaGUI import SaGUI
 
 # TODO Crée la table contenant les équations du noeud sélectionné
 class EqTableCanvas(RightClickQTableWidget):
@@ -20,6 +21,9 @@ class EqTableCanvas(RightClickQTableWidget):
         self.cntrApp=None #Defined in RFGraphMain
         self.colors = ColorMaps.colorm()
         RightClickQTableWidget.__init__(self)
+        self.SaWindow = SaGUI()
+
+
 
 
     def paintSection(self, painter, rect, logicalIndex):
@@ -203,28 +207,16 @@ class EqTableCanvas(RightClickQTableWidget):
             if self.modApp.eqButton.button() == 2:
                 print("click Eq")
                 SA=self.modApp.equacolO[np.where(self.modApp.equacolO[:,3]==self.modApp.data[self.modApp.clicked_line][2]),6][0][0]
-                wSA = QtGui.QMainWindow()
-                wSA.__init__()
-                wSA.setWindowTitle("Sensitivity analysis of the equation")
-                wSA.setGeometry(500, 500, 300, 300)
-                #fig, ax = plt.subplots()
-                a = np.arange(len(SA['ST']))
-                b = SA['ST']
-                fig = plt.figure()
-                ax= fig.add_subplot(111)
-                #fig, ax = plt.subplots()
-                ax.bar(a + 0.35, b, 0.35)
-                fig.patch.set_visible(False)
-                figCanv = FigureCanvas(fig)
-                SAWidget= QtGui.QWidget(wSA)
-                SALayout = QtGui.QGridLayout(SAWidget)
-                SALayout.addWidget(figCanv, 0, 0, 1, 1)
-                wSA.show()
+                self.SaWindow.showSA(SA)
+                #wSA = QtGui.QMainWindow()
+                #wSA.__init__()
+
 
 
 
 
         except AttributeError as e:
+            print(e)
             pass #This is a feature !
 
         self.show()

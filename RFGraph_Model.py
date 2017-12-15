@@ -324,7 +324,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.progress.setValue(0)
         self.show()
 
-    def evalfit(self,nbAP, nbPP, dataSize, nbRepet=100):
+    def evalfit(self,nbAP, nbPP, dataSize, nbRepet=10):
         if (nbAP > nbPP):
             nbAPr = nbPP
         else:
@@ -418,7 +418,10 @@ class RFGraph_Model(QtGui.QMainWindow):
 
 
                 idx=[list(self.dataset.varnames_extd).index(v) for v in par]
-                X=self.dataset.data_extd[:,idx]
+                try:
+                    X=self.dataset.data_extd[:,idx]
+                except Exception as e:
+                    print(e)
 
 
                 nbEqToFind=6
@@ -553,7 +556,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         pb['names'] = par
         pb['num_vars'] = len(par)
 
-        param_values = saltelli.sample(pb, 10, calc_second_order=False)
+        param_values = saltelli.sample(pb, 1000, calc_second_order=False)
 
         YSobol = clf.predict(param_values)
 
