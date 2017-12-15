@@ -1,0 +1,234 @@
+{
+    "edge": [
+        [
+            "Cell",
+            "PopUFC"
+        ],
+        [
+            "Cell",
+            "PoptpH07spe"
+        ],
+        [
+            "Cell",
+            "CellAniso"
+        ],
+        [
+            "Cell",
+            "PoptpH07"
+        ],
+        [
+            "condition",
+            "mol"
+        ],
+        [
+            "condition",
+            "PopUFC"
+        ],
+        [
+            "condition",
+            "PoptpH07spe"
+        ],
+        [
+            "condition",
+            "Cell"
+        ],
+        [
+            "condition",
+            "CellAniso"
+        ],
+        [
+            "condition",
+            "PoptpH07"
+        ],
+        [
+            "mol",
+            "PopUFC"
+        ],
+        [
+            "mol",
+            "PoptpH07spe"
+        ],
+        [
+            "mol",
+            "Cell"
+        ],
+        [
+            "mol",
+            "CellAniso"
+        ],
+        [
+            "mol",
+            "PoptpH07"
+        ],
+        [
+            "CellAniso",
+            "PoptpH07"
+        ],
+        [
+            "CellAniso",
+            "PopUFC"
+        ],
+        [
+            "CellAniso",
+            "PoptpH07spe"
+        ]
+    ],
+    "node": [
+        {
+            "color": [
+                0.9921568627450981,
+                0.7490196078431373,
+                0.43529411764705883
+            ],
+            "lineWidth": 0,
+            "name": "PopUFC",
+            "nodeList": [
+                "dUFCSto3",
+                "dUFCCong",
+                "dUFCLyo"
+            ],
+            "operators": [],
+            "pos": [
+                0.8365698026940429,
+                0.007073474802829494
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6980392156862745,
+                0.8745098039215686,
+                0.5411764705882353
+            ],
+            "lineWidth": 0,
+            "name": "Cell",
+            "nodeList": [
+                "CFASFA",
+                "CFAUFA",
+                "UFA",
+                "UFASFA",
+                "CFA",
+                "SFA"
+            ],
+            "operators": [],
+            "pos": [
+                0.0917651442608377,
+                0.49124982499649994
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.2,
+                0.6274509803921569,
+                0.17254901960784313
+            ],
+            "lineWidth": 0,
+            "name": "condition",
+            "nodeList": [
+                "Age",
+                "Temperature"
+            ],
+            "operators": [],
+            "pos": [
+                0.37586589026113243,
+                0.8908411501563365
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6509803921568628,
+                0.807843137254902,
+                0.8901960784313725
+            ],
+            "lineWidth": 0,
+            "name": "PoptpH07spe",
+            "nodeList": [
+                "dtpH07speSto3",
+                "dtpH07speLyo",
+                "dtpH07speCong"
+            ],
+            "operators": [],
+            "pos": [
+                0.611242534928218,
+                -0.010426875204170655
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.984313725490196,
+                0.6039215686274509,
+                0.6
+            ],
+            "lineWidth": 0,
+            "name": "mol",
+            "nodeList": [
+                "Lipopolysaccharide_biosynthesis",
+                "Base_excision_Nucleotide_excision_and_Mismatch_repair",
+                "cytochrome_P450",
+                "D_Glutamine_and_D_glutamate_metabolism",
+                "ABC_transporters",
+                "Biosynthesis_of_unsaturated_fatty_acids",
+                "Glycerophospholipid_metabolism",
+                "Protein_export",
+                "Alanin_aspartate_and_glutamate_metabolism",
+                "Thiamine_Riboflavin_and__Vitamin_B6_metabolism",
+                "Peptidoglycan_biosynthesis",
+                "Glycerolipid_and_Sphingolipid_metabolism",
+                "Fatty_acid_metabolism",
+                "Phosphotransferase_system",
+                "Glutathione_metabolism",
+                "Fatty_acid_biosynthesis"
+            ],
+            "operators": [],
+            "pos": [
+                0.8979969910184309,
+                0.8704240751481698
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.8901960784313725,
+                0.10196078431372549,
+                0.10980392156862745
+            ],
+            "lineWidth": 0,
+            "name": "CellAniso",
+            "nodeList": [
+                "Anisotropie"
+            ],
+            "operators": [],
+            "pos": [
+                0.6113367788379533,
+                0.529167250011667
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.41568627450980394,
+                0.23921568627450981,
+                0.6039215686274509
+            ],
+            "lineWidth": 0,
+            "name": "PoptpH07",
+            "nodeList": [
+                "dtpH07Cong",
+                "dtpH07Sto3",
+                "dtpH07Lyo"
+            ],
+            "operators": [],
+            "pos": [
+                0.40366779812660464,
+                0.00124002480049612
+            ],
+            "size": 700
+        }
+    ],
+    "unbound": [
+        "numexp"
+    ]
+}
