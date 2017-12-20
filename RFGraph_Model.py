@@ -396,6 +396,14 @@ class RFGraph_Model(QtGui.QMainWindow):
 
             return falseReg
 
+    def addnoise(self,m): #to make it possible to use OrthogonalMatchingPursuit for some datasets
+        newM=np.array(m)
+        for i in range(m.shape[0]):
+            for j in range(m.shape[1]):
+                newM[i,j] = m[i,j] * (1+(random.random()*2-1)*0.0000001)
+
+        return newM
+
     def findLassoEqs(self):
         equacolOtmp=[]
         self.createProgressBar()
@@ -428,11 +436,14 @@ class RFGraph_Model(QtGui.QMainWindow):
 
                 for j in range(1,np.minimum(nbEqToFind,len(idx))+1):
 
+
+
                     clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=j)
                     #clf = self.eaForLinearRegression(X, Y, j)
                     factnormY=(1 / np.mean(np.array(Y)))
                     Yn=list(np.array(Y)*factnormY)
-                    clf.fit(X, Yn)
+                    Xn=self.addnoise(X)
+                    clf.fit(Xn, Yn)
                     clf.coef_ = clf.coef_ / factnormY
                     clf.intercept_ = clf.intercept_ / factnormY
 
@@ -556,7 +567,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         pb['names'] = par
         pb['num_vars'] = len(par)
 
-        param_values = saltelli.sample(pb, 1000, calc_second_order=False)
+        param_values = saltelli.sample(pb, 10, calc_second_order=False)
 
         YSobol = clf.predict(param_values)
 
