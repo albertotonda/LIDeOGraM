@@ -40,15 +40,16 @@ class RFGraph_Model(QtGui.QMainWindow):
         logging.info("Program started -- {}".format(strftime("%d %m %y: %H %M %S")))
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
-        #datafile = "data/type3_extra_0.2"
+        datafile = "data/type3_extra_0.2"
         #datafile = "data/Classeur1.csv"
-        datafile = "data/use_case_san.csv"
 
+
+        #datafile = "data/use_case_san.csv"
         self.dataset = Dataset(datafile)
 
-        #self.truth = pandas.read_csv("data/ballon_clean_no_noise.csv")
+        self.truth = pandas.read_csv("data/ballon_clean_no_noise.csv", encoding="utf-8")
         #self.truth = self.truth.iloc[list(range(1, self.truth.shape[0]))]
-       # self.trueture = Dataset("data/ballon_clean_no_noise.csv")
+        #self.trueture = Dataset("data/ballon_clean_no_noise.csv")
         #self.dataset = Dataset("data/use_case.mld")
 
         logging.info("Data file {} -- {}".format(datafile, strftime("%d %m %y: %H %M %S")))
@@ -63,9 +64,9 @@ class RFGraph_Model(QtGui.QMainWindow):
             self.adj_contrGraph.edgesTrueName.append((e0.name, e1.name))
         self.correctDataset(self.dataset, self.adj_contrGraph)
 
-        self.equacolO = self.findLassoEqs()
+        #self.equacolO = self.findLassoEqs()
 
-        #self.equacolO = self.readEureqaResults('data/eq_erqa4.txt')
+        self.equacolO = self.readEureqaResults('data/eq_erqa4.txt')
         self.nbequa = len(self.equacolO)  # Number of Equation for all variables taken together
 
         self.adj_simple = np.zeros((self.dataset.nbVar,self.dataset.nbVar))

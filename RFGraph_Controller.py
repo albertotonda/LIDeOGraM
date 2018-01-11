@@ -128,7 +128,7 @@ class RFGraph_Controller:
             self.vwApp.showAction.setChecked(True)
             optModGlob.update_bar_signal.disconnect(self.vwApp.global_compute_progress.setValue)
             self.clean_global_state = True
-            #self.toyModel_dstTruth()
+            self.toyModel_dstTruth()
 
 
         # TODO
