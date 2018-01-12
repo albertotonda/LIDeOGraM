@@ -35,8 +35,10 @@ class MyHeaderView(QHeaderView):
          return QSize(0, self._get_text_width() + 2 * self._margin)
 
      def _get_text_width(self):
-         return max([self._metrics.width(self._get_data(i))
-                     for i in range(0, self.model().columnCount())])
+         t = [self._get_data(i) for i in range(0, self.model().columnCount())]
+         t2 = [self._metrics.width(str(i)) for i in t]
+         #TODO Potentiellement truc tres moche (str(i)), il semble qu'apres optimisation i contienne un chiffre.
+         return max(t2)
 
      def _get_data(self, index):
          return self.model().headerData(index, self.orientation())

@@ -106,7 +106,7 @@ class RFGraph_Controller:
         logging.info("Computing distance to truth")
         iT = Individual_true(self.modApp, self.modApp.truth)
         true_fit = iT.get_fitness(self.modApp.best_indv)
-        self.vwApp.toyFitness.setText("Distance à la vérité {}".format(true_fit[0]))
+        self.vwApp.toyFitness.setText("Score {}".format(true_fit[0]))
         print(true_fit)
 
 
