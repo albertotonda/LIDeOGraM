@@ -231,6 +231,7 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
     def updateView(self):
         if(self.modApp.globalModelView==True):
             pass
+        #TODO WHAT ?!
         self.networkGUI.network.updateView()
 
         if(not self.modApp.lastNodeClicked==None):

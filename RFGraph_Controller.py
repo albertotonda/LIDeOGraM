@@ -519,16 +519,19 @@ class RFGraph_Controller:
                 matrix_position = self.modApp.clicked_line
                 global_ind = len(list(filter(lambda x: True if x[1] > 0 else False, self.modApp.best_indv.items())))
                 offsets = list(self.vwApp.incMatGUI.order[global_ind:])
-                first_occu = offsets.index(self.modApp.lastNodeClicked)
-                offsets = offsets[:first_occu]
-                class_offset =list( set(offsets) - {self.modApp.lastNodeClicked} )
-                for c in class_offset:
-                    offset = offsets.count(c)
-                    matrix_position += offset
-                    if self.modApp.best_indv != {}:
-                        matrix_position+=1
-                if higlight_matrix:
-                    self.vwApp.incMatGUI.highlight(self.vwApp.incMatGUI.newOrder.index(matrix_position))
+                if self.modApp.lastNodeClicked in offsets:
+                    first_occu = offsets.index(self.modApp.lastNodeClicked)
+                    offsets = offsets[:first_occu]
+                    class_offset =list( set(offsets) - {self.modApp.lastNodeClicked} )
+                    for c in class_offset:
+                        offset = offsets.count(c)
+                        matrix_position += offset
+                        if self.modApp.best_indv != {}:
+                            matrix_position+=1
+                    if higlight_matrix:
+
+
+                        self.vwApp.incMatGUI.highlight(self.vwApp.incMatGUI.newOrder.index(matrix_position))
             else:
                 self.vwApp.uncertaintyModifTxt.setText('')
             self.vwApp.fitGUI.updateView()
@@ -596,8 +599,11 @@ class RFGraph_Controller:
         y = {offsets[xp]} # set
         z = x - y
         class_offset = list(z)
+
         for c in class_offset:
             eq_table_position -= offsets.count(c)
+
+
 
         class MyWidgetItem:
             self.row2 = -1
@@ -607,6 +613,14 @@ class RFGraph_Controller:
 
             def row(self):
                 return self.row2
+
+        # get position of discareded equations
+        # count those before the selected line
+        # add offset
+#TODO Homework
+        discard = self.modApp.rmByRmEq
+        offsetlist = filter(lambda x: x < eq_table_position, discard)
+        eq_table_position -= sum(offsetlist)
 
         eqCellToClickWid = MyWidgetItem(eq_table_position)
 
