@@ -122,7 +122,7 @@ class EqTableCanvas(RightClickQTableWidget):
 
     def updateView(self):
         self.clear()
-        self.setRowCount(len(self.modApp.data))
+        self.setRowCount(len(self.modApp.data)+1)
         self.setColumnCount(5)
         self.wordWrap()
         self.setTextElideMode(Qt.ElideNone)
@@ -133,6 +133,7 @@ class EqTableCanvas(RightClickQTableWidget):
         #self.resizeRowsToContents()
         #self.resizeColumnsToContents()
         #eqList = self.generateLatex()
+        sumvdf=0
         for n  in range(len(self.modApp.data)):
             newitem = QTableWidgetItem(str(self.modApp.data[n][0]))
             cmap = self.colors.get("complexity",(self.modApp.data[n][0]/self.modApp.cmplxMax))
@@ -149,6 +150,7 @@ class EqTableCanvas(RightClickQTableWidget):
             newitem = QTableWidgetItem(str(round(self.modApp.data[n][1],3)))
 
             vdf=(self.modApp.data[n][1]/self.modApp.dataMaxFitness)
+            sumvdf+=self.modApp.data[n][1]
             cmap = self.colors.get("local",vdf)
             #if (sum(cmap) < 128 * 3):
             if (0.299 * cmap[0] + 0.587 * cmap[1] + 0.114 * cmap[2] < 100):
@@ -188,6 +190,32 @@ class EqTableCanvas(RightClickQTableWidget):
             cb.setParent(self)
             cb.setCheckState(self.modApp.data[n][3])
             self.setCellWidget(n,4,cb)
+
+        newitem = QTableWidgetItem('FitnessMoyenne:')
+        self.setItem(len(self.modApp.data), 0, newitem)
+
+        newitem = QTableWidgetItem(str(round(sumvdf/len(self.modApp.data),3)))
+        self.setItem(len(self.modApp.data), 1, newitem)
+
+        newitem = QTableWidgetItem('')
+        self.setItem(len(self.modApp.data), 2, newitem)
+
+        newitem = QTableWidgetItem('')
+        self.setItem(len(self.modApp.data), 3, newitem)
+
+        newitem = QTableWidgetItem('')
+        self.setItem(len(self.modApp.data), 4, newitem)
+
+
+
+
+
+
+
+
+
+
+
 
         self.wordWrap()
         #self.setHorizontalHeaderLabels(['Complexity','Fitness','Equation'])

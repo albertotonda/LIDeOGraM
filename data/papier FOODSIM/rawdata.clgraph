@@ -1,0 +1,124 @@
+{
+    "edge": [
+        [
+            "Anisotropy",
+            "Population"
+        ],
+        [
+            "condition",
+            "Anisotropy"
+        ],
+        [
+            "condition",
+            "Population"
+        ],
+        [
+            "condition",
+            "Cell"
+        ],
+        [
+            "Cell",
+            "Population"
+        ],
+        [
+            "Cell",
+            "Anisotropy"
+        ]
+    ],
+    "node": [
+        {
+            "color": [
+                0.12156862745098039,
+                0.47058823529411764,
+                0.7058823529411765
+            ],
+            "lineWidth": 0,
+            "name": "Anisotropy",
+            "nodeList": [
+                "Anisotropy"
+            ],
+            "operators": [],
+            "pos": [
+                0.7524214053054292,
+                0.4795829249918332
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.41568627450980394,
+                0.23921568627450981,
+                0.6039215686274509
+            ],
+            "lineWidth": 0,
+            "name": "condition",
+            "nodeList": [
+                "Age",
+                "Temperature"
+            ],
+            "operators": [],
+            "pos": [
+                0.5908610493964905,
+                0.9112582251645034
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.9921568627450981,
+                0.7490196078431373,
+                0.43529411764705883
+            ],
+            "lineWidth": 0,
+            "name": "Population",
+            "nodeList": [
+                "tpH07cong",
+                "UFCcong",
+                "UFCcentri",
+                "UFCsto3",
+                "tpH07sto3",
+                "TpH07lyo",
+                "UFClyo",
+                "tpH07centri"
+            ],
+            "operators": [],
+            "pos": [
+                0.4857139999942856,
+                0.1179090248471637
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.8901960784313725,
+                0.10196078431372549,
+                0.10980392156862745
+            ],
+            "lineWidth": 0,
+            "name": "Cell",
+            "nodeList": [
+                "C140",
+                "C181trans11",
+                "C220",
+                "C181cis11",
+                "C161cis",
+                "C150",
+                "C160",
+                "C170",
+                "C181cis9",
+                "C180",
+                "C181trans9",
+                "C19cyc"
+            ],
+            "operators": [],
+            "pos": [
+                0.35283069463948696,
+                0.6895871250758349
+            ],
+            "size": 700
+        }
+    ],
+    "unbound": [
+        "numexp"
+    ]
+}

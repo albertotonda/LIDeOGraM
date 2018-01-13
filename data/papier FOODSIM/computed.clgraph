@@ -1,0 +1,173 @@
+{
+    "edge": [
+        [
+            "CellAniso",
+            "PopUFC"
+        ],
+        [
+            "CellAniso",
+            "PoptpH07"
+        ],
+        [
+            "CellAniso",
+            "PoptpH07spe"
+        ],
+        [
+            "condition",
+            "PopUFC"
+        ],
+        [
+            "condition",
+            "CellAniso"
+        ],
+        [
+            "condition",
+            "Cell"
+        ],
+        [
+            "condition",
+            "PoptpH07"
+        ],
+        [
+            "condition",
+            "PoptpH07spe"
+        ],
+        [
+            "Cell",
+            "PopUFC"
+        ],
+        [
+            "Cell",
+            "CellAniso"
+        ],
+        [
+            "Cell",
+            "PoptpH07spe"
+        ]
+    ],
+    "node": [
+        {
+            "color": [
+                0.8901960784313725,
+                0.10196078431372549,
+                0.10980392156862745
+            ],
+            "lineWidth": 0,
+            "name": "CellAniso",
+            "nodeList": [
+                "Anisotropie"
+            ],
+            "operators": [],
+            "pos": [
+                0.7341911554867293,
+                0.5495843250198338
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.41568627450980394,
+                0.23921568627450981,
+                0.6039215686274509
+            ],
+            "lineWidth": 0,
+            "name": "PoptpH07",
+            "nodeList": [
+                "dtpH07Cong",
+                "dtpH07Sto3",
+                "dtpH07Lyo"
+            ],
+            "operators": [],
+            "pos": [
+                0.866062367118902,
+                0.047907624819163136
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6509803921568628,
+                0.807843137254902,
+                0.8901960784313725
+            ],
+            "lineWidth": 0,
+            "name": "PoptpH07spe",
+            "nodeList": [
+                "dtpH07speCong",
+                "dtpH07speSto3",
+                "dtpH07speLyo"
+            ],
+            "operators": [],
+            "pos": [
+                0.4565882790524028,
+                0.07707487483083003
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.9921568627450981,
+                0.7490196078431373,
+                0.43529411764705883
+            ],
+            "lineWidth": 0,
+            "name": "PopUFC",
+            "nodeList": [
+                "dUFCLyo",
+                "dUFCSto3",
+                "dUFCCong"
+            ],
+            "operators": [],
+            "pos": [
+                0.04569475301754666,
+                0.04207417481682976
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.2,
+                0.6274509803921569,
+                0.17254901960784313
+            ],
+            "lineWidth": 0,
+            "name": "condition",
+            "nodeList": [
+                "Temperature",
+                "Age"
+            ],
+            "operators": [],
+            "pos": [
+                0.4168173491440578,
+                0.952092375180837
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6980392156862745,
+                0.8745098039215686,
+                0.5411764705882353
+            ],
+            "lineWidth": 0,
+            "name": "Cell",
+            "nodeList": [
+                "CFA",
+                "CFASFA",
+                "UFA",
+                "UFASFA",
+                "SFA",
+                "CFAUFA"
+            ],
+            "operators": [],
+            "pos": [
+                0.242773648891625,
+                0.6633366000653347
+            ],
+            "size": 700
+        }
+    ],
+    "unbound": [
+        "numexp"
+    ]
+}
