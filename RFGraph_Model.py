@@ -886,9 +886,9 @@ class RFGraph_Model(QtGui.QMainWindow):
                     # if self.nbeq[i] == np.float64(0.0): continue
                     r = self.adj_simple[i, j] / self.nbeq[i]  # Rapport entre le nombre de fois que j intervient dans i par rapport au nombre d'équations dans i
                     tup = (self.dataset.varnames[j], self.dataset.varnames[i])
-                    if (self.ColorMode!='Pearson' and r <= self.adjThresholdVal):
+                    if (self.ColorMode!='Pearson' and self.ColorMode!='SA' and r <= self.adjThresholdVal):
                         self.invisibleTup.append(tup)
-                    elif(self.ColorMode=='Pearson' and not -1+self.adjThresholdVal < self.allPearson[tup] < 1-self.adjThresholdVal ):
+                    elif((self.ColorMode=='Pearson' or self.ColorMode=='SA') and not -1+self.adjThresholdVal < self.allPearson[tup] < 1-self.adjThresholdVal ):
                         self.invisibleTup.append(tup)
 
         self.edgeColor = self.colorDictToConstraintedcolorList(self.edgeColorfull,self.edgelist_inOrder)
