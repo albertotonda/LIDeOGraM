@@ -38,7 +38,7 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         self.networkGUI = NetworkCanvas(self.modApp, self)
         self.gridLayout.addWidget(self.networkGUI, 1, 0, 2, 2)
         self.incMatGUI = IncMatrixCanvas(self.modApp, self)
-        #self.gridLayout.addWidget(self.incMatGUI, 1, 2, 3, 1)
+        self.gridLayout.addWidget(self.incMatGUI, 1, 2, 3, 1)
 
         self.global_compute_progress = QProgressBar(self)
         self.global_compute_progress.setRange(0, 100)
@@ -61,13 +61,15 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         # self.gridLayout.addWidget(self.comprFitCmplx_lab_cmplx, 9, 1)
         # self.gridLayout.addWidget(self.comprFitCmplx_slider, 9, 2, 1, 57)
         self.comprFitCmplx_lab_fit = QtGui.QLabel('Fitness')
-        # self.gridLayout.addWidget(self.comprFitCmplx_lab_fit, 9, 59, 1, 1)
         self.selectContrTxtLab = QtGui.QLabel('')
         self.gridLayout.addWidget(self.selectContrTxtLab, 0, 1, 1, 1)
         selectContrFont = QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold)
         self.selectContrTxtLab.setFont(selectContrFont)
 
 
+        self.toyFitness = QtGui.QLabel('')
+        self.toyFitness.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold))
+        self.gridLayout.addWidget(self.toyFitness, 0, 0, 1, 1)
 
         self.clickedNodeLab = QtGui.QLabel('Selected node:')
         selNodeFont = QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold)
@@ -231,7 +233,7 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         #print("sizeActionA=" + str(len(self.editMenu.actions())))
         if(b==a):
             a=''
-            #print(a)
+            print(a)
         self.cntrApp.clickReinstateLink(name,isRestoreByNode)
 
     def noEquationError(self):

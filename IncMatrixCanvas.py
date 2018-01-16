@@ -35,8 +35,10 @@ class MyHeaderView(QHeaderView):
          return QSize(0, self._get_text_width() + 2 * self._margin)
 
      def _get_text_width(self):
-         return max([self._metrics.width(self._get_data(i))
-                     for i in range(0, self.model().columnCount())])
+         t = [self._get_data(i) for i in range(0, self.model().columnCount())]
+         t2 = [self._metrics.width(str(i)) for i in t]
+         #TODO Potentiellement truc tres moche (str(i)), il semble qu'apres optimisation i contienne un chiffre.
+         return max(t2)
 
      def _get_data(self, index):
          return self.model().headerData(index, self.orientation())
@@ -49,7 +51,7 @@ class IncMatrixCanvas(QTableWidget):
         QTableWidget.__init__(self)
         #self.setSelectionBehavior(QAbstractItemView.SelectRows)
 
-        self.lastSelected = ""
+        self.lastSelected = -1
         self.lastSelectedRows = ""
 
         self.setSelectionMode(QAbstractItemView.NoSelection)
@@ -238,7 +240,7 @@ class IncMatrixCanvas(QTableWidget):
         pass
 
     def highlight(self, value : int):
-        if self.lastSelected :
+        if self.lastSelected >= 0:
             for i in range(len(self.modApp.dataIncMat.columns) + 3):
                 cell = self.item(self.lastSelected, i)
                 color = cell.background().color().getRgb()
@@ -250,7 +252,7 @@ class IncMatrixCanvas(QTableWidget):
                     color.append(255)
                     cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
         if value == -1:
-            self.lastSelected = False
+            self.lastSelected = -1
             return
         self.lastSelected = value
         for i in range(len(self.modApp.dataIncMat.columns)+3):

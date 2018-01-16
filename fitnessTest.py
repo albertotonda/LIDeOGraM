@@ -1,6 +1,6 @@
 import sys
 sys.path.append("fitness/")
-from fitness import fitness
+import fitness
 import numpy as np
 from sklearn import linear_model
 from matplotlib.colors import LinearSegmentedColormap
@@ -26,7 +26,7 @@ def evalfit(nbAP,nbPP,dataSize,nbRepet=1000):
             clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=nbAPr)
             clf.fit(P, X)
             Y=clf.predict(P)
-            meanf+=fitness(X,Y)/nbRepet
+            meanf+= fitness(X, Y) / nbRepet
         return meanf
 
 
@@ -68,7 +68,7 @@ for nbPP in nbPotentialParents:
                     clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=nbAPr + 1)
                     clf.fit(P, X)
                     Y = clf.predict(P)
-                    fAct=fitness(X,Y)
+                    fAct= fitness(X, Y)
                     if(fAct<meanf):
                         meanf=fAct
 
@@ -76,7 +76,7 @@ for nbPP in nbPotentialParents:
                 clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=nbAPr+1)
                 clf.fit(P, X)
                 Y=clf.predict(P)
-                meanf+=fitness(X,Y)/nbRepet
+                meanf+= fitness(X, Y) / nbRepet
         f[nbPP,nbAP]=meanf
 
 f.tofile('ds'+str(dataSize+1)+'npp'+str(nbPotentialParents[-1]+1)+'nba'+str(nbAllowedParents[-1]+1)+'nbr'+str(nbRepet))
