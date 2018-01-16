@@ -618,9 +618,12 @@ class RFGraph_Controller:
         # count those before the selected line
         # add offset
 #TODO Homework
-        discard = self.modApp.rmByRmEq
-        offsetlist = filter(lambda x: x < eq_table_position, discard)
-        eq_table_position -= sum(offsetlist)
+        # discard = self.modApp.rmByRmEq
+        # b_discard = self.modApp.dataIncMat.iloc[0:min(discard)]
+        # c_discard = self.modApp.dataIncMat.iloc[min(discard)].index
+        # other = sum(filter(lambda x: x != c_discard, b_discard.index))
+        # offsetlist = map(lambda x: x - other, discard)
+        # eq_table_position -= sum(offsetlist)
 
         eqCellToClickWid = MyWidgetItem(eq_table_position)
 

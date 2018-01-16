@@ -51,7 +51,7 @@ class IncMatrixCanvas(QTableWidget):
         QTableWidget.__init__(self)
         #self.setSelectionBehavior(QAbstractItemView.SelectRows)
 
-        self.lastSelected = ""
+        self.lastSelected = -1
         self.lastSelectedRows = ""
 
         self.setSelectionMode(QAbstractItemView.NoSelection)
@@ -240,7 +240,7 @@ class IncMatrixCanvas(QTableWidget):
         pass
 
     def highlight(self, value : int):
-        if self.lastSelected :
+        if self.lastSelected >= 0:
             for i in range(len(self.modApp.dataIncMat.columns) + 3):
                 cell = self.item(self.lastSelected, i)
                 color = cell.background().color().getRgb()
@@ -252,7 +252,7 @@ class IncMatrixCanvas(QTableWidget):
                     color.append(255)
                     cell.setBackgroundColor(QColor.fromRgb(*color[:-1]))
         if value == -1:
-            self.lastSelected = False
+            self.lastSelected = -1
             return
         self.lastSelected = value
         for i in range(len(self.modApp.dataIncMat.columns)+3):
