@@ -42,7 +42,9 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
 
-        datafile =  QtGui.QFileDialog.getOpenFileName(self, caption="Load a datafile",directory="data", filter="Datafile (*.csv)")
+        datafile = "data/type3_extra_0.2"
+
+        #datafile =  QtGui.QFileDialog.getOpenFileName(self, caption="Load a datafile",directory="data", filter="Datafile (*.csv)")
         #datafile = "data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert_ifset_bolotin_2_nooutlier.csv"
 
         #datafile = "data/Classeur1.csv"
@@ -70,7 +72,7 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         self.equacolO = self.findLassoEqs()
 
-        #self.equacolO = self.readEureqaResults('data/eq_erqa4.txt')
+        self.equacolO = self.readEureqaResults('data/eq_erqa4.txt')
         self.nbequa = len(self.equacolO)  # Number of Equation for all variables taken together
 
         self.adj_simple = np.zeros((self.dataset.nbVar,self.dataset.nbVar))
@@ -768,7 +770,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.computeInitialPos()
         self.computeFitandCmplxEdgeColor()
         self.computeComprEdgeColor()
-        self.computeSAEdgeColor()
+#        self.computeSAEdgeColor()
         self.computePearsonColor()
 
         self.computeNxGraph()

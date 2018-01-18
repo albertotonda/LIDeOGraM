@@ -36,9 +36,17 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         self.gridLayout = QtGui.QGridLayout(self.main_widget)
         self.gridLayout.setSpacing(5)
         self.networkGUI = NetworkCanvas(self.modApp, self)
-        self.gridLayout.addWidget(self.networkGUI, 1, 0, 2, 2)
         self.incMatGUI = IncMatrixCanvas(self.modApp, self)
-        self.gridLayout.addWidget(self.incMatGUI, 1, 2, 3, 1)
+
+        self.splitter = QtGui.QSplitter()
+
+        self.splitter.addWidget(self.networkGUI)
+        self.splitter.addWidget(self.incMatGUI)
+
+        #self.gridLayout.addWidget(self.networkGUI, 1, 0, 2, 2)
+        #self.gridLayout.addWidget(self.incMatGUI, 1, 2, 2, 1)
+
+        self.gridLayout.addWidget(self.splitter, 1,0,2,3)
 
         self.global_compute_progress = QProgressBar(self)
         self.global_compute_progress.setRange(0, 100)

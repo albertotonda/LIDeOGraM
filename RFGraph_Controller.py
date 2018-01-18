@@ -134,10 +134,11 @@ class RFGraph_Controller:
         # TODO
     def clickHideModGlobal(self):
         logging.info("Clicked Hide global model -- {}".format(strftime("%d %m %y: %H %M %S")))
-        self.modApp.showGlobalModel = False
+        self.modApp.globalModelView = False
         self.vwApp.cmAction.setEnabled(True)
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.updateView()
+        self.vwApp.incMatGUI.updateView()
         self.clickFitness()
 
     def clickUncertaintyButton(self):

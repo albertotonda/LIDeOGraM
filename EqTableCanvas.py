@@ -136,7 +136,7 @@ class EqTableCanvas(RightClickQTableWidget):
         sumvdf=0
         for n  in range(len(self.modApp.data)):
             newitem = QTableWidgetItem(str(self.modApp.data[n][0]))
-            cmap = self.colors.get("complexity",(self.modApp.data[n][0]/self.modApp.cmplxMax))
+            cmap = self.colors.get("local",(self.modApp.data[n][0]/self.modApp.cmplxMax))
             newitem.setBackground(QColor(*cmap))
             if(0.299*cmap[0] + 0.587*cmap[1]+0.114*cmap[2] < 110):
                 newitem.setTextColor(Qt.white)
