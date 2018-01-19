@@ -106,6 +106,7 @@ class RFGraph_Controller:
         logging.info("Computing distance to truth")
         iT = Individual_true(self.modApp, self.modApp.truth)
         true_fit = iT.get_fitness(self.modApp.best_indv)
+        logging.info("Computing distance to truth {}".format(true_fit))
         self.vwApp.toyFitness.setText("Score {0:.1f}".format(true_fit[0] - 0.0601))
         print(true_fit)
 
@@ -545,8 +546,6 @@ class RFGraph_Controller:
     def eqTableHeaderClicked(self, clicked):
         #print("eqTableHeaderClicked {}".format(clicked))
         logging.info("node {} All Equations {} -- {}".format(self.modApp.lastNodeClicked, self.on_off_state, strftime("%d %m %y: %H %M %S")))
-        print(self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked])
-
         if clicked == 4:
             try:
                 matching_list = np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0]
@@ -566,7 +565,7 @@ class RFGraph_Controller:
                     self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] = 0
 
                 self.vwApp.eqTableGUI.updateView()
-                print(self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked])
+                self.vwApp.eqTableGUI.show()
             except Exception as e:
                 print(traceback.format_exc())
                 print(e)
@@ -653,6 +652,11 @@ class RFGraph_Controller:
         self.fileQuit()
 
     def onOffClicked(self, objClicked, id=0):
+        if self.modApp.globalModelView == True:
+            self.modApp.globalModelView = False
+            self.clickHideModGlobal()
+
+
         scroll_handle = self.vwApp.eqTableGUI.verticalScrollBar()
         first_row = self.vwApp.eqTableGUI.rowAt(0)
         lineToModify = np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][objClicked.id]

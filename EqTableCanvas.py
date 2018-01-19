@@ -228,15 +228,10 @@ class EqTableCanvas(RightClickQTableWidget):
         if(self.modApp.globalModelView and not self.modApp.lastNodeClicked in self.modApp.varsIn and self.modApp.lastNodeClicked != None):
             idx_node=np.ix_(self.modApp.equacolO[:, 2] == self.modApp.lastNodeClicked)
             idx_true=np.ix_(self.modApp.equacolO[idx_node, 4][0] == True)[0]
-            idx_selected = idx_true[self.modApp.selectedEq[self.modApp.lastNodeClicked]]
+            idx = self.modApp.selectedEq[self.modApp.lastNodeClicked]
+            idx_selected = idx_true[idx]
 
-            # discard = self.modApp.rmByRmEq
-            # if len(discard) > 0:
-            #     o_discard = list(map(lambda x: self.modApp.vwApp.incMatGUI.order[x], discard))
-            #     c_var_name = self.modApp.shapeIncMat.ix[o_discard[0],:] #juste une normalement elle appartiennent à la m^^eme classe
-            #
-            #     offsetlist = filter(lambda x: x < idx_selected, discard)
-            #     idx_selected -= sum(offsetlist)
+
 
             self.item(idx_selected, 3).setBackground(QColor(100, 100, 150))
 

@@ -88,7 +88,7 @@ class IncMatrixCanvas(QTableWidget):
                     self.setColumnWidth(j, 15)
                     cmap = self.modApp.colors.get("local",self.modApp.data[i][0]/self.modApp.cmplxMax)
                     color = QColor.fromRgb(*cmap)
-                    cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
+                    cell = QTableWidgetItem(" ")
                     cell.setBackgroundColor(color)
                     cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
                     self.setItem(i, j, cell)
@@ -97,7 +97,7 @@ class IncMatrixCanvas(QTableWidget):
                     self.setColumnWidth(j, 15)
                     cmap = self.modApp.colors.get("local",self.modApp.data[i][1]/self.modApp.dataMaxFitness)
                     color = QColor.fromRgb(*cmap)
-                    cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
+                    cell = QTableWidgetItem(" ")
                     cell.setBackgroundColor(color)
                     cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
                     self.setItem(i, j, cell)
@@ -171,7 +171,7 @@ class IncMatrixCanvas(QTableWidget):
                     self.setColumnWidth(j, 15)
                     cmap = self.modApp.colors.get("local",self.modApp.equacolO[eqs[i],0] / self.modApp.cmplxMax)
                     color = QColor.fromRgb(*cmap)
-                    cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
+                    cell = QTableWidgetItem(" ")
                     cell.setBackgroundColor(color)
                     cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
                     self.setItem(i, j, cell)
@@ -183,12 +183,12 @@ class IncMatrixCanvas(QTableWidget):
                     if i < gmodelSize:
                         cmap = self.modApp.colors.get("global", value)
                         if self.modApp.globalModelView == False:
-                            value = self.modApp.data[i][1] / self.modApp.dataMaxFitness
+                            value = self.modApp.datumIncMat.iloc[i,1] / self.modApp.dataMaxFitness
                             cmap = self.modApp.colors.get("local", value)
                     else:
                         cmap=[255,255,255]
                     color = QColor.fromRgb(*cmap)
-                    cell = QTableWidgetItem(self.modApp.dataIncMat.index.tolist()[i])
+                    cell = QTableWidgetItem(" ")
                     cell.setBackgroundColor(color)
                     cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
                     self.setItem(i, j, cell)
@@ -242,7 +242,7 @@ class IncMatrixCanvas(QTableWidget):
                 cell.setBackgroundColor(color)
                 cell.setToolTip(self.modApp.datumIncMat.iloc[i][3])
                 self.setItem(i, j, cell)
-
+        self.lastSelectedRows = []
         self.show()
 
     def selected(self,value : str):

@@ -37,7 +37,10 @@ import pandas
 class RFGraph_Model(QtGui.QMainWindow):
 
     def __init__(self):
-        logging.basicConfig(filename=strftime("lastlog")+'.log', level=logging.DEBUG)
+        v = strftime("%d_%m_%y__%H_%M_%S")+'.log'
+        sv = str(v)
+        print(sv)
+        logging.basicConfig(filename=sv, level=logging.DEBUG)
         logging.info("Program started -- {}".format(strftime("%d %m %y: %H %M %S")))
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
