@@ -106,7 +106,7 @@ class RFGraph_Controller:
         logging.info("Computing distance to truth")
         iT = Individual_true(self.modApp, self.modApp.truth)
         true_fit = iT.get_fitness(self.modApp.best_indv)
-        self.vwApp.toyFitness.setText("Score {}".format(true_fit[0]))
+        self.vwApp.toyFitness.setText("Score {0:.1f}".format(true_fit[0] - 0.0601))
         print(true_fit)
 
 
@@ -545,24 +545,28 @@ class RFGraph_Controller:
     def eqTableHeaderClicked(self, clicked):
         #print("eqTableHeaderClicked {}".format(clicked))
         logging.info("node {} All Equations {} -- {}".format(self.modApp.lastNodeClicked, self.on_off_state, strftime("%d %m %y: %H %M %S")))
+        print(self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked])
+
         if clicked == 4:
             try:
-                for _ in range(len(np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0])):
-                    lineToModify = np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][_]
+                matching_list = np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0]
+                for _ in range(len(matching_list)):
+                    lineToModify = matching_list[_]
                     self.modApp.equacolO[lineToModify][4] = self.on_off_state
                     self.modApp.data[_][3] = self.on_off_state
                     if self.on_off_state:
-                        self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] += 1
                         self.modApp.rmByRmEq.remove(lineToModify)
                     else:
-                        self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] -= 1
                         self.modApp.rmByRmEq.append(lineToModify)
-                        #print(self.modApp.equacolO[lineToModify][4])
-                        #print(self.modApp.data[_][3])
-                    #print(self.modApp.rmByRmEq)
                     self.modApp.rmByRmEq = list(set(self.modApp.rmByRmEq))
 
+                if self.on_off_state:
+                    self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] = len(matching_list)
+                else:
+                    self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] = 0
+
                 self.vwApp.eqTableGUI.updateView()
+                print(self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked])
             except Exception as e:
                 print(traceback.format_exc())
                 print(e)
