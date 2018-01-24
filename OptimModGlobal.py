@@ -92,11 +92,11 @@ class OptimModGlobal(QWidget):
         stats.register("max", np.max)
         stats.register("all", lambda x: list(x))
 
-        NGEN = 100
+        NGEN = 15
         CXPB = 0.8
         MUTPB = 0.2
-        mu = 100
-        lmbd = 80
+        mu = 20
+        lmbd = 16
         halloffame = tools.HallOfFame(1)
         pop = toolbox.new_population(n=mu)
         fitnesses = toolbox.map(toolbox.evaluate, pop)

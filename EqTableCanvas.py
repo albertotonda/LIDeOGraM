@@ -126,7 +126,7 @@ class EqTableCanvas(RightClickQTableWidget):
         self.setColumnCount(5)
         self.wordWrap()
         self.setTextElideMode(Qt.ElideNone)
-        self.setHorizontalHeaderLabels(['Complexity', 'Fitness','Random Fitness', 'Equation','On/Off'])
+        self.setHorizontalHeaderLabels(['Complexity', 'Fitness','', 'Equation','On/Off'])
 
         #self.horizontalHeader().setMaximumWidth(1000)
         self.resizeColumnsToContents()
@@ -161,13 +161,14 @@ class EqTableCanvas(RightClickQTableWidget):
                 newitem.setTextColor(QColor(int(255 * mash), int(255 * mash), int(255 * mash)))
             self.setItem(n, 1, newitem)
 
-            newitem = QTableWidgetItem(str(round(self.modApp.data[n][4],3)))
+            #newitem = QTableWidgetItem(str(round(self.modApp.data[n][4],3)))
+            newitem = QTableWidgetItem('')
 
             cmap = self.colors.get("local", (self.modApp.data[n][1] / self.modApp.data[n][4]))
             # if (sum(cmap) < 128 * 3):
             if (0.299 * cmap[0] + 0.587 * cmap[1] + 0.114 * cmap[2] < 100):
                 newitem.setTextColor(Qt.white)
-            newitem.setBackground(QColor(*cmap))
+            #newitem.setBackground(QColor(*cmap))
             if (self.modApp.data[n][3] == False):
                 mash = 0.6
                 newitem.setTextColor(QColor(int(255 * mash), int(255 * mash), int(255 * mash)))
@@ -191,20 +192,6 @@ class EqTableCanvas(RightClickQTableWidget):
             cb.setCheckState(self.modApp.data[n][3])
             self.setCellWidget(n,4,cb)
 
-        newitem = QTableWidgetItem('FitnessMoyenne:')
-        self.setItem(len(self.modApp.data), 0, newitem)
-
-        newitem = QTableWidgetItem(str(round(sumvdf/len(self.modApp.data),3)))
-        self.setItem(len(self.modApp.data), 1, newitem)
-
-        newitem = QTableWidgetItem('')
-        self.setItem(len(self.modApp.data), 2, newitem)
-
-        newitem = QTableWidgetItem('')
-        self.setItem(len(self.modApp.data), 3, newitem)
-
-        newitem = QTableWidgetItem('')
-        self.setItem(len(self.modApp.data), 4, newitem)
 
 
 
@@ -215,8 +202,7 @@ class EqTableCanvas(RightClickQTableWidget):
 
 
 
-
-
+        self.setColumnWidth(3, 0)
         self.wordWrap()
         #self.setHorizontalHeaderLabels(['Complexity','Fitness','Equation'])
         #self.resizeColumnsToContents()

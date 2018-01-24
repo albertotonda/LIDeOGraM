@@ -45,7 +45,7 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
 
-        datafile = "data/type3_extra_0.2"
+        datafile = "data/type3_extra_0.2.csv"
 
         #datafile =  QtGui.QFileDialog.getOpenFileName(self, caption="Load a datafile",directory="data", filter="Datafile (*.csv)")
         #datafile = "data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert_ifset_bolotin_2_nooutlier.csv"
@@ -141,7 +141,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.forbidden_edge = []
         self.curr_tabl=[]
         self.adjThresholdVal=0.0
-        self.comprFitCmplxVal=0.5
+        self.comprFitCmplxVal=0.0
         self.opt_params= []
         self.error_paramas= []
         self.help_params= []
@@ -1170,7 +1170,9 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         for v in self.selectedEq.keys():
             if(not v in self.varsIn):
-                equaLines.append(self.equaPerNode[v][self.selectedEq[v]])
+                idxV = np.where(self.equacolO[:, 2] == v)[0]
+                eqs = self.equacolO[idxV[np.where(self.equacolO[idxV, 4] == True)[0]], :]
+                equaLines.append(eqs[self.selectedEq[v]])
         self.edgelist_inOrder = []
         self.global_Edge_Color = []
         for l in range(len(equaLines)):

@@ -623,7 +623,11 @@ class RFGraph_Controller:
         # count those before the selected line
         # add offset
 #TODO Homework
-        # discard = self.modApp.rmByRmEq
+        match = filter(lambda x: self.vwApp.incMatGUI.order[x] ==  nodeToClick, self.modApp.rmByRmEq)
+        for i in match:
+            if i < eq_table_position:
+                eq_table_position += 1
+
         # b_discard = self.modApp.dataIncMat.iloc[0:min(discard)]
         # c_discard = self.modApp.dataIncMat.iloc[min(discard)].index
         # other = sum(filter(lambda x: x != c_discard, b_discard.index))
