@@ -330,13 +330,13 @@ class RFGraph_Controller:
             self.modApp.data = []
             updateFitGUI = True  # Clean the equation table and the measured/predicted plot
             updateEqTable = True
-
+            logging.info("Clicked graph deselect all -- {}".format(strftime("%d %m %y: %H %M %S")))
             self.vwApp.clickedNodeLab.setText('Selected node: ' + self.p(self.modApp.lastNodeClicked))
-            logging.info("Clicked {} -- {}".format(self.modApp.lastNodeClicked, strftime("%d %m %y: %H %M %S")))
 
 
         else:
-            logging.info("Clicked graph deselect all -- {}".format(strftime("%d %m %y: %H %M %S")))
+            logging.info("Clicked {} -- {}".format(self.modApp.lastNodeClicked, strftime("%d %m %y: %H %M %S")))
+
             nodeclicked = min(dst, key=(lambda x: x[0]))[1]  # Closest node
             self.vwApp.incMatGUI.mutipleHighlight(nodeclicked)
             #self.vwApp.incMatGUI.highlight(-1)
@@ -452,6 +452,11 @@ class RFGraph_Controller:
 
                     self.modApp.NodeConstraints = []
                     self.vwApp.addConstrain(self.constraint)
+
+                    #self.modApp.datumIncMat[self.modApp.NodeConstraints[0]]
+
+                    #self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] -= linesToRemove[0]
+                    #self.modApp.rmByRmEq.remove(lineToModify)
 
                 else:
                     self.modApp.selectContrTxt = ""
