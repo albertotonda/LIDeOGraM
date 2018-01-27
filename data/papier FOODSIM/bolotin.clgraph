@@ -1,128 +1,79 @@
 {
     "edge": [
         [
-            "Bolotin",
-            "PopUFC"
-        ],
-        [
-            "Bolotin",
+            "condition",
             "PoptpH07spe"
         ],
         [
-            "Bolotin",
-            "PoptpH07"
-        ],
-        [
-            "Bolotin",
-            "Cell"
-        ],
-        [
-            "Bolotin",
+            "condition",
             "CellAniso"
         ],
         [
             "condition",
+            "PoptpH07"
+        ],
+        [
+            "condition",
             "PopUFC"
+        ],
+        [
+            "condition",
+            "Cell"
         ],
         [
             "condition",
             "Bolotin"
         ],
         [
-            "condition",
+            "CellAniso",
             "PoptpH07spe"
         ],
         [
-            "condition",
+            "CellAniso",
             "PoptpH07"
         ],
         [
-            "condition",
+            "CellAniso",
+            "PopUFC"
+        ],
+        [
+            "Cell",
+            "PoptpH07spe"
+        ],
+        [
+            "Cell",
+            "CellAniso"
+        ],
+        [
+            "Cell",
+            "PoptpH07"
+        ],
+        [
+            "Cell",
+            "PopUFC"
+        ],
+        [
+            "Bolotin",
+            "PoptpH07spe"
+        ],
+        [
+            "Bolotin",
+            "CellAniso"
+        ],
+        [
+            "Bolotin",
+            "PoptpH07"
+        ],
+        [
+            "Bolotin",
+            "PopUFC"
+        ],
+        [
+            "Bolotin",
             "Cell"
-        ],
-        [
-            "condition",
-            "CellAniso"
-        ],
-        [
-            "Cell",
-            "PopUFC"
-        ],
-        [
-            "Cell",
-            "PoptpH07spe"
-        ],
-        [
-            "Cell",
-            "PoptpH07"
-        ],
-        [
-            "Cell",
-            "CellAniso"
-        ],
-        [
-            "CellAniso",
-            "PopUFC"
-        ],
-        [
-            "CellAniso",
-            "PoptpH07"
-        ],
-        [
-            "CellAniso",
-            "PoptpH07spe"
         ]
     ],
     "node": [
-        {
-            "color": [
-                0.41568627450980394,
-                0.23921568627450981,
-                0.6039215686274509
-            ],
-            "lineWidth": 0,
-            "name": "PopUFC",
-            "nodeList": [
-                "dUFCLyo",
-                "dUFCSto3",
-                "dUFCCong"
-            ],
-            "operators": [],
-            "pos": [
-                0.07384888099955783,
-                -0.027927225211170803
-            ],
-            "size": 700
-        },
-        {
-            "color": [
-                0.6980392156862745,
-                0.8745098039215686,
-                0.5411764705882353
-            ],
-            "lineWidth": 0,
-            "name": "Bolotin",
-            "nodeList": [
-                "Detoxification",
-                "Adaptationsandatypicalconditions",
-                "Chaperones",
-                "Multidrugresistance",
-                "ATP-protonmotiveforceinterconversion",
-                "General",
-                "Thioredoxinglutaredoxinandglutathione",
-                "Electrontransport",
-                "Mureinsacculusandpeptidoglycan",
-                "Cations",
-                "Membraneslipoproteinsandporins",
-                "Siderophorebiosynthesis"
-            ],
-            "operators": [],
-            "pos": [
-                0.5776081538752336,
-                0.7933996358385974
-            ],
-            "size": 700
-        },
         {
             "color": [
                 0.2,
@@ -132,14 +83,34 @@
             "lineWidth": 0,
             "name": "PoptpH07spe",
             "nodeList": [
-                "dtpH07speSto3",
                 "dtpH07speCong",
-                "dtpH07speLyo"
+                "dtpH07speLyo",
+                "dtpH07speSto3"
             ],
             "operators": [],
             "pos": [
-                0.3317795813280607,
-                -0.027927225211170803
+                0.5434117209475973,
+                0.012906924805162867
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6509803921568628,
+                0.807843137254902,
+                0.8901960784313725
+            ],
+            "lineWidth": 0,
+            "name": "PoptpH07",
+            "nodeList": [
+                "dtpH07Lyo",
+                "dtpH07Sto3",
+                "dtpH07Cong"
+            ],
+            "operators": [],
+            "pos": [
+                0.11338676314810703,
+                0.015823649806329554
             ],
             "size": 700
         },
@@ -157,31 +128,8 @@
             ],
             "operators": [],
             "pos": [
-                0.429614680044972,
-                0.9695927251878371
-            ],
-            "size": 700
-        },
-        {
-            "color": [
-                0.8901960784313725,
-                0.10196078431372549,
-                0.10980392156862745
-            ],
-            "lineWidth": 0,
-            "name": "Cell",
-            "nodeList": [
-                "CFAUFA",
-                "UFASFA",
-                "UFA",
-                "SFA",
-                "CFASFA",
-                "CFA"
-            ],
-            "operators": [],
-            "pos": [
-                0.09635581513129143,
-                0.4252892064918199
+                0.5422311919730167,
+                0.8762575251505031
             ],
             "size": 700
         },
@@ -198,28 +146,80 @@
             ],
             "operators": [],
             "pos": [
-                0.5422311919730167,
-                0.3949978999579993
+                0.6190151773785018,
+                0.42416514996966614
             ],
             "size": 700
         },
         {
             "color": [
-                0.6509803921568628,
-                0.807843137254902,
-                0.8901960784313725
+                0.41568627450980394,
+                0.23921568627450981,
+                0.6039215686274509
             ],
             "lineWidth": 0,
-            "name": "PoptpH07",
+            "name": "PopUFC",
             "nodeList": [
-                "dtpH07Cong",
-                "dtpH07Sto3",
-                "dtpH07Lyo"
+                "dUFCLyo",
+                "dUFCSto3",
+                "dUFCCong"
             ],
             "operators": [],
             "pos": [
-                0.6425716587726249,
-                0.012906924805162867
+                0.8353447012245472,
+                0.021177793678976986
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.8901960784313725,
+                0.10196078431372549,
+                0.10980392156862745
+            ],
+            "lineWidth": 0,
+            "name": "Cell",
+            "nodeList": [
+                "CFA",
+                "SFA",
+                "UFA",
+                "CFAUFA",
+                "UFASFA",
+                "CFASFA"
+            ],
+            "operators": [],
+            "pos": [
+                0.3400333637385728,
+                0.529167250011667
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6980392156862745,
+                0.8745098039215686,
+                0.5411764705882353
+            ],
+            "lineWidth": 0,
+            "name": "Bolotin",
+            "nodeList": [
+                "Chaperones",
+                "Thioredoxinglutaredoxinandglutathione",
+                "Electrontransport",
+                "Siderophorebiosynthesis",
+                "ATPprotonmotiveforceinterconversion",
+                "Mureinsacculusandpeptidoglycan",
+                "Detoxification",
+                "Cations",
+                "Membraneslipoproteinsandporins",
+                "General",
+                "Adaptationsandatypicalconditions",
+                "Multidrugresistance"
+            ],
+            "operators": [],
+            "pos": [
+                0.7956183438111175,
+                0.8062561251225024
             ],
             "size": 700
         }
