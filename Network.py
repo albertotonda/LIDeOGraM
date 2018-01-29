@@ -125,6 +125,18 @@ class Network:
         greyFLab = {}
         blackFLab = {}
 
+        lineWidthsNode = []
+        linewidthsColors = []
+
+        for v in self.modApp.dataset.varnames.tolist():
+            if (v == self.modApp.lastNodeClicked):
+                lineWidthsNode.append(5.0)
+                linewidthsColors.append((0, 0, 0))
+            else:
+                lineWidthsNode.append(0.0)
+                linewidthsColors.append((0, 0, 0))
+
+
         greyColor = [0.85, 0.85, 0.85, 1.0]
         greyNode = (0.8, 0.8, 0.8)
 
@@ -193,9 +205,10 @@ class Network:
         #                      node_color=hNodeColor,
         #                      with_labels=False, edgelist=hEdge,edge_color=hEdgeColor,ax=self.axes)
 
-        nx.draw_networkx_nodes(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
+        nxa.draw_networkx_nodes(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
                                node_color=hNodeColor,
-                               with_labels=False, edgelist=hEdge, edge_color=hEdgeColor, ax=self.axes)
+                               with_labels=False, edgelist=hEdge, edge_color=hEdgeColor, ax=self.axes,linewidths=lineWidthsNode,
+                                linewidthsColors=linewidthsColors)
         nxa.draw_networkx_edges(self.modApp.G, self.modApp.pos, nodelist=self.modApp.dataset.varnames.tolist(),
                                 node_color=self.modApp.nodeColor, with_labels=False, edgelist=hEdge,
                                 edge_color=hEdgeColor, edge_bold=hBold, ax=self.axes)

@@ -1,11 +1,13 @@
 #-*- coding: utf-8
-import random
-import numpy as np
 import copy
-import networkx as nx
+import random
 import re
 import sys
-sys.path.append("fitness/")
+
+import networkx as nx
+import numpy as np
+
+#sys.path.append("fitness/")
 sys.path.append('SALib/SaLib-master')
 from SALib.analyze import sobol
 from SALib.sample import saltelli
@@ -18,7 +20,7 @@ from sympy.parsing.sympy_parser import parse_expr
 import ColorMaps
 from collections import OrderedDict
 from sklearn import linear_model
-from fitness import fitness
+import fitness
 from classes.ClassGraph import ClassGraph
 from classes.ClassNode import ClassNode
 from classes.WindowClasses import WindowClasses
@@ -28,24 +30,35 @@ from QtConnector import QtConnector
 from PyQt4 import QtGui
 import logging
 from time import strftime
+import pandas
 
 
 # TODO  Définie la position des noeuds et les initialise
 class RFGraph_Model(QtGui.QMainWindow):
 
     def __init__(self):
-        logging.basicConfig(filename=strftime("lastlog")+'.log', level=logging.DEBUG)
+        v = strftime("%d_%m_%y__%H_%M_%S")+'.log'
+        sv = str(v)
+        print(sv)
+        logging.basicConfig(filename=sv, level=logging.DEBUG)
         logging.info("Program started -- {}".format(strftime("%d %m %y: %H %M %S")))
 
         QtGui.QMainWindow.__init__(self) #Only for the progress bar
 
-        datafile =  QtGui.QFileDialog.getOpenFileName(self, caption="Load a datafile",directory="data", filter="Datafile (*.csv)")
+        datafile = "data/type3_extra_0.2.csv"
+
+        #datafile =  QtGui.QFileDialog.getOpenFileName(self, caption="Load a datafile",directory="data", filter="Datafile (*.csv)")
         #datafile = "data/dataset_mol_cell_pop_nocalc_sursousexpr_expertcorrected_incert_ifset_bolotin_2_nooutlier.csv"
 
         #datafile = "data/Classeur1.csv"
 
+
+        #datafile = "data/use_case_san.csv"
         self.dataset = Dataset(datafile)
-       # self.trueture = Dataset("data/ballon_clean_no_noise.csv")
+
+        self.truth = pandas.read_csv("data/ballon_clean_no_noise.csv", encoding="utf-8")
+        #self.truth = self.truth.iloc[list(range(1, self.truth.shape[0]))]
+        #self.trueture = Dataset("data/ballon_clean_no_noise.csv")
         #self.dataset = Dataset("data/use_case.mld")
 
         logging.info("Data file {} -- {}".format(datafile, strftime("%d %m %y: %H %M %S")))
@@ -62,7 +75,7 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         self.equacolO = self.findLassoEqs()
 
-        #self.equacolO = self.readEureqaResults('data/eq_erqa4.txt')
+        self.equacolO = self.readEureqaResults('data/eq_erqa4.txt')
         self.nbequa = len(self.equacolO)  # Number of Equation for all variables taken together
 
         self.adj_simple = np.zeros((self.dataset.nbVar,self.dataset.nbVar))
@@ -128,7 +141,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.forbidden_edge = []
         self.curr_tabl=[]
         self.adjThresholdVal=0.0
-        self.comprFitCmplxVal=0.5
+        self.comprFitCmplxVal=0.0
         self.opt_params= []
         self.error_paramas= []
         self.help_params= []
@@ -336,7 +349,7 @@ class RFGraph_Model(QtGui.QMainWindow):
             clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=nbAPr)
             clf.fit(P, X)
             Y = clf.predict(P)
-            meanf += fitness(X, Y) / nbRepet
+            meanf += fitness.fitness(X, Y) / nbRepet
         return meanf
 
     def eaForLinearRegression(self,X,Y,nb):
@@ -352,7 +365,7 @@ class RFGraph_Model(QtGui.QMainWindow):
                     X1D.append([e])
                 reg.fit(X1D,Y)
                 pred=reg.predict(X1D)
-                fit = fitness(Y, pred)
+                fit = fitness.fitness(Y, pred)
                 if(fit < bestFit):
                     bestFit=fit
                     bestX=i
@@ -547,7 +560,7 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         self.hide()
         equacolOtmp = np.array(equacolOtmp, dtype=object)
-        equacolOtmp = equacolOtmp.reshape(len(equacolOtmp)/8,8)
+        equacolOtmp = equacolOtmp.reshape(int(len(equacolOtmp)/8),8)
 
 
         return equacolOtmp
@@ -612,7 +625,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         if(clf.intercept_ == 0):
             cmplx -= 1;
 
-        fit=fitness(Y,pred)
+        fit= fitness.fitness(Y, pred)
 
         line.append(cmplx)
         line.append(fit)
@@ -661,7 +674,7 @@ class RFGraph_Model(QtGui.QMainWindow):
             mfx = list(map(float, xr.tolist()))
             #print(yr)
             mfy = list(map(float, yr))
-            recomputedFitness=fitness(mfx, mfy)
+            recomputedFitness= fitness.fitness(mfx, mfy)
             #convertArr.append(np.float32(s[1]))
             convertArr.append(recomputedFitness)
             convertArr.append(s[2])
@@ -760,7 +773,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.computeInitialPos()
         self.computeFitandCmplxEdgeColor()
         self.computeComprEdgeColor()
-        self.computeSAEdgeColor()
+#        self.computeSAEdgeColor()
         self.computePearsonColor()
 
         self.computeNxGraph()
@@ -1157,7 +1170,9 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         for v in self.selectedEq.keys():
             if(not v in self.varsIn):
-                equaLines.append(self.equaPerNode[v][self.selectedEq[v]])
+                idxV = np.where(self.equacolO[:, 2] == v)[0]
+                eqs = self.equacolO[idxV[np.where(self.equacolO[idxV, 4] == True)[0]], :]
+                equaLines.append(eqs[self.selectedEq[v]])
         self.edgelist_inOrder = []
         self.global_Edge_Color = []
         for l in range(len(equaLines)):

@@ -5,7 +5,7 @@ import random
 import re
 import threading
 from itertools import compress
-from math import fabs
+from fitness import Individual_true
 from time import strftime
 import traceback
 
@@ -55,6 +55,7 @@ class RFGraph_Controller:
         logging.info("Clicked view fitness -- {}".format(strftime("%d %m %y: %H %M %S")))
         QCoreApplication.processEvents()
 
+
     def clickSA(self):
         print("clic SA")
         self.modApp.ColorMode = 'SA'
@@ -101,9 +102,17 @@ class RFGraph_Controller:
         logging.info("Clicked view complexity -- {}".format(strftime("%d %m %y: %H %M %S")))
         QCoreApplication.processEvents()
 
+    def toyModel_dstTruth(self):
+        logging.info("Computing distance to truth")
+        iT = Individual_true(self.modApp, self.modApp.truth)
+        true_fit = iT.get_fitness(self.modApp.best_indv)
+        logging.info("Computing distance to truth {}".format(true_fit))
+        self.vwApp.toyFitness.setText("Score {0:.1f}".format(true_fit[0] - 0.0601))
+        print(true_fit)
+
+
     def clickOptmuGP(self):
         logging.info("Global optimisation started -- {}".format(strftime("%d %m %y: %H %M %S")))
-        # self.modApp.opt_params = OptimisationCanvas.get_params()
         if (len(self.modApp.nodesWithNoEquations) > 0):
             self.vwApp.noEquationError()
         else:
@@ -120,15 +129,17 @@ class RFGraph_Controller:
             self.vwApp.showAction.setChecked(True)
             optModGlob.update_bar_signal.disconnect(self.vwApp.global_compute_progress.setValue)
             self.clean_global_state = True
+            self.toyModel_dstTruth()
 
 
         # TODO
     def clickHideModGlobal(self):
         logging.info("Clicked Hide global model -- {}".format(strftime("%d %m %y: %H %M %S")))
-        self.modApp.showGlobalModel = False
+        self.modApp.globalModelView = False
         self.vwApp.cmAction.setEnabled(True)
         self.modApp.computeNxGraph()
         self.vwApp.networkGUI.network.updateView()
+        self.vwApp.incMatGUI.updateView()
         self.clickFitness()
 
     def clickUncertaintyButton(self):
@@ -319,13 +330,13 @@ class RFGraph_Controller:
             self.modApp.data = []
             updateFitGUI = True  # Clean the equation table and the measured/predicted plot
             updateEqTable = True
-
+            logging.info("Clicked graph deselect all -- {}".format(strftime("%d %m %y: %H %M %S")))
             self.vwApp.clickedNodeLab.setText('Selected node: ' + self.p(self.modApp.lastNodeClicked))
-            logging.info("Clicked {} -- {}".format(self.modApp.lastNodeClicked, strftime("%d %m %y: %H %M %S")))
 
 
         else:
-            logging.info("Clicked graph deselect all -- {}".format(strftime("%d %m %y: %H %M %S")))
+            logging.info("Clicked {} -- {}".format(self.modApp.lastNodeClicked, strftime("%d %m %y: %H %M %S")))
+
             nodeclicked = min(dst, key=(lambda x: x[0]))[1]  # Closest node
             self.vwApp.incMatGUI.mutipleHighlight(nodeclicked)
             #self.vwApp.incMatGUI.highlight(-1)
@@ -442,6 +453,11 @@ class RFGraph_Controller:
                     self.modApp.NodeConstraints = []
                     self.vwApp.addConstrain(self.constraint)
 
+                    #self.modApp.datumIncMat[self.modApp.NodeConstraints[0]]
+
+                    #self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] -= linesToRemove[0]
+                    #self.modApp.rmByRmEq.remove(lineToModify)
+
                 else:
                     self.modApp.selectContrTxt = ""
                     self.modApp.mode_cntrt = False
@@ -511,16 +527,19 @@ class RFGraph_Controller:
                 matrix_position = self.modApp.clicked_line
                 global_ind = len(list(filter(lambda x: True if x[1] > 0 else False, self.modApp.best_indv.items())))
                 offsets = list(self.vwApp.incMatGUI.order[global_ind:])
-                first_occu = offsets.index(self.modApp.lastNodeClicked)
-                offsets = offsets[:first_occu]
-                class_offset =list( set(offsets) - {self.modApp.lastNodeClicked} )
-                for c in class_offset:
-                    offset = offsets.count(c)
-                    matrix_position += offset
-                    if self.modApp.best_indv != {}:
-                        matrix_position+=1
-                if higlight_matrix:
-                    self.vwApp.incMatGUI.highlight(self.vwApp.incMatGUI.newOrder.index(matrix_position))
+                if self.modApp.lastNodeClicked in offsets:
+                    first_occu = offsets.index(self.modApp.lastNodeClicked)
+                    offsets = offsets[:first_occu]
+                    class_offset =list( set(offsets) - {self.modApp.lastNodeClicked} )
+                    for c in class_offset:
+                        offset = offsets.count(c)
+                        matrix_position += offset
+                        if self.modApp.best_indv != {}:
+                            matrix_position+=1
+                    if higlight_matrix:
+
+
+                        self.vwApp.incMatGUI.highlight(self.vwApp.incMatGUI.newOrder.index(matrix_position))
             else:
                 self.vwApp.uncertaintyModifTxt.setText('')
             self.vwApp.fitGUI.updateView()
@@ -532,24 +551,26 @@ class RFGraph_Controller:
     def eqTableHeaderClicked(self, clicked):
         #print("eqTableHeaderClicked {}".format(clicked))
         logging.info("node {} All Equations {} -- {}".format(self.modApp.lastNodeClicked, self.on_off_state, strftime("%d %m %y: %H %M %S")))
-        if clicked == 3:
+        if clicked == 4:
             try:
-                for _ in range(len(np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0])):
-                    lineToModify = np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][_]
+                matching_list = np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0]
+                for _ in range(len(matching_list)):
+                    lineToModify = matching_list[_]
                     self.modApp.equacolO[lineToModify][4] = self.on_off_state
                     self.modApp.data[_][3] = self.on_off_state
                     if self.on_off_state:
-                        self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] += 1
                         self.modApp.rmByRmEq.remove(lineToModify)
                     else:
-                        self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] -= 1
                         self.modApp.rmByRmEq.append(lineToModify)
-                        #print(self.modApp.equacolO[lineToModify][4])
-                        #print(self.modApp.data[_][3])
-                    #print(self.modApp.rmByRmEq)
                     self.modApp.rmByRmEq = list(set(self.modApp.rmByRmEq))
 
+                if self.on_off_state:
+                    self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] = len(matching_list)
+                else:
+                    self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] = 0
+
                 self.vwApp.eqTableGUI.updateView()
+                self.vwApp.eqTableGUI.show()
             except Exception as e:
                 print(traceback.format_exc())
                 print(e)
@@ -588,8 +609,11 @@ class RFGraph_Controller:
         y = {offsets[xp]} # set
         z = x - y
         class_offset = list(z)
+
         for c in class_offset:
             eq_table_position -= offsets.count(c)
+
+
 
         class MyWidgetItem:
             self.row2 = -1
@@ -599,6 +623,21 @@ class RFGraph_Controller:
 
             def row(self):
                 return self.row2
+
+        # get position of discareded equations
+        # count those before the selected line
+        # add offset
+#TODO Homework
+        match = filter(lambda x: self.vwApp.incMatGUI.order[x] ==  nodeToClick, self.modApp.rmByRmEq)
+        for i in match:
+            if i < eq_table_position:
+                eq_table_position += 1
+
+        # b_discard = self.modApp.dataIncMat.iloc[0:min(discard)]
+        # c_discard = self.modApp.dataIncMat.iloc[min(discard)].index
+        # other = sum(filter(lambda x: x != c_discard, b_discard.index))
+        # offsetlist = map(lambda x: x - other, discard)
+        # eq_table_position -= sum(offsetlist)
 
         eqCellToClickWid = MyWidgetItem(eq_table_position)
 
@@ -622,6 +661,11 @@ class RFGraph_Controller:
         self.fileQuit()
 
     def onOffClicked(self, objClicked, id=0):
+        if self.modApp.globalModelView == True:
+            self.modApp.globalModelView = False
+            self.clickHideModGlobal()
+
+
         scroll_handle = self.vwApp.eqTableGUI.verticalScrollBar()
         first_row = self.vwApp.eqTableGUI.rowAt(0)
         lineToModify = np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0][objClicked.id]

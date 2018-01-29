@@ -141,7 +141,7 @@ class EqTableCanvas(RightClickQTableWidget):
         sumvdf=0
         for n  in range(len(self.modApp.data)):
             newitem = QTableWidgetItem(str(self.modApp.data[n][0]))
-            cmap = self.colors.get("complexity",(self.modApp.data[n][0]/self.modApp.cmplxMax))
+            cmap = self.colors.get("local",(self.modApp.data[n][0]/self.modApp.cmplxMax))
             newitem.setBackground(QColor(*cmap))
             if(0.299*cmap[0] + 0.587*cmap[1]+0.114*cmap[2] < 110):
                 newitem.setTextColor(Qt.white)
@@ -186,8 +186,6 @@ class EqTableCanvas(RightClickQTableWidget):
             if(self.modApp.data[n][3]==False):
                 mash=0.6
                 newitem.setTextColor(QColor(int(255*mash),int(255*mash),int(255*mash)))
-
-
             #newitem = QTableWidgetItem(str(self.modApp.data[n][2]))
             if(self.modApp.clicked_line==n):
                 newitem.setBackground(QColor(200, 200, 200))
@@ -221,12 +219,7 @@ class EqTableCanvas(RightClickQTableWidget):
 
 
 
-
-
-
-
-
-
+        self.setColumnWidth(3, 0)
         self.wordWrap()
         #self.setHorizontalHeaderLabels(['Complexity','Fitness','Equation'])
         #self.resizeColumnsToContents()
@@ -238,7 +231,11 @@ class EqTableCanvas(RightClickQTableWidget):
         if(self.modApp.globalModelView and not self.modApp.lastNodeClicked in self.modApp.varsIn and self.modApp.lastNodeClicked != None):
             idx_node=np.ix_(self.modApp.equacolO[:, 2] == self.modApp.lastNodeClicked)
             idx_true=np.ix_(self.modApp.equacolO[idx_node, 4][0] == True)[0]
-            idx_selected = idx_true[self.modApp.selectedEq[self.modApp.lastNodeClicked]]
+            idx = self.modApp.selectedEq[self.modApp.lastNodeClicked]
+            idx_selected = idx_true[idx]
+
+
+
             self.item(idx_selected, 3).setBackground(QColor(100, 100, 150))
 
         try:
