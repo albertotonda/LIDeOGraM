@@ -56,10 +56,10 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         #self.gridLayout.addWidget(self.selectContrTxtLab, 0, 1, 1, 1)
         self.selectContrTxtLab.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold))
 
-        self.toyFitness = QtGui.QLabel('Score : ')
-        self.toyFitness.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold))
+        #self.toyFitness = QtGui.QLabel('Score : ')
+        #self.toyFitness.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold))
 
-        self.gridLayout.addWidget(self.toyFitness, 0, 0, 1, 1)
+        #self.gridLayout.addWidget(self.toyFitness, 0, 0, 1, 1)
 
         self.clickedNodeLab = QtGui.QLabel('Selected node:')
         selNodeFont = QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold)
