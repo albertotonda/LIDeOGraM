@@ -79,6 +79,18 @@ class RFGraph_Controller:
         self.vwApp.networkGUI.fig.canvas.draw()
         QCoreApplication.processEvents()
 
+    def clickRandomFit(self):
+        print("clic FitRd")
+        self.modApp.ColorMode = 'FitRd'
+        self.modApp.computeNxGraph()
+        self.vwApp.networkGUI.network.updateView()
+        # self.vwApp.buttonCompromis.setStyleSheet("background-color: None")
+        # self.vwApp.buttonFitness.setStyleSheet("background-color: grey")
+        # self.vwApp.buttonComplexite.setStyleSheet("background-color: None")
+        logging.info("Cliked view FitRd -- {}".format(strftime("%d %m %y: %H %M %S")))
+        self.vwApp.networkGUI.fig.canvas.draw()
+        QCoreApplication.processEvents()
+
     def clickCompromis(self):
         print("clic Compr")
         self.modApp.ColorMode = 'Compr'
@@ -129,7 +141,7 @@ class RFGraph_Controller:
             self.vwApp.showAction.setChecked(True)
             optModGlob.update_bar_signal.disconnect(self.vwApp.global_compute_progress.setValue)
             self.clean_global_state = True
-            self.toyModel_dstTruth()
+            #self.toyModel_dstTruth()
 
 
         # TODO
@@ -551,7 +563,9 @@ class RFGraph_Controller:
     def eqTableHeaderClicked(self, clicked):
         #print("eqTableHeaderClicked {}".format(clicked))
         logging.info("node {} All Equations {} -- {}".format(self.modApp.lastNodeClicked, self.on_off_state, strftime("%d %m %y: %H %M %S")))
-        if clicked == 4:
+
+
+        if self.vwApp.eqTableGUI.horizontalHeaderItem(clicked).text() == 'On/Off' :
             try:
                 matching_list = np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked])[0]
                 for _ in range(len(matching_list)):

@@ -155,6 +155,9 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         psAction = QtGui.QAction("&Pearson correlation", self, checkable=True)
         psAction.triggered.connect(cntrApp.clickPearson)
         PearsonAction = viewGroupAction.addAction(psAction)
+        rfAction = QtGui.QAction("&RandomFit", self, checkable=True)
+        rfAction.triggered.connect(cntrApp.clickRandomFit)
+        randfitAction = viewGroupAction.addAction(rfAction)
 
         self.showAction = QtGui.QAction("&Show Global model", self, checkable=True)
         self.showAction.triggered.connect(self.viewGlobalModel)
@@ -184,7 +187,8 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         viewMenu.addAction(fitnesAction)
         viewMenu.addAction(compleAction)
         viewMenu.addAction(stvAnlsAction)
-        viewMenu.addAction(psAction)
+        viewMenu.addAction(PearsonAction)
+        viewMenu.addAction(randfitAction)
         viewMenu.addSeparator()
         viewMenu.addAction(self.showAction)
 

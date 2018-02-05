@@ -123,12 +123,13 @@ class EqTableCanvas(RightClickQTableWidget):
     def updateView(self):
         self.clear()
         self.setRowCount(len(self.modApp.data))
+        #self.setColumnCount(5)
         self.setColumnCount(5)
-        self.setColumnCount(4)
+
         self.wordWrap()
         self.setTextElideMode(Qt.ElideNone)
-        self.setHorizontalHeaderLabels(['Complexity', 'Fitness','Random Fitness', 'Equation','On/Off'])
-        self.setHorizontalHeaderLabels(['Complexity', 'Fitness', 'Equation', 'On/Off'])
+        #self.setHorizontalHeaderLabels(['Complexity', 'Fitness','Random Fitness', 'Equation','On/Off'])
+        self.setHorizontalHeaderLabels(['Complexity', 'Fitness', 'Random Fitness','Equation', 'On/Off'])
 
         #self.horizontalHeader().setMaximumWidth(1000)
         self.resizeColumnsToContents()
@@ -168,17 +169,18 @@ class EqTableCanvas(RightClickQTableWidget):
             newitem.setFont(f)
             self.setItem(n, 1, newitem)
 
-            # newitem = QTableWidgetItem(str(round(self.modApp.data[n][4],3)))
-            #
-            # cmap = self.colors.get("local", (self.modApp.data[n][1] / self.modApp.data[n][4]))
-            # # if (sum(cmap) < 128 * 3):
-            # if (0.299 * cmap[0] + 0.587 * cmap[1] + 0.114 * cmap[2] < 100):
-            #     newitem.setTextColor(Qt.white)
-            # newitem.setBackground(QColor(*cmap))
-            # if (self.modApp.data[n][3] == False):
-            #     mash = 0.6
-            #     newitem.setTextColor(QColor(int(255 * mash), int(255 * mash), int(255 * mash)))
-            # self.setItem(n, 2, newitem)
+            newitem = QTableWidgetItem(str(round(self.modApp.data[n][4],3)))
+
+            cmap = self.colors.get("local", (self.modApp.data[n][1] / self.modApp.data[n][4]))
+            # if (sum(cmap) < 128 * 3):
+            if (0.299 * cmap[0] + 0.587 * cmap[1] + 0.114 * cmap[2] < 100):
+                newitem.setTextColor(Qt.white)
+            newitem.setBackground(QColor(*cmap))
+            if (self.modApp.data[n][3] == False):
+                mash = 0.6
+                newitem.setTextColor(QColor(int(255 * mash), int(255 * mash), int(255 * mash)))
+            newitem.setFont(f)
+            self.setItem(n, 2, newitem)
 
 
 
@@ -192,12 +194,12 @@ class EqTableCanvas(RightClickQTableWidget):
             else:
                 newitem.setBackground(QColor(255, 255, 255))
             newitem.setFont(f)
-            self.setItem(n, 2, newitem)
+            self.setItem(n, 3, newitem)
 
             cb = OnOffCheckBox(self.cntrApp, n)
             cb.setParent(self)
             cb.setCheckState(self.modApp.data[n][3])
-            self.setCellWidget(n,3,cb)
+            self.setCellWidget(n,4,cb)
 
         # newitem = QTableWidgetItem('FitnessMoyenne:')
         # self.setItem(len(self.modApp.data), 0, newitem)
@@ -219,12 +221,12 @@ class EqTableCanvas(RightClickQTableWidget):
 
 
 
-        self.setColumnWidth(3, 0)
+        self.setColumnWidth(5, 0)
         self.wordWrap()
         #self.setHorizontalHeaderLabels(['Complexity','Fitness','Equation'])
         #self.resizeColumnsToContents()
         self.resizeRowsToContents()
-        self.horizontalHeader().setResizeMode(2,QtGui.QHeaderView.Stretch)
+        self.horizontalHeader().setResizeMode(3,QtGui.QHeaderView.Stretch)
         #self.resizeColumnsToContents()
         self.resizeRowsToContents()
 

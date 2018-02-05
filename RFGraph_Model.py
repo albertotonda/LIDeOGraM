@@ -772,6 +772,7 @@ class RFGraph_Model(QtGui.QMainWindow):
             #     self.nodeColor.append((0.8, 0.8, 0.2))
         self.computeInitialPos()
         self.computeFitandCmplxEdgeColor()
+        self.computeFitRandColor()
         self.computeComprEdgeColor()
 #        self.computeSAEdgeColor()
         self.computePearsonColor()
@@ -892,6 +893,8 @@ class RFGraph_Model(QtGui.QMainWindow):
             self.edgeColorfull = copy.deepcopy(self.edgeColorSA)
         elif (self.ColorMode == 'Pearson'):
             self.edgeColorfull = copy.deepcopy(self.edgeColorPearson)
+        elif (self.ColorMode == 'FitRd'):
+            self.edgeColorfull = copy.deepcopy(self.edgeColorFR)
         for i in range(len(self.pareto)):  # i is child
             for j in range(len(self.pareto[i])):  # j is parent
                 lIdxColPareto = self.pareto[i][j]
@@ -1022,6 +1025,25 @@ class RFGraph_Model(QtGui.QMainWindow):
                         lcmap = list(np.array(cmap) / 255)
                         lcmap.extend([1.0])
                         self.edgeColorCmplx[(self.dataset.varnames[j], self.dataset.varnames[i])]=lcmap
+
+    def computeFitRandColor(self):
+        self.edgeColorFR = {}
+        for e in self.edgeColorFit.keys():
+            idxE = np.where(self.equacolPO[:, 2] == e[1])[0]
+            idxPe = np.where(self.equacolPO[idxE, 3] == e[0])[0]
+            idxP = idxE[idxPe]
+            eqs=self.equacolPO[idxP, 4]
+            eqsC = [self.equacolO[self.equacolO[:, 3] == e, :][0] for e in eqs]
+            edgeColVal = [np.minimum(e[1] / e[7], 1) for e in eqsC][0]
+            #edgeColVal=np.mean([np.minimum(e[1] / e[7], 1) for e in eqsC])
+            edgeColVal = np.min([np.minimum(e[1] / e[7], 1) for e in eqsC])
+
+            cmap = self.colors.get("local",edgeColVal)
+            lcmap = list(np.array(cmap) / 255)
+            lcmap.extend([1.0])
+            self.edgeColorFR[e] = lcmap
+
+
 
     def computeSAEdgeColor(self):
         self.edgeColorSA={}

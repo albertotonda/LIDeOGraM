@@ -95,8 +95,8 @@ class OptimModGlobal(QWidget):
         NGEN = 2
         CXPB = 0.8
         MUTPB = 0.2
-        mu = 20
-        lmbd = 16
+        mu = 2
+        lmbd = 1
         halloffame = tools.HallOfFame(1)
         pop = toolbox.new_population(n=mu)
         fitnesses = toolbox.map(toolbox.evaluate, pop)
