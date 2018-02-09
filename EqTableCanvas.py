@@ -192,19 +192,19 @@ class EqTableCanvas(RightClickQTableWidget):
             self.setCellWidget(n,4,cb)
 
         newitem = QTableWidgetItem('FitnessMoyenne:')
-        self.setItem(len(self.modApp.data), 0, newitem)
+        #self.setItem(len(self.modApp.data), 0, newitem)
 
         newitem = QTableWidgetItem(str(round(sumvdf/len(self.modApp.data),3)))
-        self.setItem(len(self.modApp.data), 1, newitem)
+        #self.setItem(len(self.modApp.data), 1, newitem)
 
         newitem = QTableWidgetItem('')
-        self.setItem(len(self.modApp.data), 2, newitem)
+        #self.setItem(len(self.modApp.data), 2, newitem)
 
         newitem = QTableWidgetItem('')
-        self.setItem(len(self.modApp.data), 3, newitem)
+        #self.setItem(len(self.modApp.data), 3, newitem)
 
         newitem = QTableWidgetItem('')
-        self.setItem(len(self.modApp.data), 4, newitem)
+        #self.setItem(len(self.modApp.data), 4, newitem)
 
 
 

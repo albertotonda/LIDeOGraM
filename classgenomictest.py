@@ -3,6 +3,9 @@ from sklearn.cluster import DBSCAN
 import copy
 import pandas as pd
 import csv
+from scipy.spatial import distance
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
 
 #X = np.genfromtxt('data/resultats_tri_entier_sansribosomauxTCnorm.csv', delimiter=';')
 X = np.genfromtxt('data/resultats_tri_entier4cond_normDESeq.csv', delimiter=';')
@@ -63,38 +66,62 @@ for i in range(len(X)):
     vm = np.var([m1,m2,m3,m4]);
     rv[i] = vm / np.max([v1,v2,v3,v4]);
 
-f=np.where(rv>1)[0]
+f=np.where(rv>1)[0] #Indices respectant cette contrainte
 Xf=X[f,:]
+alrdplt=[]
 
-db = DBSCAN(eps=0.5, min_samples=2).fit(Xf)
-labels = db.labels_
-dn_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
-print('nbclusters:',dn_clusters_ )
-Xb=copy.deepcopy(Xf)
-offset=0
-todata=[]
-for i in range(-1,dn_clusters_ ):
+for epsdb in np.arange(0.1, 1.6, 0.2):
 
-    w=np.where(labels==i)
-    print('class ',i,' ',len(w[0]))
-    if i>-1 :
-        todataclass=[0]*12
-        for j in w[0]:
-            print(loc[f[j]])
-            #print(X2[f[j]])
-            todataclass+=X2[f[j]]
-        todataline=[]
-        todataline.append('Class'+str(i))
-        todataline.append('Genes')
-        todataline.append('0')
-        todataline.extend(todataclass)
-        todata.append(todataline)
-        #print(todataline)
+    minsample=2
+    db = DBSCAN(eps=epsdb, min_samples=minsample).fit(Xf)
+    labels = db.labels_
+    dn_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+    print('nbclusters:',dn_clusters_ )
+    Xb=copy.deepcopy(Xf)
+    offset=0
+    todata=[]
+    for i in range(-1,dn_clusters_ ): #Parcours toute les classes
 
-    Xb[offset:(offset+len(w[0])),:]=X[w[0],:]
+        w=np.where(labels==i)[0]
+        print('class ',i,' ',len(w))
+        if i>-1 :
+            todataclass=[0]*12
+            for j in w: #Parcours les indices dans f de la classe courante
+                print(loc[f[j]])
+                #print(X2[f[j]])
+                todataclass+=X2[f[j]] #Les 12 points de données correspondant à un gène de cette classe
+
+            if not  np.any(alrdplt==w):
+                fig, ax = plt.subplots()
+                for j in w:
+                    ax.plot(Xf[j], 'o-',c=np.random.rand(3,1),label=loc[f[j]][1] if loc[f[j]][1]!='-' else loc[f[j]][0])
+                ax.set_ylim((0,3))
+                score=np.std(Xf[w])
+                ax.set_title("class: "+str(i)+ ' epsdb:' +str(epsdb)+ ' minsample:'+ str(minsample)  + 'score:' + str(score))
+                ax.legend()
+                fig.show()
+                alrdplt.append(w)
+            # plt.plot(Xf[w[1]], 'bo-')
+            # plt.plot(Xf[w[2]], 'go-')
+            # plt.plot(Xf[w[3]], 'yo-')
+            #distance.euclidean(Xf[w[0][2]],Xf[w[0][3]])
+
+            todataline=[]
+            todataline.append('Class'+str(i))
+            todataline.append('Genes')
+            todataline.append('0')
+            todataline.extend(todataclass)
+            todata.append(todataline)
+            #print(todataline)
+
+        Xb[offset:(offset+len(w)),:]=X[w,:]
+
+
+
 todata=np.transpose(todata)
-todata=todata[[0,1,2,3,5,6,8,9,10,13,14,4,7,11,12],:]
-with open("testdatagenes2.csv", 'w',newline='') as csvfile:
+#todata=todata[[0,1,2,3,5,6,8,9,10,13,14,4,7,11,12],:]
+todata=todata[[0,1,2,3,4,5,6,7,8,9,10,11,12],:]
+with open("testdatagenes3.csv", 'w',newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(todata)
 
