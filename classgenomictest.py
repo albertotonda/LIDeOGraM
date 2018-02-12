@@ -97,7 +97,7 @@ for epsdb in np.arange(0.1, 1.6, 0.2):
                     ax.plot(Xf[j], 'o-',c=np.random.rand(3,1),label=loc[f[j]][1] if loc[f[j]][1]!='-' else loc[f[j]][0])
                 ax.set_ylim((0,3))
                 score=np.std(Xf[w])
-                ax.set_title("class: "+str(i)+ ' epsdb:' +str(epsdb)+ ' minsample:'+ str(minsample)  + 'score:' + str(score))
+                ax.set_title("class : "+str(i)+ ' epsdb:' +str(epsdb)+ ' minsample:'+ str(minsample)  + 'score:' + str(score))
                 ax.legend()
                 fig.show()
                 alrdplt.append(w)
