@@ -106,12 +106,15 @@ class OptimModGlobal(QWidget):
 
         evolutionlog = tools.Logbook()
 
-        for gen in range(NGEN):
-            pop, logbook = algorithms.eaMuPlusLambda(pop, toolbox, mu, lmbd, CXPB, MUTPB, 1, stats=stats,
-                                                     halloffame=halloffame, verbose=1)
-            evolutionlog.record(gen=gen, book=logbook)
-            self.update_bar_signal.emit(int(100*float(gen)/(NGEN-1)))
-            QCoreApplication.processEvents()
+        pop, logbook = algorithms.eaMuPlusLambda(pop, toolbox, mu, lmbd, CXPB, MUTPB, NGEN, stats=stats,
+                                                 halloffame=halloffame, verbose=1)
+
+        #for gen in range(NGEN):
+        #    pop, logbook = algorithms.eaMuPlusLambda(pop, toolbox, mu, lmbd, CXPB, MUTPB, 1, stats=stats,
+        #                                             halloffame=halloffame, verbose=1)
+        #    evolutionlog.record(gen=gen, book=logbook)
+            #self.update_bar_signal.emit(int(100*float(gen)/(NGEN-1)))
+            #QCoreApplication.processEvents()
 
         fit_alls = logbook.select("all")
 

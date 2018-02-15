@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.cluster import DBSCAN
 import copy
 import pandas as pd
+
 import csv
 from scipy.spatial import distance
 from mpl_toolkits.mplot3d import Axes3D
@@ -40,8 +41,11 @@ X=X[1:,[1,2,3,4,5,6,7,8,9,10,11,12]]
 X2=X2=copy.deepcopy(X)
 #X=np.delete(X,(2141),axis=0)
 for i in range(len(X)):
-    X[i,:]=X[i,:]/np.mean(X[i,:])
-
+    #X[i,:]=X[i,:]/np.mean(X[i,:])
+    #X[i, :] = (X[i, :] - np.mean(X[i, :]))/np.std(X[i, :])
+    #X[i, :] = (X[i, :] - np.mean(X[i, :])) / np.mean(X[i, :])
+    X[i, :] = np.log((X[i, :] / np.mean(X[i, :])))
+    X[i, :] = (X[i, :] - np.mean(X[i, :]))/np.std(X[i, :])
 
 
 
@@ -66,11 +70,11 @@ for i in range(len(X)):
     vm = np.var([m1,m2,m3,m4]);
     rv[i] = vm / np.max([v1,v2,v3,v4]);
 
-f=np.where(rv>1)[0] #Indices respectant cette contrainte
+f=np.where(rv>0)[0] #Indices respectant cette contrainte
 Xf=X[f,:]
 alrdplt=[]
 
-for epsdb in np.arange(0.1, 1.6, 0.2):
+for epsdb in np.arange(0.1, 1.5, 0.2):
 
     minsample=2
     db = DBSCAN(eps=epsdb, min_samples=minsample).fit(Xf)
@@ -94,12 +98,14 @@ for epsdb in np.arange(0.1, 1.6, 0.2):
             if not  np.any(alrdplt==w):
                 fig, ax = plt.subplots()
                 for j in w:
-                    ax.plot(Xf[j], 'o-',c=np.random.rand(3,1),label=loc[f[j]][1] if loc[f[j]][1]!='-' else loc[f[j]][0])
-                ax.set_ylim((0,3))
+                    ax.plot(Xf[j], 'o-',c=np.random.rand(3,1),label=loc[f[j]][1] + ' ' + loc[f[j]][0][5:] )
+                ax.set_ylim((np.minimum(-3,ax.get_ylim()[0]),np.maximum(3,ax.get_ylim()[1])))
                 score=np.std(Xf[w])
-                ax.set_title("class : "+str(i)+ ' epsdb:' +str(epsdb)+ ' minsample:'+ str(minsample)  + 'score:' + str(score))
-                ax.legend()
-                fig.show()
+                ax.set_title("class : "+str(i)+ ' nbGene:' + str(len(w)) + ' epsdb:' +str(epsdb)+ ' minsample:'+ str(minsample)  + ' score:' + str(score))
+
+                ax.legend(fontsize = 'xx-small')
+                #fig.show()
+                fig.savefig('fig3/'+"class  "+str(i)+  ' nbGene ' + str(len(w)) +' epsdb' +str(epsdb)+ ' minsample'+ str(minsample)  + ' score' + str(score)+'.png',dpi=400)
                 alrdplt.append(w)
             # plt.plot(Xf[w[1]], 'bo-')
             # plt.plot(Xf[w[2]], 'go-')
@@ -117,13 +123,36 @@ for epsdb in np.arange(0.1, 1.6, 0.2):
         Xb[offset:(offset+len(w)),:]=X[w,:]
 
 
+fig, ax = plt.subplots()
+l=np.where(loc[:,0]=='O208_01367' )[0]
+ax.plot(X[l][0], 'o-',c=np.random.rand(3,1),label='O208_01367')
+l=np.where(loc[:,0]=='O208_01368' )[0]
+ax.plot(X[l][0], 'o-',c=np.random.rand(3,1),label='O208_01368')
+l=np.where(loc[:,0]=='O208_01369' )[0]
+ax.plot(X[l][0], 'o-',c=np.random.rand(3,1),label='O208_01367')
+l=np.where(loc[:,0]=='O208_01367' )[0]
+ax.plot(X[l][0], 'o-',c=np.random.rand(3,1),label='O208_01369')
+l=np.where(loc[:,0]=='O208_01370' )[0]
+ax.plot(X[l][0], 'o-',c=np.random.rand(3,1),label='O208_01370')
+l=np.where(loc[:,0]=='O208_01371' )[0]
+ax.plot(X[l][0], 'o-',c=np.random.rand(3,1),label='atpA')
+l=np.where(loc[:,0]=='O208_01372' )[0]
+ax.plot(X[l][0], 'o-',c=np.random.rand(3,1),label='O208_01372')
+#l=np.where(loc[:,0]=='O208_01373' )[0]
+#ax.plot(X[l][0], 'o-',c=np.random.rand(3,1),label='O208_01373')
+l=np.where(loc[:,0]=='O208_01374' )[0]
+ax.plot(X[l][0], 'o-',c=np.random.rand(3,1),label='atpD')
+l=np.where(loc[:,0]=='O208_01375' )[0]
+ax.plot(X[l][0], 'o-',c=np.random.rand(3,1),label='O208_01375')
+ax.legend()
+fig.show()
 
-todata=np.transpose(todata)
-#todata=todata[[0,1,2,3,5,6,8,9,10,13,14,4,7,11,12],:]
-todata=todata[[0,1,2,3,4,5,6,7,8,9,10,11,12],:]
-with open("testdatagenes3.csv", 'w',newline='') as csvfile:
-    writer = csv.writer(csvfile)
-    writer.writerows(todata)
+# todata=np.transpose(todata)
+# #todata=todata[[0,1,2,3,5,6,8,9,10,13,14,4,7,11,12],:]
+# todata=todata[[0,1,2,3,4,5,6,7,8,9,10,11,12],:]
+# with open("testdatagenes3.csv", 'w',newline='') as csvfile:
+#     writer = csv.writer(csvfile)
+#     writer.writerows(todata)
 
 #np.savetxt("testdatagenes.csv", todata, delimiter=",")
 a=5
