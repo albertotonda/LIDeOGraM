@@ -99,7 +99,7 @@ class Gene_Model():
         nbLabels=clusterer.labels_.max()
         fig, ax = plt.subplots()
         clusterer.condensed_tree_.plot(select_clusters=True, selection_palette=sns.color_palette())
-        fig.savefig('fighdbscan3/'+'tree.png',dpi=400)
+        #fig.savefig('fighdbscan3/'+'tree.png',dpi=400)
         #g = clusterer.condensed_tree_.to_networkx()
 
         self.tree=clusterer.condensed_tree_.to_pandas()
@@ -129,54 +129,7 @@ class Gene_Model():
         for p in self.lpos:  # raise text positions
             self.lpos[p] = (self.lpos[p][0], self.lpos[p][1] + 0.04)
 
-        a=5
-        #fig, ax = plt.subplots()
-        #nx.draw(self.G, self.pos, with_labels=True)
 
-
-        # p1=[sp for p in p0 for sp in tree[tree.parent==p].child]
-        # p2=[sp for p in p1 for sp in tree[tree.parent==p].child]
-        # p3=[sp for p in p2 for sp in tree[tree.parent==p].child]
-        # p4=[sp for p in p3 for sp in tree[tree.parent==p].child]
-        # p5=[sp for p in p4 for sp in tree[tree.parent==p].child]
-        # p6=[sp for p in p5 for sp in tree[tree.parent==p].child]
-
-
-        # for p in self.parents:
-        #     prof=self.profondeur(p)
-        #
-        #
-        #     w=self.getallchildfrom([p])
-        #     print(len(w))
-        #
-        #     todataclass=[0]*12
-        #     for j in w: #Parcours les indices dans f de la classe courante
-        #         print(loc[f[j]])
-        #         #print(X2[f[j]])
-        #         todataclass+=X2[f[j]] #Les 12 points de données correspondant à un gène de cette classe
-        #
-        #     if not  np.any(alrdplt==w):
-        #         fig, ax = plt.subplots()
-        #         ax.set_position([0.1, 0.1, 0.7, 0.8])
-        #         for j in w:
-        #             ax.plot(Xf[j], 'o-',c=np.random.rand(3,1),label=loc[f[j]][1] + ' ' + loc[f[j]][0][5:] )
-        #         ax.set_ylim((np.minimum(-3,ax.get_ylim()[0]),np.maximum(3,ax.get_ylim()[1])))
-        #         score=np.std(Xf[w])
-        #         ax.set_title("prof : "+str(prof)+ 'nbGene:' + str(len(w)) +  ' score:' + str(score))
-        #
-        #         ax.legend(fontsize = 'xx-small',bbox_to_anchor=(1.25, 1))
-        #         #fig.show()
-        #         fig.savefig('fighdbscan3/'+"prof  "+str(prof)+  ' nbGene ' + str(len(w)) + ' score' + str(score)+'.png',dpi=400)
-        #         alrdplt.append(w)
-        #
-        #
-        #
-        # g = clusterer.condensed_tree_.to_networkx()
-        # fig, ax = plt.subplots()
-        # posG = nx.nx_pydot.graphviz_layout(g, prog='dot',ax=ax)
-        # nx.draw(g,posG,with_labels=True)
-        # fig.savefig('fighdbscan3/'+'nx.png',dpi=400)
-        # a=5
 
 
     def getallchildfrom(self,parentSearch):
@@ -274,15 +227,15 @@ class Gene_Model():
                 for neighbor in neighbors:
                     nextx += dx
                     if len(G.neighbors(neighbors[0])) == 0:  # If the left neighbor has no child
-                        pos = self.hierarchy_pos(G, neighbor, width=dx * 2, vert_gap=vert_gap,
+                        pos = self.hierarchy_pos(G, neighbor, width=dx , vert_gap=vert_gap,
                                                  vert_loc=vert_loc - vert_gap, xcenter=nextx, pos=pos,
                                                  parent=root, go='Left')
                     elif len(G.neighbors(neighbors[1])) == 0:  # If the right neighbor has no child
-                        pos = self.hierarchy_pos(G, neighbor, width=dx * 2, vert_gap=vert_gap,
+                        pos = self.hierarchy_pos(G, neighbor, width=dx , vert_gap=vert_gap,
                                                  vert_loc=vert_loc - vert_gap, xcenter=nextx, pos=pos,
                                                  parent=root, go='Right')
                     else:
-                        pos = self.hierarchy_pos(G, neighbor, width=dx * 2, vert_gap=vert_gap,
+                        pos = self.hierarchy_pos(G, neighbor, width=dx , vert_gap=vert_gap,
                                                  vert_loc=vert_loc - vert_gap, xcenter=nextx, pos=pos,
                                                  parent=root)
             elif go=='Left':
@@ -290,32 +243,81 @@ class Gene_Model():
                 for neighbor in neighbors:
                     nextx += dx
                     if len(G.neighbors(neighbors[0])) == 0:  # If the left neighbor has no child
-                        pos = self.hierarchy_pos(G, neighbor, width=dx * 2, vert_gap=vert_gap,
+                        pos = self.hierarchy_pos(G, neighbor, width=dx * 1.9, vert_gap=vert_gap,
                                                  vert_loc=vert_loc - vert_gap, xcenter=nextx, pos=pos,
                                                  parent=root, go='Left')
                     elif len(G.neighbors(neighbors[1])) == 0:  # If the right neighbor has no child
-                        pos = self.hierarchy_pos(G, neighbor, width=dx * 2, vert_gap=vert_gap,
+                        pos = self.hierarchy_pos(G, neighbor, width=dx * 1.9, vert_gap=vert_gap,
                                                  vert_loc=vert_loc - vert_gap, xcenter=nextx, pos=pos,
                                                  parent=root, go='Right')
                     else:
-                        pos = self.hierarchy_pos(G, neighbor, width=dx * 2, vert_gap=vert_gap,
+                        pos = self.hierarchy_pos(G, neighbor, width=dx * 1.9, vert_gap=vert_gap,
                                                  vert_loc=vert_loc - vert_gap, xcenter=nextx, pos=pos,
                                                  parent=root)
-            elif go=='right':
+            elif go=='Right':
                 nextx+=dx / 2
                 for neighbor in neighbors:
                     nextx += dx
                     if len(G.neighbors(neighbors[0])) ==0: #If the left neighbor has no child
-                        pos = self.hierarchy_pos(G, neighbor, width=dx*2, vert_gap=vert_gap,
+                        pos = self.hierarchy_pos(G, neighbor, width=dx*1.9, vert_gap=vert_gap,
                                         vert_loc=vert_loc - vert_gap, xcenter=nextx, pos=pos,
                                         parent=root,go='Left')
                     elif len(G.neighbors(neighbors[1]))==0: #If the right neighbor has no child
-                        pos = self.hierarchy_pos(G, neighbor, width=dx * 2, vert_gap=vert_gap,
+                        pos = self.hierarchy_pos(G, neighbor, width=dx * 1.9, vert_gap=vert_gap,
                                                  vert_loc=vert_loc - vert_gap, xcenter=nextx, pos=pos,
                                                  parent=root,go='Right')
                     else:
-                        pos = self.hierarchy_pos(G, neighbor, width=dx * 2, vert_gap=vert_gap,
+                        pos = self.hierarchy_pos(G, neighbor, width=dx * 1.9, vert_gap=vert_gap,
                                                  vert_loc=vert_loc - vert_gap, xcenter=nextx, pos=pos,
                                                  parent=root)
         return pos
 
+
+#a = 5
+# fig, ax = plt.subplots()
+# nx.draw(self.G, self.pos, with_labels=True)
+
+
+# p1=[sp for p in p0 for sp in tree[tree.parent==p].child]
+# p2=[sp for p in p1 for sp in tree[tree.parent==p].child]
+# p3=[sp for p in p2 for sp in tree[tree.parent==p].child]
+# p4=[sp for p in p3 for sp in tree[tree.parent==p].child]
+# p5=[sp for p in p4 for sp in tree[tree.parent==p].child]
+# p6=[sp for p in p5 for sp in tree[tree.parent==p].child]
+
+
+# for p in self.parents:
+#     prof=self.profondeur(p)
+#
+#
+#     w=self.getallchildfrom([p])
+#     print(len(w))
+#
+#     todataclass=[0]*12
+#     for j in w: #Parcours les indices dans f de la classe courante
+#         print(loc[f[j]])
+#         #print(X2[f[j]])
+#         todataclass+=X2[f[j]] #Les 12 points de données correspondant à un gène de cette classe
+#
+#     if not  np.any(alrdplt==w):
+#         fig, ax = plt.subplots()
+#         ax.set_position([0.1, 0.1, 0.7, 0.8])
+#         for j in w:
+#             ax.plot(Xf[j], 'o-',c=np.random.rand(3,1),label=loc[f[j]][1] + ' ' + loc[f[j]][0][5:] )
+#         ax.set_ylim((np.minimum(-3,ax.get_ylim()[0]),np.maximum(3,ax.get_ylim()[1])))
+#         score=np.std(Xf[w])
+#         ax.set_title("prof : "+str(prof)+ 'nbGene:' + str(len(w)) +  ' score:' + str(score))
+#
+#         ax.legend(fontsize = 'xx-small',bbox_to_anchor=(1.25, 1))
+#         #fig.show()
+#         fig.savefig('fighdbscan3/'+"prof  "+str(prof)+  ' nbGene ' + str(len(w)) + ' score' + str(score)+'.png',dpi=400)
+#         alrdplt.append(w)
+#
+#
+#
+# g = clusterer.condensed_tree_.to_networkx()
+# fig, ax = plt.subplots()
+# posG = nx.nx_pydot.graphviz_layout(g, prog='dot',ax=ax)
+# nx.draw(g,posG,with_labels=True)
+# fig.savefig('fighdbscan3/'+'nx.png',dpi=400)
+# a=5
