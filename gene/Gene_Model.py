@@ -13,6 +13,7 @@ import dill
 from Gene_View import Gene_View
 from QtConnectorGene import QtConnectorGene
 import random
+import sklearn as sk
 
 class Gene_Model():
 
@@ -22,6 +23,7 @@ class Gene_Model():
         #dill.load_session(filename)
         self.lastNodeClicked=None
         self.radius = 0.002
+        self.highlightNode=-1
 
         #X = np.genfromtxt('../data/resultats_tri_entier_sansribosomauxTCnorm.csv', delimiter=';')
         X = np.genfromtxt('../data/resultats_tri_entier4cond_normDESeq.csv', delimiter=';')
@@ -47,6 +49,7 @@ class Gene_Model():
 
         np.where(r.iloc[:,1] == 'O208_01742')
         torm.append(2141)
+        torm.append(451)
         X=np.delete(X,torm ,axis=0)
         torm2=[t -1 for t in torm]
         self.loc=np.delete(loc,torm2,axis=0)
@@ -55,12 +58,7 @@ class Gene_Model():
         X=X[1:,[1,2,3,4,5,6,7,8,9,10,11,12]]
         X2=X2=copy.deepcopy(X)
         #X=np.delete(X,(2141),axis=0)
-        for i in range(len(X)):
-            #X[i,:]=X[i,:]/np.mean(X[i,:])
-            #X[i, :] = (X[i, :] - np.mean(X[i, :]))/np.std(X[i, :])
-            #X[i, :] = (X[i, :] - np.mean(X[i, :])) / np.mean(X[i, :])
-            X[i, :] = np.log((X[i, :] / np.mean(X[i, :])))
-            X[i, :] = (X[i, :] - np.mean(X[i, :]))/np.std(X[i, :])
+
 
 
 
@@ -85,16 +83,28 @@ class Gene_Model():
             vm = np.var([m1,m2,m3,m4]);
             rv[i] = vm / np.max([v1,v2,v3,v4]);
 
+        for i in range(len(X)):
+            #X[i,:]=X[i,:]/np.mean(X[i,:])
+            #X[i, :] = (X[i, :] - np.mean(X[i, :]))/np.std(X[i, :])
+            #X[i, :] = (X[i, :] - np.mean(X[i, :])) / np.mean(X[i, :])
+            X[i, :] = np.log((X[i, :] / np.mean(X[i, :])))
+            X[i, :] = (X[i, :] - np.mean(X[i, :]))/np.std(X[i, :])
 
-
-        self.f=np.where(rv>0.7)[0] #Indices respectant cette contrainte
+        self.f=np.where(rv>0.0)[0] #Indices respectant cette contrainte
         self.Xf=X[self.f,:]
         alrdplt=[]
 
         # dill.dump_session(filename)
 
-        clusterer = hdbscan.HDBSCAN(min_cluster_size=2,min_samples=1,gen_min_span_tree=True)
+        #clusterer = hdbscan.HDBSCAN(min_cluster_size=5,min_samples=1,gen_min_span_tree=True)
+        #clusterer.fit(self.Xf)
+
+        #self.TXf = sk.manifold.spectral_embedding().fit_transform(self.Xf)
+        clusterer = hdbscan.HDBSCAN(min_cluster_size=2, min_samples=1, gen_min_span_tree=True)
         clusterer.fit(self.Xf)
+        #fig, ax = plt.subplots()
+        #ax.scatter(*self.TXf.T)
+        #fig.show()
         labels=clusterer.labels_
         nbLabels=clusterer.labels_.max()
         fig, ax = plt.subplots()
@@ -127,7 +137,7 @@ class Gene_Model():
 
         self.lpos = copy.deepcopy(self.pos)
         for p in self.lpos:  # raise text positions
-            self.lpos[p] = (self.lpos[p][0], self.lpos[p][1] + 0.04)
+            self.lpos[p] = (self.lpos[p][0], self.lpos[p][1] + 0.0)
 
 
 
@@ -239,35 +249,35 @@ class Gene_Model():
                                                  vert_loc=vert_loc - vert_gap, xcenter=nextx, pos=pos,
                                                  parent=root)
             elif go=='Left':
-                nextx -= dx / 2
+                nextx = xcenter - dx *4
                 for neighbor in neighbors:
-                    nextx += dx
+                    nextx += dx*2
                     if len(G.neighbors(neighbors[0])) == 0:  # If the left neighbor has no child
-                        pos = self.hierarchy_pos(G, neighbor, width=dx * 1.9, vert_gap=vert_gap,
+                        pos = self.hierarchy_pos(G, neighbor, width=dx * 2, vert_gap=vert_gap,
                                                  vert_loc=vert_loc - vert_gap, xcenter=nextx, pos=pos,
                                                  parent=root, go='Left')
                     elif len(G.neighbors(neighbors[1])) == 0:  # If the right neighbor has no child
-                        pos = self.hierarchy_pos(G, neighbor, width=dx * 1.9, vert_gap=vert_gap,
+                        pos = self.hierarchy_pos(G, neighbor, width=dx * 2, vert_gap=vert_gap,
                                                  vert_loc=vert_loc - vert_gap, xcenter=nextx, pos=pos,
                                                  parent=root, go='Right')
                     else:
-                        pos = self.hierarchy_pos(G, neighbor, width=dx * 1.9, vert_gap=vert_gap,
+                        pos = self.hierarchy_pos(G, neighbor, width=dx * 2, vert_gap=vert_gap,
                                                  vert_loc=vert_loc - vert_gap, xcenter=nextx, pos=pos,
                                                  parent=root)
             elif go=='Right':
-                nextx+=dx / 2
+                nextx=xcenter-dx*2
                 for neighbor in neighbors:
-                    nextx += dx
+                    nextx += dx*2
                     if len(G.neighbors(neighbors[0])) ==0: #If the left neighbor has no child
-                        pos = self.hierarchy_pos(G, neighbor, width=dx*1.9, vert_gap=vert_gap,
+                        pos = self.hierarchy_pos(G, neighbor, width=dx*2, vert_gap=vert_gap,
                                         vert_loc=vert_loc - vert_gap, xcenter=nextx, pos=pos,
                                         parent=root,go='Left')
                     elif len(G.neighbors(neighbors[1]))==0: #If the right neighbor has no child
-                        pos = self.hierarchy_pos(G, neighbor, width=dx * 1.9, vert_gap=vert_gap,
+                        pos = self.hierarchy_pos(G, neighbor, width=dx * 2, vert_gap=vert_gap,
                                                  vert_loc=vert_loc - vert_gap, xcenter=nextx, pos=pos,
                                                  parent=root,go='Right')
                     else:
-                        pos = self.hierarchy_pos(G, neighbor, width=dx * 1.9, vert_gap=vert_gap,
+                        pos = self.hierarchy_pos(G, neighbor, width=dx * 2, vert_gap=vert_gap,
                                                  vert_loc=vert_loc - vert_gap, xcenter=nextx, pos=pos,
                                                  parent=root)
         return pos

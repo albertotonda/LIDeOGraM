@@ -27,6 +27,7 @@ class Gene_Controller:
             prof = self.modGene.profondeur(nodeclicked)
             w = self.modGene.getallchildfrom([nodeclicked])
             fig, ax = plt.subplots()
+            #[j for j in range(len(self.modGene.f)) if self.modGene.loc[self.modGene.f[j]][1]=='galK']
             ax.set_position([0.1, 0.1, 0.7, 0.8])
             for j in w:
              ax.plot(self.modGene.Xf[j], 'o-',c=np.random.rand(3,1),label=self.modGene.loc[self.modGene.f[j]][1] + ' ' + self.modGene.loc[self.modGene.f[j]][0][5:] )
@@ -36,3 +37,17 @@ class Gene_Controller:
             print('click ', nodeclicked, ' prof: ', prof)
             ax.legend(fontsize='xx-small', bbox_to_anchor=(1.25, 1))
             fig.show()
+
+
+
+    def clickSearchGene(self):
+        print("clickSearchGene")
+        txt=self.vwGene.searchTxt.text()
+        numgene=[j for j in range(len(self.modGene.f)) if self.modGene.loc[self.modGene.f[j]][1] == txt or self.modGene.loc[self.modGene.f[j]][0] == txt  ]
+        if numgene == []:
+            self.modGene.highlightNode=-1
+        else:
+            numgene=numgene[0]
+            numparent=self.modGene.tree[self.modGene.tree.child==numgene].parent.values[0]
+            self.modGene.highlightNode=numparent
+        self.vwGene.updateView()

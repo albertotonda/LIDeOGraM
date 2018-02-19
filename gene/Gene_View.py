@@ -21,7 +21,12 @@ class Gene_View(QtGui.QMainWindow):
         self.gridLayout.setSpacing(5)
 
         self.networkGUI= NetworkGenes(self.modGene,self)
-        self.gridLayout.addWidget(self.networkGUI, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.networkGUI, 0, 0, 1, 2)
+
+        self.searchTxt = QtGui.QLineEdit()
+        self.searchButton = QtGui.QPushButton("Search Gene")
+        self.gridLayout.addWidget(self.searchTxt, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.searchButton, 2, 0, 1, 1)
 
         self.setCentralWidget(self.main_widget)
         self.updateView()
