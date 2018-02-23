@@ -438,19 +438,20 @@ class RFGraph_Model(QtGui.QMainWindow):
 
 
 
-                    clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=j)
-                    #clf = self.eaForLinearRegression(X, Y, j)
+                    #clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=j)
+                    clf = self.eaForLinearRegression(X, Y, j)
                     factnormY=(1 / np.mean(np.array(Y)))
                     Yn=list(np.array(Y)*factnormY)
                     Xn=self.addnoise(X)
-                    clf.fit(Xn, Yn)
+                    #clf.fit(Xn, Yn)
                     clf.coef_ = clf.coef_ / factnormY
                     clf.intercept_ = clf.intercept_ / factnormY
 
-                    pred = clf.predict(X)
+                    #pred = clf.predict(X)
+                    pred = clf.pred
                     equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames_extd[i], Y, pred)
                     #TODO restaurer sensitivity analysis
-                    Si = self.SA_Eq(X, par, clf)
+                    Si = random.random()#self.SA_Eq(X, par, clf)
                     equacolOLine.append(Si)
                     evFit=self.evalfit(j, len(par), len(Y))
                     equacolOLine.append(evFit)
@@ -760,7 +761,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.computeInitialPos()
         self.computeFitandCmplxEdgeColor()
         self.computeComprEdgeColor()
-        self.computeSAEdgeColor()
+        #self.computeSAEdgeColor()
         self.computePearsonColor()
 
         self.computeNxGraph()

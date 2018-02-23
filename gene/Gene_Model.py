@@ -26,37 +26,53 @@ class Gene_Model():
         self.highlightNode=-1
 
         #X = np.genfromtxt('../data/resultats_tri_entier_sansribosomauxTCnorm.csv', delimiter=';')
-        X = np.genfromtxt('../data/resultats_tri_entier4cond_normDESeq.csv', delimiter=';')
+
+
+        #X = np.genfromtxt('../data/resultats_tri_entier4cond_normDESeq.csv', delimiter=';')
+        Xp = pd.read_csv('../data/resultats_tri_entier4cond_normDESeq.csv', sep=';')
+
         r= pd.read_csv('../data/resultats_tri_entierTCnorm.csv',sep=';',encoding = "ISO-8859-1")
         blt= pd.read_csv('../data/ResultListbis_classification(2).csv',sep=' ',encoding = "ISO-8859-1")
 
         loc=[]
         torm=[]
-        for i in range(1,len(X)):
-            print(i)
+        #i=0
+        for XpRow_index,XpRow in Xp.iterrows():
+        #for i in range(1,len(Xp.loc)):
+            print(XpRow_index)
             infos=[]
-            locid=r.iloc[np.where(r.iloc[:,0] == X[i,0])[0][0],1]
+            locid = XpRow.cds_locustag
+            #locid=r.iloc[np.where(r.iloc[:,0] == X[i,0])[0][0],1]
             infos.append(locid)
-            p=np.where(blt.iloc[:,3]==locid)[0]
-            if not p.tolist() == []:
-                l=list(blt.iloc[p,4:8].values[0])
-                infos.extend(l)
-                if( l[1]=='Hypotheticalprotein'):
-                    torm.append(i)
-            else:
-                infos.extend([[],[],[],[],[]])
-            loc.append(infos)
 
-        np.where(r.iloc[:,1] == 'O208_01742')
-        torm.append(2141)
-        torm.append(451)
-        X=np.delete(X,torm ,axis=0)
-        torm2=[t -1 for t in torm]
-        self.loc=np.delete(loc,torm2,axis=0)
+            l=blt[blt.LocusID==locid][['Genename','Function','ECNumber','Class1','Class2']].values[0]
+            infos.extend(l)
+            #p=np.where(blt.LocusID==locid)[0]
+            #if not p.tolist() == []:
+                #l=list(blt.iloc[p,4:8].values[0])
+                #infos.extend(l)
+                #if( l[1]=='Hypotheticalprotein'):
+                #    torm.append(i)
+            #else:
+            #    infos.extend([[],[],[],[],[]])
+            loc.append(infos)
+            #i+=1
+
+        #np.where(r.iloc[:,1] == 'O208_01742')
+
+        X = Xp.drop(Xp[(Xp == 0).any(1)].index)
+
+        #torm.append(2141)
+        #torm.append(451)
+        #X=np.delete(X,torm ,axis=0)
+        #torm2=[t -1 for t in torm]
+
+        self.loc=np.delete(np.array(loc),np.where((Xp == 0).any(1))[0],axis=0)
 
         #X=X[1:,[1,2,3,4,5,6,13,14,15,16,17,18]]
-        X=X[1:,[1,2,3,4,5,6,7,8,9,10,11,12]]
-        X2=X2=copy.deepcopy(X)
+        X=X[['X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X13', 'X14', 'X15', 'X16', 'X17', 'X18']].as_matrix()
+        #X=X[1:,[1,2,3,4,5,6,7,8,9,10,11,12]]
+        self.X2=copy.deepcopy(X)
         #X=np.delete(X,(2141),axis=0)
 
 
@@ -99,8 +115,8 @@ class Gene_Model():
         #clusterer = hdbscan.HDBSCAN(min_cluster_size=5,min_samples=1,gen_min_span_tree=True)
         #clusterer.fit(self.Xf)
 
-        #self.TXf = sk.manifold.spectral_embedding().fit_transform(self.Xf)
-        clusterer = hdbscan.HDBSCAN(min_cluster_size=2, min_samples=1, gen_min_span_tree=True)
+        #self.TXf = sk.manifold.TSNE().fit_transform(self.Xf)
+        clusterer = hdbscan.HDBSCAN(min_cluster_size=3, min_samples=1, gen_min_span_tree=True)
         clusterer.fit(self.Xf)
         #fig, ax = plt.subplots()
         #ax.scatter(*self.TXf.T)
