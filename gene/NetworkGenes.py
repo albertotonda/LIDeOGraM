@@ -31,17 +31,26 @@ class NetworkGenes(FigureCanvas, QtGui.QWidget):
 
     def drawNetwork(self):
         greyNode = (0.8, 0.8, 0.8)
-        redNode = (0.9, 0, 0)
+        redNode = (0.90, 0, 0)
 
         nodeColor=[]
+        lineWidthsNode = []
+        linewidthsColors = []
         for i in range(len(self.modGene.G.nodes())):
-            if self.modGene.G.nodes()[i]==self.modGene.highlightNode:
+            if self.modGene.G.nodes()[i] == self.modGene.lastNodeClicked:
+                lineWidthsNode.append(3.0)
+                linewidthsColors.append((0, 0, 0))
+            else:
+                lineWidthsNode.append(1.0)
+                linewidthsColors.append((0, 0, 0))
+
+            if self.modGene.G.nodes()[i]==self.modGene.lastNodeClicked:
                 nodeColor.append(redNode)
             else:
                 nodeColor.append(greyNode)
 
 
-        nx.draw(self.modGene.G, self.modGene.pos, node_color=nodeColor,with_labels=False, ax=self.axes)
+        nx.draw(self.modGene.G, self.modGene.pos, node_color=nodeColor,with_labels=False, linewidths=lineWidthsNode, ax=self.axes)
         nx.draw_networkx_labels(self.modGene.G,self.modGene.lpos,self.modGene.labels,ax=self.axes)
 
     def updateView(self, hover=None):

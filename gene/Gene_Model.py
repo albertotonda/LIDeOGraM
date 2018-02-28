@@ -14,6 +14,7 @@ from Gene_View import Gene_View
 from QtConnectorGene import QtConnectorGene
 import random
 import sklearn as sk
+from scipy.spatial import distance
 
 class Gene_Model():
 
@@ -24,6 +25,16 @@ class Gene_Model():
         self.lastNodeClicked=None
         self.radius = 0.002
         self.highlightNode=-1
+        self.currGeneExpPlt=None
+        self.currprof=None
+
+        self.thresholdVar=None
+        self.minClusterSize=None
+        self.activCond=None
+        self.activCondShow=None
+
+    def searchClusters(self):
+
 
         #X = np.genfromtxt('../data/resultats_tri_entier_sansribosomauxTCnorm.csv', delimiter=';')
 
@@ -73,31 +84,45 @@ class Gene_Model():
         X=X[['X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X13', 'X14', 'X15', 'X16', 'X17', 'X18']].as_matrix()
         #X=X[1:,[1,2,3,4,5,6,7,8,9,10,11,12]]
         self.X2=copy.deepcopy(X)
+        self.X2=self.X2[:,self.activCond]
         #X=np.delete(X,(2141),axis=0)
 
 
 
 
 
-        rv=np.zeros(len(X))
-        for i in range(len(X)):
-            i1 = [0,1,2];
-            i2 = [3,4,5];
-            i3 = [6,7,8];
-            i4 = [9,10,11];
+        rv=np.zeros(len(self.X2))
+        for i in range(len(self.X2)):
+            nbcond=len(self.X2[0])/3
+            print(nbcond,int(nbcond))
 
-            v1 = np.var(X[i,i1]);
-            v2 = np.var(X[i, i2]);
-            v3 = np.var(X[i, i3]);
-            v4 = np.var(X[i, i4]);
+            v=[]
+            m=[]
+            for j in range(int(nbcond)):
+                ci=[k+3*j for k in range(3)]
+                v.append(np.var(self.X2[i,ci]))
+                m.append(np.mean(self.X2[i,ci]))
+            vm=np.var(m)
+            rv[i] = vm / np.max(v)
 
-            m1 = np.mean(X[i,i1]);
-            m2 = np.mean(X[i, i2]);
-            m3 = np.mean(X[i, i3]);
-            m4 = np.mean(X[i, i4]);
 
-            vm = np.var([m1,m2,m3,m4]);
-            rv[i] = vm / np.max([v1,v2,v3,v4]);
+            # i1 = [0,1,2];
+            # i2 = [3,4,5];
+            # i3 = [6,7,8];
+            # i4 = [9,10,11];
+            #
+            # v1 = np.std(self.X2[i,i1]);
+            # v2 = np.std(self.X2[i, i2]);
+            # v3 = np.std(self.X2[i, i3]);
+            # v4 = np.std(self.X2[i, i4]);
+            #
+            # m1 = np.mean(self.X2[i,i1]);
+            # m2 = np.mean(self.X2[i, i2]);
+            # m3 = np.mean(self.X2[i, i3]);
+            # m4 = np.mean(self.X2[i, i4]);
+            #
+            # vm = np.std([m1,m2,m3,m4]);
+            # rv[i] = vm / np.max([v1,v2,v3,v4]);
 
         for i in range(len(X)):
             #X[i,:]=X[i,:]/np.mean(X[i,:])
@@ -106,7 +131,7 @@ class Gene_Model():
             X[i, :] = np.log((X[i, :] / np.mean(X[i, :])))
             X[i, :] = (X[i, :] - np.mean(X[i, :]))/np.std(X[i, :])
 
-        self.f=np.where(rv>0.0)[0] #Indices respectant cette contrainte
+        self.f=np.where(rv>self.thresholdVar)[0] #Indices respectant cette contrainte
         self.Xf=X[self.f,:]
         alrdplt=[]
 
@@ -115,12 +140,13 @@ class Gene_Model():
         #clusterer = hdbscan.HDBSCAN(min_cluster_size=5,min_samples=1,gen_min_span_tree=True)
         #clusterer.fit(self.Xf)
 
-        #self.TXf = sk.manifold.TSNE().fit_transform(self.Xf)
-        clusterer = hdbscan.HDBSCAN(min_cluster_size=3, min_samples=1, gen_min_span_tree=True)
+        #self.TXf = sk.manifold.TSNE().fit_transform(self.Xf)   n_iter =50000 ,
+
+        self.TXf = sk.manifold.TSNE( n_iter =50000000 ,learning_rate = 200,metric='manhattan',perplexity=15,random_state =1234).fit_transform(self.Xf)
+
+        clusterer = hdbscan.HDBSCAN(min_cluster_size=self.minClusterSize, min_samples=1, gen_min_span_tree=True)
         clusterer.fit(self.Xf)
-        #fig, ax = plt.subplots()
-        #ax.scatter(*self.TXf.T)
-        #fig.show()
+
         labels=clusterer.labels_
         nbLabels=clusterer.labels_.max()
         fig, ax = plt.subplots()

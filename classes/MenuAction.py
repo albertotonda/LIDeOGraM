@@ -32,14 +32,14 @@ class MenuAction:
 
     @staticmethod
     def save():
-        rep = QtGui.QFileDialog.getSaveFileName(MenuAction.window, caption="Save the class graph", filter="Class Graph (*.clgraph)")
+        rep = QtGui.QFileDialog.getSaveFileName(MenuAction.window, caption="Save the class graph",directory="data", filter="Class Graph (*.clgraph)")
         if rep:
             MenuAction.window.canv.graph.toJSON(rep)
 
     @staticmethod
     def load():
         from classes.ClassGraph import ClassGraph
-        rep = QtGui.QFileDialog.getOpenFileName(MenuAction.window, filter="Class Graph (*.clgraph)")
+        rep = QtGui.QFileDialog.getOpenFileName(MenuAction.window,directory="data", filter="Class Graph (*.clgraph)")
         if rep:
             #print(rep)
             MenuAction.window.graph = ClassGraph.readJson(rep)

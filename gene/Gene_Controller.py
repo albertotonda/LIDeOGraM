@@ -7,6 +7,7 @@ class Gene_Controller:
         self.modGene=modGene
         self.vwGene=vwGene
 
+
     def onClickTest(self,event):
 
         bp=self.modGene.p0
@@ -20,7 +21,8 @@ class Gene_Controller:
             for p2 in bp:
                 w = self.modGene.getallchildfrom([p2])
                 score = np.mean(np.std(self.modGene.Xf[w], 0))
-                if score >0.32 or (score > 0.25 and len(w) > 8):
+                scoremax=max(np.std(self.modGene.Xf[w], 0))
+                if (score >0.32 or (score > 0.25 and len(w) > 8) or (score > 0.2 and len(w) == 3) or scoremax > 0.4):
                     newp = [sp for sp in self.modGene.tree[self.modGene.tree.parent == p2].child if sp in self.modGene.parents]
                     toexp.extend(newp)
                 else:
@@ -33,6 +35,7 @@ class Gene_Controller:
             w = self.modGene.getallchildfrom([l])
 
             score = np.mean(np.std(self.modGene.Xf[w], 0))
+            scoremax = max(np.std(self.modGene.Xf[w], 0))
             #if score < 0.2:
             fig, ax = plt.subplots()
             # [j for j in range(len(self.modGene.f)) if self.modGene.loc[self.modGene.f[j]][1]=='galK']
@@ -44,7 +47,7 @@ class Gene_Controller:
             ax.set_ylim((np.minimum(-3, ax.get_ylim()[0]), np.maximum(3, ax.get_ylim()[1])))
             # score = np.std(self.modGene.Xf[w])
 
-            ax.set_title('nbGene:' + str(len(w)) + ' score:' + str(score))
+            ax.set_title('nbGene:' + str(len(w)) + ' score:' + str(score) + ' scoremax:' + str(scoremax))
 
             ax.legend(fontsize='small', bbox_to_anchor=(1.25, 1))
             fig.savefig('fig5/' + "class  " + str(l) + ' nbGene ' + str(len(w)) + '.png', dpi=400)
@@ -58,7 +61,7 @@ class Gene_Controller:
                 for j in w:  # Parcours les indices dans f de la classe courante
                     todataclass += self.modGene.X2[self.modGene.f[j]]  # Les 12 points de données correspondant à un gène de cette classe
             todataline=[]
-            todataline.append('Class '+str(l))
+            todataline.append('Class'+str(l))
             todataline.append('Genes')
             todataline.append('0')
             todataline.extend(todataclass)
@@ -78,6 +81,9 @@ class Gene_Controller:
 
         (x, y) = (event.xdata, event.ydata)
         if x == None or y == None:
+            self.modGene.currGeneExpPlt=[]
+            self.vwGene.networkGUI.updateView()
+            self.vwGene.geneExpCanv.updateView()
             return
 
         dst = [(pow(x - self.modGene.pos[node][0], 2) + pow(y - self.modGene.pos[node][1], 2), node) for node in
@@ -85,16 +91,24 @@ class Gene_Controller:
 
         if (len(list(filter(lambda x: x[0] < self.modGene.radius,
                             dst))) == 0 and event.button == 1):  # If no node is close enougth, select no node update view and exit
-
+            self.modGene.currGeneExpPlt=[]
             self.modGene.lastNodeClicked = None
+            self.vwGene.geneExpCanv.updateView()
             print('click None')
 
         else:
             nodeclicked = min(dst, key=(lambda x: x[0]))[1]  # Closest node
             self.modGene.lastNodeClicked = nodeclicked
 
-            prof = self.modGene.profondeur(nodeclicked)
+
             w = self.modGene.getallchildfrom([nodeclicked])
+            self.modGene.currGeneExpPlt=w
+            self.modGene.currprof = self.modGene.profondeur(nodeclicked)
+            self.vwGene.geneExpCanv.updateView()
+
+        self.vwGene.networkGUI.updateView()
+        self.show2Ddata()
+
 
             #leu_iso_val : w=[952,953,954,955,958,957,956,887]
             # leu_iso_valV2 : w=[952,953,954,958,957,956]
@@ -113,20 +127,7 @@ class Gene_Controller:
             # Metabolisme du glycerol V2 w=[1910,1909,1908,1907]
 
 
-            fig, ax = plt.subplots()
-            #[j for j in range(len(self.modGene.f)) if self.modGene.loc[self.modGene.f[j]][1]=='galK']
-            ax.set_position([0.1, 0.1, 0.7, 0.8])
-            color = iter(cm.rainbow(np.linspace(0, 1, len(w))))
-            for j in w:
-                ax.plot(self.modGene.Xf[j], 'o-',c=next(color),label=self.modGene.loc[self.modGene.f[j]][1] + ' ' + self.modGene.loc[self.modGene.f[j]][0][5:] )
-            ax.set_ylim((np.minimum(-3, ax.get_ylim()[0]), np.maximum(3, ax.get_ylim()[1])))
-            #score = np.std(self.modGene.Xf[w])
-            score = np.mean(np.std(self.modGene.Xf[w], 0))
-            #score= np.mean(np.std(self.modGene.Xf[w],0))
-            ax.set_title("prof : " + str(prof) + 'nbGene:' + str(len(w)) + ' score:' + str(score))
-            print('click ', nodeclicked, ' prof: ', prof)
-            ax.legend(fontsize='small', bbox_to_anchor=(1.25, 1))
-            fig.show()
+
 
             # import csv
             # todata = []
@@ -157,9 +158,45 @@ class Gene_Controller:
         txt=self.vwGene.searchTxt.text()
         numgene=[j for j in range(len(self.modGene.f)) if self.modGene.loc[self.modGene.f[j]][1] == txt or self.modGene.loc[self.modGene.f[j]][0] == txt  ]
         if numgene == []:
-            self.modGene.highlightNode=-1
+            self.modGene.lastNodeClicked=None
         else:
             numgene=numgene[0]
             numparent=self.modGene.tree[self.modGene.tree.child==numgene].parent.values[0]
-            self.modGene.highlightNode=numparent
-        self.vwGene.updateView()
+            self.modGene.lastNodeClicked=numparent
+
+        class MyEvent:
+            def __init__(self, xdata, ydata):
+                self.xdata = xdata
+                self.ydata = ydata
+                self.button = None
+
+        if self.modGene.lastNodeClicked!=None:
+            posNode = self.modGene.pos[self.modGene.lastNodeClicked]
+            ev = MyEvent(*posNode)
+        else:
+            ev = MyEvent(None,None)
+        self.onClick(ev)
+
+    def show2Ddata(self):
+        self.vwGene.gene2DCanv.updateView()
+
+    def checkBoxCondChanged(self):
+        self.modGene.activCondShow=[]
+        if(self.vwGene.cond22h0CB.isChecked()):
+            self.modGene.activCondShow.extend([0,1,2])
+        if(self.vwGene.cond22h6CB.isChecked()):
+            self.modGene.activCondShow.extend([3,4,5])
+        if(self.vwGene.cond30h0CB.isChecked()):
+            self.modGene.activCondShow.extend([6,7,8])
+        if(self.vwGene.cond30h6CB.isChecked()):
+            self.modGene.activCondShow.extend([9,10,11])
+        self.vwGene.geneExpCanv.updateView()
+
+
+
+
+        #fig, ax = plt.subplots()
+        #ax.scatter(*self.TXf.T)
+        #fig.show()
+
+        # self.vwGene.updateView()
