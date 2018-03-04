@@ -41,29 +41,65 @@ class Gene_View(QtGui.QMainWindow):
         self.hLayoutconds=QtGui.QHBoxLayout(self.condWidget)
         self.cond22h0Lab = QtGui.QLabel('22C 0h stationary phase:')
         self.cond22h0CB = QtGui.QCheckBox()
-        self.cond22h0CB.setChecked(True)
+        c=0 in self.modGene.activCond
+        self.cond22h0CB.setChecked(c)
         self.hLayoutconds.addWidget(self.cond22h0Lab)
         self.hLayoutconds.addWidget(self.cond22h0CB)
 
         self.cond22h6Lab = QtGui.QLabel('22C 6h stationary phase:')
         self.cond22h6CB = QtGui.QCheckBox()
-        self.cond22h6CB.setChecked(True)
+        c = 3 in self.modGene.activCond
+        self.cond22h6CB.setChecked(c)
         self.hLayoutconds.addWidget(self.cond22h6Lab)
         self.hLayoutconds.addWidget(self.cond22h6CB)
 
         self.cond30h0Lab = QtGui.QLabel('30C 0h stationary phase:')
         self.cond30h0CB = QtGui.QCheckBox()
-        self.cond30h0CB.setChecked(True)
+        c = 6 in self.modGene.activCond
+        self.cond30h0CB.setChecked(c)
         self.hLayoutconds.addWidget(self.cond30h0Lab)
         self.hLayoutconds.addWidget(self.cond30h0CB)
 
         self.cond30h6Lab = QtGui.QLabel('30C 6h stationary phase:')
         self.cond30h6CB = QtGui.QCheckBox()
-        self.cond30h6CB.setChecked(True)
+        c = 9 in self.modGene.activCond
+        self.cond30h6CB.setChecked(c)
         self.hLayoutconds.addWidget(self.cond30h6Lab)
         self.hLayoutconds.addWidget(self.cond30h6CB)
 
         self.gridLayout.addWidget(self.condWidget,1,1,1,2)
+
+        self.currClustWidget = QtGui.QWidget(self)
+        self.vLayoutCurrClust = QtGui.QVBoxLayout(self.currClustWidget)
+        self.geneCurrClustLab = QtGui.QLabel("Genes in current cluster :")
+        self.vLayoutCurrClust.addWidget(self.geneCurrClustLab)
+        self.geneCurrClustList  = QtGui.QListWidget()
+        self.vLayoutCurrClust.addWidget(self.geneCurrClustList)
+        self.geneCurrClustList.addItem(QtGui.QListWidgetItem('1'))
+        self.geneCurrClustList.addItem(QtGui.QListWidgetItem('2'))
+        self.geneCurrClustList.addItem(QtGui.QListWidgetItem('3'))
+        self.gridLayout.addWidget(self.currClustWidget,0,3,4,1)
+
+        self.moveGeneWidget = QtGui.QWidget(self)
+        self.vLayoutMoveButton = QtGui.QVBoxLayout(self.moveGeneWidget)
+        self.removeGeneButton=QtGui.QPushButton(" > ")
+        self.vLayoutMoveButton.addWidget(self.removeGeneButton)
+        self.addGeneButton = QtGui.QPushButton(" < ")
+        self.vLayoutMoveButton.addWidget(self.addGeneButton)
+        self.gridLayout.addWidget(self.moveGeneWidget,0,4,4,1)
+
+
+        self.notAssignedGeneWidget = QtGui.QWidget(self)
+        self.vLayoutNotAssignedGene = QtGui.QVBoxLayout(self.notAssignedGeneWidget)
+        self.geneNotAssignedLab = QtGui.QLabel("Genes not assigned:")
+        self.vLayoutNotAssignedGene.addWidget(self.geneNotAssignedLab)
+        self.geneNotAssignedList = QtGui.QListWidget()
+        self.vLayoutNotAssignedGene.addWidget(self.geneNotAssignedList)
+        self.geneNotAssignedList.addItem(QtGui.QListWidgetItem('4'))
+        self.geneNotAssignedList.addItem(QtGui.QListWidgetItem('5'))
+        self.geneNotAssignedList.addItem(QtGui.QListWidgetItem('6'))
+        self.gridLayout.addWidget(self.notAssignedGeneWidget, 0, 5, 4, 1)
+
 
 
 

@@ -2,6 +2,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.pyplot import cm
 import csv
+from PyQt4 import QtGui
+from matplotlib.pyplot import cm
+from PyQt4.QtGui import *
+from PyQt4 import QtCore
+from PyQt4.QtGui import *
+from PyQt4.QtCore import *
+from colour import Color
+
 class Gene_Controller:
     def __init__(self,modGene,vwGene):
         self.modGene=modGene
@@ -104,6 +112,25 @@ class Gene_Controller:
             w = self.modGene.getallchildfrom([nodeclicked])
             self.modGene.currGeneExpPlt=w
             self.modGene.currprof = self.modGene.profondeur(nodeclicked)
+
+            self.vwGene.geneCurrClustList.clear()
+            color = iter(cm.rainbow(np.linspace(0, 1, len(w))))
+            for j in w:
+                lab=self.modGene.loc[self.modGene.f[j]][1] + ' ' + self.modGene.loc[self.modGene.f[j]][0][5:]
+                #lab=QtCore.QString(lab)
+                c=next(color)
+                r=c[0]
+                g=c[1]
+                b=c[2]
+
+                rgbc=Color(rgb=(r, g, b))
+                s=rgbc+lab+Color.END
+
+                #s='<font color=rgb('+str(r) +','+ str(g)+ ','+ str(b) +')> ' +  lab +'</font>'
+                print(s)
+                self.vwGene.geneCurrClustList.addItem(QtGui.QListWidgetItem( s ))
+
+
             self.vwGene.geneExpCanv.updateView()
 
         self.vwGene.networkGUI.updateView()
@@ -152,6 +179,8 @@ class Gene_Controller:
             #     writer.writerows(todata)
             #
             # np.savetxt("genesExp.csv", todata, delimiter=",")
+
+
 
     def clickSearchGene(self):
         print("clickSearchGene")
