@@ -9,11 +9,14 @@ from PyQt4 import QtCore
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from colour import Color
+import pandas as pd
+from NumGeneQListWidgetItem import NumGeneQListWidgetItem
 
 class Gene_Controller:
     def __init__(self,modGene,vwGene):
         self.modGene=modGene
         self.vwGene=vwGene
+        self.w=None
 
 
     def onClickTest(self,event):
@@ -82,6 +85,40 @@ class Gene_Controller:
             writer = csv.writer(csvfile)
             writer.writerows(todata)
 
+    def clickRmGene(self):
+        idxSelected = self.vwGene.geneCurrClustList.selectedIndexes()[0].row()
+        numGeneToRm = self.modGene.currGeneExpPlt[idxSelected]
+        self.modGene.currGeneExpPlt.remove(numGeneToRm)
+        idxToRmInTree = self.modGene.tree[self.modGene.tree.child == numGeneToRm].index
+        self.modGene.tree = self.modGene.tree[self.modGene.tree.child != numGeneToRm]
+        self.modGene.computeGraph()
+        self.vwGene.networkGUI.updateView()
+        self.vwGene.gene2DCanv.updateView()
+        self.vwGene.geneExpCanv.updateView()
+        self.computeCurrGeneList(self.w)
+        j=numGeneToRm
+        lab=self.modGene.loc[self.modGene.f[j]][1] + ' ' + self.modGene.loc[self.modGene.f[j]][0][5:]
+        notAssgnItem=NumGeneQListWidgetItem(lab,numGeneToRm)
+        self.vwGene.geneNotAssignedList.addItem(notAssgnItem)
+
+
+    def clickAddGene(self):
+        idxSelected = self.vwGene.geneNotAssignedList.selectedIndexes()[0].row()
+        numGeneToAdd = self.vwGene.geneNotAssignedList.item(idxSelected).numGene
+        #parent=self.modGene.tree[self.modGene.tree.child==self.modGene.currGeneExpPlt[0]].parent.values[0]
+        parent=int(self.modGene.lastNodeClicked)
+        dftoadd=pd.DataFrame([[parent,numGeneToAdd,1,1]],columns=self.modGene.tree.columns)
+        self.modGene.tree=self.modGene.tree.append(dftoadd)
+        self.modGene.currGeneExpPlt.append(numGeneToAdd)
+        #self.w.append(numGeneToAdd)
+        self.vwGene.geneNotAssignedList.takeItem(idxSelected)
+        self.modGene.computeGraph()
+        self.vwGene.networkGUI.updateView()
+        self.vwGene.gene2DCanv.updateView()
+        self.vwGene.geneExpCanv.updateView()
+        self.computeCurrGeneList(self.w)
+
+
 
 
 
@@ -109,26 +146,11 @@ class Gene_Controller:
             self.modGene.lastNodeClicked = nodeclicked
 
 
-            w = self.modGene.getallchildfrom([nodeclicked])
-            self.modGene.currGeneExpPlt=w
+            self.w = self.modGene.getallchildfrom([nodeclicked])
+            self.modGene.currGeneExpPlt=self.w
             self.modGene.currprof = self.modGene.profondeur(nodeclicked)
 
-            self.vwGene.geneCurrClustList.clear()
-            color = iter(cm.rainbow(np.linspace(0, 1, len(w))))
-            for j in w:
-                lab=self.modGene.loc[self.modGene.f[j]][1] + ' ' + self.modGene.loc[self.modGene.f[j]][0][5:]
-                #lab=QtCore.QString(lab)
-                c=next(color)
-                r=c[0]
-                g=c[1]
-                b=c[2]
-
-                rgbc=Color(rgb=(r, g, b))
-                s=rgbc+lab+Color.END
-
-                #s='<font color=rgb('+str(r) +','+ str(g)+ ','+ str(b) +')> ' +  lab +'</font>'
-                print(s)
-                self.vwGene.geneCurrClustList.addItem(QtGui.QListWidgetItem( s ))
+            self.computeCurrGeneList(self.w)
 
 
             self.vwGene.geneExpCanv.updateView()
@@ -229,3 +251,38 @@ class Gene_Controller:
         #fig.show()
 
         # self.vwGene.updateView()
+
+    def computeCurrGeneList(self,w):
+        self.vwGene.geneCurrClustList.clear()
+        color = iter(cm.rainbow(np.linspace(0, 1, len(w))))
+        for j in w:
+            lab = self.modGene.loc[self.modGene.f[j]][1] + ' ' + self.modGene.loc[self.modGene.f[j]][0][5:] + ' ' + self.modGene.loc[self.modGene.f[j]][6]
+            # lab=QtCore.QString(lab)
+            c = next(color)
+            r = int(c[0] * 255)
+            g = int(c[1] * 255)
+            b = int(c[2] * 255)
+
+            # rgbc=Color(rgb=(r, g, b))
+            # s=rgbc+lab+Color.END
+            # item=QtGui.QListWidgetItem(lab)
+            # item.setBackground(rgbc)
+
+            qcol = QColor(r, g, b)
+
+            widgitItem = QtGui.QListWidgetItem()
+            widget = QtGui.QWidget()
+            txt = '<span style="color: rgb({0},{1},{2});"> --- </span> '.format(r, g, b) + lab
+            #print(txt)
+            widgetText = QtGui.QLabel(txt)
+            widgetLayout = QtGui.QHBoxLayout()
+            widgetLayout.addWidget(widgetText)
+            widgetLayout.setSizeConstraint(QtGui.QLayout.SetFixedSize)
+            widget.setLayout(widgetLayout)
+
+            # s='<font color=rgb('+str(r) +','+ str(g)+ ','+ str(b) +')> ' +  lab +'</font>'
+            # print(s)
+            widgitItem.setBackground(qcol)
+            self.vwGene.geneCurrClustList.addItem(widgitItem)
+            widgitItem.setSizeHint(widget.sizeHint())
+            self.vwGene.geneCurrClustList.setItemWidget(widgitItem, widget)

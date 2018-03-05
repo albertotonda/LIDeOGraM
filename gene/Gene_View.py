@@ -75,9 +75,7 @@ class Gene_View(QtGui.QMainWindow):
         self.vLayoutCurrClust.addWidget(self.geneCurrClustLab)
         self.geneCurrClustList  = QtGui.QListWidget()
         self.vLayoutCurrClust.addWidget(self.geneCurrClustList)
-        self.geneCurrClustList.addItem(QtGui.QListWidgetItem('1'))
-        self.geneCurrClustList.addItem(QtGui.QListWidgetItem('2'))
-        self.geneCurrClustList.addItem(QtGui.QListWidgetItem('3'))
+
         self.gridLayout.addWidget(self.currClustWidget,0,3,4,1)
 
         self.moveGeneWidget = QtGui.QWidget(self)
@@ -95,9 +93,7 @@ class Gene_View(QtGui.QMainWindow):
         self.vLayoutNotAssignedGene.addWidget(self.geneNotAssignedLab)
         self.geneNotAssignedList = QtGui.QListWidget()
         self.vLayoutNotAssignedGene.addWidget(self.geneNotAssignedList)
-        self.geneNotAssignedList.addItem(QtGui.QListWidgetItem('4'))
-        self.geneNotAssignedList.addItem(QtGui.QListWidgetItem('5'))
-        self.geneNotAssignedList.addItem(QtGui.QListWidgetItem('6'))
+
         self.gridLayout.addWidget(self.notAssignedGeneWidget, 0, 5, 4, 1)
 
 

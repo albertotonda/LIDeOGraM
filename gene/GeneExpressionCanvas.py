@@ -30,7 +30,7 @@ class GeneExpressionCanvas(FigureCanvas):
         if w!=[]:
             ax = self.axes
             # [j for j in range(len(self.modGene.f)) if self.modGene.loc[self.modGene.f[j]][1]=='galK']
-            ax.set_position([0.1, 0.1, 0.7, 0.8])
+            #ax.set_position([0.1, 0.1, 0.7, 0.8])
             color = iter(cm.rainbow(np.linspace(0, 1, len(w))))
             print('w:',w)
             for j in w:
@@ -56,5 +56,5 @@ class GeneExpressionCanvas(FigureCanvas):
             # score= np.mean(np.std(self.modGene.Xf[w],0))
             ax.set_title("prof: " + str(self.modGene.currprof) + ' nbGene: ' + str(len(w)) + ' score: ' + str(score))
             print('click ', self.modGene.lastNodeClicked, ' prof: ', self.modGene.currprof)
-            ax.legend(fontsize='small', bbox_to_anchor=(1.25, 1))
+            #ax.legend(fontsize='small', bbox_to_anchor=(1.25, 1))
         self.fig.canvas.draw()

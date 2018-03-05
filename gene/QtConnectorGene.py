@@ -9,8 +9,8 @@ class QtConnectorGene:
         self.vwGene.cond22h6CB.stateChanged.connect(self.cntrGene.checkBoxCondChanged)
         self.vwGene.cond30h0CB.stateChanged.connect(self.cntrGene.checkBoxCondChanged)
         self.vwGene.cond30h6CB.stateChanged.connect(self.cntrGene.checkBoxCondChanged)
-
-
+        self.vwGene.removeGeneButton.clicked.connect(self.cntrGene.clickRmGene)
+        self.vwGene.addGeneButton.clicked.connect(self.cntrGene.clickAddGene)
 
 
 

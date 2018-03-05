@@ -56,7 +56,7 @@ class Gene_Model():
             #locid=r.iloc[np.where(r.iloc[:,0] == X[i,0])[0][0],1]
             infos.append(locid)
 
-            l=blt[blt.LocusID==locid][['Genename','Function','ECNumber','Class1','Class2']].values[0]
+            l=blt[blt.LocusID==locid][['Genename','Function','ECNumber','Class1','Class2','Function']].values[0]
             infos.extend(l)
             #p=np.where(blt.LocusID==locid)[0]
             #if not p.tolist() == []:
@@ -161,8 +161,9 @@ class Gene_Model():
         self.leafs=self.tree[self.tree.child_size == 1].child
         self.p0=[p for p in self.parents if p not in self.childs]
 
+        self.computeGraph()
 
-
+    def computeGraph(self):
         self.G = nx.DiGraph()
         self.labels={}
         for p in self.parents:
@@ -181,16 +182,12 @@ class Gene_Model():
         for p in self.lpos:  # raise text positions
             self.lpos[p] = (self.lpos[p][0], self.lpos[p][1] + 0.0)
 
-
-
-
     def getallchildfrom(self,parentSearch):
         leafs = [sp for p in parentSearch for sp in self.tree[self.tree.parent == p].child if not sp in self.parents]
         newp = [sp for p in parentSearch for sp in self.tree[self.tree.parent == p].child if sp in self.parents]
         if len(newp) > 0:
             leafs.extend(self.getallchildfrom(newp))
         return leafs
-
 
     def profondeur(self,p):
         newp = self.tree[self.tree.child == p].parent
@@ -310,11 +307,16 @@ class Gene_Model():
                 nextx=xcenter-dx*2
                 for neighbor in neighbors:
                     nextx += dx*2
-                    if len(G.neighbors(neighbors[0])) ==0: #If the left neighbor has no child
+                    try:
+                        ltest=len(G.neighbors(neighbors[0]))
+                        ltest2=len(G.neighbors(neighbors[1]))
+                    except:
+                        pass
+                    if ltest ==0: #If the left neighbor has no child
                         pos = self.hierarchy_pos(G, neighbor, width=dx*2, vert_gap=vert_gap,
                                         vert_loc=vert_loc - vert_gap, xcenter=nextx, pos=pos,
                                         parent=root,go='Left')
-                    elif len(G.neighbors(neighbors[1]))==0: #If the right neighbor has no child
+                    elif ltest2==0: #If the right neighbor has no child
                         pos = self.hierarchy_pos(G, neighbor, width=dx * 2, vert_gap=vert_gap,
                                                  vert_loc=vert_loc - vert_gap, xcenter=nextx, pos=pos,
                                                  parent=root,go='Right')
