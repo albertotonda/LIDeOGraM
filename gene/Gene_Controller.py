@@ -17,6 +17,7 @@ class Gene_Controller:
         self.modGene=modGene
         self.vwGene=vwGene
         self.w=None
+        self.numsearchgene=None
 
 
     def onClickTest(self,event):
@@ -214,7 +215,7 @@ class Gene_Controller:
             numgene=numgene[0]
             numparent=self.modGene.tree[self.modGene.tree.child==numgene].parent.values[0]
             self.modGene.lastNodeClicked=numparent
-
+            self.numsearchgene=numgene
         class MyEvent:
             def __init__(self, xdata, ydata):
                 self.xdata = xdata
@@ -270,19 +271,27 @@ class Gene_Controller:
 
             qcol = QColor(r, g, b)
 
-            widgitItem = QtGui.QListWidgetItem()
-            widget = QtGui.QWidget()
-            txt = '<span style="color: rgb({0},{1},{2});"> --- </span> '.format(r, g, b) + lab
-            #print(txt)
-            widgetText = QtGui.QLabel(txt)
-            widgetLayout = QtGui.QHBoxLayout()
-            widgetLayout.addWidget(widgetText)
-            widgetLayout.setSizeConstraint(QtGui.QLayout.SetFixedSize)
-            widget.setLayout(widgetLayout)
+            widgitItem = QtGui.QListWidgetItem(lab)
+
+
+
+            # widget = QtGui.QWidget()
+            # palette = widget.palette()
+            # palette.setColor(QtGui.QPalette.Highlight, QtGui.QColor(255, 0, 0,255))
+            # widget.setPalette(palette)
+            # txt = lab#'<span style="color: rgb({0},{1},{2});"> --- </span> '.format(r, g, b) + lab
+            # #print(txt)
+            # widgetText = QtGui.QLabel(txt)
+            # widgetLayout = QtGui.QHBoxLayout()
+            # widgetLayout.addWidget(widgetText)
+            # widgetLayout.setSizeConstraint(QtGui.QLayout.SetFixedSize)
+            # widget.setLayout(widgetLayout)
 
             # s='<font color=rgb('+str(r) +','+ str(g)+ ','+ str(b) +')> ' +  lab +'</font>'
             # print(s)
             widgitItem.setBackground(qcol)
             self.vwGene.geneCurrClustList.addItem(widgitItem)
-            widgitItem.setSizeHint(widget.sizeHint())
-            self.vwGene.geneCurrClustList.setItemWidget(widgitItem, widget)
+            #widgitItem.setSizeHint(widget.sizeHint())
+            #self.vwGene.geneCurrClustList.setItemWidget(widgitItem, widget)
+        if self.numsearchgene!= None :
+            pass

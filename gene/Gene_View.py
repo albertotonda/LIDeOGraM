@@ -76,6 +76,13 @@ class Gene_View(QtGui.QMainWindow):
         self.geneCurrClustList  = QtGui.QListWidget()
         self.vLayoutCurrClust.addWidget(self.geneCurrClustList)
 
+
+        palette = self.geneCurrClustList.palette()
+        palette.setColor(QtGui.QPalette.Highlight, Qt.white)
+        self.geneCurrClustList.setPalette(palette)
+
+        self.geneCurrClustList.setStyleSheet("QListView::item:selected { text-color: blue; background: black  } QListView::item:hover { text-color: blue; background: grey  }")
+
         self.gridLayout.addWidget(self.currClustWidget,0,3,4,1)
 
         self.moveGeneWidget = QtGui.QWidget(self)
