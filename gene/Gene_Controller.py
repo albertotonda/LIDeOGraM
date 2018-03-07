@@ -19,6 +19,131 @@ class Gene_Controller:
         self.w=None
         self.numsearchgene=None
 
+    def onClickTest2(self,event):
+
+        cluststxt=[
+            # ['yugB','yugA', 'O208_01649','O208_01650','O208_01651','O208_01652','O208_01653','O208_01654','O208_01655'],
+            # ['O208_01835','O208_01836','O208_01837','O208_01838','O208_01839'],
+            # ['O208_01072','O208_01073','O208_01074'],
+            # ['yugB','yugA', 'O208_01649','O208_01650','O208_01651','O208_01652','O208_01653','O208_01654','O208_01655','O208_01072','O208_01073','O208_01074','O208_01835','O208_01836','O208_01837','O208_01838','O208_01839'],
+            # ['O208_01228','O208_01229','O208_01230','O208_01231','O208_01232','O208_01233','O208_01234'],
+            # ['O208_00090','O208_00091'],
+            # ['O208_00857','O208_00858'],
+            # ['O208_00090','O208_00091','O208_00857','O208_00858','O208_00855','O208_00856','O208_00859'],
+            # ['O208_00573','O208_00706','O208_00707','O208_00708','O208_01605','O208_01606','O208_01607'],
+            # ['O208_01617','O208_01618','O208_02391'],
+            # ['O208_02263','O208_00817','O208_00818','O208_00819'],
+            # ['O208_02701','O208_02702','O208_02703','O208_02704','O208_02705','O208_00225'],
+            # ['O208_00772','O208_00855','O208_00856','O208_00857','O208_00858','O208_00859','O208_00861','O208_00862','O208_00864','O208_00865'],
+            #
+            # ['O208_01296','O208_01297'],
+            # ['O208_02306','O208_02307'],
+            # ['O208_02644','O208_02645','O208_02646','O208_02647','O208_02648','O208_02649'],
+            # ['O208_02668','O208_02669','O208_02670','O208_02671'],
+            # ['O208_01296','O208_01297','O208_02306','O208_02307','O208_02644','O208_02645','O208_02646','O208_02647','O208_02648','O208_02649','O208_02668','O208_02669','O208_02670','O208_02671'],
+            #
+            # ['O208_01367','O208_01368','O208_01369','O208_01370','O208_01371','O208_01372','O208_01374','O208_01375'],
+            #
+            # ['O208_00057','O208_00072','O208_00073'],
+            # ['O208_00058','O208_00059','O208_00060','O208_00061','O208_00062','O208_00063','O208_00074','O208_01341'],
+            # ['O208_00057','O208_00072','O208_00073','O208_00064','O208_00065','O208_00066','O208_00067','O208_00068','O208_00069','O208_00070','O208_00071','O208_00058','O208_00059','O208_00060','O208_00061','O208_00062','O208_00063','O208_00074','O208_01341'],
+            #
+            # ['O208_00162','O208_00163','O208_00164'],
+            # ['O208_00214','O208_00215','O208_02706'],
+            # ['O208_00216','O208_01115','O208_01116','O208_01591','O208_01899'],
+            # ['O208_00311','O208_00637','O208_00638','O208_01900'],
+            # ['O208_00162','O208_00163','O208_00164','O208_00214','O208_00215','O208_02706','O208_00216','O208_01115','O208_01116','O208_01591','O208_01899','O208_00311','O208_00637','O208_00638','O208_01900','O208_01901']
+            #
+            ###
+            ['O208_00855','O208_00856','O208_00858','O208_00865','O208_00864','O208_00862'],
+            ['O208_01231','O208_01230','O208_01229','O208_01228'],
+            ['O208_00801','O208_00802','O208_00803','O208_00058','O208_00061','O208_00804','O208_00059','O208_00057'],
+            ['O208_01367','O208_01368','O208_01369','O208_01370','O208_01371','O208_01372','O208_01373','O208_01374','O208_01375'],
+            ['O208_01649','O208_01650','O208_01651','O208_01652','O208_01653','O208_01654']
+        ]
+        i=0
+        wL=[]
+        for ctxt in cluststxt:
+            w = []
+            for txt in ctxt:
+                numgene = [j for j in range(len(self.modGene.f)) if
+                           self.modGene.loc[self.modGene.f[j]][1] == txt or self.modGene.loc[self.modGene.f[j]][0] == txt]
+                if numgene !=  []:
+                    w.append(numgene[0])
+                else:
+                    print(txt , ' not found')
+            wL.append(w)
+            print(w)
+
+
+            if len(w) < 75:
+                xpos = np.arange(0.5, len(self.modGene.activCondShow) + 0.5, 1)
+                if w != []:
+                    fig,ax = plt.subplots()
+                    ax.set_position([0.1, 0.1, 0.7, 0.8])
+                    # [j for j in range(len(self.modGene.f)) if self.modGene.loc[self.modGene.f[j]][1]=='galK']
+                    # ax.set_position([0.1, 0.1, 0.7, 0.8])
+                    color = iter(cm.rainbow(np.linspace(0, 1, len(w))))
+                    print('w:', w)
+                    for j in w:
+                        if j == self.modGene.selectedGene:
+                            ax.plot(xpos, self.modGene.Xf[j, self.modGene.activCondShow], 'o-', c=next(color),
+                                    label=self.modGene.loc[self.modGene.f[j]][1] + ' ' +
+                                          self.modGene.loc[self.modGene.f[j]][0][5:], linewidth=5)
+                        else:
+                            ax.plot(xpos, self.modGene.Xf[j, self.modGene.activCondShow], 'o-', c=next(color),
+                                    label=self.modGene.loc[self.modGene.f[j]][1] + ' ' +
+                                          self.modGene.loc[self.modGene.f[j]][0][5:])
+                    ax.set_ylim((np.minimum(-3, ax.get_ylim()[0]), np.maximum(3, ax.get_ylim()[1])))
+
+                    ax.set_xticks(xpos - 0.4)
+
+                    tlab = []
+                    if (0 in self.modGene.activCondShow):
+                        tlab.extend(['22C 0h'] * 3)
+                    if (3 in self.modGene.activCondShow):
+                        tlab.extend(['22C 6h'] * 3)
+                    if (6 in self.modGene.activCondShow):
+                        tlab.extend(['30C 0h'] * 3)
+                    if (9 in self.modGene.activCondShow):
+                        tlab.extend(['30C 6h'] * 3)
+                    ax.set_xticklabels(tlab, rotation=45)
+
+                    # score = np.std(self.modGene.Xf[w])
+                    score = np.mean(np.std(self.modGene.Xf[w], 0))
+                    # score= np.mean(np.std(self.modGene.Xf[w],0))
+                    ax.set_title(
+                        "prof: " + str(self.modGene.currprof) + ' nbGene: ' + str(len(w)) + ' score: ' + str(score))
+
+                    ax.legend(fontsize='small', bbox_to_anchor=(1.25, 1))
+                    fig.savefig('fig7/' + "class  " + str(i) + ' nbGene ' + str(len(w)) + '.png', dpi=400)
+                    i+=1
+
+        # import csv
+        # todata = []
+        # #wL = [[952, 953, 954, 958, 957, 956], [1910, 1909, 1908, 1907], [914, 915, 916, 1147, 1150, 917, 1148, 1146],
+        # #      [24, 25, 26, 27, 28, 29, 30, 31, 32], [197, 198, 199, 200, 201, 202]]
+        # for w in wL:
+        #     for j in w:
+        #         todataclass = [0] * 12
+        #         for j in w:  # Parcours les indices dans f de la classe courante
+        #             todataclass += self.modGene.X2[
+        #                 self.modGene.f[j]]  # Les 12 points de données correspondant à un gène de cette classe
+        #     todataline = []
+        #     todataline.append('Class')
+        #     todataline.append('Genes')
+        #     todataline.append('0')
+        #     todataline.extend(todataclass)
+        #     todata.append(todataline)
+        #
+        # todata = np.transpose(todata)
+        # todata = todata[[0, 1, 2, 3, 5, 6, 8, 9, 10, 13, 14, 4, 7, 11, 12], :]
+        # # todata=todata[[0,1,2,3,4,5,6,7,8,9,10,11,12],:]
+        # with open("testdatagenes0703.csv", 'w', newline='') as csvfile:
+        #     writer = csv.writer(csvfile)
+        #     writer.writerows(todata)
+        #
+        # np.savetxt("genesExp0703.csv", todata, delimiter=",")
 
     def onClickTest(self,event):
 
@@ -179,29 +304,29 @@ class Gene_Controller:
 
 
 
-            # import csv
-            # todata = []
-            # wL=[[952,953,954,958,957,956],[1910,1909,1908,1907],[914,915,916,1147,1150,917,1148,1146],[24,25,26,27,28,29,30,31,32],[197,198,199,200,201,202]]
-            # for w in wL:
-            #     for j in w:
-            #         todataclass = [0] * 12
-            #         for j in w:  # Parcours les indices dans f de la classe courante
-            #             todataclass += self.modGene.X2[self.modGene.f[j]]  # Les 12 points de données correspondant à un gène de cette classe
-            #     todataline=[]
-            #     todataline.append('Class')
-            #     todataline.append('Genes')
-            #     todataline.append('0')
-            #     todataline.extend(todataclass)
-            #     todata.append(todataline)
-            #
-            # todata = np.transpose(todata)
-            # todata=todata[[0,1,2,3,5,6,8,9,10,13,14,4,7,11,12],:]
-            # #todata=todata[[0,1,2,3,4,5,6,7,8,9,10,11,12],:]
-            # with open("testdatagenes3.csv", 'w',newline='') as csvfile:
-            #     writer = csv.writer(csvfile)
-            #     writer.writerows(todata)
-            #
-            # np.savetxt("genesExp.csv", todata, delimiter=",")
+        # import csv
+        # todata = []
+        # wL=[[952,953,954,958,957,956],[1910,1909,1908,1907],[914,915,916,1147,1150,917,1148,1146],[24,25,26,27,28,29,30,31,32],[197,198,199,200,201,202]]
+        # for w in wL:
+        #     for j in w:
+        #         todataclass = [0] * 12
+        #         for j in w:  # Parcours les indices dans f de la classe courante
+        #             todataclass += self.modGene.X2[self.modGene.f[j]]  # Les 12 points de données correspondant à un gène de cette classe
+        #     todataline=[]
+        #     todataline.append('Class')
+        #     todataline.append('Genes')
+        #     todataline.append('0')
+        #     todataline.extend(todataclass)
+        #     todata.append(todataline)
+        #
+        # todata = np.transpose(todata)
+        # todata=todata[[0,1,2,3,5,6,8,9,10,13,14,4,7,11,12],:]
+        # #todata=todata[[0,1,2,3,4,5,6,7,8,9,10,11,12],:]
+        # with open("testdatagenes0703.csv", 'w',newline='') as csvfile:
+        #     writer = csv.writer(csvfile)
+        #     writer.writerows(todata)
+        #
+        # np.savetxt("genesExp0703.csv", todata, delimiter=",")
 
 
 
@@ -228,6 +353,10 @@ class Gene_Controller:
         else:
             ev = MyEvent(None,None)
         self.onClick(ev)
+        idxHighlight=self.modGene.currGeneExpPlt.index(numgene)
+        self.vwGene.geneCurrClustList.setCurrentRow(idxHighlight)
+        self.vwGene.geneCurrClustList.scrollToItem(self.vwGene.geneCurrClustList.currentItem(), QtGui.QAbstractItemView.PositionAtTop)
+        self.modGene.selectedGene=numgene
 
     def show2Ddata(self):
         self.vwGene.gene2DCanv.updateView()
@@ -295,3 +424,9 @@ class Gene_Controller:
             #self.vwGene.geneCurrClustList.setItemWidget(widgitItem, widget)
         if self.numsearchgene!= None :
             pass
+
+    def currClustSelChanged(self):
+        a=5
+        currRow=self.vwGene.geneCurrClustList.currentRow()
+        self.modGene.selectedGene=self.modGene.currGeneExpPlt[currRow]
+        self.vwGene.geneExpCanv.updateView()

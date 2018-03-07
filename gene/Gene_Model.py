@@ -33,6 +33,8 @@ class Gene_Model():
         self.activCond=None
         self.activCondShow=None
 
+        self.selectedGene=None
+
     def searchClusters(self):
 
 
