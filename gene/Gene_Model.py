@@ -35,6 +35,8 @@ class Gene_Model():
 
         self.selectedGene=None
 
+        self.isZoom = None
+
     def searchClusters(self):
 
 

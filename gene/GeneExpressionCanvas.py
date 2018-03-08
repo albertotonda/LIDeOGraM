@@ -35,15 +35,20 @@ class GeneExpressionCanvas(FigureCanvas):
                 color = iter(cm.rainbow(np.linspace(0, 1, len(w))))
                 print('w:',w)
                 for j in w:
-                    if j == self.modGene.selectedGene:
-                        ax.plot(xpos, self.modGene.Xf[j, self.modGene.activCondShow], 'o-', c=next(color),
-                                label=self.modGene.loc[self.modGene.f[j]][1] + ' ' +
-                                      self.modGene.loc[self.modGene.f[j]][0][5:],linewidth=5)
-                    else:
-                        ax.plot(xpos,self.modGene.Xf[j,self.modGene.activCondShow], 'o-', c=next(color),
+                    cn=next(color)
+                    if j != self.modGene.selectedGene:
+                        ax.plot(xpos,self.modGene.Xf[j,self.modGene.activCondShow], 'o-', c=cn,
                             label=self.modGene.loc[self.modGene.f[j]][1] + ' ' + self.modGene.loc[self.modGene.f[j]][0][5:])
-                ax.set_ylim((np.minimum(-3, ax.get_ylim()[0]), np.maximum(3, ax.get_ylim()[1])))
 
+                color = iter(cm.rainbow(np.linspace(0, 1, len(w))))
+                for j in w:
+                    cn = next(color)
+                    if j == self.modGene.selectedGene:
+                        ax.plot(xpos, self.modGene.Xf[j, self.modGene.activCondShow], 'o-', c=cn,
+                                label=self.modGene.loc[self.modGene.f[j]][1] + ' ' +
+                                      self.modGene.loc[self.modGene.f[j]][0][5:], linewidth=5)
+
+                ax.set_ylim((np.minimum(-3, ax.get_ylim()[0]), np.maximum(3, ax.get_ylim()[1])))
                 ax.set_xticks(xpos-0.4)
 
                 tlab=[]

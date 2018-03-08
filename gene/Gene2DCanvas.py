@@ -28,15 +28,28 @@ class Gene2DCanvas(FigureCanvas):
 
         #fig, ax = plt.subplots()
         self.axes.scatter(*self.modGene.TXf.T, c=[0.8,0.8,0.8,1],linewidths=0.0)
-        self.axes.scatter(*self.modGene.TXf.T[:,self.modGene.currGeneExpPlt],c='r',linewidths=0.0)
+        self.axes.scatter(*self.modGene.TXf.T[:,self.modGene.currGeneExpPlt],c='b',linewidths=0.0)
+
+        if self.modGene.selectedGene != None:
+            self.axes.scatter(*self.modGene.TXf.T[:, self.modGene.selectedGene], c='r', linewidths=0.0)
 
 
-        minx=np.min(self.modGene.TXf.T[0,:])
-        maxx=np.max(self.modGene.TXf.T[0,:])
-        miny=np.min(self.modGene.TXf.T[1,:])
-        maxy=np.max(self.modGene.TXf.T[1,:])
-        diffy=maxy-miny
-        diffx=maxx-minx
+
+        if(self.modGene.currGeneExpPlt != [] and self.modGene.isZoom):
+            minx=np.min(self.modGene.TXf.T[0,self.modGene.currGeneExpPlt])
+            maxx=np.max(self.modGene.TXf.T[0,self.modGene.currGeneExpPlt])
+            miny=np.min(self.modGene.TXf.T[1,self.modGene.currGeneExpPlt])
+            maxy=np.max(self.modGene.TXf.T[1,self.modGene.currGeneExpPlt])
+            diffy=maxy-miny
+            diffx=maxx-minx
+        else:
+            minx=np.min(self.modGene.TXf.T[0,:])
+            maxx=np.max(self.modGene.TXf.T[0,:])
+            miny=np.min(self.modGene.TXf.T[1,:])
+            maxy=np.max(self.modGene.TXf.T[1,:])
+            diffy=maxy-miny
+            diffx=maxx-minx
+
 
         self.axes.set_xlim((minx - 0.05 * diffx, maxx + 0.05 * diffx))
         self.axes.set_ylim((miny-0.05*diffy,maxy+0.05*diffy))

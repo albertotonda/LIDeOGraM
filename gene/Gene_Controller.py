@@ -249,7 +249,7 @@ class Gene_Controller:
 
 
     def onClick(self,event):
-
+        self.modGene.selectedGene=None
         (x, y) = (event.xdata, event.ydata)
         if x == None or y == None:
             self.modGene.currGeneExpPlt=[]
@@ -332,6 +332,7 @@ class Gene_Controller:
 
     def clickSearchGene(self):
         print("clickSearchGene")
+
         txt=self.vwGene.searchTxt.text()
         numgene=[j for j in range(len(self.modGene.f)) if self.modGene.loc[self.modGene.f[j]][1] == txt or self.modGene.loc[self.modGene.f[j]][0] == txt  ]
         if numgene == []:
@@ -373,6 +374,9 @@ class Gene_Controller:
             self.modGene.activCondShow.extend([9,10,11])
         self.vwGene.geneExpCanv.updateView()
 
+    def checkBoxZoomChanged(self):
+        self.modGene.isZoom=self.vwGene.cbZoom.isChecked()
+        self.vwGene.gene2DCanv.updateView()
 
 
 
@@ -384,6 +388,7 @@ class Gene_Controller:
 
     def computeCurrGeneList(self,w):
         self.vwGene.geneCurrClustList.clear()
+
         color = iter(cm.rainbow(np.linspace(0, 1, len(w))))
         for j in w:
             lab = self.modGene.loc[self.modGene.f[j]][1] + ' ' + self.modGene.loc[self.modGene.f[j]][0][5:] + ' ' + self.modGene.loc[self.modGene.f[j]][6]
@@ -426,7 +431,8 @@ class Gene_Controller:
             pass
 
     def currClustSelChanged(self):
-        a=5
+
         currRow=self.vwGene.geneCurrClustList.currentRow()
         self.modGene.selectedGene=self.modGene.currGeneExpPlt[currRow]
         self.vwGene.geneExpCanv.updateView()
+        self.vwGene.gene2DCanv.updateView()

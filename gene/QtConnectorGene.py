@@ -12,6 +12,7 @@ class QtConnectorGene:
         self.vwGene.removeGeneButton.clicked.connect(self.cntrGene.clickRmGene)
         self.vwGene.addGeneButton.clicked.connect(self.cntrGene.clickAddGene)
         self.vwGene.geneCurrClustList.selectionModel().currentChanged.connect(self.cntrGene.currClustSelChanged)
+        self.vwGene.cbZoom.stateChanged.connect(self.cntrGene.checkBoxZoomChanged)
 
 
 
