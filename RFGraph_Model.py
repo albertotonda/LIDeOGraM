@@ -548,7 +548,8 @@ class RFGraph_Model(QtGui.QMainWindow):
 
         self.hide()
         equacolOtmp = np.array(equacolOtmp, dtype=object)
-        equacolOtmp = equacolOtmp.reshape(len(equacolOtmp)/8,8)
+        print(len(equacolOtmp)/8)
+        equacolOtmp = equacolOtmp.reshape(int(len(equacolOtmp)/8),8)
 
 
         return equacolOtmp
