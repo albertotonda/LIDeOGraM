@@ -5,7 +5,8 @@ from fitness import fitness
 from deap import base
 from deap import creator
 from deap import tools
-from deap import algorithms
+#from deap import algorithms
+from myEAalgorithms import *
 import numpy as np
 from sklearn import linear_model
 from scipy.special import binom
@@ -144,7 +145,7 @@ class equaOptim:
         for ind, fit in list(zip(pop, fitnesses)):
             #print(fit)
             ind.fitness.values = fit
-        pop, logbook = algorithms.eaMuPlusLambda(pop, toolbox, mu, lmbd, CXPB, MUTPB, NGEN, stats=stats,
-                                                 halloffame=halloffame, verbose=True)
+        pop, logbook = eaMuPlusLambda(pop, toolbox, mu, lmbd, CXPB, MUTPB, NGEN, stats=stats,
+                                                 halloffame=halloffame,stopping_criteria=0.001, verbose=True)
 
         return halloffame[0]

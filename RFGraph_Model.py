@@ -47,10 +47,12 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.dataset = Dataset(datafile)
        # self.trueture = Dataset("data/ballon_clean_no_noise.csv")
         #self.dataset = Dataset("data/use_case.mld")
-
+        self.regressionType = 'OMP'  # 'OMP' or 'EA'
         logging.info("Data file {} -- {}".format(datafile, strftime("%d %m %y: %H %M %S")))
         self.createConstraintsGraph()
         self.firstInit = True
+
+
 
     def init2(self, contrgraph):
 
@@ -169,6 +171,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.forbiddenNodes = []
         self.nodesWithNoEquations=[]
         self.eqButton=-1
+
 
         #Necessaire de faire une deepcopy ?
         #self.lpos= copy.deepcopy(self.pos)
@@ -435,25 +438,25 @@ class RFGraph_Model(QtGui.QMainWindow):
                 nbEqToFind=6
 
                 for j in range(1,np.minimum(nbEqToFind,len(idx))+1):
+                    if self.regressionType=='OMP':
+                        clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=j)
+                        #clf = self.eaForLinearRegression(X, Y, j)
+                        factnormY=(1 / np.mean(np.array(Y)))
+                        Yn=list(np.array(Y)*factnormY)
+                        Xn=self.addnoise(X)
+                        clf.fit(Xn, Yn)
+                        clf.coef_ = clf.coef_ / factnormY
+                        clf.intercept_ = clf.intercept_ / factnormY
+                        pred = clf.predict(X)
+                    elif self.regressionType == 'EA':
+                        clf = self.eaForLinearRegression(X, Y, j)
+                        pred = clf.pred
 
-
-
-                    clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=j)
-                    #clf = self.eaForLinearRegression(X, Y, j)
-                    factnormY=(1 / np.mean(np.array(Y)))
-                    Yn=list(np.array(Y)*factnormY)
-                    Xn=self.addnoise(X)
-                    clf.fit(Xn, Yn)
-                    clf.coef_ = clf.coef_ / factnormY
-                    clf.intercept_ = clf.intercept_ / factnormY
-
-                    pred = clf.predict(X)
-                    #pred = clf.pred
                     equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames_extd[i], Y, pred)
-                    #TODO restaurer sensitivity analysis
-                    Si = random.random()#self.SA_Eq(X, par, clf)
+                    # TODO restaurer sensitivity analysis
+                    Si = random.random()  # self.SA_Eq(X, par, clf)
                     equacolOLine.append(Si)
-                    evFit=self.evalfit(j, len(par), len(Y))
+                    evFit = self.evalfit(j, len(par), len(Y))
                     equacolOLine.append(evFit)
                     equacolOtmp.extend(equacolOLine)
                 # curEqFound=0
