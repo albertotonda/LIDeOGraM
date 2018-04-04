@@ -68,7 +68,8 @@ class OptimModGlobal(QWidget):
 
     def startOptim(self):
 
-        random.seed()
+        random.seed(123)
+        np.random.seed(123)
 
         creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
         creator.create("Individual", list, fitness=creator.FitnessMin)
@@ -92,11 +93,11 @@ class OptimModGlobal(QWidget):
         stats.register("max", np.max)
         stats.register("all", lambda x: list(x))
 
-        NGEN = 2
+        NGEN = 100
         CXPB = 0.8
         MUTPB = 0.2
-        mu = 2
-        lmbd = 2
+        mu = 100
+        lmbd = 80
         halloffame = tools.HallOfFame(1)
         pop = toolbox.new_population(n=mu)
         fitnesses = toolbox.map(toolbox.evaluate, pop)

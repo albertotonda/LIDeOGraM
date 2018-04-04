@@ -461,6 +461,7 @@ class RFGraph_Controller:
                     if (isRmNode):
                         #self.modApp.rmByRmNode.append(linesToRemove)
                         self.modApp.rmByRmEq.extend(linesToRemove)
+                        self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] -= len(linesToRemove)
                     self.modApp.equacolO[linesToRemove, 4] = False
 
                     self.modApp.NodeConstraints = []
@@ -497,6 +498,7 @@ class RFGraph_Controller:
         linesToReinstate = [av for av in linesToReinstate if not av in self.modApp.rmByRmEq]
         self.modApp.equacolO[linesToReinstate, 4] = True
         self.modApp.data= self.modApp.equacolO[np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked], [0, 1, 3, 4, 7])]
+        #self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] += len(linesToReinstate)
 
         if (not isRestoreByNode):
             self.vwApp.eqTableGUI.updateView()

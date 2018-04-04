@@ -1,7 +1,7 @@
 import random
 import sys
 sys.path.append("fitness/")
-import fitness
+from fitness import fitness
 from deap import base
 from deap import creator
 from deap import tools

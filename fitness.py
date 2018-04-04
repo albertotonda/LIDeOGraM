@@ -58,8 +58,10 @@ class Individual:
         for v in chosenEqs.keys():
             if(not v in self.modApp.varsIn):
                 idxs=np.logical_and(self.modApp.equacolO[:, 4] == True , self.modApp.equacolO[:, 2] == v)
-                equaLines.append(self.modApp.equacolO[idxs][chosenEqs[v]])
-
+                try:
+                    equaLines.append(self.modApp.equacolO[idxs][chosenEqs[v]])
+                except:
+                    a=5
         for t in equaLines:
             localvar = []
             for b in self.variables:

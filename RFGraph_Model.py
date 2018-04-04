@@ -50,7 +50,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.dataset = Dataset(datafile)
        # self.trueture = Dataset("data/ballon_clean_no_noise.csv")
         #self.dataset = Dataset("data/use_case.mld")
-        self.regressionType = 'EA'  # 'OMP' or 'EA'
+        self.regressionType = 'OMP'  # 'OMP' or 'EA'
         logging.info("Data file {} -- {}".format(datafile, strftime("%d %m %y: %H %M %S")))
         self.createConstraintsGraph()
         self.firstInit = True
@@ -438,7 +438,7 @@ class RFGraph_Model(QtGui.QMainWindow):
                     print(e)
 
 
-                nbEqToFind=6
+                nbEqToFind=10
 
                 for j in range(1,np.minimum(nbEqToFind,len(idx))+1):
                     if self.regressionType=='OMP':

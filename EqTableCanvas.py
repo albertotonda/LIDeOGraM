@@ -122,7 +122,7 @@ class EqTableCanvas(RightClickQTableWidget):
 
     def updateView(self):
         self.clear()
-        self.setRowCount(len(self.modApp.data)+1)
+        self.setRowCount(len(self.modApp.data))
         self.setColumnCount(5)
         self.wordWrap()
         self.setTextElideMode(Qt.ElideNone)
@@ -134,7 +134,7 @@ class EqTableCanvas(RightClickQTableWidget):
         #self.resizeColumnsToContents()
         #eqList = self.generateLatex()
         f = QFont()
-        f.setPointSize(14)
+        f.setPointSize(12)
 
         sumvdf=0
         for n  in range(len(self.modApp.data)):
@@ -213,17 +213,17 @@ class EqTableCanvas(RightClickQTableWidget):
         # newitem = QTableWidgetItem('')
         # self.setItem(len(self.modApp.data), 4, newitem)
 
-        newitem = QTableWidgetItem(str(round(sumvdf/len(self.modApp.data),3)))
-        self.setItem(len(self.modApp.data), 1, newitem)
-
-        newitem = QTableWidgetItem('')
-        self.setItem(len(self.modApp.data), 2, newitem)
-
-        newitem = QTableWidgetItem('')
-        self.setItem(len(self.modApp.data), 3, newitem)
-
-        newitem = QTableWidgetItem('')
-        self.setItem(len(self.modApp.data), 4, newitem)
+        # newitem = QTableWidgetItem(str(round(sumvdf/len(self.modApp.data),3)))
+        # self.setItem(len(self.modApp.data), 1, newitem)
+        #
+        # newitem = QTableWidgetItem('')
+        # self.setItem(len(self.modApp.data), 2, newitem)
+        #
+        # newitem = QTableWidgetItem('')
+        # self.setItem(len(self.modApp.data), 3, newitem)
+        #
+        # newitem = QTableWidgetItem('')
+        # self.setItem(len(self.modApp.data), 4, newitem)
 
 
         self.setColumnWidth(5, 0)
