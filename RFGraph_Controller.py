@@ -334,7 +334,7 @@ class RFGraph_Controller:
             self.modApp.lastNodeClicked = nodeclicked
 
             if (self.modApp.mode_cntrt == True):  # Click action when we are deleting a link
-                self.deleteLink(nodeclicked)
+                self.deleteLink(nodeclicked,isRmNode=True)
 
 
             if (not self.modApp.mode_cntrt):        #Update the Equation table
@@ -436,7 +436,8 @@ class RFGraph_Controller:
                     linesToRemove = list(compress(ix1[0].tolist(), rcontain.tolist()[0]))
                     self.modApp.rmByRmEdge.append(linesToRemove)
                     if (isRmNode):
-                        self.modApp.rmByRmNode.append(linesToRemove)
+                        #self.modApp.rmByRmNode.append(linesToRemove)
+                        self.modApp.rmByRmEq.extend(linesToRemove)
                     self.modApp.equacolO[linesToRemove, 4] = False
 
                     self.modApp.NodeConstraints = []
@@ -659,8 +660,8 @@ class RFGraph_Controller:
 
         for i, o in self.modApp.edgelist_inOrder:
             if ((i == nodeToRemove or o == nodeToRemove) and not (i, o) in self.modApp.forbidden_edge):
-                self.deleteLink(i, True)
-                self.deleteLink(o, True)
+                self.deleteLink(i, isRmNode=True)
+                self.deleteLink(o, isRmNode=True)
         self.modApp.forbiddenNodes.append(nodeToRemove)
         ix = np.ix_(self.modApp.equacolO[:, 2] == nodeToRemove)
         linesToRemove = [ixe for ixe in ix[0] if
