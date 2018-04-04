@@ -104,9 +104,9 @@ class Gene_Model():
             m=[]
             for j in range(int(nbcond)):
                 ci=[k+3*j for k in range(3)]
-                v.append(np.var(self.X2[i,ci]))
+                v.append(np.std(self.X2[i,ci]))
                 m.append(np.mean(self.X2[i,ci]))
-            vm=np.var(m)
+            vm=np.std(m)
             rv[i] = vm / np.max(v)
 
 

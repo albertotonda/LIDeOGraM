@@ -47,7 +47,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.dataset = Dataset(datafile)
        # self.trueture = Dataset("data/ballon_clean_no_noise.csv")
         #self.dataset = Dataset("data/use_case.mld")
-        self.regressionType = 'OMP'  # 'OMP' or 'EA'
+        self.regressionType = 'EA'  # 'OMP' or 'EA'
         logging.info("Data file {} -- {}".format(datafile, strftime("%d %m %y: %H %M %S")))
         self.createConstraintsGraph()
         self.firstInit = True
@@ -343,7 +343,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         return meanf
 
     def eaForLinearRegression(self,X,Y,nb):
-
+        random.seed(123)
         if(nb==1):
             bestFit=np.Inf
             bestX=-1

@@ -8,7 +8,7 @@ import networkx as nx
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from PyQt4 import QtGui
-from Network import Network
+#from Network import Network
 
 class NetworkGenes(FigureCanvas, QtGui.QWidget):
     def __init__(self, modGene, vwGene):

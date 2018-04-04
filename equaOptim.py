@@ -106,7 +106,8 @@ class equaOptim:
 
     def startOptim(self):
 
-        random.seed()
+        random.seed(123)
+        np.random.seed(123)
         creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
         creator.create("Individual", list, fitness=creator.FitnessMin)
 
