@@ -1,0 +1,164 @@
+{
+    "edge": [
+        [
+            "Condition",
+            "Population"
+        ],
+        [
+            "Condition",
+            "Anisotropy"
+        ],
+        [
+            "Condition",
+            "Cellular"
+        ],
+        [
+            "Condition",
+            "Genomic"
+        ],
+        [
+            "Cellular",
+            "Anisotropy"
+        ],
+        [
+            "Cellular",
+            "Population"
+        ],
+        [
+            "Anisotropy",
+            "Population"
+        ],
+        [
+            "Genomic",
+            "Population"
+        ],
+        [
+            "Genomic",
+            "Cellular"
+        ],
+        [
+            "Genomic",
+            "Anisotropy"
+        ]
+    ],
+    "node": [
+        {
+            "color": [
+                0.9921568627450981,
+                0.7490196078431373,
+                0.43529411764705883
+            ],
+            "lineWidth": 0,
+            "name": "Condition",
+            "nodeList": [
+                "GrowthPhase",
+                "Temperature"
+            ],
+            "operators": [],
+            "pos": [
+                0.47824453746844575,
+                0.9258418501703367
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.8901960784313725,
+                0.10196078431372549,
+                0.10980392156862745
+            ],
+            "lineWidth": 0,
+            "name": "Cellular",
+            "nodeList": [
+                "SFA",
+                "UFA",
+                "CFA",
+                "UFASFA",
+                "CFAUFA",
+                "CFASFA"
+            ],
+            "operators": [],
+            "pos": [
+                0.03801635447699811,
+                0.5087501750035002
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6509803921568628,
+                0.807843137254902,
+                0.8901960784313725
+            ],
+            "lineWidth": 0,
+            "name": "Population",
+            "nodeList": [
+                "dtpH07Drying",
+                "dtpH07Freezing",
+                "dtpH07speDrying",
+                "dUFCSto3",
+                "dUFCDrying",
+                "dtpH07speFreezing",
+                "dtpH07speSto3",
+                "dUFCFreezing",
+                "dtpH07Sto3"
+            ],
+            "operators": [],
+            "pos": [
+                0.45973945452935033,
+                0.10624212484249695
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.12156862745098039,
+                0.47058823529411764,
+                0.7058823529411765
+            ],
+            "lineWidth": 0,
+            "name": "Anisotropy",
+            "nodeList": [
+                "Anisotropy"
+            ],
+            "operators": [],
+            "pos": [
+                0.8304898811730878,
+                0.3716640999486656
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.41568627450980394,
+                0.23921568627450981,
+                0.6039215686274509
+            ],
+            "lineWidth": 0,
+            "name": "Genomic",
+            "nodeList": [
+                "Detoxification",
+                "Electrontransport",
+                "Thioredoxinglutaredoxinandglutathione",
+                "ATPprotonmotiveforceinterconversion",
+                "Mureinsacculusandpeptidoglycan",
+                "Cations",
+                "General",
+                "Multidrugresistance",
+                "Siderophorebiosynthesis",
+                "Membraneslipoproteinsandporins",
+                "Chaperones",
+                "Adaptationsandatypicalconditions"
+            ],
+            "operators": [],
+            "pos": [
+                0.8826401939373337,
+                0.7858390501143355
+            ],
+            "size": 700
+        }
+    ],
+    "unbound": [
+        "numexp"
+    ]
+}

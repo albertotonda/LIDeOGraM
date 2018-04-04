@@ -4,12 +4,14 @@
 # Tracé démo de l'optimisation global en fct bruit et taille model
 #Auto générer les tests ?
 #-*- coding: utf-8
-import random
-import numpy as np
 import copy
-import networkx as nx
+import random
 import re
 import sys
+
+import networkx as nx
+import numpy as np
+
 sys.path.append("fitness/")
 sys.path.append('SALib/SaLib-master')
 from SALib.analyze import sobol
@@ -22,7 +24,7 @@ from Dataset import Dataset
 import ColorMaps
 from collections import OrderedDict
 from sklearn import linear_model
-from fitness import fitness
+import fitness
 from classes.ClassGraph import ClassGraph
 from classes.ClassNode import ClassNode
 from OptimModGlobal import OptimModGlobal
@@ -30,7 +32,7 @@ from OptimModGlobal import OptimModGlobal
 import logging
 import time
 
-from RFGraph_Controller import RFGraph_Controller
+
 # TODO  Définie la position des noeuds et les initialise
 class RandomModels():
 
@@ -528,7 +530,7 @@ class RandomModels():
         if(clf.intercept_ == 0):
             cmplx -= 1;
 
-        fit=fitness(Y,pred)
+        fit= fitness(Y, pred)
 
         line.append(cmplx)
         line.append(fit)

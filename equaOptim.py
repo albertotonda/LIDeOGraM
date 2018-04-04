@@ -1,7 +1,7 @@
 import random
 import sys
 sys.path.append("fitness/")
-from fitness import fitness
+import fitness
 from deap import base
 from deap import creator
 from deap import tools
@@ -11,7 +11,6 @@ import numpy as np
 from sklearn import linear_model
 from scipy.special import binom
 from math import log
-import pickle
 
 
 class equaOptim:
@@ -100,7 +99,7 @@ class equaOptim:
         reg.fit(Xreg,self.Y)
         pred=reg.predict(Xreg)
 
-        return (fitness(self.Y,pred),)
+        return (fitness(self.Y, pred),)
 
 
 

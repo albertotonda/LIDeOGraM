@@ -5,7 +5,7 @@ class Dataset:
 
     def __init__(self,datafile, constmodel="data/cmdl"):
         self.ctmod = constmodel
-        datafileReader = open(datafile)
+        datafileReader = open(datafile, encoding='utf-8')
         line = datafileReader.readline()  # First line are the variables name
         self.varnames = []
         for i in line.split(','):

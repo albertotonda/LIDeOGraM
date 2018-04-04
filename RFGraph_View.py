@@ -18,10 +18,8 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         #print(event)
         pass
 
-    def __init__(self,modApp):
-
+    def __init__(self, modApp):
         self.modApp = modApp
-
         QtGui.QMainWindow.__init__(self)
         QtGui.QGraphicsItem.__init__(self)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
@@ -36,69 +34,70 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         self.gridLayout = QtGui.QGridLayout(self.main_widget)
         self.gridLayout.setSpacing(5)
         self.networkGUI = NetworkCanvas(self.modApp, self)
-        self.gridLayout.addWidget(self.networkGUI, 1, 0, 2, 2)
         self.incMatGUI = IncMatrixCanvas(self.modApp, self)
-        #self.gridLayout.addWidget(self.incMatGUI, 1, 2, 3, 1)
+
+        self.splitterNM = QtGui.QSplitter()
+
+        self.splitterNM.addWidget(self.networkGUI)
+        self.splitterNM.addWidget(self.incMatGUI)
 
         self.global_compute_progress = QProgressBar(self)
         self.global_compute_progress.setRange(0, 100)
-        self.gridLayout.addWidget(self.global_compute_progress,4,1,1,3)
+        self.gridLayout.addWidget(self.global_compute_progress,12,1,1,3)
 
         self.adjThreshold_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
         self.adjThreshold_slider.setValue(self.modApp.adjThresholdVal * 100)
 
         self.adjThreshold_lab = QtGui.QLabel('Edges importance : ')
-        # self.gridLayout.addWidget(self.adjThreshold_lab, 8, 0, 1, 2)
-        self.gridLayout.addWidget(self.adjThreshold_lab, 3, 0, 1, 1)
-        # self.gridLayout.addWidget(self.adjThreshold_slider, 8, 2, 1, 57)
-        self.gridLayout.addWidget(self.adjThreshold_slider, 3, 1, 1, 1)
+        self.gridLayout.addWidget(self.adjThreshold_lab, 11, 0, 1, 1)
+        self.gridLayout.addWidget(self.adjThreshold_slider, 11, 1, 1, 1)
 
-        # self.comprFitCmplx_slider = QtGui.QSlider(QtCore.Qt.Horizontal, self.main_widget)
-        # self.comprFitCmplx_slider.setValue(self.modApp.comprFitCmplxVal * 100)
-        # self.comprFitCmplx_lab = QtGui.QLabel('Compromise : ')
-        # self.gridLayout.addWidget(self.comprFitCmplx_lab, 9, 0)
-        # self.comprFitCmplx_lab_cmplx = QtGui.QLabel('Complexity')
-        # self.gridLayout.addWidget(self.comprFitCmplx_lab_cmplx, 9, 1)
-        # self.gridLayout.addWidget(self.comprFitCmplx_slider, 9, 2, 1, 57)
-        self.comprFitCmplx_lab_fit = QtGui.QLabel('Fitness')
-        # self.gridLayout.addWidget(self.comprFitCmplx_lab_fit, 9, 59, 1, 1)
-        self.selectContrTxtLab = QtGui.QLabel('')
-        self.gridLayout.addWidget(self.selectContrTxtLab, 0, 1, 1, 1)
-        selectContrFont = QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold)
-        self.selectContrTxtLab.setFont(selectContrFont)
+        self.selectContrTxtLab = QtGui.QLabel(' ')
+        #self.gridLayout.addWidget(self.selectContrTxtLab, 0, 1, 1, 1)
+        self.selectContrTxtLab.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold))
 
+        #self.toyFitness = QtGui.QLabel('Score : ')
+        #self.toyFitness.setFont(QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold))
 
+        #self.gridLayout.addWidget(self.toyFitness, 0, 0, 1, 1)
 
         self.clickedNodeLab = QtGui.QLabel('Selected node:')
         selNodeFont = QtGui.QFont("AnyStyle", 14, QtGui.QFont.DemiBold)
         self.clickedNodeLab.setFont(selNodeFont)
         self.eqTableGUI = EqTableCanvas(self.modApp)
-        self.gridLayout.addWidget(self.eqTableGUI, 1, 3, 1, 1)
-        self.gridLayout.addWidget(self.clickedNodeLab, 0, 3, 1, 1)
+
+        self.focus_group = QtGui.QVBoxLayout()
+        self.focus_group.addWidget(self.clickedNodeLab)
+        self.focus_group.addWidget(self.eqTableGUI)
 
         self.uncertaintyModifTxt = QtGui.QLineEdit()
         self.uncertaintyModifButton=QtGui.QPushButton("Change Uncertainty")
         self.fitGUI = FitCanvas(self.modApp)
 
-        self.fit_widget = QtGui.QWidget(self)
-        self.fitLayout = QtGui.QGridLayout(self.fit_widget)
-        self.fitLayout.addWidget(self.uncertaintyModifTxt,0,0,1,1)
-        self.fitLayout.addWidget(self.uncertaintyModifButton,0,1,1,1)
-        self.fitLayout.addWidget(self.fitGUI, 1, 0, 1, 2)
-        self.gridLayout.addWidget(self.fit_widget, 2, 3, 2, 1)
+        self.uncertainty_group = QtGui.QHBoxLayout()
+        self.uncertainty_group.addWidget(self.uncertaintyModifTxt)
+        self.uncertainty_group.addWidget(self.uncertaintyModifButton)
+        self.fitLayout = QtGui.QVBoxLayout()
+        self.fitLayout.addLayout(self.uncertainty_group)
+        self.fitLayout.addWidget(self.fitGUI)
+
+        self.w_focus_group = QtGui.QWidget()
+        self.w_focus_group.setLayout(self.focus_group)
+
+        self.w_fit_layout = QtGui.QWidget()
+        self.w_fit_layout.setLayout(self.fitLayout)
+
+        self.table_fit_splitter = QtGui.QSplitter(Qt.Vertical)
+        self.table_fit_splitter.addWidget(self.w_focus_group)
+        self.table_fit_splitter.addWidget(self.w_fit_layout)
+
+        self.splitterNM.addWidget(self.table_fit_splitter)
+
+        self.gridLayout.addWidget(self.splitterNM, 1,0,11,3)
+
         self.buttonSaveEq = QtGui.QPushButton('Save equations', self)
-        #self.buttonChangerEq = QtGui.QPushButton('Change equation', self)
-        # self.buttonRemoveLink = QtGui.QPushButton('Remove Link', self)
-        # self.buttonReinstateLink = QtGui.QPushButton('Reinstate', self)
 
-        #self.gridLayout.addWidget(self.buttonChangerEq, 4, 0, 1, 1)
-        self.gridLayout.addWidget(self.buttonSaveEq, 4, 0, 1, 1)
-        # self.gridLayout.addWidget(self.buttonRemoveLink, 12, 0, 1, 30)
-        # self.gridLayout.addWidget(self.buttonReinstateLink, 0, 12, 1, 8)
-
-        # self.scrolledListBox = QtGui.QComboBox(self)
-        # self.gridLayout.addWidget(self.scrolledListBox, 0, 1, 1, 1)
-
+        #self.gridLayout.addWidget(self.buttonSaveEq, 4, 0, 1, 1)
 
         self.eqTableGUI.setAttribute(Qt.WA_AcceptTouchEvents)
         self.setCentralWidget(self.main_widget)
@@ -156,6 +155,9 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         psAction = QtGui.QAction("&Pearson correlation", self, checkable=True)
         psAction.triggered.connect(cntrApp.clickPearson)
         PearsonAction = viewGroupAction.addAction(psAction)
+        rfAction = QtGui.QAction("&RandomFit", self, checkable=True)
+        rfAction.triggered.connect(cntrApp.clickRandomFit)
+        randfitAction = viewGroupAction.addAction(rfAction)
 
         self.showAction = QtGui.QAction("&Show Global model", self, checkable=True)
         self.showAction.triggered.connect(self.viewGlobalModel)
@@ -185,7 +187,8 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         viewMenu.addAction(fitnesAction)
         viewMenu.addAction(compleAction)
         viewMenu.addAction(stvAnlsAction)
-        viewMenu.addAction(psAction)
+        viewMenu.addAction(PearsonAction)
+        viewMenu.addAction(randfitAction)
         viewMenu.addSeparator()
         viewMenu.addAction(self.showAction)
 
@@ -231,7 +234,7 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         #print("sizeActionA=" + str(len(self.editMenu.actions())))
         if(b==a):
             a=''
-            #print(a)
+            print(a)
         self.cntrApp.clickReinstateLink(name,isRestoreByNode)
 
     def noEquationError(self):

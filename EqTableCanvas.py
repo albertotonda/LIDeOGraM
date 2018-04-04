@@ -133,16 +133,20 @@ class EqTableCanvas(RightClickQTableWidget):
         #self.resizeRowsToContents()
         #self.resizeColumnsToContents()
         #eqList = self.generateLatex()
+        f = QFont()
+        f.setPointSize(14)
+
         sumvdf=0
         for n  in range(len(self.modApp.data)):
             newitem = QTableWidgetItem(str(self.modApp.data[n][0]))
-            cmap = self.colors.get("complexity",(self.modApp.data[n][0]/self.modApp.cmplxMax))
+            cmap = self.colors.get("local",(self.modApp.data[n][0]/self.modApp.cmplxMax))
             newitem.setBackground(QColor(*cmap))
             if(0.299*cmap[0] + 0.587*cmap[1]+0.114*cmap[2] < 110):
                 newitem.setTextColor(Qt.white)
             if (self.modApp.data[n][3] == False):
                 mash = 0.6
                 newitem.setTextColor(QColor(int(255 * mash), int(255 * mash), int(255 * mash)))
+            newitem.setFont(f)
             self.setItem(n, 0, newitem)
 
 
@@ -159,6 +163,7 @@ class EqTableCanvas(RightClickQTableWidget):
             if (self.modApp.data[n][3] == False):
                 mash = 0.6
                 newitem.setTextColor(QColor(int(255 * mash), int(255 * mash), int(255 * mash)))
+            newitem.setFont(f)
             self.setItem(n, 1, newitem)
 
             newitem = QTableWidgetItem(str(round(self.modApp.data[n][4],3)))
@@ -171,6 +176,7 @@ class EqTableCanvas(RightClickQTableWidget):
             if (self.modApp.data[n][3] == False):
                 mash = 0.6
                 newitem.setTextColor(QColor(int(255 * mash), int(255 * mash), int(255 * mash)))
+            newitem.setFont(f)
             self.setItem(n, 2, newitem)
 
 
@@ -181,9 +187,10 @@ class EqTableCanvas(RightClickQTableWidget):
                 newitem.setTextColor(QColor(int(255*mash),int(255*mash),int(255*mash)))
             #newitem = QTableWidgetItem(str(self.modApp.data[n][2]))
             if(self.modApp.clicked_line==n):
-                newitem.setBackground(QColor(130, 130, 110))
+                newitem.setBackground(QColor(200, 200, 200))
             else:
                 newitem.setBackground(QColor(255, 255, 255))
+            newitem.setFont(f)
             self.setItem(n, 3, newitem)
 
             cb = OnOffCheckBox(self.cntrApp, n)
@@ -191,32 +198,35 @@ class EqTableCanvas(RightClickQTableWidget):
             cb.setCheckState(self.modApp.data[n][3])
             self.setCellWidget(n,4,cb)
 
-        newitem = QTableWidgetItem('FitnessMoyenne:')
-        #self.setItem(len(self.modApp.data), 0, newitem)
+        # newitem = QTableWidgetItem('FitnessMoyenne:')
+        # self.setItem(len(self.modApp.data), 0, newitem)
+        #
+        # newitem = QTableWidgetItem(str(round(sumvdf/len(self.modApp.data),3)))
+        # self.setItem(len(self.modApp.data), 1, newitem)
+        #
+        # newitem = QTableWidgetItem('')
+        # self.setItem(len(self.modApp.data), 2, newitem)
+        #
+        # newitem = QTableWidgetItem('')
+        # self.setItem(len(self.modApp.data), 3, newitem)
+        #
+        # newitem = QTableWidgetItem('')
+        # self.setItem(len(self.modApp.data), 4, newitem)
 
         newitem = QTableWidgetItem(str(round(sumvdf/len(self.modApp.data),3)))
-        #self.setItem(len(self.modApp.data), 1, newitem)
+        self.setItem(len(self.modApp.data), 1, newitem)
 
         newitem = QTableWidgetItem('')
-        #self.setItem(len(self.modApp.data), 2, newitem)
+        self.setItem(len(self.modApp.data), 2, newitem)
 
         newitem = QTableWidgetItem('')
-        #self.setItem(len(self.modApp.data), 3, newitem)
+        self.setItem(len(self.modApp.data), 3, newitem)
 
         newitem = QTableWidgetItem('')
-        #self.setItem(len(self.modApp.data), 4, newitem)
+        self.setItem(len(self.modApp.data), 4, newitem)
 
 
-
-
-
-
-
-
-
-
-
-
+        self.setColumnWidth(5, 0)
         self.wordWrap()
         #self.setHorizontalHeaderLabels(['Complexity','Fitness','Equation'])
         #self.resizeColumnsToContents()
@@ -228,7 +238,11 @@ class EqTableCanvas(RightClickQTableWidget):
         if(self.modApp.globalModelView and not self.modApp.lastNodeClicked in self.modApp.varsIn and self.modApp.lastNodeClicked != None):
             idx_node=np.ix_(self.modApp.equacolO[:, 2] == self.modApp.lastNodeClicked)
             idx_true=np.ix_(self.modApp.equacolO[idx_node, 4][0] == True)[0]
-            idx_selected = idx_true[self.modApp.selectedEq[self.modApp.lastNodeClicked]]
+            idx = self.modApp.selectedEq[self.modApp.lastNodeClicked]
+            idx_selected = idx_true[idx]
+
+
+
             self.item(idx_selected, 3).setBackground(QColor(100, 100, 150))
 
         try:
