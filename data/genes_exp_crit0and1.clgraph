@@ -1,0 +1,163 @@
+{
+    "edge": [
+        [
+            "CellAniso",
+            "Population"
+        ],
+        [
+            "Cell",
+            "CellAniso"
+        ],
+        [
+            "Cell",
+            "Population"
+        ],
+        [
+            "condition",
+            "Cell"
+        ],
+        [
+            "condition",
+            "CellAniso"
+        ],
+        [
+            "condition",
+            "Population"
+        ],
+        [
+            "Genes",
+            "Cell"
+        ],
+        [
+            "Genes",
+            "CellAniso"
+        ],
+        [
+            "Genes",
+            "Population"
+        ]
+    ],
+    "node": [
+        {
+            "color": [
+                0.8901960784313725,
+                0.10196078431372549,
+                0.10980392156862745
+            ],
+            "lineWidth": 0,
+            "name": "CellAniso",
+            "nodeList": [
+                "Anisotropie"
+            ],
+            "operators": [],
+            "pos": [
+                0.45187403748074956,
+                0.42999859997199946
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.41568627450980394,
+                0.23921568627450981,
+                0.6039215686274509
+            ],
+            "lineWidth": 0,
+            "name": "Population",
+            "nodeList": [
+                "dtpH07Sto3",
+                "dtpH07Lyo",
+                "dtpH07Cong",
+                "dtpH07speCong",
+                "dUFCSto3",
+                "dUFCCong",
+                "dUFCLyo",
+                "dtpH07speSto3",
+                "dtpH07speLyo"
+            ],
+            "operators": [],
+            "pos": [
+                0.4474989499789995,
+                0.00124002480049612
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6980392156862745,
+                0.8745098039215686,
+                0.5411764705882353
+            ],
+            "lineWidth": 0,
+            "name": "Cell",
+            "nodeList": [
+                "UFASFA",
+                "CFA",
+                "CFAUFA",
+                "CFASFA",
+                "SFA",
+                "UFA"
+            ],
+            "operators": [],
+            "pos": [
+                0.7078166563331265,
+                0.4591658499836664
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6509803921568628,
+                0.807843137254902,
+                0.8901960784313725
+            ],
+            "lineWidth": 0,
+            "name": "condition",
+            "nodeList": [
+                "Temperature",
+                "Age"
+            ],
+            "operators": [],
+            "pos": [
+                0.20686913738274765,
+                0.9200084001680033
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.9921568627450981,
+                0.7490196078431373,
+                0.43529411764705883
+            ],
+            "lineWidth": 0,
+            "name": "Genes",
+            "nodeList": [
+                "synth_elong_acgras",
+                "L_LDH",
+                "galactose2",
+                "metabo_glycerol",
+                "hydrogenase_copper",
+                "tryptophane_synth",
+                "leu_iso_val",
+                "L_LDH_transp",
+                "pompe_a_protons",
+                "parois",
+                "transp_galactose",
+                "exopolysaccharide",
+                "Cuivre",
+                "acide_teichoique",
+                "arginine_glutamine"
+            ],
+            "operators": [],
+            "pos": [
+                0.6596906938138762,
+                0.8383401001353361
+            ],
+            "size": 700
+        }
+    ],
+    "unbound": [
+        "numexp"
+    ]
+}
