@@ -39,7 +39,7 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         self.splitterNM = QtGui.QSplitter()
 
         self.splitterNM.addWidget(self.networkGUI)
-        self.splitterNM.addWidget(self.incMatGUI)
+        #self.splitterNM.addWidget(self.incMatGUI)
 
         self.global_compute_progress = QProgressBar(self)
         self.global_compute_progress.setRange(0, 100)
@@ -96,8 +96,10 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         self.gridLayout.addWidget(self.splitterNM, 1,0,11,3)
 
         self.buttonSaveEq = QtGui.QPushButton('Save equations', self)
-
+        self.buttonChangerEq = QtGui.QPushButton('Change equation', self)
+        self.gridLayout.addWidget(self.buttonChangerEq, 12, 0, 1, 1)
         #self.gridLayout.addWidget(self.buttonSaveEq, 4, 0, 1, 1)
+
 
         self.eqTableGUI.setAttribute(Qt.WA_AcceptTouchEvents)
         self.setCentralWidget(self.main_widget)
@@ -223,7 +225,7 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
 
     def removeConstrain(self,name,isRestoreByNode=False):
         #print("Inside")
-        self.modApp.debugCmp+=1
+        #self.modApp.debugCmp+=1
         #print("Cmp:" + str(self.modApp.debugCmp))
         #print("removing : " + name)
         b=len(self.editMenu.actions())
@@ -261,5 +263,5 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
             self.clickedNodeLab.setText('Selected node: ' + self.modApp.lastNodeClicked)
 
         self.clickedNodeLab.setText(self.modApp.lastNodeClicked)
-        self.incMatGUI.updateView()
+        #self.incMatGUI.updateView()
 

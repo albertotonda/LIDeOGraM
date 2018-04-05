@@ -50,10 +50,11 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.dataset = Dataset(datafile)
        # self.trueture = Dataset("data/ballon_clean_no_noise.csv")
         #self.dataset = Dataset("data/use_case.mld")
-        self.regressionType = 'OMP'  # 'OMP' or 'EA'
+        self.regressionType = 'EA'  # 'OMP' or 'EA'
         logging.info("Data file {} -- {}".format(datafile, strftime("%d %m %y: %H %M %S")))
         self.createConstraintsGraph()
         self.firstInit = True
+        self.isRecomputeNode=False
 
 
 
@@ -63,9 +64,11 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.adj_contrGraph.edgesTrueName = []
         for (e0, e1) in self.adj_contrGraph.edges():
             self.adj_contrGraph.edgesTrueName.append((e0.name, e1.name))
-        self.correctDataset(self.dataset, self.adj_contrGraph)
 
-        self.equacolO = self.findLassoEqs()
+
+        if not self.isRecomputeNode:
+            self.correctDataset(self.dataset, self.adj_contrGraph)
+            self.equacolO = self.findLassoEqs()
 
         #self.equacolO = self.readEureqaResults('data/eq_erqa4.txt')
         self.nbequa = len(self.equacolO)  # Number of Equation for all variables taken together
@@ -79,13 +82,11 @@ class RFGraph_Model(QtGui.QMainWindow):
         for l in range(self.nbequa):
             for h in range(self.dataset.nbVar):
                 #Possible parents for the equations
-                try:
-                    cont_h = len(re.findall(r'\b%s\b' % re.escape(self.dataset.varnames[h]),self.equacolO[l,3]))  #How many times the variable self.varname[h] is found in the equation self.equacolO[l,3]
-                    cont_h = cont_h+len(re.findall(r'\b%s\b' % re.escape(self.dataset.varnames[h]+"^2"), self.equacolO[l, 3]))
+
+                cont_h = len(re.findall(r'\b%s\b' % re.escape(self.dataset.varnames[h]),self.equacolO[l,3]))  #How many times the variable self.varname[h] is found in the equation self.equacolO[l,3]
+                cont_h = cont_h+len(re.findall(r'\b%s\b' % re.escape(self.dataset.varnames[h]+"^2"), self.equacolO[l, 3]))
 
 
-                except:
-                    pass
                 if cont_h>0: #If present, add infos in adjacence matrix
                     ind_parent=h
                     ind_offspring=list(self.dataset.varnames).index(self.equacolO[l,2])
@@ -103,104 +104,109 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.adj_fit = np.power(self.adj_fit, 1 / self.adj_simple)
         self.adj_fit[self.adj_simple == 0] = 0
 
+        if not self.isRecomputeNode:
+            self.adj_contr=self.createConstraints()
 
-        self.adj_contr=self.createConstraints()
+            #self.pos=self.pos_graph()
+            self.pos = []
+            #self.adj_simple = genfromtxt('data/adj_simple_withMol.csv', delimiter=',')
+            #self.adj_cmplx = genfromtxt('data/adj_cmplx_withMol.csv', delimiter=',')
+            #self.adj_fit = genfromtxt('data/adj_fit_withMol.csv', delimiter=',')
+            #self.adj_contr = genfromtxt('data/adj_contraintes_withMol.csv', delimiter=',')
+            #self.dataset.varnames = genfromtxt('data/varnames_withMol.csv', dtype='str', delimiter=',')
+            #self.nbeq = genfromtxt('data/nbeq_withMol.csv', delimiter=',')
+            #self.equacolPOf = genfromtxt('data/equa_with_col_ParentOffspring_withMol.csv', 'float', delimiter=',')
+            #self.equacolPOs = genfromtxt('data/equa_with_col_ParentOffspring_withMol.csv', 'str', delimiter=',')
+            #self.equacolOf = genfromtxt('data/equa_with_col_Parent_withMol.csv', 'float', delimiter=',')
+            #self.equacolOs = genfromtxt('data/equa_with_col_Parent_withMol.csv', 'str', delimiter=',')
+            #self.datasetset_cell_popS = genfromtxt('data/dataset_cell_pop.csv', 'str', delimiter=',')
+            #self.datasetset_mol_cellS = genfromtxt('data/dataset_mol_cell.csv', 'str', delimiter=',')
+            #self.datasetset_cell_popF = genfromtxt('data/dataset_cell_pop.csv', 'float', delimiter=',')
+            #self.datasetset_mol_cellF = genfromtxt('data/dataset_mol_cell.csv', 'float', delimiter=',')
+            #self.varsIn = ['Temperature','Age','AMACBIOSYNTHsousexpr','BIOSYNTH_CARRIERSsousexpr','CELLENVELOPEsousexpr','CELLPROCESSESsousexpr','CENTRINTMETABOsousexpr','ENMETABOsousexpr','FATTYACIDMETABOsousexpr','Hypoprotsousexpr','OTHERCATsousexpr','PURINESsousexpr','REGULFUNsousexpr','REPLICATIONsousexpr','TRANSCRIPTIONsousexpr','TRANSLATIONsousexpr','TRANSPORTPROTEINSsousexpr','AMACBIOSYNTHsurexpr','BIOSYNTH_CARRIERSsurexpr','CELLENVELOPEsurexpr','CELLPROCESSESsurexpr','CENTRINTMETABOsurexpr','ENMETABOsurexpr','FATTYACIDMETABOsurexpr','Hypoprotsurexpr','OTHERCATsurexpr','PURINESsurexpr','REGULFUNsurexpr','REPLICATIONsurexpr','TRANSCRIPTIONsurexpr','TRANSLATIONsurexpr','TRANSPORTPROTEINSsurexpr']
+            self.varsIn = self.dataset.varsIn
+            self.NodeConstraints = []
+            self.lastNodeClicked = None
+            self.last_clicked = None
+            self.mode_cntrt = False
+            self.cntrt_FirstClick = ''
+            self.cntrt_SecondClick = ''
+            self.forbidden_edge = []
+            self.curr_tabl=[]
+            self.adjThresholdVal=0.0
+            self.comprFitCmplxVal=0.0
+            self.opt_params= []
+            self.error_paramas= []
+            self.help_params= []
+            self.clicked_line=-1
+            self.old_color=[]
+            self.nodeColor = []
+            self.edgeColor = []
+            self.nodeWeight = []
+            self.cmplxMin = np.amin(self.equacolO[:, 0])
+            self.cmplxMax = np.amax(self.equacolO[:, 0])
+            self.dataMaxFitness = np.amax(self.equacolO[:, 1])
 
-        #self.pos=self.pos_graph()
-        self.pos = []
-        #self.adj_simple = genfromtxt('data/adj_simple_withMol.csv', delimiter=',')
-        #self.adj_cmplx = genfromtxt('data/adj_cmplx_withMol.csv', delimiter=',')
-        #self.adj_fit = genfromtxt('data/adj_fit_withMol.csv', delimiter=',')
-        #self.adj_contr = genfromtxt('data/adj_contraintes_withMol.csv', delimiter=',')
-        #self.dataset.varnames = genfromtxt('data/varnames_withMol.csv', dtype='str', delimiter=',')
-        #self.nbeq = genfromtxt('data/nbeq_withMol.csv', delimiter=',')
-        #self.equacolPOf = genfromtxt('data/equa_with_col_ParentOffspring_withMol.csv', 'float', delimiter=',')
-        #self.equacolPOs = genfromtxt('data/equa_with_col_ParentOffspring_withMol.csv', 'str', delimiter=',')
-        #self.equacolOf = genfromtxt('data/equa_with_col_Parent_withMol.csv', 'float', delimiter=',')
-        #self.equacolOs = genfromtxt('data/equa_with_col_Parent_withMol.csv', 'str', delimiter=',')
-        #self.datasetset_cell_popS = genfromtxt('data/dataset_cell_pop.csv', 'str', delimiter=',')
-        #self.datasetset_mol_cellS = genfromtxt('data/dataset_mol_cell.csv', 'str', delimiter=',')
-        #self.datasetset_cell_popF = genfromtxt('data/dataset_cell_pop.csv', 'float', delimiter=',')
-        #self.datasetset_mol_cellF = genfromtxt('data/dataset_mol_cell.csv', 'float', delimiter=',')
-        #self.varsIn = ['Temperature','Age','AMACBIOSYNTHsousexpr','BIOSYNTH_CARRIERSsousexpr','CELLENVELOPEsousexpr','CELLPROCESSESsousexpr','CENTRINTMETABOsousexpr','ENMETABOsousexpr','FATTYACIDMETABOsousexpr','Hypoprotsousexpr','OTHERCATsousexpr','PURINESsousexpr','REGULFUNsousexpr','REPLICATIONsousexpr','TRANSCRIPTIONsousexpr','TRANSLATIONsousexpr','TRANSPORTPROTEINSsousexpr','AMACBIOSYNTHsurexpr','BIOSYNTH_CARRIERSsurexpr','CELLENVELOPEsurexpr','CELLPROCESSESsurexpr','CENTRINTMETABOsurexpr','ENMETABOsurexpr','FATTYACIDMETABOsurexpr','Hypoprotsurexpr','OTHERCATsurexpr','PURINESsurexpr','REGULFUNsurexpr','REPLICATIONsurexpr','TRANSCRIPTIONsurexpr','TRANSLATIONsurexpr','TRANSPORTPROTEINSsurexpr']
-        self.varsIn = self.dataset.varsIn
-        self.NodeConstraints = []
-        self.lastNodeClicked = None
-        self.last_clicked = None
-        self.mode_cntrt = False
-        self.cntrt_FirstClick = ''
-        self.cntrt_SecondClick = ''
-        self.forbidden_edge = []
-        self.curr_tabl=[]
-        self.adjThresholdVal=0.0
-        self.comprFitCmplxVal=0.0
-        self.opt_params= []
-        self.error_paramas= []
-        self.help_params= []
-        self.clicked_line=-1
-        self.old_color=[]
-        self.nodeColor = []
-        self.edgeColor = []
-        self.nodeWeight = []
-        self.cmplxMin = np.amin(self.equacolO[:, 0])
-        self.cmplxMax = np.amax(self.equacolO[:, 0])
-        self.dataMaxFitness = np.amax(self.equacolO[:, 1])
+            self.scrolledList=[]
+            self.scrolledList.append("Select link to reinstate")
+            self.edgelist_inOrder = []
+            self.edgeColorCompr=[]
+            self.edgeColorFit=[]
+            self.edgeColorCmplx=[]
+            self.ColorMode='Fit'
+            self.transparentEdges=False
+            self.edgeBoldfull=[]
+            self.adj_cmplx_max = np.amax(self.adj_cmplx)
+            self.best_indv={}
+            self.globalModelView = False
+            self.selectedEq={}
+            self.global_Edge_Color = []
+            self.mode_changeEq=False
+            self.colors = ColorMaps.colorm()
+            self.radius=0.002
+            self.lastHover=''
+            self.fitCmplxPos={}
+            self.fitCmplxfPos = {}
+            self.fitCmplxlPos = {}
+            self.rmByRmEq = []
+            self.rmByRmEdge = []
+            self.rmByRmNode = []
+            self.invisibleTup = []
+            self.forbiddenNodes = []
+            self.nodesWithNoEquations=[]
+            self.eqButton=-1
+
+
+
+
+
+            #Necessaire de faire une deepcopy ?
+            #self.lpos= copy.deepcopy(self.pos)
+            #for p in self.lpos:  # raise text positions
+            # self.modApp.lpos[p] = (self.modApp.lpos[p][0],self.modApp.lpos[p][1]+0.04)
+            #    self.lpos[p][1] +=0.04
+
+            # Charge la base de données d'équations à afficher après chargement
+            # TODO: Base de données d'équations à changer
+
+
+            self.data = []
+
+            #self.dataMaxComplexity = self.cmplxMax
+            for i in range(len(self.equacolO)):
+                self.data.append(self.equacolO[i, np.ix_([0, 1, 3, 4, 7])][0])
+                #self.dataMaxComplexity = max(self.dataMaxComplexity, self.equacolPO[i,np.ix_([0])][0][0])
+                #self.dataMaxFitness = max(self.dataMaxFitness, self.equacolPO[i,np.ix_([1])][0][0])
+
+
+
+            self.labels = {}
+            self.edges = None
+
+            self.varEquasize=OrderedDict(list(zip(self.dataset.varnames,self.nbeq)))
+            self.varEquasizeOnlyTrue=self.varEquasize.copy()
+
         self.pareto = []
-        self.scrolledList=[]
-        self.scrolledList.append("Select link to reinstate")
-        self.edgelist_inOrder = []
-        self.edgeColorCompr=[]
-        self.edgeColorFit=[]
-        self.edgeColorCmplx=[]
-        self.ColorMode='Fit'
-        self.transparentEdges=False
-        self.edgeBoldfull=[]
-        self.adj_cmplx_max = np.amax(self.adj_cmplx)
-        self.best_indv={}
-        self.globalModelView = False
-        self.selectedEq={}
-        self.global_Edge_Color = []
-        self.mode_changeEq=False
-        self.colors = ColorMaps.colorm()
-        self.radius=0.002
-        self.lastHover=''
-        self.fitCmplxPos={}
-        self.fitCmplxfPos = {}
-        self.fitCmplxlPos = {}
-        self.rmByRmEq = []
-        self.rmByRmEdge = []
-        self.rmByRmNode = []
-        self.invisibleTup = []
-        self.forbiddenNodes = []
-        self.nodesWithNoEquations=[]
-        self.eqButton=-1
-
-
-        #Necessaire de faire une deepcopy ?
-        #self.lpos= copy.deepcopy(self.pos)
-        #for p in self.lpos:  # raise text positions
-        # self.modApp.lpos[p] = (self.modApp.lpos[p][0],self.modApp.lpos[p][1]+0.04)
-        #    self.lpos[p][1] +=0.04
-
-        # Charge la base de données d'équations à afficher après chargement
-        # TODO: Base de données d'équations à changer
-
-
-        self.data = []
-
-        #self.dataMaxComplexity = self.cmplxMax
-        for i in range(len(self.equacolO)):
-            self.data.append(self.equacolO[i, np.ix_([0, 1, 3, 4, 7])][0])
-            #self.dataMaxComplexity = max(self.dataMaxComplexity, self.equacolPO[i,np.ix_([0])][0][0])
-            #self.dataMaxFitness = max(self.dataMaxFitness, self.equacolPO[i,np.ix_([1])][0][0])
-
-
-
-        self.labels = {}
-        self.edges = None
-
-        self.varEquasize=OrderedDict(list(zip(self.dataset.varnames,self.nbeq)))
-        self.varEquasizeOnlyTrue=self.varEquasize.copy()
         self.computeEquaPerNode()
 
         ##########################
@@ -224,6 +230,13 @@ class RFGraph_Model(QtGui.QMainWindow):
 
 
         self.initGraph()
+        if self.isRecomputeNode:
+            self.computeNxGraph()
+            self.vwApp.updateView()
+            self.vwApp.networkGUI.network.updateView()
+            self.vwApp.networkGUI.fig.canvas.draw()
+            self.vwApp.eqTableGUI.updateView()
+
         if self.firstInit:
             vwApp = RFGraph_View(self)
             cntrApp = RFGraph_Controller(self, vwApp)
@@ -231,10 +244,12 @@ class RFGraph_Model(QtGui.QMainWindow):
             vwApp.eqTableGUI.cntrApp = cntrApp
             vwApp.updateMenuBar(cntrApp)
             vwApp.eqTableGUI.horizontalHeader().sortIndicatorChanged.connect(cntrApp.eqTableHeaderClicked)
-
+            self.vwApp=vwApp
             #self.progress_bar_global = vwApp.global_compute_progress
             qtconnector = QtConnector(vwApp, cntrApp)
         self.firstInit=False
+
+        self.isRecomputeNode=False
 
     def correctDataset(self,dataset,constrGraph):
         dataset.varnames=dataset.true_varnames
@@ -318,9 +333,74 @@ class RFGraph_Model(QtGui.QMainWindow):
                 dataset.classesIn.append(vc.name)
                 dataset.varsIn.extend(vc.nodeList)
 
-    def recomputeNode(self,node,neweqs):
+    def recomputeNode(self,node):
+        self.isRecomputeNode=True
         self.equacolO[self.equacolO[:, 2] == node, :]
-        linesToRemove = np.ix_(self.equacolO[:, 2] == node)
+        linesToRemove = np.where(self.equacolO[:, 2] == node)[0]
+        self.equacolO = np.delete(self.equacolO, linesToRemove, axis=0)
+
+        newEqua = []
+
+        i=np.where(self.dataset.varnames==node)[0][0]
+        print('computing : ' + self.dataset.varnames[i])
+
+        iClass = self.dataset.variablesClass[self.dataset.varnames[i]]
+        print(self.dataset.classesIn)
+        if (not iClass in self.dataset.classesIn):
+            parIClass = []
+            for (e1, e2) in self.adj_contrGraph.edges():
+                if (e2.name == iClass and not e1.name in parIClass):
+                    parIClass.append(e1.name)
+            # parIClass=list(self.adj_contrGraph.edge[iClass].keys())
+            par = []
+            for v in self.dataset.varnames_extd:
+                if (self.dataset.variablesClass[v] in parIClass):
+                    par.append(v)
+            Y = list(self.dataset.data[:, i])
+
+            forbidden_var = [i for i, o in self.forbidden_edge if o == node]
+            for fv in forbidden_var:
+                par.remove(fv)
+            idx = [list(self.dataset.varnames_extd).index(v) for v in par]
+            try:
+                X = self.dataset.data_extd[:, idx]
+            except Exception as e:
+                print(e)
+
+            nbEqToFind = 4
+
+            for j in range(1, np.minimum(nbEqToFind, len(idx)) + 1):
+                if self.regressionType == 'OMP':
+                    clf = linear_model.OrthogonalMatchingPursuit(n_nonzero_coefs=j)
+                    # clf = self.eaForLinearRegression(X, Y, j)
+                    factnormY = (1 / np.mean(np.array(Y)))
+                    Yn = list(np.array(Y) * factnormY)
+                    Xn = self.addnoise(X)
+                    clf.fit(Xn, Yn)
+                    clf.coef_ = clf.coef_ / factnormY
+                    clf.intercept_ = clf.intercept_ / factnormY
+                    pred = clf.predict(X)
+                elif self.regressionType == 'EA':
+                    clf = self.eaForLinearRegression(X, Y, j)
+                    pred = clf.pred
+
+                equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames_extd[i], Y, pred)
+                # TODO restaurer sensitivity analysis
+                Si = random.random()  # self.SA_Eq(X, par, clf)
+                equacolOLine.append(Si)
+                evFit = self.evalfit(j, len(par), len(Y))
+                equacolOLine.append(evFit)
+                newEqua.append(equacolOLine)
+        newEqua=np.array(newEqua, dtype=object)
+        self.equacolO=np.append(self.equacolO, newEqua, axis=0)
+        self.varEquasizeOnlyTrue[node]=nbEqToFind
+        a=5
+
+
+
+
+
+
 
     def createProgressBar(self):
         self.setWindowTitle("Searching for models")
@@ -438,7 +518,7 @@ class RFGraph_Model(QtGui.QMainWindow):
                     print(e)
 
 
-                nbEqToFind=10
+                nbEqToFind=4
 
                 for j in range(1,np.minimum(nbEqToFind,len(idx))+1):
                     if self.regressionType=='OMP':
@@ -765,7 +845,8 @@ class RFGraph_Model(QtGui.QMainWindow):
             #     self.nodeColor.append((0.8, 0.8, 0.2))
             # if (self.dataset.variablesClass[self.dataset.varnames[i]] == 'PopSto3'):
             #     self.nodeColor.append((0.8, 0.8, 0.2))
-        self.computeInitialPos()
+        if not self.isRecomputeNode:
+            self.computeInitialPos()
         self.computeFitandCmplxEdgeColor()
         self.computeFitRandColor()
         self.computeComprEdgeColor()
@@ -1000,7 +1081,11 @@ class RFGraph_Model(QtGui.QMainWindow):
                 lIdxColPareto = self.pareto[i][j]
                 if (len(lIdxColPareto) > 0):  # il ne s'agit pas d'une variable d'entrée qui n'a pas de front de pareto
 
-                    cr = np.minimum(self.adj_fit[i, j] * 2, 1)
+                    try:
+                        cr = np.minimum(self.adj_fit[i, j] * 2, 1)
+                    except:
+                        raise Exception('bug')
+                        a=5
                     cg = np.minimum((1 - self.adj_fit[i, j]) * 2, 1)
                     cb = 0
                     if (self.transparentEdges):
@@ -1186,10 +1271,13 @@ class RFGraph_Model(QtGui.QMainWindow):
         equaLines=[]
 
         for v in self.selectedEq.keys():
-            if(not v in self.varsIn):
+            if(not v in self.varsIn and not v in self.forbiddenNodes):
                 idxV = np.where(self.equacolO[:, 2] == v)[0]
                 eqs = self.equacolO[idxV[np.where(self.equacolO[idxV, 4] == True)[0]], :]
-                equaLines.append(eqs[self.selectedEq[v]])
+                try:
+                    equaLines.append(eqs[self.selectedEq[v]])
+                except:
+                    raise Exception('bug')
         self.edgelist_inOrder = []
         self.global_Edge_Color = []
         for l in range(len(equaLines)):
@@ -1213,16 +1301,19 @@ class RFGraph_Model(QtGui.QMainWindow):
             self.global_Edge_Color.append([cr,cg,cb,1.0])
         pass
 
-        maxcmplx=max(list(res[3].values()))
-        for v in self.dataset.varnames:
-            if(v in self.varsIn):
-                self.fitCmplxPos[v] = (0,0)
-            else:
-                self.fitCmplxPos[v] = (res[2][v], res[3][v]/maxcmplx)
-
-
-        self.fitCmplxlPos= dict(list(map(lambda x: (x[0], (x[1][0] + 0.04, x[1][1] + 0.04)), list(self.fitCmplxPos.items()))))
-        self.fitCmplxfPos = dict(list(map(lambda x: (x[0], (x[1][0] - 0.04, x[1][1] - 0.04)), list(self.fitCmplxPos.items()))))
+        # maxcmplx=max(list(res[3].values()))
+        # for v in self.dataset.varnames:
+        #     if(v in self.varsIn):
+        #         self.fitCmplxPos[v] = (0,0)
+        #     else:
+        #         try:
+        #             self.fitCmplxPos[v] = (res[2][v], res[3][v]/maxcmplx)
+        #         except:
+        #             raise Exception('bug')
+        #
+        #
+        # self.fitCmplxlPos= dict(list(map(lambda x: (x[0], (x[1][0] + 0.04, x[1][1] + 0.04)), list(self.fitCmplxPos.items()))))
+        # self.fitCmplxfPos = dict(list(map(lambda x: (x[0], (x[1][0] - 0.04, x[1][1] - 0.04)), list(self.fitCmplxPos.items()))))
         #self.fitCmplxlPos = 0
         #self.pos=self.fitCmplxPos
         #self.fpos=self.fitCmplxfPos

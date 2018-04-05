@@ -71,7 +71,10 @@ class FitCanvas(FigureCanvas):
         if self.modApp.globalModelView:
             ft = fitness.Individual(self.modApp)
             x = num_exp
-            z = [ft.process(i,self.modApp.selectedEq)[self.modApp.lastNodeClicked] for i in x]
+            try:
+                z = [ft.process(i,self.modApp.selectedEq)[self.modApp.lastNodeClicked] for i in x]
+            except:
+                raise Exception('bug')
             z = np.asarray(z)
 
         val_node_exp=self.modApp.dataset.getAllExpsforVar(self.modApp.lastNodeClicked)

@@ -9,6 +9,7 @@ from fitness import Individual_true
 from time import strftime
 import traceback
 
+
 import numpy as np
 from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QAbstractItemView
@@ -350,7 +351,7 @@ class RFGraph_Controller:
             logging.info("Clicked {} -- {}".format(self.modApp.lastNodeClicked, strftime("%d %m %y: %H %M %S")))
 
             nodeclicked = min(dst, key=(lambda x: x[0]))[1]  # Closest node
-            self.vwApp.incMatGUI.mutipleHighlight(nodeclicked)
+            #self.vwApp.incMatGUI.mutipleHighlight(nodeclicked)
             #self.vwApp.incMatGUI.highlight(-1)
             #print("highlighting " + nodeclicked)
             # self.higlight(nodeclicked, self.p(self.modApp.lastNodeClicked))
@@ -459,9 +460,13 @@ class RFGraph_Controller:
                     linesToRemove = list(compress(ix1[0].tolist(), rcontain.tolist()[0]))
                     self.modApp.rmByRmEdge.append(linesToRemove)
                     if (isRmNode):
-                        #self.modApp.rmByRmNode.append(linesToRemove)
-                        self.modApp.rmByRmEq.extend(linesToRemove)
-                        self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] -= len(linesToRemove)
+                        self.modApp.rmByRmNode.append(linesToRemove)
+                    self.modApp.rmByRmEq.extend(linesToRemove)
+                    self.modApp.varEquasizeOnlyTrue[nodeclicked] -= len(linesToRemove)
+                        #self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] -= len(linesToRemove)
+                        #self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] = 0.0
+                    #else:
+
                     self.modApp.equacolO[linesToRemove, 4] = False
 
                     self.modApp.NodeConstraints = []
@@ -483,6 +488,7 @@ class RFGraph_Controller:
             self.modApp.NodeConstraints = []
 
     def clickReinstateLink(self, name, isRestoreByNode=False):
+        print('reinstate link')
         idx = self.modApp.scrolledList.index(name)
         v = name.split(' ')
 
@@ -495,10 +501,11 @@ class RFGraph_Controller:
         flist = [item for sublist in self.modApp.rmByRmEdge for item in sublist]
         logging.info("Clicked reinstate line {} -- {}".format(str(flist), strftime("%d %m %y: %H %M %S")))
         linesToReinstate = [av for av in linesToReinstate if not av in flist]
-        linesToReinstate = [av for av in linesToReinstate if not av in self.modApp.rmByRmEq]
+        #linesToReinstate = [av for av in linesToReinstate if not av in self.modApp.rmByRmEq]
         self.modApp.equacolO[linesToReinstate, 4] = True
         self.modApp.data= self.modApp.equacolO[np.ix_(self.modApp.equacolO[:, 2] == [self.modApp.lastNodeClicked], [0, 1, 3, 4, 7])]
-        #self.modApp.varEquasizeOnlyTrue[self.modApp.lastNodeClicked] += len(linesToReinstate)
+        childVar=name.split(' - ')[1]
+        self.modApp.varEquasizeOnlyTrue[childVar] += len(linesToReinstate)
 
         if (not isRestoreByNode):
             self.vwApp.eqTableGUI.updateView()
@@ -523,9 +530,14 @@ class RFGraph_Controller:
         self.modApp.eqButton = self.vwApp.eqTableGUI.button
         # print("self.modApp.mode_changeEq:" + str(self.modApp.mode_changeEq))
         if (self.modApp.mode_changeEq):
-            self.modApp.selectedEq[self.modApp.lastNodeClicked] = cellClicked.row() - int(
-                self.modApp.varEquasize[self.modApp.lastNodeClicked] - self.modApp.varEquasizeOnlyTrue[
-                    self.modApp.lastNodeClicked])
+            # self.modApp.selectedEq[self.modApp.lastNodeClicked] = cellClicked.row() - int(
+            #     self.modApp.varEquasize[self.modApp.lastNodeClicked] - self.modApp.varEquasizeOnlyTrue[
+            #         self.modApp.lastNodeClicked])
+            idx_clicked=np.where(self.modApp.equacolO[:, 2] == self.modApp.lastNodeClicked)[0][self.modApp.clicked_line]
+            idx_true=np.where(np.logical_and(self.modApp.equacolO[:, 2] == self.modApp.lastNodeClicked,
+                                    self.modApp.equacolO[:, 4] == True))[0]
+
+            self.modApp.selectedEq[self.modApp.lastNodeClicked] =np.where(idx_true==idx_clicked)[0][0]
 
             self.modApp.computeGlobalView()
             self.vwApp.updateView()
@@ -551,10 +563,12 @@ class RFGraph_Controller:
                         matrix_position += offset
                         if self.modApp.best_indv != {}:
                             matrix_position+=1
+                    higlight_matrix=False
                     if higlight_matrix:
-
-
-                        self.vwApp.incMatGUI.highlight(self.vwApp.incMatGUI.newOrder.index(matrix_position))
+                        try:
+                            self.vwApp.incMatGUI.highlight(self.vwApp.incMatGUI.newOrder.index(matrix_position))
+                        except:
+                            raise Exception('bug')
             else:
                 self.vwApp.uncertaintyModifTxt.setText('')
             self.vwApp.fitGUI.updateView()
@@ -723,6 +737,7 @@ class RFGraph_Controller:
                 self.deleteLink(i, isRmNode=True)
                 self.deleteLink(o, isRmNode=True)
         self.modApp.forbiddenNodes.append(nodeToRemove)
+        self.modApp.varEquasizeOnlyTrue[nodeToRemove] = 0.0
         ix = np.ix_(self.modApp.equacolO[:, 2] == nodeToRemove)
         linesToRemove = [ixe for ixe in ix[0] if
                          not ixe in [le for l in self.modApp.rmByRmEdge for le in l]]  # Remove the constant equations
@@ -740,7 +755,7 @@ class RFGraph_Controller:
         self.modApp.debugCmp = 0
         ix = np.ix_(self.modApp.equacolO[:, 2] == nodeToRestore)
         linesToRestore = [ixe for ixe in ix[0] if not ixe in [le for l in self.modApp.rmByRmEdge for le in l]]
-        self.modApp.rmByRmNode.remove(linesToRestore)
+        #self.modApp.rmByRmNode.remove(linesToRestore)
         self.modApp.equacolO[linesToRestore, 4] = True
 
         for i, o in self.modApp.edgelist_inOrder:
@@ -763,6 +778,7 @@ class RFGraph_Controller:
         logging.info("Recompute node {} -- {}".format(nodeToCompute, strftime("%d %m %y: %H %M %S")))
 
         print("Recomputing " + nodeToCompute)
-        tmp_equacolO = self.modApp.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_expertcorrected.txt')
-        tmp_equacolO = tmp_equacolO[tmp_equacolO[:, 2] == nodeToCompute, :]
-        self.modApp.recomputeNode(nodeToCompute, tmp_equacolO)
+        # tmp_equacolO = self.modApp.readEureqaResults('data/eureqa_sans_calcmol_soussurexpr_expertcorrected.txt')
+        # tmp_equacolO = tmp_equacolO[tmp_equacolO[:, 2] == nodeToCompute, :]
+        self.modApp.recomputeNode(nodeToCompute)
+        self.modApp.init2(self.modApp.adj_contrGraph)
