@@ -50,7 +50,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         self.dataset = Dataset(datafile)
        # self.trueture = Dataset("data/ballon_clean_no_noise.csv")
         #self.dataset = Dataset("data/use_case.mld")
-        self.regressionType = 'EA'  # 'OMP' or 'EA'
+        self.regressionType = 'OMP'  # 'OMP' or 'EA'
         logging.info("Data file {} -- {}".format(datafile, strftime("%d %m %y: %H %M %S")))
         self.createConstraintsGraph()
         self.firstInit = True
@@ -367,7 +367,7 @@ class RFGraph_Model(QtGui.QMainWindow):
             except Exception as e:
                 print(e)
 
-            nbEqToFind = 4
+            nbEqToFind = 6
 
             for j in range(1, np.minimum(nbEqToFind, len(idx)) + 1):
                 if self.regressionType == 'OMP':
@@ -386,7 +386,7 @@ class RFGraph_Model(QtGui.QMainWindow):
 
                 equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames_extd[i], Y, pred)
                 # TODO restaurer sensitivity analysis
-                Si = random.random()  # self.SA_Eq(X, par, clf)
+                Si =   random.random() #self.SA_Eq(X, par, clf) #
                 equacolOLine.append(Si)
                 evFit = self.evalfit(j, len(par), len(Y))
                 equacolOLine.append(evFit)
@@ -518,7 +518,7 @@ class RFGraph_Model(QtGui.QMainWindow):
                     print(e)
 
 
-                nbEqToFind=4
+                nbEqToFind=5
 
                 for j in range(1,np.minimum(nbEqToFind,len(idx))+1):
                     if self.regressionType=='OMP':
@@ -537,7 +537,7 @@ class RFGraph_Model(QtGui.QMainWindow):
 
                     equacolOLine = self.regrToEquaColO(clf, par, self.dataset.varnames_extd[i], Y, pred)
                     # TODO restaurer sensitivity analysis
-                    Si = random.random()  # self.SA_Eq(X, par, clf)
+                    Si = random.random()   #self.SA_Eq(X, par, clf) #
                     equacolOLine.append(Si)
                     evFit = self.evalfit(j, len(par), len(Y))
                     equacolOLine.append(evFit)
@@ -655,7 +655,7 @@ class RFGraph_Model(QtGui.QMainWindow):
         pb['names'] = par
         pb['num_vars'] = len(par)
 
-        param_values = saltelli.sample(pb, 10, calc_second_order=False)
+        param_values = saltelli.sample(pb, 100, calc_second_order=False)
 
         YSobol = clf.predict(param_values)
 
