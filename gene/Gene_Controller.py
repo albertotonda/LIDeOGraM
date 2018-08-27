@@ -100,7 +100,7 @@ class Gene_Controller:
             # ['O208_01593','O208_01339','O208_02574','O208_02572','O208_02571','O208_02568','O208_02570','O208_01338','O208_00580','O208_00534','O208_02573','O208_00581','O208_00533'],
             # ['O208_00808','O208_00809','O208_01135','O208_02656','O208_01703','O208_01704','O208_01136','O208_01137','O208_01141','O208_01139','O208_01138','O208_01140'],
             # ['O208_01162','O208_01160','O208_01161']
-            # critère 0 révisé et réduit avec Fernanda + critère 1
+            # critère 0 révisé et réduit avec Fernanda + critère 10 5
             # #    crit1
             # ['O208_00855','O208_00856','O208_00858','O208_00865','O208_00864','O208_00862'],
             # ['O208_01231','O208_01230','O208_01229','O208_01228'],
@@ -444,13 +444,11 @@ class Gene_Controller:
         self.modGene.isZoom=self.vwGene.cbZoom.isChecked()
         self.vwGene.gene2DCanv.updateView()
 
+    def checkBoxZoomExpChanged(self):
+        self.modGene.isZoomExp = self.vwGene.cbZoomExp.isChecked()
+        self.vwGene.geneExpCanv.updateView()
 
 
-        #fig, ax = plt.subplots()
-        #ax.scatter(*self.TXf.T)
-        #fig.show()
-
-        # self.vwGene.updateView()
 
     def computeCurrGeneList(self,w):
         self.vwGene.geneCurrClustList.clear()

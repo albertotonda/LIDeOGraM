@@ -24,7 +24,7 @@ class Gene_View(QtGui.QMainWindow):
         self.gridLayout.setSpacing(5)
 
         self.networkGUI= NetworkGenes(self.modGene,self)
-        self.gridLayout.addWidget(self.networkGUI, 0, 0, 5, 1)
+        self.gridLayout.addWidget(self.networkGUI, 0, 0, 6, 1)
 
         self.searchTxt = QtGui.QLineEdit()
         self.searchButton = QtGui.QPushButton("Search Gene")
@@ -32,7 +32,19 @@ class Gene_View(QtGui.QMainWindow):
         self.gridLayout.addWidget(self.searchButton, 0, 2, 1, 1)
 
         self.geneExpCanv=GeneExpressionCanvas(self.modGene,self)
-        self.gridLayout.addWidget(self.geneExpCanv,2,1,1,1)
+        self.gridLayout.addWidget(self.geneExpCanv,3,1,1,1)
+
+
+        self.zoomExpWidget=QtGui.QWidget(self)
+        self.hLayoutzoomExp = QtGui.QHBoxLayout(self.zoomExpWidget)
+        self.cbZoomExp = QtGui.QCheckBox()
+        self.cbZoomExp.setChecked(False)
+        self.modGene.isZoomExp = self.cbZoomExp.isChecked()
+        self.labZoomExp = QtGui.QLabel('Activate zoom')
+        self.hLayoutzoomExp.addWidget(self.cbZoomExp)
+        self.hLayoutzoomExp.addWidget(self.labZoomExp)
+        self.gridLayout.addWidget(self.zoomExpWidget,1,1,1,1)
+
 
         self.zoomWidget=QtGui.QWidget(self)
         self.hLayoutzoom = QtGui.QHBoxLayout(self.zoomWidget)
@@ -42,13 +54,13 @@ class Gene_View(QtGui.QMainWindow):
         self.labZoom = QtGui.QLabel('Activate zoom')
         self.hLayoutzoom.addWidget(self.cbZoom)
         self.hLayoutzoom.addWidget(self.labZoom)
-        self.gridLayout.addWidget(self.zoomWidget,3,1,1,1)
+        self.gridLayout.addWidget(self.zoomWidget,4,1,1,1)
 
 
 
 
         self.gene2DCanv=Gene2DCanvas(self.modGene,self)
-        self.gridLayout.addWidget(self.gene2DCanv,4,1,1,1)
+        self.gridLayout.addWidget(self.gene2DCanv,5,1,1,1)
 
         self.condWidget=QtGui.QWidget(self)
         self.hLayoutconds=QtGui.QHBoxLayout(self.condWidget)
@@ -80,7 +92,7 @@ class Gene_View(QtGui.QMainWindow):
         self.hLayoutconds.addWidget(self.cond30h6Lab)
         self.hLayoutconds.addWidget(self.cond30h6CB)
 
-        self.gridLayout.addWidget(self.condWidget,1,1,1,2)
+        self.gridLayout.addWidget(self.condWidget,2,1,1,2)
 
         self.currClustWidget = QtGui.QWidget(self)
         self.vLayoutCurrClust = QtGui.QVBoxLayout(self.currClustWidget)
@@ -96,7 +108,7 @@ class Gene_View(QtGui.QMainWindow):
 
         self.geneCurrClustList.setStyleSheet("QListView::item:selected { color: white; background: black  } QListView::item:hover { text-color: blue; background: grey  }")
 
-        self.gridLayout.addWidget(self.currClustWidget,0,3,5,1)
+        self.gridLayout.addWidget(self.currClustWidget,0,3,6,1)
 
         self.moveGeneWidget = QtGui.QWidget(self)
         self.vLayoutMoveButton = QtGui.QVBoxLayout(self.moveGeneWidget)
@@ -104,7 +116,7 @@ class Gene_View(QtGui.QMainWindow):
         self.vLayoutMoveButton.addWidget(self.removeGeneButton)
         self.addGeneButton = QtGui.QPushButton(" < ")
         self.vLayoutMoveButton.addWidget(self.addGeneButton)
-        self.gridLayout.addWidget(self.moveGeneWidget,0,4,5,1)
+        self.gridLayout.addWidget(self.moveGeneWidget,0,4,6,1)
 
 
         self.notAssignedGeneWidget = QtGui.QWidget(self)
@@ -114,7 +126,7 @@ class Gene_View(QtGui.QMainWindow):
         self.geneNotAssignedList = QtGui.QListWidget()
         self.vLayoutNotAssignedGene.addWidget(self.geneNotAssignedList)
 
-        self.gridLayout.addWidget(self.notAssignedGeneWidget, 0, 5, 5, 1)
+        self.gridLayout.addWidget(self.notAssignedGeneWidget, 0, 5, 6, 1)
 
 
 

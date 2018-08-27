@@ -36,6 +36,7 @@ class Gene_Model():
         self.selectedGene=None
 
         self.isZoom = None
+        self.isZoomExp= None
 
     def searchClusters(self):
 
@@ -146,8 +147,32 @@ class Gene_Model():
 
         #self.TXf = sk.manifold.TSNE().fit_transform(self.Xf)   n_iter =50000 ,
 
-        self.TXf = sk.manifold.TSNE( n_iter =50000000 ,learning_rate = 200,metric='manhattan',perplexity=15,random_state =1234).fit_transform(self.Xf)
+        def my_cosine(X,Y=None,dense_output=True):
+            dist=sk.metrics.pairwise.cosine_similarity([X],[Y],dense_output)
+            return 0 if dist <0  else dist
 
+        import math
+
+        def dotproduct(v1, v2):
+            return sum((a * b) for a, b in zip(v1, v2))
+
+        def length(v):
+            return math.sqrt(dotproduct(v, v))
+
+        def angle(v1, v2):
+            v1=np.array(v1)
+            v2 = np.array(v2)
+
+            return math.acos(  dotproduct(v1, v2) / (len(v1)))  if not np.array_equal(v1,v2) else 0
+
+        self.TXf = sk.manifold.TSNE( n_iter =50000000 ,learning_rate = 200,metric='manhattan',perplexity=15,random_state =1234).fit_transform(self.Xf)
+        #self.TXf = sk.manifold.TSNE(n_iter=50000000, learning_rate=2.5, metric=my_cosine, perplexity=3,
+        #random_state=1234).fit_transform(self.Xf)
+
+        #self.TXf = sk.manifold.TSNE(n_iter=50000000, learning_rate=100, metric=angle, perplexity=5,
+        #                            random_state=1234).fit_transform(self.Xf)
+
+        #clusterer = hdbscan.HDBSCAN(min_cluster_size=self.minClusterSize, min_samples=1, gen_min_span_tree=True,metric=angle)
         clusterer = hdbscan.HDBSCAN(min_cluster_size=self.minClusterSize, min_samples=1, gen_min_span_tree=True)
         clusterer.fit(self.Xf)
 

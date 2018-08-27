@@ -49,8 +49,8 @@ class RFGraph_View(QtGui.QMainWindow,QtGui.QGraphicsItem):
         self.adjThreshold_slider.setValue(self.modApp.adjThresholdVal * 100)
 
         self.adjThreshold_lab = QtGui.QLabel('Edges importance : ')
-        self.gridLayout.addWidget(self.adjThreshold_lab, 11, 0, 1, 1)
-        self.gridLayout.addWidget(self.adjThreshold_slider, 11, 1, 1, 1)
+        self.gridLayout.addWidget(self.adjThreshold_lab, 13, 0, 1, 1)
+        self.gridLayout.addWidget(self.adjThreshold_slider, 13, 1, 1, 1)
 
         self.selectContrTxtLab = QtGui.QLabel(' ')
         #self.gridLayout.addWidget(self.selectContrTxtLab, 0, 1, 1, 1)

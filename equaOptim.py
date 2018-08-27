@@ -69,8 +69,7 @@ class equaOptim:
         child2[list(indchild2_1)] = 1
         child2[list(indchild2_2)] = 1
 
-        if(self.nbElmt==5):
-            a=10
+
 
 
         for i in range(len(child1)):

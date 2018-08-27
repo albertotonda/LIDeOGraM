@@ -17,7 +17,7 @@ class QtConnector:
         #self.vwApp.buttonFitness.clicked.connect(self.cntrApp.clickFitness)
         #self.vwApp.buttonComplexite.clicked.connect(self.cntrApp.clickCmplx)
         #self.vwApp.buttonCompromis.clicked.connect(self.cntrApp.clickCompromis)
-        #self.vwApp.buttonShowModGlobal.clicked.connect(self.cntrApp.clickShowModGlobal)
+        #self.vwApp.buttonShowModGlobal.clicked.connect(self.cntrApp.)
         #self.vwApp.buttonHideModGlobal.clicked.connect(self.cntrApp.clickHideModGlobal)
         #self.vwApp.buttonOptUgp3.clicked.connect(self.cntrApp.clickOptmuGP)
         #self.vwApp.buttonRemoveLink.clicked.connect(self.cntrApp.clickRemoveLink)

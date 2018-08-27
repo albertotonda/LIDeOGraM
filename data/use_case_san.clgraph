@@ -1,0 +1,253 @@
+{
+    "edge": [
+        [
+            "B",
+            "ester"
+        ],
+        [
+            "B",
+            "aldehyde"
+        ],
+        [
+            "B",
+            "alcohol"
+        ],
+        [
+            "Y",
+            "ester"
+        ],
+        [
+            "Y",
+            "aldehyde"
+        ],
+        [
+            "Y",
+            "alcohol"
+        ]
+    ],
+    "node": [
+        {
+            "color": [
+                1.0,
+                0.4980392156862745,
+                0.0
+            ],
+            "lineWidth": 0,
+            "name": "nan",
+            "nodeList": [
+                "ethylbenzene"
+            ],
+            "operators": [],
+            "pos": [
+                0.22353269074963444,
+                0.8451875021897323
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.2,
+                0.6274509803921569,
+                0.17254901960784313
+            ],
+            "lineWidth": 0,
+            "name": "ethyl ester",
+            "nodeList": [
+                "ethyl_propanoate"
+            ],
+            "operators": [],
+            "pos": [
+                0.8024009213352764,
+                0.5740567409297901
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.12156862745098039,
+                0.47058823529411764,
+                0.7058823529411765
+            ],
+            "lineWidth": 0,
+            "name": "B",
+            "nodeList": [
+                "B_adenosylhomocysteinase",
+                "B_homocysteine_S_methyltransferase",
+                "B_citrate_synthase",
+                "B_Methionine_gamma_lyase",
+                "B_cysteine_synthase_B",
+                "B_cysteine_synthase_A",
+                "B_aldehyde_dehydrogenase",
+                "B_five_methyltetrahydropteroyltriglutamate__homocysteine_methyltransferase",
+                "B_serine_O_acetyltransferase",
+                "B_cystathionine_gamma_lyase",
+                "B_cystathionine_beta_synthase",
+                "B_branched_chain_amino_acid_aminotransferase",
+                "B_aconitate_hydratase",
+                "B_homoserine_O_succinyltransferase",
+                "B_S_adenosylhomocysteinefive'_methylthioadenosine_nucleosidase",
+                "B_succinate_dehydrogenase",
+                "B_cystathionine_gamma_synthase",
+                "B_S_ribosylhomocysteine_lyase",
+                "B_S_adenosylmethionine_synthetase",
+                "B_cystathionine_beta_lyase",
+                "B_pyruvate_dehydrogenase_Eone_component",
+                "B_aromatic_amino_acid_aminotransferase",
+                "B_uroporphyrin_III_C_methyltransferase",
+                "B_homoserine_O_acetyltransferase",
+                "B_five_methyltetrahydrofolate__homocysteine_methyltransferase",
+                "B_O_acetylhomoserine_thiol_lyase",
+                "B_glyceraldehyde_three_phosphate_dehydrogenase",
+                "B_alcohol_dehydrogenase"
+            ],
+            "operators": [],
+            "pos": [
+                0.09637450161210737,
+                0.16078874486669237
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.9921568627450981,
+                0.7490196078431373,
+                0.43529411764705883
+            ],
+            "lineWidth": 0,
+            "name": "aldehyde",
+            "nodeList": [
+                "n_heptanal"
+            ],
+            "operators": [],
+            "pos": [
+                0.2411353162626526,
+                0.626852375572291
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.984313725490196,
+                0.6039215686274509,
+                0.6
+            ],
+            "lineWidth": 0,
+            "name": "ketone",
+            "nodeList": [
+                "two_heptanone",
+                "two_hexanone",
+                "cyclopentanone",
+                "two_three_butanedione"
+            ],
+            "operators": [],
+            "pos": [
+                0.49730568504353645,
+                0.017189813528953768
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6509803921568628,
+                0.807843137254902,
+                0.8901960784313725
+            ],
+            "lineWidth": 0,
+            "name": "ester",
+            "nodeList": [
+                "isobutyl_isobutyrate",
+                "two_methyl_one_butanol_acetate",
+                "propyl_acetate",
+                "ethyl_acetate"
+            ],
+            "operators": [],
+            "pos": [
+                0.8305950918152291,
+                0.16664160991867338
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.41568627450980394,
+                0.23921568627450981,
+                0.6039215686274509
+            ],
+            "lineWidth": 0,
+            "name": "alkane",
+            "nodeList": [
+                "three_methyl_pentane",
+                "heptane"
+            ],
+            "operators": [],
+            "pos": [
+                0.43046268905079754,
+                0.08237173963373068
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.6980392156862745,
+                0.8745098039215686,
+                0.5411764705882353
+            ],
+            "lineWidth": 0,
+            "name": "Y",
+            "nodeList": [
+                "Y_S_adenosylmethionine_decarboxylase",
+                "Y_cystathionine_beta_synthase",
+                "Y_pyruvate_dehydrogenase_Eone_component",
+                "Y_citrate_synthase",
+                "Y_homoserine_O_acetyltransferase",
+                "Y_homocysteine_S_methyltransferase",
+                "Y_pyruvate_decarboxylase",
+                "Y_cystathionine_gamma_lyase",
+                "Y_cysteine_synthase_A",
+                "Y_aldehyde_dehydrogenase",
+                "Y_alcohol_dehydrogenase",
+                "Y_adenosylhomocysteinase",
+                "Y_succinate_dehydrogenase",
+                "Y_aromatic_amino_acid_aminotransferase",
+                "Y_five_methyltetrahydropteroyltriglutamate__homocysteine_methyltransferase",
+                "Y_uroporphyrin_III_C_methyltransferase",
+                "Y_O_acetylhomoserineO_acetylserine_sulfhydrylase",
+                "Y_cystathionine_beta_lyase",
+                "Y_cystathionine_gamma_synthase",
+                "Y_alcohol_acetyltransferase",
+                "Y_aconitate_hydratase",
+                "Y_S_adenosylmethionine_synthetase",
+                "Y_branched_chain_amino_acid_aminotransferase"
+            ],
+            "operators": [],
+            "pos": [
+                0.5906631104977422,
+                0.5294022858923427
+            ],
+            "size": 700
+        },
+        {
+            "color": [
+                0.8901960784313725,
+                0.10196078431372549,
+                0.10980392156862745
+            ],
+            "lineWidth": 0,
+            "name": "alcohol",
+            "nodeList": [
+                "two_heptanol",
+                "two_methyl_one_propanol",
+                "two_three_butanediol",
+                "two_butanol",
+                "three_methyl_one_butanol"
+            ],
+            "operators": [],
+            "pos": [
+                0.28793883646422835,
+                0.5135079715558385
+            ],
+            "size": 700
+        }
+    ],
+    "unbound": []
+}

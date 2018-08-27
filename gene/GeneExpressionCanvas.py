@@ -34,21 +34,32 @@ class GeneExpressionCanvas(FigureCanvas):
                 #ax.set_position([0.1, 0.1, 0.7, 0.8])
                 color = iter(cm.rainbow(np.linspace(0, 1, len(w))))
                 print('w:',w)
+
+                if self.modGene.isZoomExp:
+                    minExp = np.array([np.min(v) for v in np.transpose(self.modGene.Xf[np.ix_(w, self.modGene.activCondShow)])])
+                    maxExp = np.array([np.max(v) for v in np.transpose(self.modGene.Xf[np.ix_(w, self.modGene.activCondShow)])])
+                    subtractVect=(minExp+maxExp)/2
+                    divVect=(maxExp-minExp)/2
+
                 for j in w:
                     cn=next(color)
-                    if j != self.modGene.selectedGene:
-                        ax.plot(xpos,self.modGene.Xf[j,self.modGene.activCondShow], 'o-', c=cn,
-                            label=self.modGene.loc[self.modGene.f[j]][1] + ' ' + self.modGene.loc[self.modGene.f[j]][0][5:])
+                    geneExps=self.modGene.Xf[j,self.modGene.activCondShow]
 
-                color = iter(cm.rainbow(np.linspace(0, 1, len(w))))
-                for j in w:
-                    cn = next(color)
-                    if j == self.modGene.selectedGene:
-                        ax.plot(xpos, self.modGene.Xf[j, self.modGene.activCondShow], 'o-', c=cn,
+                    if self.modGene.isZoomExp:
+                        geneExps=(geneExps-subtractVect)/divVect
+
+                    if j != self.modGene.selectedGene:
+                        ax.plot(xpos,geneExps, 'o-', c=cn,
+                            label=self.modGene.loc[self.modGene.f[j]][1] + ' ' + self.modGene.loc[self.modGene.f[j]][0][5:])
+                    else:
+                        ax.plot(xpos, geneExps, 'o-', c=cn,
                                 label=self.modGene.loc[self.modGene.f[j]][1] + ' ' +
                                       self.modGene.loc[self.modGene.f[j]][0][5:], linewidth=5)
 
-                ax.set_ylim((np.minimum(-3, ax.get_ylim()[0]), np.maximum(3, ax.get_ylim()[1])))
+                if self.modGene.isZoomExp:
+                    ax.set_ylim((-1,1))
+                else:
+                    ax.set_ylim((np.minimum(-3, ax.get_ylim()[0]), np.maximum(3, ax.get_ylim()[1])))
                 ax.set_xticks(xpos-0.4)
 
                 tlab=[]
